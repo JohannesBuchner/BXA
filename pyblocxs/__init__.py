@@ -11,7 +11,7 @@ info = logging.getLogger("sherpa").info
 
 
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 
 ###############################################################################
@@ -65,7 +65,8 @@ __all__=['get_draws', 'get_error_estimates',
          'set_sampler', 'get_sampler', 'get_sampler_name', 'set_sampler_opt',
          'get_sampler_opt',
 
-         'quantile', 'flat', 'inverse', 'inverse2', 'plot_pdf']
+         'quantile', 'flat', 'inverse', 'inverse2', 'plot_pdf', 'plot_cdf',
+         'plot_trace']
 
 
 def list_priors():
@@ -233,29 +234,8 @@ def get_draws(id=None, otherids=(), niter=1e3, remin=5):
 
     info('Using Priors: ' + str(priors))
 
-    while remin > 0:
-        try:
-            stats, accept, params = Walk(sampler(fit, sigma, mu, dof))(niter, **kwargs)
-            break
-
-        except ReminError:
-            info("New minimum statistic found running %s" % sampler.__name__)
-
-            info(fit.fit().format())
-            covar_results = fit.est_errors()
-            info(covar_results.format())
-            sigma = covar_results.extra_output
-            mu = fit.model.thawedpars
-
-            remin -= 1
-            continue
-
-    if remin <= 0:
-        try:
-            stats, accept, params = Walk(sampler(fit, sigma, mu, dof))(niter, **kwargs)
-        except ReminError:
-            pass
-
+    stats, accept, params = Walk(sampler(fit, sigma, mu, dof))(niter, **kwargs)
+    
     # slice off mode from Sherpa fit
     #params = params[:,1:]
     #stats = -2.0*stats[1:]
@@ -291,7 +271,7 @@ def plot_pdf(x, name='x', bins=12, overplot=False):
     Compute a histogram and plot the probability density (PDF) of x.
 
     `x`        input ndarray
-    `xlabel`   the label for the input data, default = 'x'
+    `name`     the label for the input data, default = 'x'
     `bins`     the number of bins in the histogram, default = 12
     `overplot` overplot over an existing plot, default = False
 
@@ -307,6 +287,64 @@ def plot_pdf(x, name='x', bins=12, overplot=False):
         hist.plot(xx[:-1], xx[1:], pdf, xlabel=name,
                   ylabel='probability density', title='PDF: %s' % name,
                   overplot=overplot)
+    except:
+        sherpa.plot.exceptions()
+        raise
+    else:
+        sherpa.plot.end()
+
+def plot_cdf(x, name='x', overplot=False):
+    """
+    Compute quantiles and plot the cumulative distribution (CDF) of x.
+
+    `x`        input ndarray
+    `name`     the label for the input data, default = 'x'
+    `overplot` overplot over an existing plot, default = False
+
+    returns None
+
+    """
+    import sherpa.plot
+    plot = sherpa.plot.Plot()
+    x = numpy.sort(x)
+    median, lval, hval, = get_error_estimates(x, True)
+    y = (numpy.arange(x.size) + 1) * 1.0 / x.size
+
+    sherpa.plot.begin()
+    try:
+        plot.plot_prefs["linecolor"]="red"
+        plot.plot(x, y, xlabel=name, ylabel="p(<=x)",
+                  title="CDF: %s" % name)
+        plot.vline(median, linecolor="orange", linestyle="dash",
+                   linewidth=1.5, overplot=True, clearwindow=False)
+        plot.vline(lval, linecolor="blue", linestyle="dash",
+                   linewidth=1.5, overplot=True, clearwindow=False)
+        plot.vline(hval,  linecolor="blue", linestyle="dash",
+                   linewidth=1.5, overplot=True, clearwindow=False)
+    except:
+        sherpa.plot.exceptions()
+        raise
+    else:
+        sherpa.plot.end()
+
+def plot_trace(x, name='x', overplot=False):
+    """
+    Plot the trace of 'x'.
+
+    `x`        input ndarray
+    `name`     the label for the input data, default = 'x'
+    `overplot` overplot over an existing plot, default = False
+
+    returns None
+
+    """
+    import sherpa.plot
+    plot = sherpa.plot.Plot()
+    iter = numpy.arange(len(x), dtype=float)
+    sherpa.plot.begin()
+    try:
+        plot.plot(iter, x, xlabel="iteration", ylabel=name,
+                  title="Trace: %s" % name)
     except:
         sherpa.plot.exceptions()
         raise

@@ -108,3 +108,33 @@ High-Level User Interface functions
    For example::
 
      plot_pdf(params[0], bins=15)
+
+
+.. function:: plot_cdf(x, name='x', overplot=False)
+
+   Compute quantiles and plot the cumulative distribution (CDF) of *x*.
+   For example::
+
+     import numpy as np
+     mu, sigma = 100, 15
+     x = mu + sigma*np.random.randn(10000)
+     plot_cdf(x)
+
+   For example::
+
+     plot_cdf(params[0])
+
+
+.. function:: plot_trace(x, name='x', overplot=False)
+
+   Plot the trace of *x*.
+   For example::
+
+     import numpy as np
+     mu, sigma = 100, 15
+     x = mu + sigma*np.random.randn(10000)
+     plot_trace(x)
+
+   For example::
+
+     plot_trace(params[0])
