@@ -183,7 +183,7 @@ def get_sampler_opt(opt):
     return _session.samplers[_session.sampler]['opts'][opt]
 
 
-def get_draws(id=None, otherids=(), niter=1e3, remin=5):
+def get_draws(id=None, otherids=(), niter=1e3):
     """ 
     Run pyblocxs using current sampler and current sampler configuration
     options for *niter* number of iterations.  The results are returned
@@ -194,7 +194,6 @@ def get_draws(id=None, otherids=(), niter=1e3, remin=5):
     `id`              Sherpa data id
     `otherids`        Additional Sherpa data ids for simultaneous fit 
     `niter`           Number of iterations, default = 1e3
-    `remin`           Number of restarts upon finding new minimum, default = 5
 
     returns a tuple of ndarrays e.g. (stats, params)
 
@@ -235,10 +234,8 @@ def get_draws(id=None, otherids=(), niter=1e3, remin=5):
     info('Using Priors: ' + str(priors))
 
     stats, accept, params = Walk(sampler(fit, sigma, mu, dof))(niter, **kwargs)
-    
-    # slice off mode from Sherpa fit
-    #params = params[:,1:]
-    #stats = -2.0*stats[1:]
+
+    # Change to Sherpa statistic convention
     stats = -2.0*stats
 
     return (stats, accept, params)
@@ -266,6 +263,7 @@ def get_error_estimates(x, sorted=False):
 
     return (median, lval, hval)
 
+
 def plot_pdf(x, name='x', bins=12, overplot=False):
     """
     Compute a histogram and plot the probability density (PDF) of x.
@@ -292,6 +290,7 @@ def plot_pdf(x, name='x', bins=12, overplot=False):
         raise
     else:
         sherpa.plot.end()
+
 
 def plot_cdf(x, name='x', overplot=False):
     """
@@ -326,6 +325,7 @@ def plot_cdf(x, name='x', overplot=False):
         raise
     else:
         sherpa.plot.end()
+
 
 def plot_trace(x, name='x', overplot=False):
     """
