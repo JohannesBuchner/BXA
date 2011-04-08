@@ -12,11 +12,8 @@ _level = _log.level
 _tol = numpy.finfo(numpy.float).eps
 
 
-__all__=['ReminError', 'LimitError', 'MetropolisMH', 'MH', 'Sampler',
+__all__=['LimitError', 'MetropolisMH', 'MH', 'Sampler',
          'Walk', 'dmvt']
-
-class ReminError(Exception):
-    pass
 
 class LimitError(Exception):
     pass
@@ -394,10 +391,6 @@ class MH(Sampler):
 
         # include prior
         proposed_stat = self.update(proposed_stat, proposed_params, False)
-
-        # remember maximization!
-        if proposed_stat > self.initial_stat:
-            raise ReminError('new minimum statistic found!')
 
         return proposed_stat
 
