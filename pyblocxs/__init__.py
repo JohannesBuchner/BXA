@@ -11,7 +11,7 @@ info = logging.getLogger("sherpa").info
 
 
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 
 ###############################################################################
@@ -42,11 +42,21 @@ class Session(object):
             'MetropolisMH' : {
                 'class' : MetropolisMH,
                 'opts' : get_keyword_defaults(MetropolisMH.init)
+                },
+
+            'ARFSimMetropolisMH' : {
+                'class' : ARFSimMetropolisMH,
+                'opts' : get_keyword_defaults(ARFSimMetropolisMH.init)
                 }
+
             }
 
-
-
+        self.walk = 'Walk'
+        self.walks = {
+            'Walk' : {
+                'class' : Walk,
+                },
+            }
 
 _session = Session()
 
@@ -228,12 +238,13 @@ def get_draws(id=None, otherids=(), niter=1e3):
             priors.append(func)
 
     sampler = _session.samplers[_session.sampler]['class']
+    walk = _session.walks[_session.walk]['class']
     kwargs = _session.samplers[_session.sampler]['opts'].copy()
     kwargs['priors'] = priors
 
     info('Using Priors: ' + str(priors))
 
-    stats, accept, params = Walk(sampler(fit, sigma, mu, dof))(niter, **kwargs)
+    stats, accept, params = walk(sampler(fit, sigma, mu, dof))(niter, **kwargs)
 
     # Change to Sherpa statistic convention
     stats = -2.0*stats

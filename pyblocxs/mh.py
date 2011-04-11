@@ -13,7 +13,8 @@ _tol = numpy.finfo(numpy.float).eps
 
 
 __all__=['LimitError', 'MetropolisMH', 'MH', 'Sampler',
-         'Walk', 'dmvt']
+         'Walk', 'dmvt', 'ARFSimMetropolisMH', 'PCA1DAdd',
+         'SIM1DAdd']
 
 class LimitError(Exception):
     pass
@@ -469,7 +470,76 @@ class MetropolisMH(MH):
         alpha = self.accept_func(current, current_stat, proposal, proposal_stat)
         u = np.random.uniform(0,1,1)
         return u <= alpha
-      
+
+
+class PCA1DAdd(object):
+
+    def __init__(self, hdus):
+
+        hdu = hdus[1]
+        self.specresp = hdu.data.field('SPECRESP')
+        self.bias     = hdu.data.field('BIAS')
+
+        hdu = hdus[2]
+        self.component = hdu.data.field('COMPONENT')
+        self.fvariance = hdu.data.field('FVARIANCE')
+        self.eigenval  = hdu.data.field('EIGENVAL')
+        self.eigenvec  = hdu.data.field('EIGENVEC')
+
+
+    def get_specresp(self):
+        new_arf = self.specresp + self.bias
+        N = len(self.component)
+        rr = numpy.random.rand(N, 1)
+        tmp = self.eigenvec * self.eigenval[:,numpy.newaxis] * rr
+        return new_arf + tmp.sum(axis=0)
+
+
+
+class SIM1DAdd(object):
+
+    def __init__(self, hdus):
+
+        hdu = hdus[1]
+        self.specresp = hdu.data.field('SPECRESP')
+        self.bias     = hdu.data.field('BIAS')
+
+        hdu = hdus[2]
+        self.component = hdu.data.field('COMPONENT')
+        self.simcomp = hdu.data.field('SIMCOMP')
+
+    def get_specresp(self):
+        new_arf = self.specresp + self.bias
+        N = len(self.component)
+        rr = numpy.random.randint(0,N)
+        return new_arf + self.simcomp[rr]
+
+
+class ARFSimMetropolisMH(MetropolisMH):
+
+    def __init__(self, fit, sigma, mu, dof):
+        MetropolisMH.__init__(self, fit, sigma, mu, dof)
+
+        if hasattr(fit.model, 'teardown'):
+            fit.model.teardown()
+
+
+    def init(self, log=False, inv=False, defaultprior=True, priorshape=False,
+             priors=(), originalscale=True, verbose=False,
+             scale=1, sigma_m=False, arf=None):
+        self.arf = arf
+        return MetropolisMH.init(self, log, inv, defaultprior, priorshape,
+                                 priors, originalscale, verbose, scale,
+                                 sigma_m)
+
+    def draw(self, current):
+        data = self._fit.data
+        arf, rmf = data.get_response()
+        arf.specresp = self.arf.get_specresp()
+        arf.notice(); rmf.notice()
+        data.set_response(arf, rmf)
+        return MetropolisMH.draw(self, current)
+
 
 # class MHSim(object):
 
