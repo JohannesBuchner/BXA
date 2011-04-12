@@ -477,7 +477,7 @@ class PCA1DAdd(object):
     def __init__(self, hdus):
 
         hdu = hdus[1]
-        self.specresp = hdu.data.field('SPECRESP')
+        #self.specresp = hdu.data.field('SPECRESP')
         self.bias     = hdu.data.field('BIAS')
 
         hdu = hdus[2]
@@ -487,8 +487,8 @@ class PCA1DAdd(object):
         self.eigenvec  = hdu.data.field('EIGENVEC')
 
 
-    def get_specresp(self):
-        new_arf = self.specresp + self.bias
+    def get_specresp(self, specresp):
+        new_arf = specresp + self.bias
         N = len(self.component)
         rr = numpy.random.rand(N, 1)
         tmp = self.eigenvec * self.eigenval[:,numpy.newaxis] * rr
@@ -501,15 +501,15 @@ class SIM1DAdd(object):
     def __init__(self, hdus):
 
         hdu = hdus[1]
-        self.specresp = hdu.data.field('SPECRESP')
+        #self.specresp = hdu.data.field('SPECRESP')
         self.bias     = hdu.data.field('BIAS')
 
         hdu = hdus[2]
         self.component = hdu.data.field('COMPONENT')
         self.simcomp = hdu.data.field('SIMCOMP')
 
-    def get_specresp(self):
-        new_arf = self.specresp + self.bias
+    def get_specresp(self, specresp):
+        new_arf = specresp + self.bias
         N = len(self.component)
         rr = numpy.random.randint(0,N)
         return new_arf + self.simcomp[rr]
@@ -519,9 +519,44 @@ class ARFSimMetropolisMH(MetropolisMH):
 
     def __init__(self, fit, sigma, mu, dof):
         MetropolisMH.__init__(self, fit, sigma, mu, dof)
-
+        self._arfsrc = {}
+        self._arfbkg = {}
         if hasattr(fit.model, 'teardown'):
             fit.model.teardown()
+        if hasattr(fit.data, 'datasets'):
+            for ii, data in enumerate(fit.data.datasets):
+                if not hasattr(data, 'response_ids'):
+                    raise TypeError("dataset does not contain an ARF, dataset must be PHA")
+                self._arfsrc[ii] = {}
+                self._arfbkg[ii] = {}
+                for resp_id in data.response_ids:
+                    arf, rmf = data.get_response(resp_id)
+                    arf.notice(); rmf.notice();
+                    self._arfsrc[ii][resp_id] = numpy.array(arf.specresp)
+                for bkg_id in data.background_ids:
+                    bkg = data.get_background(bkg_id)
+                    self._arfbkg[ii][bkg_id] = {}
+                    for bkg_resp_id in bkg.response_ids:
+                        barf, brmf = bkg.get_response(bkg_resp_id)
+                        barf.notice(); brmf.notice();
+                        self._arfbkg[ii][bkg_id][bkg_resp_id] = numpy.array(barf.specresp)
+        else:
+            data = fit.data
+            if not hasattr(data, 'response_ids'):
+                raise TypeError("dataset does not contain an ARF, dataset must be PHA")
+            self._arfsrc[1] = {}
+            self._arfbkg[1] = {}
+            for resp_id in data.response_ids:
+                arf, rmf = data.get_response(resp_id)
+                arf.notice(); rmf.notice();
+                self._arfsrc[1][resp_id] = numpy.array(arf.specresp)
+            for bkg_id in data.background_ids:
+                bkg = data.get_background(bkg_id)
+                self._arfbkg[1][bkg_id] = {}
+                for bkg_resp_id in bkg.response_ids:
+                    barf, brmf = bkg.get_response(bkg_resp_id)
+                    barf.notice(); brmf.notice();
+                    self._arfbkg[1][bkg_id][bkg_resp_id] = numpy.array(barf.specresp)
 
 
     def init(self, log=False, inv=False, defaultprior=True, priorshape=False,
@@ -533,12 +568,77 @@ class ARFSimMetropolisMH(MetropolisMH):
                                  sigma_m)
 
     def draw(self, current):
-        data = self._fit.data
-        arf, rmf = data.get_response()
-        arf.specresp = self.arf.get_specresp()
-        arf.notice(); rmf.notice()
-        data.set_response(arf, rmf)
+        fit = self._fit
+        if hasattr(fit.data, 'datasets'):
+            for ii, data in enumerate(fit.data.datasets):
+                if not hasattr(data, 'response_ids'):
+                    raise TypeError("dataset does not contain an ARF, dataset must be PHA")
+                for resp_id in data.response_ids:
+                    arf, rmf = data.get_response(resp_id)
+                    arf.notice(); rmf.notice();
+                    arf.specresp = self.arf.get_specresp(self._arfsrc[ii][resp_id])
+                    data.set_response(arf, rmf, resp_id)
+                for bkg_id in data.background_ids:
+                    bkg = data.get_background(bkg_id)
+                    for bkg_resp_id in bkg.response_ids:
+                        barf, brmf = bkg.get_response(bkg_resp_id)
+                        barf.notice(); brmf.notice();
+                        barf.specresp = self.arf.get_specresp(self._arfbkg[ii][bkg_id][bkg_resp_id])
+                        bkg.set_response(barf, brmf, bkg_resp_id)
+        else:
+            data = fit.data
+            if not hasattr(data, 'response_ids'):
+                raise TypeError("dataset does not contain an ARF, dataset must be PHA")
+            for resp_id in data.response_ids:
+                arf, rmf = data.get_response(resp_id)
+                arf.notice(); rmf.notice();
+                arf.specresp = self.arf.get_specresp(self._arfsrc[1][resp_id])
+                data.set_response(arf, rmf, resp_id)
+            for bkg_id in data.background_ids:
+                bkg = data.get_background(bkg_id)
+                for bkg_resp_id in bkg.response_ids:
+                    barf, brmf = bkg.get_response(bkg_resp_id)
+                    barf.notice(); brmf.notice();
+                    barf.specresp = self.arf.get_specresp(self._arfbkg[1][bkg_id][bkg_resp_id])
+                    bkg.set_response(barf, brmf, bkg_resp_id)
         return MetropolisMH.draw(self, current)
+
+
+    def tear_down(self):
+        MetropolisMH.tear_down(self)
+        fit = self._fit
+        if hasattr(fit.data, 'datasets'):
+            for ii, data in enumerate(fit.data.datasets):
+                if not hasattr(data, 'response_ids'):
+                    raise TypeError("dataset does not contain an ARF, dataset must be PHA")
+                for resp_id in data.response_ids:
+                    arf, rmf = data.get_response(resp_id)
+                    arf.notice(); rmf.notice();
+                    arf.specresp = self._arfsrc[ii][resp_id]
+                    data.set_response(arf, rmf, resp_id)
+                for bkg_id in data.background_ids:
+                    bkg = data.get_background(bkg_id)
+                    for bkg_resp_id in bkg.response_ids:
+                        barf, brmf = bkg.get_response(bkg_resp_id)
+                        barf.notice(); brmf.notice();
+                        barf.specresp = self._arfbkg[ii][bkg_id][bkg_resp_id]
+                        bkg.set_response(barf, brmf, bkg_resp_id)
+        else:
+            data = fit.data
+            if not hasattr(data, 'response_ids'):
+                raise TypeError("dataset does not contain an ARF, dataset must be PHA")
+            for resp_id in data.response_ids:
+                arf, rmf = data.get_response(resp_id)
+                arf.notice(); rmf.notice();
+                arf.specresp = self._arfsrc[1][resp_id]
+                data.set_response(arf, rmf, resp_id)
+            for bkg_id in data.background_ids:
+                bkg = data.get_background(bkg_id)
+                for bkg_resp_id in bkg.response_ids:
+                    barf, brmf = bkg.get_response(bkg_resp_id)
+                    barf.notice(); brmf.notice();
+                    barf.specresp = self._arfbkg[1][bkg_id][bkg_resp_id]
+                    bkg.set_response(barf, brmf, bkg_resp_id)
 
 
 # class MHSim(object):
