@@ -1,25 +1,36 @@
 #!/usr/bin/env python
 
-from sherpa.all import *
 import numpy as np
-from sherpa.utils import lgam, sao_fcmp
-from sherpa.stats import Cash
 import logging
+import math
+import inspect
+from itertools import izip
+
+
+try:
+    # try lgamma in >= Python 2.7
+    math.lgamma(1)
+    
+    lgam = math.lgamma
+except:
+    # default to log(gamma()) in < Python2.7
+    from test.test_random import gamma
+    lgam = lambda x : math.log(gamma(x))
+
 
 info = logging.getLogger(__name__).info
-_log = logging.getLogger("sherpa")
-_level = _log.level
-_tol = numpy.finfo(numpy.float).eps
-
 
 __all__=['LimitError', 'MetropolisMH', 'MH', 'Sampler',
-         'Walk', 'dmvt', 'ARFSimMetropolisMH', 'PCA1DAdd',
-         'SIM1DAdd']
+         'Walk', 'dmvt', 'dmvnorm']
 
 class LimitError(Exception):
     pass
 
 def dmvt(x, mu, sigma, dof, log=True, norm=False):
+    """
+
+    Probability Density of a multi-variate Student's t distribution
+    """
 
     if np.min( np.linalg.eigvalsh(sigma))<=0 :
         raise RuntimeError("Error: sigma is not positive definite")
@@ -45,15 +56,38 @@ def dmvt(x, mu, sigma, dof, log=True, norm=False):
     return val
 
 
-class Walk(NoNewAttributesAfterInit):
+def dmvnorm(x, mu, sigma, log=True):
+    """
+
+    Probability Density of a multi-variate Normal distribution
+    """
+
+    if np.min( np.linalg.eigvalsh(sigma))<=0 :
+        raise RuntimeError("Error: sigma is not positive definite")
+    if np.max( np.abs(sigma-sigma.T))>=1e-9 :
+        raise RuntimeError("Error: sigma is not symmetric")
+
+    # log density
+    logdens = (-mu.size/2.0*np.log(2*np.pi)-
+                1/2.0*np.log( np.linalg.det(sigma) )-1/2.0 *
+                np.dot( x-mu, np.dot(np.linalg.inv(sigma), x-mu ) ) )
+
+    if log:
+        return logdens
+
+    # density
+    dens = np.exp( logdens )
+    return dens
+
+
+
+class Walk(object):
 
     def __init__(self, sampler=None):
         self._sampler = sampler
 
-
     def set_sampler(self, sampler):
         self._sampler = sampler
-
 
     def __call__(self, niter, **kwargs):
 
@@ -86,7 +120,6 @@ class Walk(NoNewAttributesAfterInit):
         #
         try:
             for ii in xrange(niter):
-
                 jump = ii+1
 
                 current_params = proposals[ii]
@@ -110,13 +143,11 @@ class Walk(NoNewAttributesAfterInit):
                 # Accept this proposal?
                 if self._sampler.accept(current_params, current_stat,
                                          proposed_params, proposed_stat):
-
                     proposals[jump] = proposed_params
                     stats[jump] = proposed_stat
                     acceptflag[jump] = True
 
                 else:
-
                     self._sampler.reject()
         finally:
             self._sampler.tear_down()
@@ -125,11 +156,15 @@ class Walk(NoNewAttributesAfterInit):
         return (stats, acceptflag, params)
 
 
-
-class Sampler(NoNewAttributesAfterInit):
+class Sampler(object):
 
     def __init__(self):
-        self._opts = get_keyword_defaults(self.init)
+
+        # get the initial keyword argument defaults
+        argspec = inspect.getargspec(self.init)
+        first = len(argspec[0]) - len(argspec[3])
+        self._opts = dict(izip(argspec[0][first:], argspec[3][0:]))
+        self.walk = None
 
     def init(self):
         raise NotImplementedError
@@ -147,33 +182,22 @@ class Sampler(NoNewAttributesAfterInit):
         raise NotImplementedError
 
     def tear_down(self):
-        raise NotImplementedError
+        raise NotImplementedError                    
 
 
 class MH(Sampler):
     """ The Metropolis Hastings Sampler """ 
 
-    def __init__(self, fit, sigma, mu, dof):
+    def __init__(self, fcn, sigma, mu, dof):
+        self.fcn = fcn
         self._df = dof
-        self._fit = fit
-        self._mu = numpy.array(mu)
-        self._sigma = numpy.array(sigma)
-        self._thawedparmins = numpy.array(fit.model.thawedparhardmins)
-        self._thawedparmaxes = numpy.array(fit.model.thawedparhardmaxes)
-        self._oldthawedpars = numpy.array(fit.model.thawedpars)
-
-        # add backwards compatibility with < CIAO 4.2
-        if hasattr(fit.model, 'startup'):
-            fit.model.startup()
-        
-        if not isinstance(fit.stat, Cash):
-            raise RuntimeError("Fit statistic must be cash, not %s" %
-                               fit.stat.name)
+        self._mu = np.array(mu)
+        self._sigma = np.array(sigma)
         Sampler.__init__(self)
 
 
-    def _calc_fit_stat(self):
-        return -0.5*self._fit.calc_stat()
+    def calc_fit_stat(self, proposed_params):
+        return self.fcn(proposed_params)
 
 
     def init(self, log=False, inv=False, defaultprior=True, priorshape=False,
@@ -232,7 +256,7 @@ class MH(Sampler):
             info("Running Metropolis-Hastings")
 
         current = self._mu.copy()
-        stat = self._calc_fit_stat()
+        stat = self.calc_fit_stat(current)
 
         # include prior
         stat = self.update(stat, self._mu)
@@ -359,29 +383,7 @@ class MH(Sampler):
 
     def calc_stat(self, proposed_params):
 
-        # automatic rejection outside hard limits
-        mins  = sao_fcmp(proposed_params, self._thawedparmins, _tol)
-        maxes = sao_fcmp(self._thawedparmaxes, proposed_params, _tol)
-        if -1 in mins or -1 in maxes:
-            #print'hard limit exception'
-            raise LimitError('Sherpa parameter hard limit exception')
-
-        try:
-            # ignore warning from Sherpa about hard limits
-            _log.setLevel(50)
-
-            # soft limits are ignored, hard limits rejected.
-            # proposed values beyond hard limit default to limit.
-            self._fit.model.thawedpars = proposed_params
-            _log.setLevel(_level)
-
-            # Calculate statistic on proposal
-            proposed_stat = self._calc_fit_stat()
-
-        except:
-            # set the model back to original state on exception
-            self._fit.model.thawedpars = self._oldthawedpars
-            raise
+        proposed_stat = self.calc_fit_stat(proposed_params)
 
         #putting parameters back on log scale
         if np.sum(self.log)>0:
@@ -395,15 +397,8 @@ class MH(Sampler):
 
         return proposed_stat
 
-
     def tear_down(self):
-        # set the model back to original state
-        self._fit.model.thawedpars = self._oldthawedpars
-        
-        # add backwards compatibility with < CIAO 4.2
-        if hasattr(self._fit.model, 'teardown'):
-            self._fit.model.teardown()
-
+        pass
 
 
 class MetropolisMH(MH):
@@ -470,175 +465,6 @@ class MetropolisMH(MH):
         alpha = self.accept_func(current, current_stat, proposal, proposal_stat)
         u = np.random.uniform(0,1,1)
         return u <= alpha
-
-
-class PCA1DAdd(object):
-
-    def __init__(self, hdus):
-
-        hdu = hdus[1]
-        #self.specresp = hdu.data.field('SPECRESP')
-        self.bias     = hdu.data.field('BIAS')
-
-        hdu = hdus[2]
-        self.component = hdu.data.field('COMPONENT')
-        self.fvariance = hdu.data.field('FVARIANCE')
-        self.eigenval  = hdu.data.field('EIGENVAL')
-        self.eigenvec  = hdu.data.field('EIGENVEC')
-
-
-    def get_specresp(self, specresp):
-        new_arf = specresp + self.bias
-        N = len(self.component)
-        rr = numpy.random.rand(N, 1)
-        tmp = self.eigenvec * self.eigenval[:,numpy.newaxis] * rr
-        return new_arf + tmp.sum(axis=0)
-
-
-
-class SIM1DAdd(object):
-
-    def __init__(self, hdus):
-
-        hdu = hdus[1]
-        #self.specresp = hdu.data.field('SPECRESP')
-        self.bias     = hdu.data.field('BIAS')
-
-        hdu = hdus[2]
-        self.component = hdu.data.field('COMPONENT')
-        self.simcomp = hdu.data.field('SIMCOMP')
-
-    def get_specresp(self, specresp):
-        new_arf = specresp + self.bias
-        N = len(self.component)
-        rr = numpy.random.randint(0,N)
-        return new_arf + self.simcomp[rr]
-
-
-class ARFSimMetropolisMH(MetropolisMH):
-
-    def __init__(self, fit, sigma, mu, dof):
-        MetropolisMH.__init__(self, fit, sigma, mu, dof)
-        self._arfsrc = {}
-        self._arfbkg = {}
-        if hasattr(fit.model, 'teardown'):
-            fit.model.teardown()
-        if hasattr(fit.data, 'datasets'):
-            for ii, data in enumerate(fit.data.datasets):
-                if not hasattr(data, 'response_ids'):
-                    raise TypeError("dataset does not contain an ARF, dataset must be PHA")
-                self._arfsrc[ii] = {}
-                self._arfbkg[ii] = {}
-                for resp_id in data.response_ids:
-                    arf, rmf = data.get_response(resp_id)
-                    arf.notice(); rmf.notice();
-                    self._arfsrc[ii][resp_id] = numpy.array(arf.specresp)
-                for bkg_id in data.background_ids:
-                    bkg = data.get_background(bkg_id)
-                    self._arfbkg[ii][bkg_id] = {}
-                    for bkg_resp_id in bkg.response_ids:
-                        barf, brmf = bkg.get_response(bkg_resp_id)
-                        barf.notice(); brmf.notice();
-                        self._arfbkg[ii][bkg_id][bkg_resp_id] = numpy.array(barf.specresp)
-        else:
-            data = fit.data
-            if not hasattr(data, 'response_ids'):
-                raise TypeError("dataset does not contain an ARF, dataset must be PHA")
-            self._arfsrc[1] = {}
-            self._arfbkg[1] = {}
-            for resp_id in data.response_ids:
-                arf, rmf = data.get_response(resp_id)
-                arf.notice(); rmf.notice();
-                self._arfsrc[1][resp_id] = numpy.array(arf.specresp)
-            for bkg_id in data.background_ids:
-                bkg = data.get_background(bkg_id)
-                self._arfbkg[1][bkg_id] = {}
-                for bkg_resp_id in bkg.response_ids:
-                    barf, brmf = bkg.get_response(bkg_resp_id)
-                    barf.notice(); brmf.notice();
-                    self._arfbkg[1][bkg_id][bkg_resp_id] = numpy.array(barf.specresp)
-
-
-    def init(self, log=False, inv=False, defaultprior=True, priorshape=False,
-             priors=(), originalscale=True, verbose=False,
-             scale=1, sigma_m=False, arf=None):
-        self.arf = arf
-        return MetropolisMH.init(self, log, inv, defaultprior, priorshape,
-                                 priors, originalscale, verbose, scale,
-                                 sigma_m)
-
-    def draw(self, current):
-        fit = self._fit
-        if hasattr(fit.data, 'datasets'):
-            for ii, data in enumerate(fit.data.datasets):
-                if not hasattr(data, 'response_ids'):
-                    raise TypeError("dataset does not contain an ARF, dataset must be PHA")
-                for resp_id in data.response_ids:
-                    arf, rmf = data.get_response(resp_id)
-                    arf.notice(); rmf.notice();
-                    arf.specresp = self.arf.get_specresp(self._arfsrc[ii][resp_id])
-                    data.set_response(arf, rmf, resp_id)
-                for bkg_id in data.background_ids:
-                    bkg = data.get_background(bkg_id)
-                    for bkg_resp_id in bkg.response_ids:
-                        barf, brmf = bkg.get_response(bkg_resp_id)
-                        barf.notice(); brmf.notice();
-                        barf.specresp = self.arf.get_specresp(self._arfbkg[ii][bkg_id][bkg_resp_id])
-                        bkg.set_response(barf, brmf, bkg_resp_id)
-        else:
-            data = fit.data
-            if not hasattr(data, 'response_ids'):
-                raise TypeError("dataset does not contain an ARF, dataset must be PHA")
-            for resp_id in data.response_ids:
-                arf, rmf = data.get_response(resp_id)
-                arf.notice(); rmf.notice();
-                arf.specresp = self.arf.get_specresp(self._arfsrc[1][resp_id])
-                data.set_response(arf, rmf, resp_id)
-            for bkg_id in data.background_ids:
-                bkg = data.get_background(bkg_id)
-                for bkg_resp_id in bkg.response_ids:
-                    barf, brmf = bkg.get_response(bkg_resp_id)
-                    barf.notice(); brmf.notice();
-                    barf.specresp = self.arf.get_specresp(self._arfbkg[1][bkg_id][bkg_resp_id])
-                    bkg.set_response(barf, brmf, bkg_resp_id)
-        return MetropolisMH.draw(self, current)
-
-
-    def tear_down(self):
-        MetropolisMH.tear_down(self)
-        fit = self._fit
-        if hasattr(fit.data, 'datasets'):
-            for ii, data in enumerate(fit.data.datasets):
-                if not hasattr(data, 'response_ids'):
-                    raise TypeError("dataset does not contain an ARF, dataset must be PHA")
-                for resp_id in data.response_ids:
-                    arf, rmf = data.get_response(resp_id)
-                    arf.notice(); rmf.notice();
-                    arf.specresp = self._arfsrc[ii][resp_id]
-                    data.set_response(arf, rmf, resp_id)
-                for bkg_id in data.background_ids:
-                    bkg = data.get_background(bkg_id)
-                    for bkg_resp_id in bkg.response_ids:
-                        barf, brmf = bkg.get_response(bkg_resp_id)
-                        barf.notice(); brmf.notice();
-                        barf.specresp = self._arfbkg[ii][bkg_id][bkg_resp_id]
-                        bkg.set_response(barf, brmf, bkg_resp_id)
-        else:
-            data = fit.data
-            if not hasattr(data, 'response_ids'):
-                raise TypeError("dataset does not contain an ARF, dataset must be PHA")
-            for resp_id in data.response_ids:
-                arf, rmf = data.get_response(resp_id)
-                arf.notice(); rmf.notice();
-                arf.specresp = self._arfsrc[1][resp_id]
-                data.set_response(arf, rmf, resp_id)
-            for bkg_id in data.background_ids:
-                bkg = data.get_background(bkg_id)
-                for bkg_resp_id in bkg.response_ids:
-                    barf, brmf = bkg.get_response(bkg_resp_id)
-                    barf.notice(); brmf.notice();
-                    barf.specresp = self._arfbkg[1][bkg_id][bkg_resp_id]
-                    bkg.set_response(barf, brmf, bkg_resp_id)
 
 
 # class MHSim(object):

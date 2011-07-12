@@ -4,6 +4,8 @@ from pyblocxs.mh import MH, LimitError
 import numpy
 import unittest
 
+_tol = numpy.finfo(numpy.float32).eps
+
 class TestParameterProposal(unittest.TestCase):
 
     _min     = [0.001, 0.1, 0.0]
@@ -22,10 +24,21 @@ class TestParameterProposal(unittest.TestCase):
         g1.thawedparmins  = self._min
         g1.thawedparmaxes = self._max    
         fit = sherpa.fit.Fit(data, g1, stat=sherpa.stats.Cash())
+        thawedparmins = numpy.array(fit.model.thawedparhardmins)
+        thawedparmaxes = numpy.array(fit.model.thawedparhardmaxes)
+        def calc_stat(proposal):
+            prop = numpy.atleast_1d(proposal)
+            mins  = sherpa.utils.sao_fcmp(prop, thawedparmins, _tol)
+            maxes = sherpa.utils.sao_fcmp(thawedparmaxes, prop, _tol)
+            if -1 in mins or -1 in maxes:
+                raise LimitError('Sherpa parameter hard limit exception')
+            fit.model.thawedpars = proposal
+            return -0.5*fit.calc_stat()
+
         sigma = g1.thawedpars
         dof = len(xlo) - len(sigma)
-        mu = numpy.random.rand(3,3)
-        self.mh = MH(fit, sigma, mu, dof)
+        mu = numpy.random.rand(3)
+        self.mh = MH(calc_stat, sigma, mu, dof)
         current, stat = self.mh.init()
 
 

@@ -3,12 +3,18 @@
 from mh import *
 from stats import *
 from utils import quantile, flat, inverse, inverse2
-from sherpa.utils import get_keyword_defaults
+
+from sherpa.utils import get_keyword_defaults, sao_fcmp
+from sherpa.stats import Cash, CStat
 import sherpa.astro.ui as ui
+
 import numpy
 import logging
 info = logging.getLogger("sherpa").info
+_log = logging.getLogger("sherpa")
+_level = _log.level
 
+_tol = numpy.finfo(numpy.float).eps
 
 
 __version__ = "0.0.5"
@@ -43,12 +49,6 @@ class Session(object):
                 'class' : MetropolisMH,
                 'opts' : get_keyword_defaults(MetropolisMH.init)
                 },
-
-            'ARFSimMetropolisMH' : {
-                'class' : ARFSimMetropolisMH,
-                'opts' : get_keyword_defaults(ARFSimMetropolisMH.init)
-                }
-
             }
 
         self.walk = 'Walk'
@@ -212,13 +212,21 @@ def get_draws(id=None, otherids=(), niter=1e3):
     stats, params = get_draws(1, niter=1e4)
 
     """
+    
+
+    niter = int(niter)
+
     fit = ui._session._get_fit(id, otherids)[1]
+
+    if not isinstance(fit.stat, (Cash, CStat)):
+        raise RuntimeError("Fit statistic must be cash or cstat, not %s" %
+                           fit.stat.name)
 
     covar_results = ui._session.get_covar_results()
     if covar_results is None:
         raise RuntimeError("Covariance has not been calculated")
-    sigma = covar_results.extra_output
 
+    sigma = covar_results.extra_output
     mu = fit.model.thawedpars
 
     fit_results = ui._session.get_fit_results()
@@ -244,7 +252,51 @@ def get_draws(id=None, otherids=(), niter=1e3):
 
     info('Using Priors: ' + str(priors))
 
-    stats, accept, params = walk(sampler(fit, sigma, mu, dof))(niter, **kwargs)
+    oldthawedpars  = numpy.array(mu)
+    thawedparmins  = fit.model.thawedparhardmins
+    thawedparmaxes = fit.model.thawedparhardmaxes
+
+    def calc_stat(proposed_params):
+
+        # automatic rejection outside hard limits
+        mins  = sao_fcmp(proposed_params, thawedparmins, _tol)
+        maxes = sao_fcmp(thawedparmaxes, proposed_params, _tol)
+        if -1 in mins or -1 in maxes:
+            #print'hard limit exception'
+            raise LimitError('Sherpa parameter hard limit exception')
+
+        try:
+            # ignore warning from Sherpa about hard limits
+            _log.setLevel(50)
+
+            # soft limits are ignored, hard limits rejected.
+            # proposed values beyond hard limit default to limit.
+            fit.model.thawedpars = proposed_params
+            _log.setLevel(_level)
+
+            # Calculate statistic on proposal, use likelihood
+            proposed_stat = -0.5*fit.calc_stat()
+
+        except:
+            # set the model back to original state on exception
+            fit.model.thawedpars = oldthawedpars
+            raise
+
+        return proposed_stat
+
+    try:
+        # add backwards compatibility with < CIAO 4.2
+        if hasattr(fit.model, 'startup'):
+            fit.model.startup()
+
+        stats, accept, params = walk(sampler(calc_stat, sigma, mu, dof))(niter, **kwargs)
+    finally:
+        # set the model back to original state
+        fit.model.thawedpars = oldthawedpars
+
+        # add backwards compatibility with < CIAO 4.2
+        if hasattr(fit.model, 'teardown'):
+            fit.model.teardown()
 
     # Change to Sherpa statistic convention
     stats = -2.0*stats
@@ -324,7 +376,7 @@ def plot_cdf(x, name='x', overplot=False):
     try:
         plot.plot_prefs["linecolor"]="red"
         plot.plot(x, y, xlabel=name, ylabel="p(<=x)",
-                  title="CDF: %s" % name)
+                  title="CDF: %s" % name, overplot=overplot)
         plot.vline(median, linecolor="orange", linestyle="dash",
                    linewidth=1.5, overplot=True, clearwindow=False)
         plot.vline(lval, linecolor="blue", linestyle="dash",
