@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from mh import *
 from stats import *
@@ -192,65 +193,22 @@ def get_sampler_opt(opt):
     """
     return _session.samplers[_session.sampler]['opts'][opt]
 
-
-def get_draws(id=None, otherids=(), niter=1e3):
+def get_log_likelihood_function(id=None, otherids=()):
     """ 
-    Run pyblocxs using current sampler and current sampler configuration
-    options for *niter* number of iterations.  The results are returned
-    as a 2-tuple of Numpy ndarrays.  The tuple specifys an array of statistic
-    values and a 2-D array of associated parameter values.
-
+    Returns a function that, given model parameters, calculates the log_likelihood 
+    function.
 
     `id`              Sherpa data id
     `otherids`        Additional Sherpa data ids for simultaneous fit 
-    `niter`           Number of iterations, default = 1e3
-
-    returns a tuple of ndarrays e.g. (stats, params)
-
-    Example:
-
-    stats, params = get_draws(1, niter=1e4)
 
     """
-    
-
-    niter = int(niter)
-
     fit = ui._session._get_fit(id, otherids)[1]
 
     if not isinstance(fit.stat, (Cash, CStat)):
         raise RuntimeError("Fit statistic must be cash or cstat, not %s" %
                            fit.stat.name)
 
-    covar_results = ui._session.get_covar_results()
-    if covar_results is None:
-        raise RuntimeError("Covariance has not been calculated")
-
-    sigma = covar_results.extra_output
     mu = fit.model.thawedpars
-
-    fit_results = ui._session.get_fit_results()
-    if fit_results is None:
-        raise RuntimeError("Fit has not been run")
-    dof = fit_results.dof
-
-    priors = []
-    for par in fit.model.pars:
-        if not par.frozen:
-            name = par.fullname
-            # assume all parameters have flat priors
-            func = flat
-            if name in _session.priors:
-                # update the parameter priors with user defined values
-                func = _session.priors[name]
-            priors.append(func)
-
-    sampler = _session.samplers[_session.sampler]['class']
-    walk = _session.walks[_session.walk]['class']
-    kwargs = _session.samplers[_session.sampler]['opts'].copy()
-    kwargs['priors'] = priors
-
-    info('Using Priors: ' + str(priors))
 
     oldthawedpars  = numpy.array(mu)
     thawedparmins  = fit.model.thawedparhardmins
@@ -283,7 +241,75 @@ def get_draws(id=None, otherids=(), niter=1e3):
             raise
 
         return proposed_stat
+    return calc_stat
 
+
+def get_draws(id=None, otherids=(), niter=1e3):
+    """ 
+    Run pyblocxs using current sampler and current sampler configuration
+    options for *niter* number of iterations.  The results are returned
+    as a 2-tuple of Numpy ndarrays.  The tuple specifys an array of statistic
+    values and a 2-D array of associated parameter values.
+
+
+    `id`              Sherpa data id
+    `otherids`        Additional Sherpa data ids for simultaneous fit 
+    `niter`           Number of iterations, default = 1e3
+
+    returns a tuple of ndarrays e.g. (stats, params)
+
+    Example:
+
+    stats, params = get_draws(1, niter=1e4)
+
+    """
+    
+
+    niter = int(niter)
+
+    fit = ui._session._get_fit(id, otherids)[1]
+
+    if not isinstance(fit.stat, (Cash, CStat)):
+        raise RuntimeError("Fit statistic must be cash or cstat, not %s" %
+                           fit.stat.name)
+
+    
+    sigma = numpy.diag((numpy.subtract(fit.model.thawedparmaxes, fit.model.thawedparmins) / 2000.)**2)
+    try:
+        covar_results = ui._session.get_covar_results()
+        if covar_results is not None:
+          sigma = covar_results.extra_output
+    except:
+        print "WARNING: Covariance has not been calculated. Using guess."
+    print sigma.shape, sigma
+    mu = fit.model.thawedpars
+
+    fit_results = ui._session.get_fit_results()
+    if fit_results is None:
+        raise RuntimeError("Fit has not been run")
+    dof = fit_results.dof
+
+    priors = []
+    for par in fit.model.pars:
+        if not par.frozen:
+            name = par.fullname
+            # assume all parameters have flat priors
+            func = flat
+            if name in _session.priors:
+                # update the parameter priors with user defined values
+                func = _session.priors[name]
+            priors.append(func)
+
+    sampler = _session.samplers[_session.sampler]['class']
+    walk = _session.walks[_session.walk]['class']
+    kwargs = _session.samplers[_session.sampler]['opts'].copy()
+    kwargs['priors'] = priors
+
+    info('Using Priors: ' + str(priors))
+
+    oldthawedpars  = numpy.array(mu)
+    calc_stat = get_log_likelihood_function(id, otherids)
+    
     try:
         # add backwards compatibility with < CIAO 4.2
         if hasattr(fit.model, 'startup'):
