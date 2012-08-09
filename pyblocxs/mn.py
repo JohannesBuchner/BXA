@@ -50,27 +50,14 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None, sampling_e
         raise RuntimeError("Fit statistic must be cash or cstat, not %s" %
                            fit.stat.name)
     
-    global bestl
-    bestl = -0.5*fit.calc_stat()
     if parameters is None:
 	parameters = fit.model.thawedpars
     def log_likelihood(cube, ndim, nparams):
         try:
           for i, p in enumerate(parameters):
+            assert not math.isnan(cube[i]), 'ERROR: parameter %d (%s) to be set to %f' % (i, p.fullname, cube[i])
             p.val = cube[i]
           l = -0.5*fit.calc_stat()
-          global bestl
-          global plot_best
-          if plot_best and l > bestl:
-            for i, p in enumerate(parameters):
-              if p.name == 'norm' or p.name == 'ampl':
-                print "%s=%e" % (p.fullname, p.val),
-              else:
-                print "%s=%f" % (p.fullname, p.val),
-            print
-            bestl = l
-            ui.plot_fit_resid()
-          #print "%.2e " * ndim % tuple([float(p) for p in fit.model.thawedpars]), "%.0f" % l
           return l
         except Exception as e:
           print 'Exception in log_likelihood function: ', e
@@ -90,5 +77,15 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None, sampling_e
     m = ui._session._get_model(id)
     paramnames = map(lambda x: x.fullname, parameters)
     json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=2)
+
+def plot_best_fit(id=None, otherids=(), parameters = None, outputfiles_basename = 'chains/'):
+    fit = ui._session._get_fit(id, otherids)[1]
+    if parameters is None:
+	parameters = fit.model.thawedpars
+    a = pymultinest.analyse.Analyzer(n_params = len(parameters), outputfiles_basename = outputfiles_basename)
+    for p,v in zip(parameters, a.get_best_fit()['parameters']):
+       p.val = v
+    
+    ui.plot_fit_resid()
 
 
