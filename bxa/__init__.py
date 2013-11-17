@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
 Bayesian inference using (Py)MultiNest
-
 """
 import sherpa.astro.ui as ui
 #from sherpa.utils import get_keyword_defaults, sao_fcmp
