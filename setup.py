@@ -2,13 +2,16 @@
 
 from distutils.core import setup
 
-setup(name='pyblocxs',
-      version='0.0.6',
-      author='CHASC Astro-Statistics Collaboration',
-      url='http://hea-www.harvard.edu/AstroStat/',
-      description='Bayesian low-Counts X-ray spectral analysis',
-      packages=['pyblocxs'
-                ],
-      package_data={'pyblocxs': ['test/*']},
-      
+long_description = ''
+with open('README.rst') as f:
+	long_description = f.read()
+
+setup(name='bxa',
+      version='1.0',
+      author='Johannes Buchner',
+      url='https://www.mpe.mpg.de/~jbuchner/',
+      author_email='johannes.buchner.acad@gmx.com',
+      description='Bayesian X-ray spectral analysis',
+      long_description=open('README.rst').read(),
+      packages=['bxa'],
       )
