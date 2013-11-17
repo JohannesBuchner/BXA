@@ -28,11 +28,11 @@ You need to have `sherpa`_ running and working.
 
 You need to have pymultinest and MultiNest installed and working.
 
-Install bxa as a python package:
+Install bxa as a python package::
 
    $ python setup.py install
 
-Or if you only want to install it for the current user
+Or if you only want to install it for the current user::
 
    $ python setup.py install --user
 
