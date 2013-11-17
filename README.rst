@@ -110,8 +110,45 @@ the correct luminosity distribution.
 		parameters = parameters, outputfiles_basename = 'testbxa_')
 	numpy.savetxt(out + prefix + "dist.txt", dist)
 
-.. _sherpa: http://cxc.cfa.harvard.edu/sherpa/
+Recommendations for X-ray spectral analysis
+--------------------------------------------
 
+For good and valid results, experienced users of XSpec or Sherpa will already do these:
+
+* Using a continuous background model (parameteric, albeit not necessarily physical),
+ instead of "subtracting" or using bin-wise backgrounds (XSpec default).
+* Use C-stat (poisson likelihood) instead of Chi^2 (gaussian likelihood)
+* Use unbinned spectra (except perhaps for visualization, albeit you can use QQ-plots there without loss of resolution)
+
+Beyond these already-standard practices, we suggest:
+
+* Estimating the values with uncertainties using nested sampling (this software)
+** instead of Contour-search, Fisher matrix, stepping, or other approximations
+* Comparing models using the computed evidence (this software)
+** instead of Likelihood ratio tests (which are invalid for non-nested models)
+
+See the accompaning paper for a detailed discussion and comparison! 
+Buchner et al. (in prep)
+
+Citing BXA correctly
+---------------------
+
+We suggest giving credit to the developers of Sherpa, MultiNest and of this software.
+As an example::
+
+  For analysing X-ray spectra, we use the analysis software BXA (\ref{Buchner2014}),
+  which connects the nested sampling algorithm MultiNest (\ref{FerozHobson2010})
+  with the fitting environment CIAO/Sherpa (\ref{Fruscione2006}).
+
+Where the BibTex entries are:
+
+* for BXA: Buchner et al. (in prep)
+* for MultiNest: see `multinest`_
+* for Sherpa: see `sherpa`_
+
+
+.. _sherpa: http://cxc.cfa.harvard.edu/sherpa/
+.. _multinest: http://ccpforge.cse.rl.ac.uk/gf/project/multinest/ 
 
 
 
