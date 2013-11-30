@@ -171,7 +171,7 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 'mo
 		verbose=verbose, **kwargs)
 	
 	paramnames = [str(t['name']) for t in transformations]
-	json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=2)
+	json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=4)
 	
 	# store as chain too, and try to load it for error computations
 	analyzer = pymultinest.Analyzer(n_params = len(transformations), 
@@ -384,7 +384,7 @@ def standard_analysis(transformations, outputfiles_basename,
 		outputfiles_basename = outputfiles_basename)
 	s = analyzer.get_stats()
 	# store information in readable, hierarchical format
-	json.dump(s, open(outputfiles_basename + 'stats.json', 'w'))
+	json.dump(s, open(outputfiles_basename + 'stats.json', 'w'), indent=4)
 	
 	#   make marginal plots
 	if 'marginals' not in skipsteps:
