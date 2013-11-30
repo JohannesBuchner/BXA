@@ -54,33 +54,31 @@ def qq_plot(bins, data, model, markers = [0.2, 1, 2, 5, 10], unit = '', annotate
 	datac = data.cumsum()
 	modelc = model.cumsum()
 	
-	plt.plot(datac, modelc, color='red', drawstyle='steps', linewidth=3)
+	plt.plot(modelc, datac, color='red', drawstyle='steps', linewidth=3)
 	
 	for m in markers:
 		mask = bins >= m
 		# first true value
 		i = mask.argmax()
 		if mask[i]:
-			plt.plot(datac[i], modelc[i], marker='+', color='k')
-			if datac[i] > modelc[i]:
+			plt.plot(modelc[i], datac[i], marker='+', color='k')
+			if datac[i] < modelc[i]:
 				textkwargs = dict(va='top', ha='left')
 			else:
 				textkwargs = dict(va='bottom', ha='right')
-			plt.text(datac[i], modelc[i], '%s%s' % (m, unit), **textkwargs)
+			plt.text(modelc[i], datac[i], '%s%s' % (m, unit), **textkwargs)
 
 	u = max(datac[-1], modelc[-1])
-	v = min(datac[-1], modelc[-1])
 	plt.plot([0, u], [0, u], ls='--', color='grey')
-	#plt.plot([u - v, u], [0, v], ls='--', color='grey')
 	plt.xlim(0, u)
 	plt.ylim(0, u)
 	plt.title('QQ-plot')
-	plt.xlabel('cumulative data counts')
-	plt.ylabel('integrated model')
+	plt.xlabel('integrated model')
+	plt.ylabel('cumulative data counts')
 
 	if annotate:
-		plt.text(u/2, u/2, 'model excess', va='bottom', ha='center', rotation=45, color='grey', size=8)
-		plt.text(u/2, u/2, 'data excess', va='center', ha='left', rotation=45, color='grey', size=8)
+		plt.text(u/2, u/2, 'data excess', va='bottom', ha='center', rotation=45, color='grey', size=8)
+		plt.text(u/2, u/2, 'model excess', va='center', ha='left', rotation=45, color='grey', size=8)
 		stats = dict(
 			ks = KSstat(data, model),
 			cvm = CvMstat(data, model),

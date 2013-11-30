@@ -13,5 +13,5 @@ setup(name='bxa',
       author_email='johannes.buchner.acad@gmx.com',
       description='Bayesian X-ray spectral analysis',
       long_description=open('README.rst').read(),
-      packages=['bxa'],
+      packages=['bxa.xspec', 'bxa.sherpa'],
       )
