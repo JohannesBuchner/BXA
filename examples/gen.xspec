@@ -6,7 +6,7 @@ cpd /xw
 model wabs*pow
 10
 1.9
-1e-4
+1
 
 plot model
 
@@ -18,7 +18,7 @@ athenapp_ir_b4c_wfi_withfilter_fov40.0arcmin_avg.rsp
 y
 example-file
 example-file.fak
-1000000 1.0 1.0
+1 1.0 1.0
 
 plot data model
 
