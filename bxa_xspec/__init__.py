@@ -4,7 +4,8 @@ import os
 import json
 from math import log10, isnan, isinf
 
-from xspec import Xset, AllModels, Fit
+from xspec import Xset, AllModels, Fit, AllChains
+import xspec
 
 # priors
 """
@@ -60,6 +61,23 @@ def create_prior_function(transformations):
 
 	return prior
 
+def store_chain(chainfilename, transformations, posterior):
+	import pyfits
+	columns = [pyfits.Column(name='%s__%d' % (t['name'], t['index']), 
+		format='D', array=t['aftertransform'](posterior[:,i]))
+		for i, t in enumerate(transformations)]
+	columns.append(pyfits.Column(name='FIT_STATISTIC', 
+		format='D', array=posterior[:,-1]))
+	table = pyfits.ColDefs(columns)
+	header = pyfits.Header()
+	header.add_comment("""Created by BXA (Bayesian X-ray spectal Analysis) for Xspec""")
+	header.add_comment("""refer to https://github.com/JohannesBuchner/""")
+	header.update('TEMPR001', 1.)
+	header.update('STROW001', 1)
+	tbhdu = pyfits.new_table(table, header = header)
+	tbhdu.update_ext_name('CHAIN')
+	tbhdu.writeto(chainfilename, clobber=True)
+
 """
 Run the Bayesian analysis with specified parameters+transformations.
 
@@ -114,5 +132,15 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 'mo
 	
 	paramnames = [str(t['name']) for t in transformations]
 	json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=2)
+	
+	# store as chain too, and try to load it for error computations
+	a = pymultinest.Analyzer(n_params = len(transformations), 
+		outputfiles_basename = outputfiles_basename)
+	posterior = a.get_equal_weighted_posterior()
+	chainfilename = '%schain.fits' % outputfiles_basename
+	store_chain(chainfilename, transformations, posterior)
+	xspec.AllChains.clear()
 	Xset.chatter, Xset.logChatter = oldchatter
+	xspec.AllChains += chainfilename
+	
 

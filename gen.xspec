@@ -1,6 +1,6 @@
 # generate data for analysis with the example programs
-# for this script to succeed, the output file
-# 
+
+rm -f example-file.fak
 
 cpd /xw
 model wabs*pow
