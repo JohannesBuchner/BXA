@@ -140,10 +140,12 @@ utility is installed with PyMultiNest, for instance into ~/.local/bin/.</p>
 <div class="section" id="error-propagation">
 <h2>Error propagation<a class="headerlink" href="#error-propagation" title="Permalink to this headline">¶</a></h2>
 <p><tt class="xref py py-func docutils literal"><span class="pre">pymultinest.Analyzer.equal_weighted_posterior()</span></tt> provides access to the posterior samples (similar to a Markov Chain).
-Use these to propagate errors:
-* For every row in the chain, compute the quantity of interest
-* Then, make a histogram of the results, or compute mean and standard deviations.
-This preserves the structure of the errors (multiple modes, degeneracies, etc.)</p>
+Use these to propagate errors:</p>
+<ul class="simple">
+<li>For every row in the chain, compute the quantity of interest</li>
+<li>Then, make a histogram of the results, or compute mean and standard deviations.</li>
+</ul>
+<p>This preserves the structure of the errors (multiple modes, degeneracies, etc.)</p>
 <p>You can also access the output directly and compute other quantities:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pymultinest</span>
 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">analyse</span><span class="o">.</span><span class="n">Analyzer</span><span class="p">(</span><span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span>
@@ -203,6 +205,24 @@ relative probability of the models (weight = exp(lnZ))</li>
 </dl>
 </li>
 </ul>
+<p>Example output:</p>
+<div class="highlight-python"><pre>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
+
+Model comparison
+****************
+
+model simplest- : log10(Z) = -1632.7  XXX ruled out
+model absorbed- : log10(Z) =    -7.5  XXX ruled out
+model line-     : log10(Z) =     0.0    &lt;-- GOOD
+
+The last, most likely model was used as normalization.
+Uniform model priors are assumed, with a cut of log10(30) to rule out models.
+
+jbuchner@ds42 $</pre>
+</div>
+<p>Here, the probability of the second-best model, &#8220;absorbed&#8221;, is <span class="math">\(10^7.5\)</span> times
+less likely than the model &#8220;line&#8221;. As this exceeds our threshold (by a lot!)
+we can claim the detection of an iron line!</p>
 </div>
 <div class="section" id="experiment-design">
 <span id="sherpa-design"></span><h2>Experiment design<a class="headerlink" href="#experiment-design" title="Permalink to this headline">¶</a></h2>
@@ -246,12 +266,18 @@ be answered in a statistical way, <strong>but</strong> what we can do is</p>
 </ol>
 <p>For the first point, <strong>Quantile-Quantile plots</strong> provide a unbinned, less noisy alternative to
 residual plots.</p>
+<img alt="_images/absorbed-qq_model_deviations.png" src="_images/absorbed-qq_model_deviations.png" />
+<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
+<p>QQ plot example (left), with the corresponding spectrum for comparison (right).</p>
 <p>In these plots, for each energy the number of counts observed with lower energy
 are plotted on one axis, while the predicted are on the other axis.
 If model and data agree perfectly, this would be a straight line.
 Deviances are indications of possible mis-fits.</p>
-<p>A Gaussian line in the data, but absent in the model, would be present as an
-S-shaped offset (shaped like the cumulative distribution of the Gaussian).</p>
+<p>This example is almost a perfect fit!
+You can see a offset growing at 6-7 keV, which remains at higher energies.
+This indicates that the data has more counts than the model there.</p>
+<p>As the growth is in a S-shape, it is probably a Gaussian (see its <a class="reference external" href="https://en.wikipedia.org/wiki/Normal_distribution">cumulative density function</a>).</p>
+<p>Refer to the appendix of the <a class="reference external" href="cite">accompaning paper</a> for more examples.</p>
 <p>The <em>qq</em> function in the <em>qq</em> module allows you to create such plots easily.</p>
 <span class="target" id="module-bxa.xspec.qq"></span><p>Statistics and Plotting for quantile-quantile analysis for model discovery</p>
 <dl class="function">

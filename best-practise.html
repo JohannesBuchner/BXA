@@ -58,11 +58,18 @@ Commonly, a extraction region near the source is used to estimate the background
 <li>Use unbinned spectra (except perhaps for visualization, albeit you can use QQ-plots there without loss of resolution)</li>
 </ol>
 <p>Beyond these already accepted practices, we recommend:</p>
-<ol class="arabic simple" start="4">
-<li>Estimating the values with uncertainties using nested sampling (this software)
-instead of Contour-search, Fisher matrix, stepping, or other approximations</li>
-<li>Comparing models using the computed evidence (this software)
-instead of Likelihood ratio tests (which are invalid for non-nested models)</li>
+<ol class="arabic" start="4">
+<li><p class="first">Estimating the values with uncertainties using Bayesian inference (this software, or MCMC methods)
+instead of Contour-search, Fisher matrix, stepping, or other approximations</p>
+<p>Instead of a local optimization, the benefit is that a global search can deal with multiples solutions.
+Error propagation is easy too when using the posterior samples (similar to a Markov chain),
+and it preserves the structure of the error (dependence between parameters, etc.)</p>
+</li>
+<li><p class="first">Comparing models using the computed evidence (this software)
+instead of Likelihood ratio tests (which are invalid for non-nested models)</p>
+<p>Bayesian model selection based on the &#8220;evidence&#8221; Z resolves a number of limitations
+of current methods, and is easy to do with this software.</p>
+</li>
 </ol>
 <p>See the <a class="reference internal" href="index.html#cite"><em>accompaning paper</em></a> for a detailed discussion and comparison!</p>
 </div>

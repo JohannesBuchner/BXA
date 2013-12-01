@@ -122,7 +122,7 @@ minimum and maximum value. Flat in logarithmic scale</p>
 
 <dl class="function">
 <dt id="bxa.xspec.create_custom_prior_for">
-<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x46b0aa0&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x3e15a28&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pass your own prior weighting transformation</p>
 </dd></dl>
 
@@ -186,6 +186,19 @@ n_live_points: 400 are often enough</p>
 </ul>
 </dd></dl>
 
+<div class="figure">
+<a class="reference internal image-reference" href="_images/absorbed-marg.png"><img alt="_images/absorbed-marg.png" src="_images/absorbed-marg.png" style="width: 610.0px; height: 202.5px;" /></a>
+<p class="caption">For each parameter and each pair (not shown here), the marginal probability distribution is plotted.
+This is presented in three forms:</p>
+<div class="legend">
+<ul class="simple">
+<li>Grey histogram, for the probability density</li>
+<li>Blue curve, for the cumulative distribution (summing up the grey histogram from left to right)</li>
+<li>As a summarizing error bar with the error corresponding to the quantiles of 1-sigma of a Gaussian.
+(i.e. the 16%, 50% and 84% quantiles are shown).</li>
+</ul>
+</div>
+</div>
 <p>For plotting the model parameters found against the data, use these functions.</p>
 <dl class="function">
 <dt id="bxa.xspec.posterior_predictions_unconvolved">
@@ -229,14 +242,51 @@ ready to be passed to matplotlib.pyplot.fill_between</li>
 </dd></dl>
 
 <p>Refer to the <em>standard_analysis</em> function as an example of how to use them.</p>
+<div class="figure">
+<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
+<p class="caption">Example of the convolved spectrum with data.
+For each posterior sample (solution), the parameters are taken and put
+through the model. All such lines are plotted. Where the region is darker,
+more lines ended up, and thus it is more likely.</p>
+<div class="legend">
+<p>The data points are adaptively binned to contain at least 20 counts.
+The error bars are created by asking: which model count rate can produce
+this amount of counts.
+In a Poisson process, the inverse incomplete gamma
+function provides this answer. The 10%-90% probability range is used.</p>
+<p>For all intents and purposes, you can ignore the colors.</p>
+<p>The colors are intended to aid the discovery of discrepancies, by using
+a custom Goodness of Fit measure. In this procedure (gof module),
+a tree of the bins is built, i.e. in the first layer, every 2 bins
+are merged, in the second, every 4 bins are merged, etc.
+Then, the counts in the bins are compared against with
+the poisson process of the model. The worst case, i.e. the least likely
+probability over the whole tree is considered. That is, for each bin,
+the lowest probability of all its merges is kept. Finally, this is multiplied
+by the number of nodes in the tree (as more comparisons lead to more
+random chances).</p>
+<p>Then, if the probability for the bin is below <span class="math">\(10^{-2}\)</span>, the point is marked orange,
+and if it reaches below <span class="math">\(10^{-6}\)</span>, it is marked red.</p>
+<p>It is ok to ignore the colors, this computation is not used otherwise.</p>
+</div>
+</div>
+<div class="figure">
+<img alt="_images/absorbed-unconvolved_posterior.png" src="_images/absorbed-unconvolved_posterior.png" />
+<p class="caption">Example of the unconvolved spectrum with data.
+For each posterior sample (solution), the parameters are taken and put
+through the model. All such lines are plotted. Where the region is darker,
+more lines ended up, and thus it is more likely.</p>
+</div>
 </div>
 <div class="section" id="error-propagation">
 <h2>Error propagation<a class="headerlink" href="#error-propagation" title="Permalink to this headline">¶</a></h2>
 <p><tt class="xref py py-func docutils literal"><span class="pre">pymultinest.Analyzer.equal_weighted_posterior()</span></tt> provides access to the posterior samples (similar to a Markov Chain).
-Use these to propagate errors:
-* For every row in the chain, compute the quantity of interest
-* Then, make a histogram of the results, or compute mean and standard deviations.
-This preserves the structure of the errors (multiple modes, degeneracies, etc.)</p>
+Use these to propagate errors:</p>
+<ul class="simple">
+<li>For every row in the chain, compute the quantity of interest</li>
+<li>Then, make a histogram of the results, or compute mean and standard deviations.</li>
+</ul>
+<p>This preserves the structure of the errors (multiple modes, degeneracies, etc.)</p>
 </div>
 <div class="section" id="model-comparison">
 <span id="xspec-models"></span><h2>Model comparison<a class="headerlink" href="#model-comparison" title="Permalink to this headline">¶</a></h2>
@@ -268,6 +318,24 @@ relative probability of the models (weight = exp(lnZ))</li>
 </dl>
 </li>
 </ul>
+<p>Example output:</p>
+<div class="highlight-python"><pre>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
+
+Model comparison
+****************
+
+model simplest- : log10(Z) = -1632.7  XXX ruled out
+model absorbed- : log10(Z) =    -7.5  XXX ruled out
+model line-     : log10(Z) =     0.0    &lt;-- GOOD
+
+The last, most likely model was used as normalization.
+Uniform model priors are assumed, with a cut of log10(30) to rule out models.
+
+jbuchner@ds42 $</pre>
+</div>
+<p>Here, the probability of the second-best model, &#8220;absorbed&#8221;, is <span class="math">\(10^7.5\)</span> times
+less likely than the model &#8220;line&#8221;. As this exceeds our threshold (by a lot!)
+we can claim the detection of an iron line!</p>
 </div>
 <div class="section" id="experiment-design">
 <span id="xspec-design"></span><h2>Experiment design<a class="headerlink" href="#experiment-design" title="Permalink to this headline">¶</a></h2>
@@ -311,12 +379,18 @@ be answered in a statistical way, <strong>but</strong> what we can do is</p>
 </ol>
 <p>For the first point, <strong>Quantile-Quantile plots</strong> provide a unbinned, less noisy alternative to
 residual plots.</p>
+<img alt="_images/absorbed-qq_model_deviations.png" src="_images/absorbed-qq_model_deviations.png" />
+<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
+<p>QQ plot example (left), with the corresponding spectrum for comparison (right).</p>
 <p>In these plots, for each energy the number of counts observed with lower energy
 are plotted on one axis, while the predicted are on the other axis.
 If model and data agree perfectly, this would be a straight line.
 Deviances are indications of possible mis-fits.</p>
-<p>A Gaussian line in the data, but absent in the model, would be present as an
-S-shaped offset (shaped like the cumulative distribution of the Gaussian).</p>
+<p>This example is almost a perfect fit!
+You can see a offset growing at 6-7 keV, which remains at higher energies.
+This indicates that the data has more counts than the model there.</p>
+<p>As the growth is in a S-shape, it is probably a Gaussian (see its <a class="reference external" href="https://en.wikipedia.org/wiki/Normal_distribution">cumulative density function</a>).</p>
+<p>Refer to the appendix of the <a class="reference external" href="cite">accompaning paper</a> for more examples.</p>
 <p>For Xspec, the <em>qq</em> function in the <em>qq</em> module allows you to create such plots easily.</p>
 <dl class="function">
 <dt id="bxa.xspec.qq.qq">

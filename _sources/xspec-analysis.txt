@@ -51,6 +51,17 @@ For histograms (1d and 2d) of the marginal parameter distributions, use *plot.ma
 .. automodule:: bxa.xspec.plot
 	:members: marginal_plots
 
+.. figure:: _static/absorbed-marg.png
+	:scale: 50%
+	
+	For each parameter and each pair (not shown here), the marginal probability distribution is plotted.
+	This is presented in three forms:
+	
+	* Grey histogram, for the probability density
+	* Blue curve, for the cumulative distribution (summing up the grey histogram from left to right)
+	* As a summarizing error bar with the error corresponding to the quantiles of 1-sigma of a Gaussian.
+	  (i.e. the 16%, 50% and 84% quantiles are shown).
+
 For plotting the model parameters found against the data, use these functions.
 
 .. autofunction:: bxa.xspec.posterior_predictions_unconvolved
@@ -61,11 +72,51 @@ For plotting the model parameters found against the data, use these functions.
 
 Refer to the *standard_analysis* function as an example of how to use them.
 
+
+.. figure:: _static/absorbed-convolved_posterior.png
+	
+	Example of the convolved spectrum with data.
+	For each posterior sample (solution), the parameters are taken and put
+	through the model. All such lines are plotted. Where the region is darker,
+	more lines ended up, and thus it is more likely.
+	
+	The data points are adaptively binned to contain at least 20 counts.
+	The error bars are created by asking: which model count rate can produce
+	this amount of counts. 
+	In a Poisson process, the inverse incomplete gamma
+	function provides this answer. The 10%-90% probability range is used.
+	
+	For all intents and purposes, you can ignore the colors.
+	
+	The colors are intended to aid the discovery of discrepancies, by using
+	a custom Goodness of Fit measure. In this procedure (gof module), 
+	a tree of the bins is built, i.e. in the first layer, every 2 bins 
+	are merged, in the second, every 4 bins are merged, etc.
+	Then, the counts in the bins are compared against with 
+	the poisson process of the model. The worst case, i.e. the least likely 
+	probability over the whole tree is considered. That is, for each bin,
+	the lowest probability of all its merges is kept. Finally, this is multiplied
+	by the number of nodes in the tree (as more comparisons lead to more 
+	random chances).
+	
+	Then, if the probability for the bin is below :math:`10^{-2}`, the point is marked orange,
+	and if it reaches below :math:`10^{-6}`, it is marked red.
+	
+	It is ok to ignore the colors, this computation is not used otherwise.
+
+.. figure:: _static/absorbed-unconvolved_posterior.png
+	
+	Example of the unconvolved spectrum with data.
+	For each posterior sample (solution), the parameters are taken and put
+	through the model. All such lines are plotted. Where the region is darker,
+	more lines ended up, and thus it is more likely.
+	
 Error propagation
 ---------------------
 
 :py:func:`pymultinest.Analyzer.equal_weighted_posterior` provides access to the posterior samples (similar to a Markov Chain).
 Use these to propagate errors:
+
 * For every row in the chain, compute the quantity of interest
 * Then, make a histogram of the results, or compute mean and standard deviations.
 This preserves the structure of the errors (multiple modes, degeneracies, etc.)

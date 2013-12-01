@@ -11,10 +11,18 @@ For good and valid results, experienced users of XSpec or Sherpa already do thes
 
 Beyond these already accepted practices, we recommend:
 
-4. Estimating the values with uncertainties using nested sampling (this software)
+4. Estimating the values with uncertainties using Bayesian inference (this software, or MCMC methods)
    instead of Contour-search, Fisher matrix, stepping, or other approximations
+   
+   Instead of a local optimization, the benefit is that a global search can deal with multiples solutions.
+   Error propagation is easy too when using the posterior samples (similar to a Markov chain),
+   and it preserves the structure of the error (dependence between parameters, etc.)
+   
 5. Comparing models using the computed evidence (this software)
    instead of Likelihood ratio tests (which are invalid for non-nested models)
+   
+   Bayesian model selection based on the "evidence" Z resolves a number of limitations
+   of current methods, and is easy to do with this software.
 
 See the :ref:`accompaning paper <cite>` for a detailed discussion and comparison! 
 

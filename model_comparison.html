@@ -77,6 +77,24 @@ relative probability of the models (weight = exp(lnZ))</li>
 </dl>
 </li>
 </ul>
+<p>Example output:</p>
+<div class="highlight-python"><pre>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
+
+Model comparison
+****************
+
+model simplest- : log10(Z) = -1632.7  XXX ruled out
+model absorbed- : log10(Z) =    -7.5  XXX ruled out
+model line-     : log10(Z) =     0.0    &lt;-- GOOD
+
+The last, most likely model was used as normalization.
+Uniform model priors are assumed, with a cut of log10(30) to rule out models.
+
+jbuchner@ds42 $</pre>
+</div>
+<p>Here, the probability of the second-best model, &#8220;absorbed&#8221;, is <span class="math">\(10^7.5\)</span> times
+less likely than the model &#8220;line&#8221;. As this exceeds our threshold (by a lot!)
+we can claim the detection of an iron line!</p>
 </div>
 
 
