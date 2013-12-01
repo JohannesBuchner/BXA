@@ -122,7 +122,7 @@ minimum and maximum value. Flat in logarithmic scale</p>
 
 <dl class="function">
 <dt id="bxa.xspec.create_custom_prior_for">
-<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x4b24758&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x4f1caa0&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pass your own prior weighting transformation</p>
 </dd></dl>
 
@@ -287,6 +287,9 @@ Use these to propagate errors:</p>
 <li>Then, make a histogram of the results, or compute mean and standard deviations.</li>
 </ul>
 <p>This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)</p>
+<p><em>Continuing in Xspec</em>: A chain file, compatible with Xspec chain commands is
+written for you into <em>&lt;outputfiles_basename&gt;chain.fits</em>. In Xspec, load it using <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html">&#8220;chain load&#8221;</a>.
+This should set parameters, and compute flux estimates.</p>
 </div>
 <div class="section" id="model-comparison">
 <span id="xspec-models"></span><h2>Model comparison<a class="headerlink" href="#model-comparison" title="Permalink to this headline">¶</a></h2>
