@@ -15,9 +15,10 @@ def marginal_plots(analyzer, d=None):
 	"""
 	Create marginal plots
 	
-	analyzer: A instance of pymultinest.Analyzer
-	d: if more than 20 dimensions, by default only 1d marginal distributions
+	* analyzer: A instance of pymultinest.Analyzer
+	* d: if more than 20 dimensions, by default only 1d marginal distributions
 	   are plotted. set d=2 if you want to force a 2d matrix plot
+	
 	"""
 	prefix = analyzer.outputfiles_basename
 	n_params = analyzer.n_params

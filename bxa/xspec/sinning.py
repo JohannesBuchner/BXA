@@ -35,12 +35,14 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	i.e. ranges where the model must lie. This is done for multiple
 	binning sizes simultaneously.
 	
-	Returns 
-	   marked_binned: data points binned to contain 10 counts
-	   	a sequence ready to be passed to matplotlib.pyplot.errorbar
-	   modelrange: range allowed by the data
-	   	ready to be passed to matplotlib.pyplot.fill_between
-	   and statistics (GoF measure)
+	Returns:
+	
+	* marked_binned: data points binned to contain 10 counts
+	  a sequence ready to be passed to matplotlib.pyplot.errorbar
+	* modelrange: range allowed by the data
+	  ready to be passed to matplotlib.pyplot.fill_between
+	* and statistics (GoF measure)
+	
 	"""
 	
 	xdata = bins
@@ -95,8 +97,8 @@ def binning(outputfiles_basename, bins, widths, data, models):
 			mask = numpy.logical_and(pxlo < xhii, xloi < pxhi)
 			data_gofp[i] = numpy.nanmin([data_gofp[i], (nstats[mask][:,2]).min() * len(nstats)])
 	
-	#gof_avg = curgof
-	#gof_total = gof_avg * len(data)
+	gof_avg = curgof
+	gof_total = gof_avg * len(data)
 	
 	# return data, marked
 	marked_binned = []
@@ -121,7 +123,7 @@ def binning(outputfiles_basename, bins, widths, data, models):
 		ymax = max(ymax, modelrange_high)
 	
 	return dict(marked_binned = marked_binned, 
-		#gof_avg=gof_avg, gof_total=gof_total, stats=stats,
+		gof_avg=gof_avg, gof_total=gof_total, stats=stats,
 		xlim = (xlo[0], xhi[-1]),
 		ylim = (ymin, ymax),
 		)

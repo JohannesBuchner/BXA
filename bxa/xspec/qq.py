@@ -47,10 +47,18 @@ def ADstat(data, model):
 	ad = ((modelc - datac)**2 / (modelc * (maxmodelc - modelc)) * model).sum()
 	return ad
 
-"""
-
-"""
 def qq_plot(bins, data, model, markers = [0.2, 1, 2, 5, 10], unit = '', annotate = True):
+	"""
+	Create a quantile-quantile plot for model discovery (deviations in data from model).
+	
+	* bins: energies/channel
+	* data: amount observed
+	* model: amount predicted
+	* markers: list of energies/channels (whichever the current plotting xaxis unit)
+	* unit: unit to append to marker
+	* annotate: add information to the plot
+	"""
+
 	datac = data.cumsum()
 	modelc = model.cumsum()
 	
@@ -92,17 +100,18 @@ A-D = %(ad)e"""  % stats
 		plt.text(u*0.98, u*0.02, text, va='bottom', ha='right', color='grey')
 
 
-
-"""
-Create a quantile-quantile plot for model discovery (deviations in data from model).
-
-Call set_best_fit(analyzer, transformations) before, to 
-get the qq plot at the best fit.
-
-markers: list of energies/channels (whichever the current plotting xaxis unit)
-    or number of equally spaced markers between minimum+maximum.
-"""
 def qq(analyzer, markers = 5, annotate = True):
+	"""
+	Create a quantile-quantile plot for model discovery (deviations in data from model).
+
+	The current data and model is used, so call *set_best_fit(analyzer, transformations)*
+	before, to get the qq plot at the best fit.
+
+	* markers: list of energies/channels (whichever the current plotting xaxis unit)
+	or number of equally spaced markers between minimum+maximum.
+	* annotate: add information to the plot
+	"""
+	
 	olddevice = Plot.device
 	prefix = analyzer.outputfiles_basename
 	Plot.device = '/null'

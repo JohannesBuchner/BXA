@@ -136,9 +136,9 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 'mo
 	transformations: Parameter transformation definitions
 	prior_function: if you want to specify a custom (non-independent) prior
 	The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
-		outputfiles_basename: prefix to output files
-			by default, chains/
-		n_live_points: 400 are often enough
+
+	outputfiles_basename: prefix to output files
+	n_live_points: 400 are often enough
 	"""
 	
 	# for convenience
