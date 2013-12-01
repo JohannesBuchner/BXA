@@ -73,6 +73,8 @@ def marginal_plots(analyzer, d=None):
 					plt.errorbar(x=m['mean'][i], y=m['mean'][j], xerr=m['sigma'][i], yerr=m['sigma'][j])
 				plt.xlabel(parameters[i])
 				plt.ylabel(parameters[j])
+				plt.xlim(s['marginals'][i]['5sigma'])
+				plt.ylim(s['marginals'][j]['5sigma'])
 				#plt.savefig('cond_%s_%s.pdf' % (params[i], params[j]), bbox_tight=True)
 				#plt.close()
 
