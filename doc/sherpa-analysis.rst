@@ -72,7 +72,8 @@ Use these to propagate errors:
 
 * For every row in the chain, compute the quantity of interest
 * Then, make a histogram of the results, or compute mean and standard deviations.
-This preserves the structure of the errors (multiple modes, degeneracies, etc.)
+
+This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)
 
 You can also access the output directly and compute other quantities::
 

@@ -11,30 +11,30 @@ import matplotlib.pyplot as plt
 import sys, os
 from xspec import Plot
 
-"""
-Kolmogorov-Smirnov statistic: maximum deviance between data and model
-"""
 def KSstat(data, model):
+	"""
+	Kolmogorov-Smirnov statistic: maximum deviance between data and model
+	"""
 	modelc = model.cumsum() / model.sum()
 	datac = data.cumsum() / data.sum()
 	ks = numpy.abs(modelc - datac).max()
 	return ks
 
-"""
-Cramér–von Mises statistic: Takes all deviances into account
-"""
 def CvMstat(data, model):
+	"""
+	Cramér–von Mises statistic: Takes all deviances into account
+	"""
 	modelc = model.cumsum()
 	datac = data.cumsum()
 	maxmodelc = modelc.max()
 	cvm = ((modelc / maxmodelc - datac / datac.max())**2 * model / maxmodelc).mean()
 	return cvm
 
-"""
-Anderson-Darling statistic: Takes all deviances into account
-more weight on tails than CvM.
-"""
 def ADstat(data, model):
+	"""
+	Anderson-Darling statistic: Takes all deviances into account
+	more weight on tails than CvM.
+	"""
 	modelc = model.cumsum()
 	datac = data.cumsum()
 	maxmodelc = modelc.max()
@@ -57,6 +57,7 @@ def qq_plot(bins, data, model, markers = [0.2, 1, 2, 5, 10], unit = '', annotate
 	* markers: list of energies/channels (whichever the current plotting xaxis unit)
 	* unit: unit to append to marker
 	* annotate: add information to the plot
+	
 	"""
 
 	datac = data.cumsum()
@@ -110,6 +111,7 @@ def qq(analyzer, markers = 5, annotate = True):
 	* markers: list of energies/channels (whichever the current plotting xaxis unit)
 	or number of equally spaced markers between minimum+maximum.
 	* annotate: add information to the plot
+	
 	"""
 	
 	olddevice = Plot.device
