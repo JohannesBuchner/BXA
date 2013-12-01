@@ -51,7 +51,7 @@ For histograms (1d and 2d) of the marginal parameter distributions, use *plot.ma
 .. automodule:: bxa.xspec.plot
 	:members: marginal_plots
 
-.. figure:: _static/absorbed-marg.png
+.. figure:: absorbed-marg.png
 	:scale: 50%
 	
 	For each parameter and each pair (not shown here), the marginal probability distribution is plotted.
@@ -73,7 +73,7 @@ For plotting the model parameters found against the data, use these functions.
 Refer to the *standard_analysis* function as an example of how to use them.
 
 
-.. figure:: _static/absorbed-convolved_posterior.png
+.. figure:: absorbed-convolved_posterior.png
 	
 	Example of the convolved spectrum with data.
 	For each posterior sample (solution), the parameters are taken and put
@@ -104,7 +104,7 @@ Refer to the *standard_analysis* function as an example of how to use them.
 	
 	It is ok to ignore the colors, this computation is not used otherwise.
 
-.. figure:: _static/absorbed-unconvolved_posterior.png
+.. figure:: absorbed-unconvolved_posterior.png
 	
 	Example of the unconvolved spectrum with data.
 	For each posterior sample (solution), the parameters are taken and put
@@ -119,7 +119,8 @@ Use these to propagate errors:
 
 * For every row in the chain, compute the quantity of interest
 * Then, make a histogram of the results, or compute mean and standard deviations.
-This preserves the structure of the errors (multiple modes, degeneracies, etc.)
+
+This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)
 
 .. _xspec-models:
 

@@ -145,7 +145,7 @@ Use these to propagate errors:</p>
 <li>For every row in the chain, compute the quantity of interest</li>
 <li>Then, make a histogram of the results, or compute mean and standard deviations.</li>
 </ul>
-<p>This preserves the structure of the errors (multiple modes, degeneracies, etc.)</p>
+<p>This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)</p>
 <p>You can also access the output directly and compute other quantities:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pymultinest</span>
 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">analyse</span><span class="o">.</span><span class="n">Analyzer</span><span class="p">(</span><span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span>
@@ -266,8 +266,8 @@ be answered in a statistical way, <strong>but</strong> what we can do is</p>
 </ol>
 <p>For the first point, <strong>Quantile-Quantile plots</strong> provide a unbinned, less noisy alternative to
 residual plots.</p>
-<img alt="_images/absorbed-qq_model_deviations.png" src="_images/absorbed-qq_model_deviations.png" />
-<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
+<img alt="_images/absorbed-qq_model_deviations1.png" src="_images/absorbed-qq_model_deviations1.png" />
+<img alt="_images/absorbed-convolved_posterior1.png" src="_images/absorbed-convolved_posterior1.png" />
 <p>QQ plot example (left), with the corresponding spectrum for comparison (right).</p>
 <p>In these plots, for each energy the number of counts observed with lower energy
 are plotted on one axis, while the predicted are on the other axis.

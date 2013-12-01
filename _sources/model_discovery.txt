@@ -11,8 +11,8 @@ be answered in a statistical way, **but** what we can do is
 For the first point, **Quantile-Quantile plots** provide a unbinned, less noisy alternative to 
 residual plots.
 
-.. image:: _static/absorbed-qq_model_deviations.png
-.. image:: _static/absorbed-convolved_posterior.png
+.. image:: absorbed-qq_model_deviations.png
+.. image:: absorbed-convolved_posterior.png
 
 QQ plot example (left), with the corresponding spectrum for comparison (right).
 
