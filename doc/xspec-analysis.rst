@@ -122,6 +122,10 @@ Use these to propagate errors:
 
 This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)
 
+*Continuing in Xspec*: A chain file, compatible with Xspec chain commands is 
+written for you into *<outputfiles_basename>chain.fits*. In Xspec, load it using `"chain load" <https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html>`_.
+This should set parameters, and compute flux estimates.
+
 .. _xspec-models:
 
 .. include:: model_comparison.rst
