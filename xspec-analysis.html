@@ -122,7 +122,7 @@ minimum and maximum value. Flat in logarithmic scale</p>
 
 <dl class="function">
 <dt id="bxa.xspec.create_custom_prior_for">
-<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x4f1caa0&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x44709b0&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pass your own prior weighting transformation</p>
 </dd></dl>
 
@@ -243,7 +243,7 @@ ready to be passed to matplotlib.pyplot.fill_between</li>
 
 <p>Refer to the <em>standard_analysis</em> function as an example of how to use them.</p>
 <div class="figure">
-<img alt="_images/absorbed-convolved_posterior1.png" src="_images/absorbed-convolved_posterior1.png" />
+<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
 <p class="caption">Example of the convolved spectrum with data.
 For each posterior sample (solution), the parameters are taken and put
 through the model. All such lines are plotted. Where the region is darker,
@@ -382,8 +382,8 @@ be answered in a statistical way, <strong>but</strong> what we can do is</p>
 </ol>
 <p>For the first point, <strong>Quantile-Quantile plots</strong> provide a unbinned, less noisy alternative to
 residual plots.</p>
-<img alt="_images/absorbed-qq_model_deviations1.png" src="_images/absorbed-qq_model_deviations1.png" />
-<img alt="_images/absorbed-convolved_posterior1.png" src="_images/absorbed-convolved_posterior1.png" />
+<img alt="_images/absorbed-qq_model_deviations.png" src="_images/absorbed-qq_model_deviations.png" />
+<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
 <p>QQ plot example (left), with the corresponding spectrum for comparison (right).</p>
 <p>In these plots, for each energy the number of counts observed with lower energy
 are plotted on one axis, while the predicted are on the other axis.
