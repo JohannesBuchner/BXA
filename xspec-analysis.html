@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>BXA/Xspec &mdash; BXA (Bayesian X-ray Analysis) 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="BXA (Bayesian X-ray Analysis) 1.0 documentation" href="index.html" />
+    <link rel="next" title="BXA/Sherpa" href="sherpa-analysis.html" />
+    <link rel="prev" title="Welcome to BXA’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sherpa-analysis.html" title="BXA/Sherpa"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to BXA’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bxa-xspec">
+<h1>BXA/Xspec<a class="headerlink" href="#bxa-xspec" title="Permalink to this headline">¶</a></h1>
+<p>Load your data, define your background model and source model as usual.
+This, you have to do using calls to <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/">PyXSpec</a> functions.
+Look at the file <em>examples/example_simplest.py</em> for an instructive example on
+how to do the simplest analysis.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Example of doing BXA in X-spec</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">bxa.xspec</span> <span class="kn">as</span> <span class="nn">bxa</span>
+<span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">Fit</span><span class="o">.</span><span class="n">statMethod</span> <span class="o">=</span> <span class="s">&#39;cstat&#39;</span>
+<span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">=</span> <span class="s">&#39;keV&#39;</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="s">&#39;example-file.fak&#39;</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s">&quot;**&quot;</span><span class="p">);</span> <span class="n">s</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s">&quot;0.2-8.0&quot;</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s">&quot;pow&quot;</span><span class="p">)</span>
+
+<span class="c"># set model parameters ranges</span>
+<span class="c">#                         val, delta, min, bottom, top, max</span>
+<span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="s">&quot;,,1e-10,1e-10,1e1,1e1&quot;</span> <span class="c"># 10^-10 .. 10</span>
+<span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">PhoIndex</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="s">&quot;,,1,1,3,3&quot;</span>       <span class="c">#     1 .. 3</span>
+
+<span class="c"># define prior</span>
+<span class="n">transformations</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="c"># uniform prior for Photon Index (see other example for </span>
+	<span class="c"># something more advanced)</span>
+	<span class="n">bxa</span><span class="o">.</span><span class="n">create_uniform_prior_for</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">PhoIndex</span><span class="p">),</span>
+	<span class="c"># jeffreys prior for scale variable</span>
+	<span class="n">bxa</span><span class="o">.</span><span class="n">create_jeffreys_prior_for</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">norm</span><span class="p">),</span>
+	<span class="c"># and possibly many more parameters here</span>
+<span class="p">]</span>
+<span class="c"># where to store intermediate and final results? this is the prefix used</span>
+<span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="s">&#39;simplest-&#39;</span>
+
+<span class="c"># send it off!</span>
+<span class="n">bxa</span><span class="o">.</span><span class="n">standard_analysis</span><span class="p">(</span><span class="n">transformations</span><span class="p">,</span>
+	<span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span><span class="p">,</span>
+	<span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="c"># show a bit of progress</span>
+	<span class="n">resume</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="c"># MultiNest supports resuming a crashed/aborted run</span>
+	<span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="defining-priors">
+<span id="xspec-priors"></span><h2>Defining priors<a class="headerlink" href="#defining-priors" title="Permalink to this headline">¶</a></h2>
+<p>Create a list of prior transformations like in the example above, one line for each variable.
+These functions will help you with that.</p>
+<span class="target" id="module-bxa.xspec"></span><p>BXA (Bayesian X-ray Analysis) for Xspec</p>
+<p>Copyright: Johannes Buchner (C) 2013</p>
+<dl class="function">
+<dt id="bxa.xspec.create_uniform_prior_for">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_uniform_prior_for</tt><big>(</big><em>model</em>, <em>par</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_uniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for location variables (position)
+The uniform prior gives equal weight in non-logarithmic scale.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.xspec.create_jeffreys_prior_for">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_jeffreys_prior_for</tt><big>(</big><em>model</em>, <em>par</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_jeffreys_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_jeffreys_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for scale variables (order of magnitude)
+The Jeffreys prior gives equal weight to each order of magnitude between the
+minimum and maximum value. Flat in logarithmic scale</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.xspec.create_custom_prior_for">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x58e5aa0&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass your own prior weighting transformation</p>
+</dd></dl>
+
+<p>See <em>examples/example_simplest.py</em> for a simple example.
+<em>examples/example_advanced_priors.py</em> introduces more complex and custom priors.</p>
+</div>
+<div class="section" id="running-the-analysis">
+<span id="xspec-run"></span><h2>Running the analysis<a class="headerlink" href="#running-the-analysis" title="Permalink to this headline">¶</a></h2>
+<p>A convencience method is provided for you, called <em>standard_analysis</em>, which does everything.
+You need to specify a prefix, called <em>outputfiles_basename</em> where the files are stored.</p>
+<dl class="function">
+<dt id="bxa.xspec.standard_analysis">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">standard_analysis</tt><big>(</big><em>transformations</em>, <em>outputfiles_basename</em>, <em>skipsteps=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#standard_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.standard_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default analysis which produces nice plots:</p>
+<ul class="simple">
+<li>runs nested sampling analysis, creates MCMC chain file</li>
+<li>marginal probabilities (1d and 2d)</li>
+<li>model posterior predictions + data overplotted, convolved</li>
+<li>model posterior predictions unconvolved</li>
+<li>quantile-quantile plot with statistics</li>
+<li>prints out summary of parameters</li>
+<li>prints out model evidence</li>
+</ul>
+<p>Look at the source of this function to figure out how to do
+the individual parts. 
+Copy them to your scripts and adapt them to your needs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.xspec.nested_run">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">nested_run</tt><big>(</big><em>transformations</em>, <em>prior_function=None</em>, <em>sampling_efficiency='model'</em>, <em>n_live_points=1000</em>, <em>outputfiles_basename='chains/'</em>, <em>verbose=True</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#nested_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.nested_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the Bayesian analysis with specified parameters+transformations.</p>
+<p>transformations: Parameter transformation definitions
+prior_function: if you want to specify a custom (non-independent) prior
+The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)</p>
+<p>outputfiles_basename: prefix to output files
+n_live_points: 400 are often enough</p>
+</dd></dl>
+
+<p>Both method return a <em>pymultinest.Analyzer</em> object, which provides access to the results.</p>
+<p>The example <em>examples/example_custom_run.py</em> shows how to customize the analysis (other plots)</p>
+<p>This will allow you to create marginal plots, qq plots, plots of the spectra, etc.</p>
+</div>
+<div class="section" id="marginal-plots">
+<span id="xspec-analyse"></span><h2>Marginal plots<a class="headerlink" href="#marginal-plots" title="Permalink to this headline">¶</a></h2>
+<p>For histograms (1d and 2d) of the marginal parameter distributions, use <em>plot.marginal_plots</em>.</p>
+<span class="target" id="module-bxa.xspec.plot"></span><p>Plotting of posterior parameter marginal distributions</p>
+<dl class="function">
+<dt id="bxa.xspec.plot.marginal_plots">
+<tt class="descclassname">bxa.xspec.plot.</tt><tt class="descname">marginal_plots</tt><big>(</big><em>analyzer</em>, <em>d=None</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec/plot.html#marginal_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.plot.marginal_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create marginal plots</p>
+<ul>
+<li><p class="first">analyzer: A instance of pymultinest.Analyzer</p>
+</li>
+<li><dl class="first docutils">
+<dt>d: if more than 20 dimensions, by default only 1d marginal distributions</dt>
+<dd><p class="first last">are plotted. set d=2 if you want to force a 2d matrix plot</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<p>For plotting the model parameters found against the data, use these functions.</p>
+<dl class="function">
+<dt id="bxa.xspec.posterior_predictions_unconvolved">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">posterior_predictions_unconvolved</tt><big>(</big><em>analyzer</em>, <em>transformations</em>, <em>component_names=None</em>, <em>plot_args=None</em>, <em>nsamples=400</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#posterior_predictions_unconvolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot unconvolved model posterior predictions.</p>
+<p>component_names: labels to use. Set to &#8216;ignore&#8217; to skip plotting a component
+plot_args: matplotlib.pyplot.plot arguments for each component</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.xspec.posterior_predictions_convolved">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">posterior_predictions_convolved</tt><big>(</big><em>analyzer</em>, <em>transformations</em>, <em>component_names=None</em>, <em>plot_args=None</em>, <em>nsamples=400</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#posterior_predictions_convolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.posterior_predictions_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot convolved model posterior predictions.
+Also returns data points for plotting.</p>
+<p>component_names: labels to use. Set to &#8216;ignore&#8217; to skip plotting a component
+plot_args: matplotlib.pyplot.plot arguments for each component</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.xspec.set_best_fit">
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">set_best_fit</tt><big>(</big><em>analyzer</em>, <em>transformations</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#set_best_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.set_best_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set to best fit</p>
+</dd></dl>
+
+<span class="target" id="module-bxa.xspec.sinning"></span><p>Binning routines for plotting</p>
+<dl class="function">
+<dt id="bxa.xspec.sinning.binning">
+<tt class="descclassname">bxa.xspec.sinning.</tt><tt class="descname">binning</tt><big>(</big><em>outputfiles_basename</em>, <em>bins</em>, <em>widths</em>, <em>data</em>, <em>models</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec/sinning.html#binning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.sinning.binning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bins the data for plotting.
+Using the gof module, computes a Poisson goodness-of-fit range,
+i.e. ranges where the model must lie. This is done for multiple
+binning sizes simultaneously.</p>
+<p>Returns:</p>
+<ul class="simple">
+<li>marked_binned: data points binned to contain 10 counts
+a sequence ready to be passed to matplotlib.pyplot.errorbar</li>
+<li>modelrange: range allowed by the data
+ready to be passed to matplotlib.pyplot.fill_between</li>
+<li>and statistics (GoF measure)</li>
+</ul>
+</dd></dl>
+
+<p>Refer to the <em>standard_analysis</em> function as an example of how to use them.</p>
+</div>
+<div class="section" id="error-propagation">
+<h2>Error propagation<a class="headerlink" href="#error-propagation" title="Permalink to this headline">¶</a></h2>
+<p><tt class="xref py py-func docutils literal"><span class="pre">pymultinest.Analyzer.equal_weighted_posterior()</span></tt> provides access to the posterior samples (similar to a Markov Chain).
+Use these to propagate errors:
+* For every row in the chain, compute the quantity of interest
+* Then, make a histogram of the results, or compute mean and standard deviations.
+This preserves the structure of the errors (multiple modes, degeneracies, etc.)</p>
+</div>
+<div class="section" id="model-comparison">
+<span id="xspec-models"></span><h2>Model comparison<a class="headerlink" href="#model-comparison" title="Permalink to this headline">¶</a></h2>
+<p><em>examples/model_compare.py</em> shows an example of model selection. Keep in mind what model prior you would like to use.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Case 1: Multiple models, want to find one best one to use from there on:</dt>
+<dd><ul class="first last simple">
+<li>follow <em>examples/model_compare.py</em>, and pick the model with the highest evidence</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Case 2: Simpler and more complex models, want to find out which complexity is justified:</dt>
+<dd><ul class="first last simple">
+<li>follow <em>examples/model_compare.py</em>, and keep the models above a certain threshold</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Case 3: Multiple models which could be correct, only interested in a parameter</dt>
+<dd><ul class="first last simple">
+<li>Marginalize over the models: Use the posterior samples from each model, and weigh them by the
+relative probability of the models (weight = exp(lnZ))</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="experiment-design">
+<span id="xspec-design"></span><h2>Experiment design<a class="headerlink" href="#experiment-design" title="Permalink to this headline">¶</a></h2>
+<p>We want to to evaluate whether a planned experiment can detect features or constrain parameters,
+i.e. determine the discriminatory power of future configurations/surveys/missions.</p>
+<p>For this, simulate a few spectra using the appropriate response.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Case 1: Can the experiment constrain the parameters?</dt>
+<dd><ul class="first last simple">
+<li>Analyse and check what fraction of the posterior samples lie inside/outside the region of interest.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Case 2: Can the experiment distinguish between two models?</dt>
+<dd><ul class="first last simple">
+<li>Model selection as above.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Case 3: Which sources (redshift range, luminosity, etc) can be distinguished?</dt>
+<dd><ul class="first last simple">
+<li>Compute a grid of spectra. Do model selection at each point in the grid.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="model-discovery">
+<span id="xspec-qq"></span><h2>Model discovery<a class="headerlink" href="#model-discovery" title="Permalink to this headline">¶</a></h2>
+<p>Is the model the right one? Is there more in the data? These questions can not
+be answered in a statistical way, <strong>but</strong> what we can do is</p>
+<ol class="arabic simple">
+<li>generate ideas on what models could fit better</li>
+<li>test those models for significance with model selection</li>
+</ol>
+<p>For the first point, <strong>Quantile-Quantile plots</strong> provide a unbinned, less noisy alternative to
+residual plots.</p>
+<p>In these plots, for each energy the number of counts observed with lower energy
+are plotted on one axis, while the predicted are on the other axis.
+If model and data agree perfectly, this would be a straight line.
+Deviances are indications of possible mis-fits.</p>
+<p>A Gaussian line in the data, but absent in the model, would be present as an
+S-shaped offset (shaped like the cumulative distribution of the Gaussian).</p>
+<p>For Xspec, the <em>qq</em> function in the <em>qq</em> module allows you to create such plots easily.</p>
+<dl class="function">
+<dt id="bxa.xspec.qq.qq">
+<tt class="descclassname">bxa.xspec.qq.</tt><tt class="descname">qq</tt><big>(</big><em>analyzer</em>, <em>markers=5</em>, <em>annotate=True</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec/qq.html#qq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.qq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a quantile-quantile plot for model discovery (deviations in data from model).</p>
+<p>The current data and model is used, so call <em>set_best_fit(analyzer, transformations)</em>
+before, to get the qq plot at the best fit.</p>
+<ul class="simple">
+<li>markers: list of energies/channels (whichever the current plotting xaxis unit)</li>
+</ul>
+<p>or number of equally spaced markers between minimum+maximum.
+* annotate: add information to the plot</p>
+</dd></dl>
+
+<p>Refer to the <a class="reference internal" href="index.html#cite"><em>accompaning paper</em></a>, which gives an introduction and
+detailed discussion on the methodology.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">BXA/Xspec</a><ul>
+<li><a class="reference internal" href="#defining-priors">Defining priors</a></li>
+<li><a class="reference internal" href="#running-the-analysis">Running the analysis</a></li>
+<li><a class="reference internal" href="#marginal-plots">Marginal plots</a></li>
+<li><a class="reference internal" href="#error-propagation">Error propagation</a></li>
+<li><a class="reference internal" href="#model-comparison">Model comparison</a></li>
+<li><a class="reference internal" href="#experiment-design">Experiment design</a></li>
+<li><a class="reference internal" href="#model-discovery">Model discovery</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to BXA&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sherpa-analysis.html"
+                        title="next chapter">BXA/Sherpa</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/xspec-analysis.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sherpa-analysis.html" title="BXA/Sherpa"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to BXA’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Johannes Buchner.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
