@@ -1,0 +1,29 @@
+# generate data for analysis with the example programs
+
+rm -f example-file.fak
+
+cpd /xw
+model wabs*pow + gauss
+10
+1.9
+0.01
+6.4
+0.04
+0.0001
+
+
+
+plot model
+
+#dummyrsp 0.1 10 100 linear
+energies 0.1 15 10000
+fakeit none
+athenapp_ir_b4c_wfi_withfilter_fov40.0arcmin_avg.rsp
+
+y
+example-file
+example-file.fak
+500 1.0 1.0
+
+plot data model
+
