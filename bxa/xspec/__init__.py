@@ -316,8 +316,13 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 	# points that barely made it into the analysis are not that interesting.
 	# so pick a random subset of at least nsamples points
 	if nsamples is not None and len(posterior) > nsamples:
-		chosen = numpy.random.choice(numpy.arange(len(posterior)), 
-			replace=False, size=nsamples)
+		if hasattr(numpy.random, 'choice'):
+			chosen = numpy.random.choice(
+				numpy.arange(len(posterior)), 
+				replace=False, size=nsamples)
+		else:
+			chosen = list(set(numpy.random.randint(0, len(posterior),
+				size=10*nsamples)))[:nsamples]
 		posterior = posterior[chosen,:]
 		assert len(posterior) == nsamples
 	prefix = analyzer.outputfiles_basename
@@ -334,10 +339,11 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 	oldchatter = Xset.chatter, Xset.logChatter
 	Xset.chatter, Xset.logChatter = 0, 0
 	# plot models
-	pbar = progressbar.ProgressBar(
-		widgets=[progressbar.Percentage(), progressbar.Counter('%5d'), 
-		progressbar.Bar(), progressbar.ETA()],
-		maxval=len(posterior)).start()
+	widgets = [progressbar.Percentage()]
+	if hasattr(progressbar, 'Counter'):
+		widgets += [progressbar.Counter('%5d')]
+	widgets += [progressbar.Bar(), progressbar.ETA()]
+	pbar = progressbar.ProgressBar(widgets, maxval=len(posterior)).start()
 	for k, row in enumerate(posterior):
 		set_parameters(values=row[:-1], transformations=transformations)
 		if os.path.exists(tmpfilename):
