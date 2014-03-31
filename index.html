@@ -202,20 +202,32 @@ with the fitting environment CIAO/Sherpa (\ref{Fruscione2006}).
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>You need to have <a class="reference external" href="http://johannesbuchner.github.io/PyMultiNest/">pymultinest</a> and <a class="reference external" href="https://github.com/JohannesBuchner/MultiNest">MultiNest</a> installed and working.</p>
+<p>However, you need to have <a class="reference external" href="http://johannesbuchner.github.io/PyMultiNest/">pymultinest</a> and <a class="reference external" href="https://github.com/JohannesBuchner/MultiNest">MultiNest</a>
+installed and working.</p>
 <ul class="simple">
 <li><a class="reference external" href="http://johannesbuchner.github.io/pymultinest-tutorial/install.html#on-your-own-computer">Installation for those two packages only</a></li>
 <li><a class="reference external" href="http://johannesbuchner.github.io/PyMultiNest/install.html">Extensive PyMultiNest, PyAPEMoST, PyCuba installation instructions</a></li>
 </ul>
 <p>You need to have <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> or <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/">Xspec</a> installed and its environment loaded.</p>
-<p>Install the needed python packages, through your package manager, through pip or easy_install. For example:</p>
+<p>The following commands should not yield any error message:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python -c &#39;import pymultinest&#39;
+$ python -c &#39;import xspec&#39;
+$ sherpa
+</pre></div>
+</div>
+<p>Install the required python packages, through your package manager, through pip or easy_install. For example:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ yum install ipython python-matplotlib scipy numpy matplotlib
 $ apt-get install python-numpy python-scipy python-matplotlib ipython
 
 $ pip install progressbar --user
 </pre></div>
 </div>
-<p>Then, just download and install bxa as a python package:</p>
+<p>BXA itself can installed directly from PyPI using pip or easy_install:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install bxa # --user if you want to install locally
+</pre></div>
+</div>
+<p>The source code is available from <a class="reference external" href="https://github.com/JohannesBuchner/BXA">https://github.com/JohannesBuchner/BXA</a>,
+so alternatively you can download and install it:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ python setup.py install
 </pre></div>
 </div>
@@ -223,6 +235,9 @@ $ pip install progressbar --user
 <div class="highlight-python"><div class="highlight"><pre>$ python setup.py install --user
 </pre></div>
 </div>
+</div>
+<div class="section" id="running">
+<h2>Running<a class="headerlink" href="#running" title="Permalink to this headline">¶</a></h2>
 <p>In <em>Sherpa</em>, load the package:</p>
 <div class="highlight-python"><div class="highlight"><pre>jbuchner@ds42 ~ $ sherpa
 -----------------------------------------------------
@@ -296,6 +311,7 @@ In [3]: bxa.standard_analysis?
 <li><a class="reference internal" href="#get-bxa">Get BXA</a></li>
 <li><a class="reference internal" href="#citing-bxa-correctly">Citing BXA correctly</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#running">Running</a></li>
 <li><a class="reference internal" href="#documentation">Documentation:</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
