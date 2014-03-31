@@ -1,22 +1,28 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 """
-Bayesian inference using (Py)MultiNest
+BXA (Bayesian X-ray Analysis) for Xspec
+
+Copyright: Johannes Buchner (C) 2013-2014
 """
-import os
-if 'MAKESPHINXDOC' not in os.environ:
-	import sherpa.astro.ui as ui
-	#from sherpa.utils import get_keyword_defaults, sao_fcmp
-	from sherpa.stats import Cash, CStat
 
 import pymultinest
+import os
+from math import log10, isnan, isinf
+if 'MAKESPHINXDOC' not in os.environ:
+	import sherpa.astro.ui as ui
+	from sherpa.stats import Cash, CStat
+
 import numpy
-from math import log10, isnan
 
 # prior
 def create_uniform_prior_for(parameter):
 	"""
 	Use for location variables (position)
 	The uniform prior gives equal weight in non-logarithmic scale.
+	
+	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex
 	"""
 	spread = (parameter.max - parameter.min)
 	low = parameter.min
@@ -27,24 +33,30 @@ def create_jeffreys_prior_for(parameter):
 	Use for scale variables (order of magnitude)
 	The Jeffreys prior gives equal weight to each order of magnitude between the
 	minimum and maximum value. Flat in logarithmic scale.
+	
+	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.norm
 
-	It is usually easier to create a ancillary Parameter, and make the actual parameter
-	a function of it, like so::
+	It is usually easier to create an ancillary parameter, and link the 
+	actual parameter, like so::
 
 		from sherpa.models.parameter import Parameter
 		lognorm = Parameter(modelname='mycomponent', name='lognorm', val=-5, min=-4*2, max=0)
 		powerlaw.norm = 10**lognorm
+
 	"""
 	low = log10(parameter.min)
 	spread = log10(parameter.max) - log10(parameter.min)
 	return lambda x: 10**(x * spread + low)
 
 
-def create_prior_function(id=None, otherids=(), priors = [], parameters = None):
+def create_prior_function(priors = [], parameters = None):
 	"""
 	Combine the prior transformations into a single function for pymultinest.
 
-	If priors is empty, uniform priors are used on all passed parameters
+	:param priors: individual prior transforms to combine into one function.
+		If priors is empty, uniform priors are used on all passed parameters
+	:param parameters: If priors is empty, specify the list of parameters.
+		Uniform priors will be created for them.
 	"""
 
 	functions = []
@@ -65,16 +77,28 @@ def create_prior_function(id=None, otherids=(), priors = [], parameters = None):
 
 plot_best = False
 
-def nested_run(id=None, otherids=(), prior = None, parameters = None, sampling_efficiency = 0.8, 
-	n_live_points = 1000, outputfiles_basename = 'chains/', **kwargs):
+def nested_run(id=None, otherids=(), prior = None, parameters = None, 
+	sampling_efficiency = 0.3, evidence_tolerance = 0.5,
+	n_live_points = 400, outputfiles_basename = 'chains/', **kwargs):
 	"""
-	Run the Bayesian analysis with specified prior. 
+	Run the Bayesian analysis with specified parameters+transformations.
+
+	:param id: See the sherpa documentation of calc_stat.
+	:param otherids: See the sherpa documentation of calc_stat.
+	:param prior: prior function created with create_prior_function.
+	:param parameters: List of parameters to analyse.
+	:param outputfiles_basename: prefix for output filenames.
+	
 	If prior is None, uniform priors are used on the passed parameters.
 	If parameters is also None, all thawed parameters are used.
 
 	The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
-	outputfiles_basename: prefix to output files
 	n_live_points: 400 are often enough
+	
+	For quick results, use sampling_efficiency = 0.8, n_live_points = 50, 
+	evidence_tolerance = 5. 
+	The real results must be estimated with sampling_efficiency = 0.3,
+	otherwise it is not reliable.
 	"""
 	fit = ui._session._get_fit(id=id, otherids=otherids)[1]
 
@@ -107,15 +131,17 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None, sampling_e
 	n_params = len(parameters)
 	pymultinest.run(log_likelihood, prior, n_params, 
 		sampling_efficiency = sampling_efficiency, n_live_points = n_live_points, 
-		outputfiles_basename = outputfiles_basename, **kwargs)
+		outputfiles_basename = outputfiles_basename, evidence_tolerance=evidence_tolerance,
+		**kwargs)
 
 	import json
 	m = ui._session._get_model(id)
 	paramnames = map(lambda x: x.fullname, parameters)
 	json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=2)
+
 def set_best_fit(id=None, otherids=(), parameters = None, outputfiles_basename = 'chains/'):
 	"""
-	Sets model to the best fit values
+	Sets model to the best fit values.
 	"""
 	fit = ui._session._get_fit(id, otherids)[1]
 	if parameters is None:

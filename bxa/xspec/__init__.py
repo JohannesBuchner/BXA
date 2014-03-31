@@ -4,10 +4,9 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013
+Copyright: Johannes Buchner (C) 2013-2014
 """
 
-import sys
 import pymultinest
 import os
 import json
@@ -127,18 +126,27 @@ def set_best_fit(analyzer, transformations):
 	params = analyzer.get_best_fit()['parameters']
 	set_parameters(transformations=transformations, values=params)
 
-def nested_run(transformations, prior_function = None, sampling_efficiency = 'model', 
-	n_live_points = 1000, outputfiles_basename = 'chains/', 
-	verbose=True, **kwargs):
+def nested_run(transformations, prior_function = None, sampling_efficiency = 0.3, 
+	n_live_points = 400, evidence_tolerance = 0.5,
+	outputfiles_basename = 'chains/', verbose=True, **kwargs):
 	"""
 	Run the Bayesian analysis with specified parameters+transformations.
 
-	transformations: Parameter transformation definitions
-	prior_function: if you want to specify a custom (non-independent) prior
+	If prior is None, uniform priors are used on the passed parameters.
+	If parameters is also None, all thawed parameters are used.
+
+	:param transformations: Parameter transformation definitions
+	:param prior_function: set only if you want to specify a custom, non-separable prior
+	:param outputfiles_basename: prefix for output filenames.
 	The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
 
-	outputfiles_basename: prefix to output files
+	The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
 	n_live_points: 400 are often enough
+	
+	For quick results, use sampling_efficiency = 0.8, n_live_points = 50, 
+	evidence_tolerance = 5.
+	The real results must be estimated with sampling_efficiency = 0.3 
+	and without using const_efficiency_mode, otherwise it is not reliable.
 	"""
 	
 	# for convenience
@@ -158,6 +166,7 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 'mo
 			return l
 		except Exception as e:
 			print 'Exception in log_likelihood function: ', e
+			import sys
 			sys.exit(-127)
 		return -1e300
 	# run multinest
@@ -309,7 +318,7 @@ def posterior_predictions_unconvolved(analyzer, transformations,
 def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 	nsamples = None):
 	"""
-	Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved
+	Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved
 	"""
 	posterior = analyzer.get_equal_weighted_posterior()
 	# for plotting, we don't need so many points, and especially the 

@@ -1,1 +1,0 @@
-Cash, CStat = None, None
