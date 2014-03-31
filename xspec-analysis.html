@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -15,7 +13,7 @@
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -27,8 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="BXA (Bayesian X-ray Analysis) 1.0 documentation" href="index.html" />
-    <link rel="next" title="BXA/Sherpa" href="sherpa-analysis.html" />
-    <link rel="prev" title="Welcome to BXA’s documentation!" href="index.html" /> 
+    <link rel="prev" title="BXA/Sherpa" href="sherpa-analysis.html" /> 
   </head>
   <body>
     <div class="related">
@@ -42,9 +39,6 @@
              >modules</a> |</li>
         <li class="right" >
           <a href="sherpa-analysis.html" title="BXA/Sherpa"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to BXA’s documentation!"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -104,7 +98,7 @@ how to do the simplest analysis.</p>
 <p>Create a list of prior transformations like in the example above, one line for each variable.
 These functions will help you with that.</p>
 <span class="target" id="module-bxa.xspec"></span><p>BXA (Bayesian X-ray Analysis) for Xspec</p>
-<p>Copyright: Johannes Buchner (C) 2013</p>
+<p>Copyright: Johannes Buchner (C) 2013-2014</p>
 <dl class="function">
 <dt id="bxa.xspec.create_uniform_prior_for">
 <tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_uniform_prior_for</tt><big>(</big><em>model</em>, <em>par</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_uniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
@@ -122,7 +116,7 @@ minimum and maximum value. Flat in logarithmic scale</p>
 
 <dl class="function">
 <dt id="bxa.xspec.create_custom_prior_for">
-<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x44709b0&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">create_custom_prior_for</tt><big>(</big><em>model</em>, <em>par</em>, <em>transform</em>, <em>aftertransform=&lt;function &lt;lambda&gt; at 0x3fffed8&gt;</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pass your own prior weighting transformation</p>
 </dd></dl>
 
@@ -135,7 +129,7 @@ minimum and maximum value. Flat in logarithmic scale</p>
 You need to specify a prefix, called <em>outputfiles_basename</em> where the files are stored.</p>
 <dl class="function">
 <dt id="bxa.xspec.standard_analysis">
-<tt class="descclassname">bxa.xspec.</tt><tt class="descname">standard_analysis</tt><big>(</big><em>transformations</em>, <em>outputfiles_basename</em>, <em>skipsteps=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#standard_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.standard_analysis" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">standard_analysis</tt><big>(</big><em>transformations</em>, <em>outputfiles_basename</em>, <em>skipsteps=</em>, <span class="optional">[</span><span class="optional">]</span><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#standard_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.standard_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default analysis which produces nice plots:</p>
 <ul class="simple">
 <li>runs nested sampling analysis, creates MCMC chain file</li>
@@ -153,13 +147,30 @@ Copy them to your scripts and adapt them to your needs.</p>
 
 <dl class="function">
 <dt id="bxa.xspec.nested_run">
-<tt class="descclassname">bxa.xspec.</tt><tt class="descname">nested_run</tt><big>(</big><em>transformations</em>, <em>prior_function=None</em>, <em>sampling_efficiency='model'</em>, <em>n_live_points=1000</em>, <em>outputfiles_basename='chains/'</em>, <em>verbose=True</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#nested_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.nested_run" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">bxa.xspec.</tt><tt class="descname">nested_run</tt><big>(</big><em>transformations</em>, <em>prior_function=None</em>, <em>sampling_efficiency=0.3</em>, <em>n_live_points=400</em>, <em>evidence_tolerance=0.5</em>, <em>outputfiles_basename='chains/'</em>, <em>verbose=True</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bxa/xspec.html#nested_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.nested_run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the Bayesian analysis with specified parameters+transformations.</p>
-<p>transformations: Parameter transformation definitions
-prior_function: if you want to specify a custom (non-independent) prior
-The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)</p>
-<p>outputfiles_basename: prefix to output files
+<p>If prior is None, uniform priors are used on the passed parameters.
+If parameters is also None, all thawed parameters are used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>transformations</strong> &#8211; Parameter transformation definitions</li>
+<li><strong>prior_function</strong> &#8211; set only if you want to specify a custom, non-separable prior</li>
+<li><strong>outputfiles_basename</strong> &#8211; prefix for output filenames.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)</p>
+<p>The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
 n_live_points: 400 are often enough</p>
+<p>For quick results, use sampling_efficiency = 0.8, n_live_points = 50, 
+evidence_tolerance = 5.
+The real results must be estimated with sampling_efficiency = 0.3 
+and without using const_efficiency_mode, otherwise it is not reliable.</p>
 </dd></dl>
 
 <p>Both method return a <em>pymultinest.Analyzer</em> object, which provides access to the results.</p>
@@ -187,7 +198,7 @@ n_live_points: 400 are often enough</p>
 </dd></dl>
 
 <div class="figure">
-<a class="reference internal image-reference" href="_images/absorbed-marg.png"><img alt="_images/absorbed-marg.png" src="_images/absorbed-marg.png" style="width: 610.0px; height: 202.5px;" /></a>
+<a class="reference internal image-reference" href="_images/absorbed-marg.pdf"><img alt="_images/absorbed-marg.pdf" src="_images/absorbed-marg.pdf" /></a>
 <p class="caption">For each parameter and each pair (not shown here), the marginal probability distribution is plotted.
 This is presented in three forms:</p>
 <div class="legend">
@@ -243,7 +254,7 @@ ready to be passed to matplotlib.pyplot.fill_between</li>
 
 <p>Refer to the <em>standard_analysis</em> function as an example of how to use them.</p>
 <div class="figure">
-<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
+<img alt="_images/absorbed-convolved_posterior.pdf" src="_images/absorbed-convolved_posterior.pdf" />
 <p class="caption">Example of the convolved spectrum with data.
 For each posterior sample (solution), the parameters are taken and put
 through the model. All such lines are plotted. Where the region is darker,
@@ -271,7 +282,7 @@ and if it reaches below <span class="math">\(10^{-6}\)</span>, it is marked red.
 </div>
 </div>
 <div class="figure">
-<img alt="_images/absorbed-unconvolved_posterior.png" src="_images/absorbed-unconvolved_posterior.png" />
+<img alt="_images/absorbed-unconvolved_posterior.pdf" src="_images/absorbed-unconvolved_posterior.pdf" />
 <p class="caption">Example of the unconvolved spectrum with data.
 For each posterior sample (solution), the parameters are taken and put
 through the model. All such lines are plotted. Where the region is darker,
@@ -322,7 +333,7 @@ relative probability of the models (weight = exp(lnZ))</li>
 </li>
 </ul>
 <p>Example output:</p>
-<div class="highlight-python"><pre>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
+<div class="highlight-python"><div class="highlight"><pre>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
 
 Model comparison
 ****************
@@ -334,7 +345,8 @@ model line-     : log10(Z) =     0.0    &lt;-- GOOD
 The last, most likely model was used as normalization.
 Uniform model priors are assumed, with a cut of log10(30) to rule out models.
 
-jbuchner@ds42 $</pre>
+jbuchner@ds42 $
+</pre></div>
 </div>
 <p>Here, the probability of the second-best model, &#8220;absorbed&#8221;, is <span class="math">\(10^7.5\)</span> times
 less likely than the model &#8220;line&#8221;. As this exceeds our threshold (by a lot!)
@@ -382,8 +394,8 @@ be answered in a statistical way, <strong>but</strong> what we can do is</p>
 </ol>
 <p>For the first point, <strong>Quantile-Quantile plots</strong> provide a unbinned, less noisy alternative to
 residual plots.</p>
-<img alt="_images/absorbed-qq_model_deviations.png" src="_images/absorbed-qq_model_deviations.png" />
-<img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
+<img alt="_images/absorbed-qq_model_deviations.pdf" src="_images/absorbed-qq_model_deviations.pdf" />
+<img alt="_images/absorbed-convolved_posterior.pdf" src="_images/absorbed-convolved_posterior.pdf" />
 <p>QQ plot example (left), with the corresponding spectrum for comparison (right).</p>
 <p>In these plots, for each energy the number of counts observed with lower energy
 are plotted on one axis, while the predicted are on the other axis.
@@ -434,11 +446,8 @@ detailed discussion on the methodology.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to BXA&#8217;s documentation!</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="sherpa-analysis.html"
-                        title="next chapter">BXA/Sherpa</a></p>
+                        title="previous chapter">BXA/Sherpa</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/xspec-analysis.txt"
@@ -472,16 +481,13 @@ detailed discussion on the methodology.</p>
              >modules</a> |</li>
         <li class="right" >
           <a href="sherpa-analysis.html" title="BXA/Sherpa"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to BXA’s documentation!"
              >previous</a> |</li>
         <li><a href="index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Johannes Buchner.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bxa.xspec.sinning &mdash; BXA (Bayesian X-ray Analysis) 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="BXA (Bayesian X-ray Analysis) 1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="bxa.xspec" href="../xspec.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../xspec.html" accesskey="U">bxa.xspec</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bxa.xspec.sinning</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*- </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Binning routines for plotting</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">scipy.special</span><span class="o">,</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">gof</span>
+
+<span class="k">def</span> <span class="nf">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">nmin</span> <span class="o">=</span> <span class="mi">20</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Adaptive grouping into nmin count bins</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">xlo</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xlo</span><span class="p">)):</span>
+			<span class="c"># [i:j] (with j)</span>
+			<span class="n">xmask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">xdata</span> <span class="o">&gt;=</span> <span class="n">xlo</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">xdata</span> <span class="o">&lt;</span> <span class="n">xhi</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+			
+			<span class="k">if</span> <span class="n">ydata</span><span class="p">[</span><span class="n">xmask</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">nmin</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xlo</span><span class="p">):</span>
+				<span class="k">yield</span> <span class="p">(</span><span class="n">xlo</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">xhi</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">ydata</span><span class="p">[</span><span class="n">xmask</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+				<span class="c">#print &#39;  groups&#39;, i,j</span>
+				<span class="k">break</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="binning"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.sinning.binning">[docs]</a><span class="k">def</span> <span class="nf">binning</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">models</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Bins the data for plotting.</span>
+<span class="sd">	Using the gof module, computes a Poisson goodness-of-fit range,</span>
+<span class="sd">	i.e. ranges where the model must lie. This is done for multiple</span>
+<span class="sd">	binning sizes simultaneously.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	</span>
+<span class="sd">	* marked_binned: data points binned to contain 10 counts</span>
+<span class="sd">	  a sequence ready to be passed to matplotlib.pyplot.errorbar</span>
+<span class="sd">	* modelrange: range allowed by the data</span>
+<span class="sd">	  ready to be passed to matplotlib.pyplot.fill_between</span>
+<span class="sd">	* and statistics (GoF measure)</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="n">xdata</span> <span class="o">=</span> <span class="n">bins</span>
+	<span class="n">xlo</span> <span class="o">=</span> <span class="n">bins</span> <span class="o">-</span> <span class="n">widths</span>
+	<span class="n">xhi</span> <span class="o">=</span> <span class="n">bins</span> <span class="o">+</span> <span class="n">widths</span>
+	<span class="c"># convert from densities to counts</span>
+	<span class="n">ydata</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">widths</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+	<span class="n">models</span> <span class="o">=</span> <span class="n">models</span> <span class="o">*</span> <span class="n">widths</span> <span class="o">*</span> <span class="mi">2</span>
+	<span class="n">deltax</span> <span class="o">=</span> <span class="p">(</span><span class="n">xdata</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">xdata</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+	<span class="n">prefix</span> <span class="o">=</span> <span class="n">outputfiles_basename</span>
+	
+	<span class="n">best_gof</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="n">best_gof_stats</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
+	
+	<span class="n">grouped_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">))</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ydata</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">xdata</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="p">,</span> <span class="n">xdata</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">)])</span>
+	
+	<span class="k">for</span> <span class="n">icomponent</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+		<span class="n">component</span> <span class="o">=</span> <span class="n">models</span><span class="p">[:,</span><span class="n">icomponent</span><span class="p">,:]</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">counts_predicted</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">component</span><span class="p">):</span>
+			<span class="n">modelrange_low</span><span class="p">,</span> <span class="n">modelrange_high</span> <span class="o">=</span> <span class="n">gof</span><span class="o">.</span><span class="n">calc_models_range</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+		
+			<span class="n">stats</span> <span class="o">=</span> <span class="n">gof</span><span class="o">.</span><span class="n">calc_multigof</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">counts_predicted</span><span class="p">)</span>
+			<span class="n">curgof</span> <span class="o">=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span>
+				<span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">stats</span><span class="p">[</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">][:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> 
+					<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))]))</span>
+			<span class="k">if</span> <span class="n">best_gof</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">curgof</span> <span class="o">&lt;</span> <span class="n">best_gof</span><span class="p">:</span>
+				<span class="n">best_gof</span> <span class="o">=</span> <span class="n">curgof</span>
+				<span class="n">best_gof_stats</span> <span class="o">=</span> <span class="n">stats</span>
+			<span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+				<span class="k">break</span>
+
+	<span class="c"># check if we can reproduce the data</span>
+	<span class="n">curgof</span> <span class="o">=</span> <span class="n">best_gof</span>
+	<span class="n">stats</span> <span class="o">=</span> <span class="n">best_gof_stats</span>
+	
+	<span class="n">data_gofp</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">grouped_data</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))):</span>
+		<span class="c"># find the worst case for this level and each datapoint</span>
+		<span class="c">#exp(numpy.log(stats[stats[:,0] == n][:,2]).sum()) * (stats[:,0] == n).sum() </span>
+		<span class="c">#		for n in sorted(set(stats[:,0]))]))</span>
+		<span class="n">nstats</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
+		<span class="n">pxlo</span> <span class="o">=</span> <span class="n">xlo</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nstats</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int</span><span class="p">)]</span>
+		<span class="n">pxhi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pxlo</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">+</span> <span class="p">[</span><span class="n">xdata</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+	
+		<span class="c"># so far so good.</span>
+		<span class="c"># mark data points that have not been achieved</span>
+		<span class="c">#print zip(pxlo, chi2min)</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">xloi</span><span class="p">,</span> <span class="n">xhii</span><span class="p">,</span> <span class="n">ydatai</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grouped_data</span><span class="p">):</span>
+			<span class="c"># select p values that intersect</span>
+			<span class="n">mask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">pxlo</span> <span class="o">&lt;</span> <span class="n">xhii</span><span class="p">,</span> <span class="n">xloi</span> <span class="o">&lt;</span> <span class="n">pxhi</span><span class="p">)</span>
+			<span class="n">data_gofp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nanmin</span><span class="p">([</span><span class="n">data_gofp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">(</span><span class="n">nstats</span><span class="p">[</span><span class="n">mask</span><span class="p">][:,</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nstats</span><span class="p">)])</span>
+	
+	<span class="n">gof_avg</span> <span class="o">=</span> <span class="n">curgof</span>
+	<span class="n">gof_total</span> <span class="o">=</span> <span class="n">gof_avg</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	
+	<span class="c"># return data, marked</span>
+	<span class="n">marked_binned</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c"># plot data</span>
+	<span class="n">ymin</span> <span class="o">=</span> <span class="mf">1e300</span>
+	<span class="n">ymax</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="p">(</span><span class="n">xloi</span><span class="p">,</span> <span class="n">xhii</span><span class="p">,</span> <span class="n">ydatai</span><span class="p">),</span> <span class="n">gofpi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">grouped_data</span><span class="p">,</span> <span class="n">data_gofp</span><span class="p">):</span>
+		<span class="n">best_gof</span> <span class="o">=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">gofpi</span><span class="p">)</span>
+		<span class="c"># 1e3 and 1e6 correspond roughly to 3 sigma and 5 sigma</span>
+		<span class="n">c</span> <span class="o">=</span> <span class="s">&#39;green&#39;</span> <span class="k">if</span> <span class="n">best_gof</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s">&#39;orange&#39;</span> <span class="k">if</span> <span class="n">best_gof</span> <span class="o">&lt;</span> <span class="mf">6.</span> <span class="k">else</span> <span class="s">&#39;red&#39;</span>
+		<span class="n">f</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">xhii</span><span class="o">-</span><span class="n">xloi</span><span class="p">)</span> <span class="c">#* deltax</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">ydatai</span> <span class="o">*</span> <span class="n">f</span>
+		<span class="n">modelrange_low</span>  <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">gammaincinv</span><span class="p">(</span><span class="n">ydatai</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">*</span> <span class="n">f</span>
+		<span class="n">modelrange_high</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">gammaincinv</span><span class="p">(</span><span class="n">ydatai</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">*</span> <span class="n">f</span>
+		<span class="n">marked_binned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+			<span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">xloi</span><span class="o">+</span><span class="n">xhii</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">xloi</span><span class="o">+</span><span class="n">xhii</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span>
+			<span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span>
+			<span class="n">yerr</span> <span class="o">=</span> <span class="p">[[</span><span class="n">modelrange_high</span> <span class="o">-</span> <span class="n">y</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span> <span class="o">-</span> <span class="n">modelrange_low</span><span class="p">]],</span>
+			<span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+		<span class="p">)</span>
+		<span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">modelrange_low</span><span class="p">)</span>
+		<span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ymax</span><span class="p">,</span> <span class="n">modelrange_high</span><span class="p">)</span>
+	
+	<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">marked_binned</span> <span class="o">=</span> <span class="n">marked_binned</span><span class="p">,</span> 
+		<span class="n">gof_avg</span><span class="o">=</span><span class="n">gof_avg</span><span class="p">,</span> <span class="n">gof_total</span><span class="o">=</span><span class="n">gof_total</span><span class="p">,</span> <span class="n">stats</span><span class="o">=</span><span class="n">stats</span><span class="p">,</span>
+		<span class="n">xlim</span> <span class="o">=</span> <span class="p">(</span><span class="n">xlo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xhi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+		<span class="n">ylim</span> <span class="o">=</span> <span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">),</span>
+		<span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../xspec.html" >bxa.xspec</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Johannes Buchner.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -15,7 +13,7 @@
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="BXA (Bayesian X-ray Analysis) 1.0 documentation" href="#" />
-    <link rel="next" title="BXA/Xspec" href="xspec-analysis.html" /> 
+    <link rel="next" title="BXA/Sherpa" href="sherpa-analysis.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="xspec-analysis.html" title="BXA/Xspec"
+          <a href="sherpa-analysis.html" title="BXA/Sherpa"
              accesskey="N">next</a> |</li>
         <li><a href="#">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -179,9 +177,10 @@ Maximum Likelihood analysis (fitting) and Bayesian analysis.</li>
 detailed discussion on the methodology and its statistical footing.</p>
 <p>We suggest giving credit to the developers of Sherpa/Xspec, MultiNest and of this software.
 As an example:</p>
-<div class="highlight-python"><pre>For analysing X-ray spectra, we use the analysis software BXA (\ref{Buchner2014}),
+<div class="highlight-python"><div class="highlight"><pre>For analysing X-ray spectra, we use the analysis software BXA (\ref{Buchner2014}),
 which connects the nested sampling algorithm MultiNest (\ref{FerozHobson2010})
-with the fitting environment CIAO/Sherpa (\ref{Fruscione2006}).</pre>
+with the fitting environment CIAO/Sherpa (\ref{Fruscione2006}).
+</pre></div>
 </div>
 <p>Where the BibTex entries are:</p>
 <ul>
@@ -211,34 +210,39 @@ with the fitting environment CIAO/Sherpa (\ref{Fruscione2006}).</pre>
 </ul>
 <p>You need to have <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> or <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/">Xspec</a> installed and its environment loaded.</p>
 <p>Install the needed python packages, through your package manager, through pip or easy_install. For example:</p>
-<div class="highlight-python"><pre>$ yum install ipython python-matplotlib scipy numpy matplotlib
+<div class="highlight-python"><div class="highlight"><pre>$ yum install ipython python-matplotlib scipy numpy matplotlib
 $ apt-get install python-numpy python-scipy python-matplotlib ipython
 
-$ pip install progressbar --user</pre>
+$ pip install progressbar --user
+</pre></div>
 </div>
 <p>Then, just download and install bxa as a python package:</p>
-<div class="highlight-python"><pre>$ python setup.py install</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py install
+</pre></div>
 </div>
 <p>Or if you only want to install it for the current user:</p>
-<div class="highlight-python"><pre>$ python setup.py install --user</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py install --user
+</pre></div>
 </div>
 <p>In <em>Sherpa</em>, load the package:</p>
-<div class="highlight-python"><pre>jbuchner@ds42 ~ $ sherpa
+<div class="highlight-python"><div class="highlight"><pre>jbuchner@ds42 ~ $ sherpa
 -----------------------------------------------------
-Welcome to Sherpa: CXC's Modeling and Fitting Package
+Welcome to Sherpa: CXC&#39;s Modeling and Fitting Package
 -----------------------------------------------------
 CIAO 4.4 Sherpa version 2 Tuesday, June 5, 2012
 
 sherpa-1&gt; import bxa.sherpa as bxa
-sherpa-2&gt; bxa.run_model?</pre>
+sherpa-2&gt; bxa.run_model?
+</pre></div>
 </div>
 <p>For <em>Xspec</em>, start python or ipython:</p>
-<div class="highlight-python"><pre>jbuchner@ds42 ~ $ ipython
+<div class="highlight-python"><div class="highlight"><pre>jbuchner@ds42 ~ $ ipython
 In [1]: import xspec
 
 In [2]: import bxa.xspec as bxa
 
-In [3]: bxa.standard_analysis?</pre>
+In [3]: bxa.standard_analysis?
+</pre></div>
 </div>
 <p>Now you can use bxa.</p>
 </div>
@@ -246,16 +250,6 @@ In [3]: bxa.standard_analysis?</pre>
 <h2>Documentation:<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">BXA/Xspec</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#defining-priors">Defining priors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#running-the-analysis">Running the analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#marginal-plots">Marginal plots</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#error-propagation">Error propagation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#model-comparison">Model comparison</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#experiment-design">Experiment design</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#model-discovery">Model discovery</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">BXA/Sherpa</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sherpa-analysis.html#defining-priors">Defining priors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sherpa-analysis.html#running-the-analysis">Running the analysis</a></li>
@@ -264,6 +258,16 @@ In [3]: bxa.standard_analysis?</pre>
 <li class="toctree-l2"><a class="reference internal" href="sherpa-analysis.html#model-comparison">Model comparison</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sherpa-analysis.html#experiment-design">Experiment design</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sherpa-analysis.html#model-discovery">Model discovery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">BXA/Xspec</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#defining-priors">Defining priors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#running-the-analysis">Running the analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#marginal-plots">Marginal plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#error-propagation">Error propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#model-comparison">Model comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#experiment-design">Experiment design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xspec-analysis.html#model-discovery">Model discovery</a></li>
 </ul>
 </li>
 </ul>
@@ -293,17 +297,15 @@ In [3]: bxa.standard_analysis?</pre>
 <li><a class="reference internal" href="#get-bxa">Get BXA</a></li>
 <li><a class="reference internal" href="#citing-bxa-correctly">Citing BXA correctly</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#documentation">Documentation:</a><ul>
-</ul>
-</li>
+<li><a class="reference internal" href="#documentation">Documentation:</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="xspec-analysis.html"
-                        title="next chapter">BXA/Xspec</a></p>
+  <p class="topless"><a href="sherpa-analysis.html"
+                        title="next chapter">BXA/Sherpa</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -336,14 +338,14 @@ In [3]: bxa.standard_analysis?</pre>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="xspec-analysis.html" title="BXA/Xspec"
+          <a href="sherpa-analysis.html" title="BXA/Sherpa"
              >next</a> |</li>
         <li><a href="#">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Johannes Buchner.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

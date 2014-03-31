@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -15,7 +13,7 @@
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -78,7 +76,7 @@ relative probability of the models (weight = exp(lnZ))</li>
 </li>
 </ul>
 <p>Example output:</p>
-<div class="highlight-python"><pre>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
+<div class="highlight-python"><div class="highlight"><pre>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
 
 Model comparison
 ****************
@@ -90,7 +88,8 @@ model line-     : log10(Z) =     0.0    &lt;-- GOOD
 The last, most likely model was used as normalization.
 Uniform model priors are assumed, with a cut of log10(30) to rule out models.
 
-jbuchner@ds42 $</pre>
+jbuchner@ds42 $
+</pre></div>
 </div>
 <p>Here, the probability of the second-best model, &#8220;absorbed&#8221;, is <span class="math">\(10^7.5\)</span> times
 less likely than the model &#8220;line&#8221;. As this exceeds our threshold (by a lot!)
@@ -139,7 +138,7 @@ we can claim the detection of an iron line!</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Johannes Buchner.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
