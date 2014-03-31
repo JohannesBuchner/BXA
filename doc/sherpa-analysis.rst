@@ -49,6 +49,8 @@ You need to specify a prefix, called *outputfiles_basename* where the files are 
 
 .. autofunction:: bxa.sherpa.nested_run
 
+.. autofunction:: bxa.sherpa.set_best_fit
+
 .. _sherpa-analyse:
 
 Marginal plots
@@ -110,10 +112,11 @@ the correct luminosity distribution.
 
 .. include:: model_discovery.rst
 
-The *qq* function in the *qq* module allows you to create such plots easily.
+The *qq* function in the *qq* module allows you to create such plots easily, by
+exporting into a file.
 
-.. automodule:: bxa.xspec.qq
-	:members: qq
+.. automodule:: bxa.sherpa.qq
+	:members: qq_export
 
 Refer to the :ref:`accompaning paper <cite>`, which gives an introduction and 
 detailed discussion on the methodology.

@@ -111,6 +111,20 @@ def ADstat(data, model, staterror=None, syserror=None, weight=None):
 def fake_staterr_func(data):
 	return data**0.5
 
+"""
+Export Q-Q plot into a file for plotting.
+
+:param id: spectrum id to use (see get_bkg_plot/get_data_plot)
+:param bkg: whether to use get_bkg_plot or get_data_plot
+:param outfile: filename to write results into
+:param elow: low energy limit
+:param ehigh: low energy limit
+
+Example::
+
+	qq.qq_export('bg', outfile='my_bg_qq', elow=0.2, ehigh=10)
+	
+"""
 def qq_export(id=None, bkg=False, outfile='qq.txt', elow=None, ehigh=None):
 	# data
 	d = ui.get_bkg_plot(id=id) if bkg else ui.get_data_plot(id=id)

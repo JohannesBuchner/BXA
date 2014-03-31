@@ -7,3 +7,4 @@ for **Bayesian Parameter Estimation** and **Model comparison**.
 
 See the `documentation <http://johannesbuchner.github.io/BXA/>`_
 
+
