@@ -90,27 +90,42 @@ Where the BibTex entries are:
 Installation
 -------------
 
-You need to have `pymultinest`_ and `MultiNest <https://github.com/JohannesBuchner/MultiNest>`_ installed and working.
+However, you need to have `pymultinest`_ and `MultiNest <https://github.com/JohannesBuchner/MultiNest>`_ 
+installed and working.
 
 * `Installation for those two packages only <http://johannesbuchner.github.io/pymultinest-tutorial/install.html#on-your-own-computer>`_
 * `Extensive PyMultiNest, PyAPEMoST, PyCuba installation instructions <http://johannesbuchner.github.io/PyMultiNest/install.html>`_
 
 You need to have `Sherpa`_ or `Xspec`_ installed and its environment loaded.
 
-Install the needed python packages, through your package manager, through pip or easy_install. For example::
+The following commands should not yield any error message::
+
+	$ python -c 'import pymultinest'
+	$ python -c 'import xspec'
+	$ sherpa
+
+Install the required python packages, through your package manager, through pip or easy_install. For example::
 
 	$ yum install ipython python-matplotlib scipy numpy matplotlib
 	$ apt-get install python-numpy python-scipy python-matplotlib ipython
 
 	$ pip install progressbar --user
 
-Then, just download and install bxa as a python package::
+BXA itself can installed directly from PyPI using pip or easy_install::
+
+	$ pip install bxa # --user if you want to install locally
+
+The source code is available from https://github.com/JohannesBuchner/BXA,
+so alternatively you can download and install it::
 
 	$ python setup.py install
 
 Or if you only want to install it for the current user::
 
 	$ python setup.py install --user
+
+Running
+--------------
 
 In *Sherpa*, load the package::
 
@@ -131,9 +146,8 @@ For *Xspec*, start python or ipython::
 	In [2]: import bxa.xspec as bxa
 	
 	In [3]:	bxa.standard_analysis?
-	
-Now you can use bxa.
 
+Now you can use bxa.
 
 .. _pymultinest: http://johannesbuchner.github.io/PyMultiNest/
 
