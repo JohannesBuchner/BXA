@@ -181,8 +181,8 @@ latex_paper_size = 'a4'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'bxa.tex', 'BXA Documentation',
-   'Johannes Buchner', 'manual'),
+  ('index', 'bxa.tex', 'BXA (Bayesian X-ray Analysis) Documentation',
+   'Johannes Buchner', 'howto'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -208,14 +208,12 @@ latex_documents = [
 # If false, no module index is generated.
 #latex_domain_indices = True
 
-file_insertion_enabled = True
-
 # -- Options for manual page output --------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'bxa', 'BXA Documentation',
+    ('index', 'bxa', 'BXA (Bayesian X-ray Analysis) Documentation',
      [u'Johannes Buchner'], 1)
 ]
 
