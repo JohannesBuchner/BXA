@@ -145,10 +145,9 @@ Documentation:
 -------------------------------
 
 .. toctree::
-   xspec-analysis
    sherpa-analysis
+   xspec-analysis
    :maxdepth: -1
-
 
 Indices and tables
 -------------------------------

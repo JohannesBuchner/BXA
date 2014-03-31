@@ -113,10 +113,9 @@ the correct luminosity distribution.
 .. include:: model_discovery.rst
 
 The *qq* function in the *qq* module allows you to create such plots easily, by
-exporting into a file.
+exporting the cumulative functions into a file.
 
-.. automodule:: bxa.sherpa.qq
-	:members: qq_export
+.. autofunction:: bxa.sherpa.qq.qq_export
 
 Refer to the :ref:`accompaning paper <cite>`, which gives an introduction and 
 detailed discussion on the methodology.

@@ -50,14 +50,14 @@ def ADstat(data, model):
 def qq_plot(bins, data, model, markers = [0.2, 1, 2, 5, 10], unit = '', annotate = True):
 	"""
 	Create a quantile-quantile plot for model discovery (deviations in data from model).
-	
+
 	* bins: energies/channel
 	* data: amount observed
 	* model: amount predicted
 	* markers: list of energies/channels (whichever the current plotting xaxis unit)
 	* unit: unit to append to marker
 	* annotate: add information to the plot
-	
+
 	"""
 
 	datac = data.cumsum()
