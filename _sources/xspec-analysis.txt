@@ -73,7 +73,7 @@ For plotting the model parameters found against the data, use these functions.
 Refer to the *standard_analysis* function as an example of how to use them.
 
 
-.. figure:: absorbed-convolved_posterior.pdf
+.. figure:: absorbed-convolved_posterior.*
 	
 	Example of the convolved spectrum with data.
 	For each posterior sample (solution), the parameters are taken and put
@@ -104,7 +104,7 @@ Refer to the *standard_analysis* function as an example of how to use them.
 	
 	It is ok to ignore the colors, this computation is not used otherwise.
 
-.. figure:: absorbed-unconvolved_posterior.pdf
+.. figure:: absorbed-unconvolved_posterior.*
 	
 	Example of the unconvolved spectrum with data.
 	For each posterior sample (solution), the parameters are taken and put
