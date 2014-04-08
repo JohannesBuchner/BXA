@@ -197,14 +197,7 @@
 	<span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
 		<span class="n">parameters</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">thawedpars</span>
 	<span class="n">a</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">analyse</span><span class="o">.</span><span class="n">Analyzer</span><span class="p">(</span><span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span><span class="p">)</span>
-	<span class="k">try</span><span class="p">:</span>
-		<span class="n">modes</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_mode_stats</span><span class="p">()[</span><span class="s">&#39;modes&#39;</span><span class="p">]</span>
-		<span class="n">highestmode</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">modes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s">&#39;local evidence&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-		<span class="n">params</span> <span class="o">=</span> <span class="n">highestmode</span><span class="p">[</span><span class="s">&#39;maximum a posterior&#39;</span><span class="p">]</span>
-	<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-		<span class="k">print</span> <span class="s">&quot;WARNING: modes were not described by MultiNest:&quot;</span><span class="p">,</span> <span class="n">e</span>
-		<span class="k">print</span> <span class="s">&quot;Using last point instead&quot;</span>
-		<span class="n">params</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_best_fit</span><span class="p">()[</span><span class="s">&#39;parameters&#39;</span><span class="p">]</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_best_fit</span><span class="p">()[</span><span class="s">&#39;parameters&#39;</span><span class="p">]</span>
 	<span class="k">for</span> <span class="n">p</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
 		<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
 </div>
