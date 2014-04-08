@@ -147,14 +147,7 @@ def set_best_fit(id=None, otherids=(), parameters = None, outputfiles_basename =
 	if parameters is None:
 		parameters = fit.model.thawedpars
 	a = pymultinest.analyse.Analyzer(n_params = len(parameters), outputfiles_basename = outputfiles_basename)
-	try:
-		modes = a.get_mode_stats()['modes']
-		highestmode = sorted(modes, key=lambda x: x['local evidence'])[0]
-		params = highestmode['maximum a posterior']
-	except Exception as e:
-		print "WARNING: modes were not described by MultiNest:", e
-		print "Using last point instead"
-		params = a.get_best_fit()['parameters']
+	params = a.get_best_fit()['parameters']
 	for p,v in zip(parameters, params):
 		p.val = v
 
