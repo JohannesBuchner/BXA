@@ -65,7 +65,7 @@ See the `code repository page <https://github.com/JohannesBuchner/BXA>`_
 Citing BXA correctly
 ---------------------
 
-Refer to the `accompaning paper <http://inspirehep.net/record/1279863/>`_ which gives introduction and 
+Refer to the `accompaning paper Buchner et al. (2014) <http://www.aanda.org/articles/aa/abs/2014/04/aa22971-13/aa22971-13.html>`_ which gives introduction and 
 detailed discussion on the methodology and its statistical footing.
 
 We suggest giving credit to the developers of Sherpa/Xspec, MultiNest and of this software.
