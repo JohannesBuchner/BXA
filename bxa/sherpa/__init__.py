@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*- 
 
 """
-BXA (Bayesian X-ray Analysis) for Xspec
+BXA (Bayesian X-ray Analysis) for Sherpa
 
-Copyright: Johannes Buchner (C) 2013-2014
+Copyright: Johannes Buchner (C) 2013-2015
 """
 
 import pymultinest
@@ -15,65 +15,7 @@ if 'MAKESPHINXDOC' not in os.environ:
 	from sherpa.stats import Cash, CStat
 
 import numpy
-
-# prior
-def create_uniform_prior_for(parameter):
-	"""
-	Use for location variables (position)
-	The uniform prior gives equal weight in non-logarithmic scale.
-	
-	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex
-	"""
-	spread = (parameter.max - parameter.min)
-	low = parameter.min
-	return lambda x: x * spread + low
-
-def create_jeffreys_prior_for(parameter):
-	"""
-	Use for scale variables (order of magnitude)
-	The Jeffreys prior gives equal weight to each order of magnitude between the
-	minimum and maximum value. Flat in logarithmic scale.
-	
-	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.norm
-
-	It is usually easier to create an ancillary parameter, and link the 
-	actual parameter, like so::
-
-		from sherpa.models.parameter import Parameter
-		lognorm = Parameter(modelname='mycomponent', name='lognorm', val=-5, min=-4*2, max=0)
-		powerlaw.norm = 10**lognorm
-
-	"""
-	low = log10(parameter.min)
-	spread = log10(parameter.max) - log10(parameter.min)
-	return lambda x: 10**(x * spread + low)
-
-
-def create_prior_function(priors = [], parameters = None):
-	"""
-	Combine the prior transformations into a single function for pymultinest.
-
-	:param priors: individual prior transforms to combine into one function.
-		If priors is empty, uniform priors are used on all passed parameters
-	:param parameters: If priors is empty, specify the list of parameters.
-		Uniform priors will be created for them.
-	"""
-
-	functions = []
-	if priors == []:
-		assert parameters is not None, "you need to pass the parameters if you want automatic uniform priors"
-		thawedparmins  = [p.min for p in parameters]
-		thawedparmaxes = [p.max for p in parameters]
-		for low, high, i in zip(thawedparmins, thawedparmaxes, range(ndim)):
-			functions.append(lambda x: x * (high - low) + low)
-	else:
-		functions = priors
-    
-	def prior_function(cube, ndim, nparams):
-		for i in range(ndim):
-			cube[i] = functions[i](cube[i])
-
-	return prior_function
+from priors import *
 
 plot_best = False
 
