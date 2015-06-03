@@ -21,64 +21,7 @@ from xspec import Xset, AllModels, Fit, AllChains, Plot
 import xspec
 import matplotlib.pyplot as plt
 import progressbar
-
-# priors
-def create_uniform_prior_for(model, par):
-	"""
-	Use for location variables (position)
-	The uniform prior gives equal weight in non-logarithmic scale.
-	"""
-	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
-	print '  uniform prior for %s between %f and %f ' % (par.name, pmin, pmax)
-	# TODO: should we use min/max or bottom/top?
-	low = float(pmin)
-	spread = float(pmax - pmin)
-	def uniform_transform(x): return x * spread + low
-	return dict(model=model, index=par._Parameter__index, name=par.name, 
-		transform=uniform_transform, aftertransform=lambda x: x)
-def create_jeffreys_prior_for(model, par):
-	"""
-	Use for scale variables (order of magnitude)
-	The Jeffreys prior gives equal weight to each order of magnitude between the
-	minimum and maximum value. Flat in logarithmic scale
-	"""
-	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
-	# TODO: should we use min/max or bottom/top?
-	#print '  ', par.values
-	print '  jeffreys prior for %s between %e and %e ' % (par.name, pmin, pmax)
-	low = log10(pmin)
-	spread = log10(pmax) - log10(pmin)
-	def log_transform(x): return x * spread + low
-	def log_after_transform(x): return 10**x
-	return dict(model=model, index=par._Parameter__index, name=par.name, 
-		transform=log_transform, aftertransform=log_after_transform)
-
-def create_custom_prior_for(model, par, transform, aftertransform = lambda x: x):
-	"""
-	Pass your own prior weighting transformation
-	"""
-	print '  custom prior for %s' % (par.name)
-	return dict(model=model, index=par._Parameter__index, name=par.name, 
-		transform=transform, aftertransform=aftertransform)
-
-def create_prior_function(transformations):
-	"""
-	Creates a single prior transformation function from parameter transformations
-	"""
-
-	def prior(cube, ndim, nparams):
-		try:
-			for i, t in enumerate(transformations):
-				transform = t['transform']
-				cube[i] = transform(cube[i])
-		except Exception as e:
-			print 'ERROR: Exception in prior function. Faulty transformations specified!'
-			print 'ERROR:', e
-			print i, transformations[i]
-			import sys
-			sys.exit(-126)
-
-	return prior
+from priors import *
 
 def store_chain(chainfilename, transformations, posterior):
 	"""
@@ -352,7 +295,7 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 	if hasattr(progressbar, 'Counter'):
 		widgets += [progressbar.Counter('%5d')]
 	widgets += [progressbar.Bar(), progressbar.ETA()]
-	pbar = progressbar.ProgressBar(widgets, maxval=len(posterior)).start()
+	pbar = progressbar.ProgressBar(widgets=widgets, maxval=len(posterior)).start()
 	for k, row in enumerate(posterior):
 		set_parameters(values=row[:-1], transformations=transformations)
 		if os.path.exists(tmpfilename):
