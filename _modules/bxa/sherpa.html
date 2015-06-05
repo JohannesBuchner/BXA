@@ -34,6 +34,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -49,9 +52,9 @@
 <span class="c"># -*- coding: utf-8 -*- </span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">BXA (Bayesian X-ray Analysis) for Xspec</span>
+<span class="sd">BXA (Bayesian X-ray Analysis) for Sherpa</span>
 
-<span class="sd">Copyright: Johannes Buchner (C) 2013-2014</span>
+<span class="sd">Copyright: Johannes Buchner (C) 2013-2015</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">pymultinest</span>
@@ -62,66 +65,8 @@
 	<span class="kn">from</span> <span class="nn">sherpa.stats</span> <span class="kn">import</span> <span class="n">Cash</span><span class="p">,</span> <span class="n">CStat</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">priors</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="c"># prior</span>
-<div class="viewcode-block" id="create_uniform_prior_for"><a class="viewcode-back" href="../../sherpa-analysis.html#bxa.sherpa.create_uniform_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_uniform_prior_for</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Use for location variables (position)</span>
-<span class="sd">	The uniform prior gives equal weight in non-logarithmic scale.</span>
-<span class="sd">	</span>
-<span class="sd">	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">spread</span> <span class="o">=</span> <span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">max</span> <span class="o">-</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
-	<span class="n">low</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min</span>
-	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">spread</span> <span class="o">+</span> <span class="n">low</span>
-</div>
-<div class="viewcode-block" id="create_jeffreys_prior_for"><a class="viewcode-back" href="../../sherpa-analysis.html#bxa.sherpa.create_jeffreys_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_jeffreys_prior_for</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Use for scale variables (order of magnitude)</span>
-<span class="sd">	The Jeffreys prior gives equal weight to each order of magnitude between the</span>
-<span class="sd">	minimum and maximum value. Flat in logarithmic scale.</span>
-<span class="sd">	</span>
-<span class="sd">	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.norm</span>
-
-<span class="sd">	It is usually easier to create an ancillary parameter, and link the </span>
-<span class="sd">	actual parameter, like so::</span>
-
-<span class="sd">		from sherpa.models.parameter import Parameter</span>
-<span class="sd">		lognorm = Parameter(modelname=&#39;mycomponent&#39;, name=&#39;lognorm&#39;, val=-5, min=-4*2, max=0)</span>
-<span class="sd">		powerlaw.norm = 10**lognorm</span>
-
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">low</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
-	<span class="n">spread</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">max</span><span class="p">)</span> <span class="o">-</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
-	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">spread</span> <span class="o">+</span> <span class="n">low</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="create_prior_function"><a class="viewcode-back" href="../../sherpa-analysis.html#bxa.sherpa.create_prior_function">[docs]</a><span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">priors</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">parameters</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Combine the prior transformations into a single function for pymultinest.</span>
-
-<span class="sd">	:param priors: individual prior transforms to combine into one function.</span>
-<span class="sd">		If priors is empty, uniform priors are used on all passed parameters</span>
-<span class="sd">	:param parameters: If priors is empty, specify the list of parameters.</span>
-<span class="sd">		Uniform priors will be created for them.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="n">functions</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">if</span> <span class="n">priors</span> <span class="o">==</span> <span class="p">[]:</span>
-		<span class="k">assert</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&quot;you need to pass the parameters if you want automatic uniform priors&quot;</span>
-		<span class="n">thawedparmins</span>  <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">min</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-		<span class="n">thawedparmaxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">max</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-		<span class="k">for</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thawedparmins</span><span class="p">,</span> <span class="n">thawedparmaxes</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">)):</span>
-			<span class="n">functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span> <span class="o">+</span> <span class="n">low</span><span class="p">)</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="n">functions</span> <span class="o">=</span> <span class="n">priors</span>
-    
-	<span class="k">def</span> <span class="nf">prior_function</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">nparams</span><span class="p">):</span>
-		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
-			<span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">functions</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-	<span class="k">return</span> <span class="n">prior_function</span>
-</div>
 <span class="n">plot_best</span> <span class="o">=</span> <span class="bp">False</span>
 
 <div class="viewcode-block" id="nested_run"><a class="viewcode-back" href="../../sherpa-analysis.html#bxa.sherpa.nested_run">[docs]</a><span class="k">def</span> <span class="nf">nested_run</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">prior</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> 
@@ -282,6 +227,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
