@@ -7,7 +7,7 @@ with open('README.rst') as f:
 	long_description = f.read()
 
 setup(name='bxa',
-	version='1.0',
+	version='2.0',
 	author='Johannes Buchner',
 	url='https://github.com/JohannesBuchner/BXA/',
 	author_email='johannes.buchner.acad@gmx.com',
