@@ -50,7 +50,7 @@ def create_gaussian_prior_for(model, parameter, mean, std):
 	"""
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
 	rv = scipy.stats.norm(1.9, 0.15)
-	def gauss_transform: 
+	def gauss_transform(x): 
 		return min(pmin, max(pmax, rv.ppf(x)))
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=gauss_transform, aftertransform=lambda x: x)
