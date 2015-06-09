@@ -2,12 +2,14 @@
 
 from distutils.core import setup
 
-long_description = ''
-with open('README.rst') as f:
-	long_description = f.read()
+try:
+	with open('README.rst') as f:
+		long_description = f.read()
+except IOError:
+	long_description = ''
 
 setup(name='bxa',
-	version='2.0',
+	version='2.1',
 	author='Johannes Buchner',
 	url='https://github.com/JohannesBuchner/BXA/',
 	author_email='johannes.buchner.acad@gmx.com',
