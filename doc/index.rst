@@ -156,7 +156,6 @@ Now you can use bxa.
 .. _Xspec: http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/
 
 
-
 Documentation:
 -------------------------------
 
@@ -164,6 +163,16 @@ Documentation:
    sherpa-analysis
    xspec-analysis
    :maxdepth: -1
+
+Who is using BXA?
+-------------------------------
+
+* Dr. Antonis Georgakakis (MPE, Munich)
+* Dr. Mike Anderson (MPA, Munich)
+* Dr. Franz Bauer (PUC, Santiago)
+* Dr. Stéphane Paltani (ISDC, Geneva)
+* Zhu Liu (NAO, Beijing)
+* 
 
 Indices and tables
 -------------------------------

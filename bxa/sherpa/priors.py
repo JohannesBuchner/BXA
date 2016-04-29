@@ -9,6 +9,7 @@ Copyright: Johannes Buchner (C) 2013-2015
 Priors
 """
 from math import log10, isnan, isinf
+import invgauss
 
 def create_uniform_prior_for(parameter):
 	"""
@@ -20,6 +21,7 @@ def create_uniform_prior_for(parameter):
 	spread = (parameter.max - parameter.min)
 	low = parameter.min
 	return lambda x: x * spread + low
+
 
 def create_jeffreys_prior_for(parameter):
 	"""
@@ -56,7 +58,7 @@ def create_gaussian_prior_for(parameter, mean, std):
 	lo = parameter.min
 	hi = parameter.max
 	f = invgauss.get_invgauss_func(mean, std)
-	return lambda x: min(lo, max(hi, f(x)))
+	return lambda x: max(lo, min(hi, f(x)))
 
 def create_prior_function(priors = [], parameters = None):
 	"""
@@ -83,4 +85,5 @@ def create_prior_function(priors = [], parameters = None):
 			cube[i] = functions[i](cube[i])
 
 	return prior_function
+
 

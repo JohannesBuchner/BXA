@@ -15,7 +15,8 @@ if 'MAKESPHINXDOC' not in os.environ:
 	from sherpa.stats import Cash, CStat
 
 import numpy
-from priors import *
+from .priors import *
+from .galabs import auto_galactic_absorption
 
 plot_best = False
 
@@ -148,5 +149,13 @@ def energy_flux_histogram(distribution, nbins = None):
 	x, y = numpy.histogram(flux_distribution, bins=nbins)
 	return numpy.vstack([y[:-1], y[1:], x]).transpose()
 
+def default_logging():
+	import logging
+	logging.basicConfig(filename='bxa.log',level=logging.DEBUG)
+	logFormatter = logging.Formatter("[%(name)s %(levelname)s]: %(message)s")
+	consoleHandler = logging.StreamHandler()
+	consoleHandler.setFormatter(logFormatter)
+	consoleHandler.setLevel(logging.INFO)
+	logging.getLogger().addHandler(consoleHandler)
 
 

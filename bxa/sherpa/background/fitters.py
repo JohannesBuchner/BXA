@@ -208,11 +208,6 @@ class BackgroundStorage(object):
 Robust fitting strategies for background models
 """
 
-from sherpa.astro.ui import *
-import numpy
-import json
-import logging
-import warnings
 
 logf = logging.getLogger('bxa.Fitter')
 logf.setLevel(logging.INFO)
@@ -242,7 +237,6 @@ class SingleFitter(object):
 		for stage in self.bm.stages:
 			self.prepare_stage(stage=stage)
 			props = self.bm.storage.load_bkg_model()
-			print props['stage']
 			logf.info('Background loaded, stage %s%s' % (stage, '(last)' if self.bm.stages[-1] == stage else '(more to go)'))
 			if stage == props['stage']:
 				break
@@ -251,6 +245,21 @@ class SingleFitter(object):
 		for stage in self.bm.stages:
 			self.prepare_stage(stage=stage)
 			self.fit_stage(stage=stage, plot=plot)
+	
+	#def fit_continue(self, reinit=True, plot=False):
+	#	stages = list(self.bm.stages)
+	#	for stage in self.bm.stages:
+	#		self.prepare_stage(stage=stage)
+	#		try:
+	#			props = self.bm.storage.load_bkg_model()
+	#			logf.info('Background loaded, stage %s%s' % (stage, '(last)' if self.bm.stages[-1] == stage else '(more to go)'))
+	#			stages.pop(0)
+	#			if stage == props['stage']:
+	#				break
+	#	for stage in stages:
+	#		self.prepare_stage(stage=stage)
+	#		self.fit_stage(stage=stage, plot=plot)
+			
 	
 	def prepare_stage(self, stage, prev=None, link=False):
 		i = self.id
@@ -293,24 +302,39 @@ class SingleFitter(object):
 				logf.debug('fit_stage %s of ID=%s (stat: %.3f)... plotting done' % (stage, i, s))
 		logf.info('fit_stage %s of ID=%s' % (stage, i))
 		logf.debug(get_bkg_model(i))
-
-		logf.info('fit_stage %s of ID=%s. rough fit ...' % (stage, i))
-		prev_filter = get_filter(i)
-		group_counts(i, 20)
-		set_stat('chi2gehrels')
-		doplot()
 		
-		normparams = [p for p in self.bm.stagepars if p.name in ['ampl', 'norm']]
-		if normparams:
-			robust_opt(i, normparams)
-		fit_bkg(i)
-		
-		doplot()
-		ungroup(i)
-		ignore()
-		notice(prev_filter)
-		self.stage = stage
-		self.store()
+		if get_bkg(i).counts.sum() > 500:
+			logf.info('fit_stage %s of ID=%s. rough fit ...' % (stage, i))
+			prev_filter = get_filter(i)
+			logf.debug('grouping')
+			group_counts(i, 20)
+			set_stat('chi2gehrels')
+			logf.debug('plotting')
+			doplot()
+			
+			normparams = [p for p in self.bm.stagepars if p.name in ['ampl', 'norm']]
+			if normparams:
+				logf.debug('simple optimization')
+				robust_opt(i, normparams)
+			logf.debug('calling fit_bkg()')
+			fit_bkg(i)
+			
+			logf.debug('plotting')
+			doplot()
+			ungrouping_bug = False
+			logf.debug('ungrouping')
+			try:
+				ungroup(i)
+			except Exception as e:
+				logf.warn('ungrouping failed')
+				ungrouping_bug = True
+			
+			logf.debug('setting filters')
+			ignore()
+			notice(prev_filter)
+			self.stage = stage
+			logf.debug('storing')
+			self.store()
 		
 		logf.info('fit_stage %s of ID=%s.  fine fit ...' % (stage, i))
 		set_method_opt('ftol', 0.001)
@@ -319,8 +343,10 @@ class SingleFitter(object):
 		fit_bkg(i)
 		doplot()
 		logf.info('fit_stage %s of ID=%s.  fitted' % (stage, i))
+		self.stage = stage
 		self.store()
 		logf.info('fit_stage %s of ID=%s.  stage done' % (stage, i))
+		ungroup(i)
 		
 logmf = logging.getLogger('bxa.MultiFitter')
 logmf.setLevel(logging.INFO)

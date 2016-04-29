@@ -11,30 +11,11 @@ import itertools
 import numpy
 import progressbar
 
-"""interpolation code
 """
-from ctypes import cdll, c_int
-from numpy.ctypeslib import ndpointer
-
-lib = cdll.LoadLibrary('npyinterp.so')
-lib.interpolate.argtypes = [
-	ndpointer(dtype=numpy.float64, ndim=1, flags='C_CONTIGUOUS'), 
-	ndpointer(dtype=numpy.float64, ndim=1, flags='C_CONTIGUOUS'), 
-	ndpointer(dtype=numpy.float64, ndim=1, flags='C_CONTIGUOUS'), 
-	c_int, 
-	ndpointer(dtype=numpy.float64, ndim=1, flags='C_CONTIGUOUS'), 
-	ndpointer(dtype=numpy.float64, ndim=1, flags='C_CONTIGUOUS'), 
-	c_int]
-def interp(left, right, x, y):
-	## sherpa-2> %timeit calc_kcorr(z=3, obslo=0.2,obshi=2)
-	## 1000 loops, best of 3: 1.94 ms per loop
-	## (2577 times faster than atable)
-	#print 'using interpolation library', len(left), len(right), len(x), len(y)
-	z = numpy.zeros_like(left) - 1
-	r = lib.interpolate(left, right, z, len(left), x, y, len(x))
-	if r != 0:
-		raise Exception("Interpolation failed")
-	return z
+custom interpolation code, needs
+https://github.com/JohannesBuchner/npyinterp
+"""
+from monointerp import interp
 
 
 """
