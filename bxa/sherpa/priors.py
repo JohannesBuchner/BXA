@@ -9,6 +9,7 @@ Copyright: Johannes Buchner (C) 2013-2015
 Priors
 """
 from math import log10, isnan, isinf
+import numpy
 import invgauss
 
 def create_uniform_prior_for(parameter):
@@ -59,6 +60,32 @@ def create_gaussian_prior_for(parameter, mean, std):
 	hi = parameter.max
 	f = invgauss.get_invgauss_func(mean, std)
 	return lambda x: max(lo, min(hi, f(x)))
+
+def prior_from_file(filename, parameter):
+	"""
+	Read a custom prior distribution from a file.
+	The file should have two columns: cumulative probability
+	and value, in ascii format. The cumulative probability
+	has to be equally spaced and should exclude 0 and 1.
+	
+	Returns a sherpa parameter, a list with that parameter inside,
+	and the prior function.
+	
+	If the file only constains a single value, that value is returned
+	along with two empty lists.
+	"""
+	dist = numpy.loadtxt(filename)
+	if len(dist) == 1:
+		return float(dist), [], []
+	distz = numpy.array(list(dist[:, 1]) + [dist[-1,1]]*2)
+	deltax = dist[1,0] - dist[0,0]
+	n = len(dist)
+	def custom_priorf(x):
+		assert x >= 0
+		assert x <= 1
+		r = distz[x*n] + (distz[x*n + 1] - distz[x*n]) * (x*n - numpy.floor(x*n))
+		return r
+	return parameter, [parameter], [custom_priorf]
 
 def create_prior_function(priors = [], parameters = None):
 	"""

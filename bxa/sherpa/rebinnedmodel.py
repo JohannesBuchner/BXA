@@ -127,12 +127,12 @@ class RebinnedModel(ArithmeticModel):
 			k = int((c - lo) * n / (hi - lo))
 			if k == n: 
 				k = n - 1
-			print '  for param %d: %d/%d -> %d' % (i, k, n, j * n + k)
+			#print '  for param %d: %d/%d -> %d' % (i, k, n, j * n + k)
 			j = j * n + k
-		print 'accessing', j
+		#print 'accessing', j
 		return self.data[j]
 	def calc(self, p, left, right, *args, **kwargs):
-		print '  calc', p
+		#print '  calc', p
 		coords = p[:-2]
 		norm = p[-2]
 		redshift = p[-1]

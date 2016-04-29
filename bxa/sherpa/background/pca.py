@@ -23,7 +23,7 @@ if 'MAKESPHINXDOC' not in os.environ:
 	from sherpa.models.parameter import Parameter
 	from sherpa.models import ArithmeticModel, CompositeModel
 	from sherpa.astro.ui import *
-	from sherpa.astro.instrument import RSPModelNoPHA
+	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
 
 
 def pca(M):
@@ -137,12 +137,31 @@ class IdentityResponse(RSPModelNoPHA):
 		src = self.model.calc(p, self.xlo, self.xhi)
 		return src
 
+class IdentityRMF(RMFModelNoPHA):
+	def __init__(self, n, model, rmf):
+		self.n = n
+		RMFModelNoPHA.__init__(self, rmf=rmf, model=model)
+		self.elo = numpy.arange(n)
+		self.ehi = numpy.arange(n)
+		self.lo = numpy.arange(n)
+		self.hi = numpy.arange(n)
+		self.xlo = numpy.arange(n)
+		self.xhi = numpy.arange(n)
+	def apply_rmf(src):
+		return src
+	def calc(self, p, x, xhi=None, *args, **kwargs):
+		src = self.model.calc(p, self.xlo, self.xhi)
+		return src
+
 def get_identity_response(i):
 	n = get_bkg(i).counts.size
-	arf = get_arf(i)
 	rmf = get_rmf(i)
-	#IdentityResponse(n)
-	return lambda model: IdentityResponse(n, model, arf=arf, rmf=rmf)
+	try:
+		arf = get_arf(i)
+		return lambda model: IdentityResponse(n, model, arf=arf, rmf=rmf)
+	except:
+		return lambda model: IdentityRMF(n, model, rmf=rmf)
+	
 
 
 """
@@ -262,7 +281,7 @@ class PCAFitter(object):
 		logf.info('fit: initial PCA decomposition: %s' % (initial))
 		id = self.id
 		set_method('neldermead')
-		bkgmodel = PCAModel('pca', data=self.pca)
+		bkgmodel = PCAModel('pca%s' % id, data=self.pca)
 		convbkgmodel = get_identity_response(self.id)(bkgmodel)
 		srcmodel = get_model(self.id)
 		set_bkg_full_model(self.id, convbkgmodel)
