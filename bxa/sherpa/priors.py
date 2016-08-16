@@ -75,7 +75,7 @@ def prior_from_file(filename, parameter):
 	along with two empty lists.
 	"""
 	dist = numpy.loadtxt(filename)
-	if len(dist) == 1:
+	if numpy.shape(dist) == ():
 		return float(dist), [], []
 	distz = numpy.array(list(dist[:, 1]) + [dist[-1,1]]*2)
 	deltax = dist[1,0] - dist[0,0]

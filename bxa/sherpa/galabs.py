@@ -23,7 +23,7 @@ def auto_galactic_absorption(id=None):
 	galabso = ui.xstbabs.galabso
 	#galabsmodel = model * galabso
 	galabso.nH = nH / 1e22
-	print('setting galactic nH to %s [units of 1e22/cm²]' % (galabso.nH))
+	print('setting galactic nH to %s [units of 1e22/cm²]' % (galabso.nH.val))
 	galabso.nH.freeze()
 	cgalabso = CachedModel(galabso)
 	#print('returning cached galaxy absorption model')
