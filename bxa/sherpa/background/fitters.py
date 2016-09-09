@@ -346,7 +346,10 @@ class SingleFitter(object):
 		self.stage = stage
 		self.store()
 		logf.info('fit_stage %s of ID=%s.  stage done' % (stage, i))
-		ungroup(i)
+		try:
+			ungroup(i)
+		except Exception as e:
+			logf.warn('ungrouping failed')
 		
 logmf = logging.getLogger('bxa.MultiFitter')
 logmf.setLevel(logging.INFO)
