@@ -23,7 +23,7 @@ class ChandraBackground(BackgroundModel):
 	def __init__(self, storage):
 		self.storage = storage
 		i = self.storage.i
-		centers = [1.486, 1.739, 2.142, 7.478, 8.012, 8.265, 8.4939, 9.7133]
+		self.centers = [1.486, 1.739, 2.142, 7.478, 8.012, 8.265, 8.4939, 9.7133]
 		continuum, softsoftend, softend = box1d('continuum_%s' % i), gauss1d('softsoftend_%s' % i), gauss1d('softend_%s' % i)
 		line1, line2, line3, line4, line5, line6, line7, line8 = [
 			gauss1d('line%d_%s' % (j, i)) for j in range(1, 9)]
@@ -106,7 +106,10 @@ class ChandraBackground(BackgroundModel):
 		contlevel.c0.val = 1e-3
 		softlevel.c0.val = 1e1
 		softsoftlevel.c0.val = 1e1
-		self.stages = ['continuum', 'softfeatures'] + ['line%d' % i for i, line in enumerate(linelines + abslines)] + ['full']
+		self.stages = ['continuum', 'softfeatures'] + ['line%d' % i for i, line in enumerate(self.linelines + self.abslines)] + ['full']
+		self.contlevel = contlevel
+		self.softlevel = softlevel
+		self.softsoftlevel = softsoftlevel
 		
 		
 	def set_zero(self):
@@ -127,6 +130,10 @@ class ChandraBackground(BackgroundModel):
 		withlines = stage > 1
 		logbm.info('stage "%s" for %s ...' % (stage, i))
 		continuum = self.boxes[0]
+		contlevel = self.contlevel
+		softlevel = self.softlevel
+		softsoftlevel = self.softsoftlevel
+		softend, softsoftend = self.softboxes
 		bg_model = continuum * contlevel
 		bunitrsp = self.storage.bunitrsp
 		set_bkg_model(i, bg_model)
@@ -153,7 +160,7 @@ class ChandraBackground(BackgroundModel):
 		if stage == 'softfeatures': 
 			return
 		logbm.debug('adding lines...')
-		for j, l in enumerate(linelines + abslines):
+		for j, l in enumerate(self.linelines + self.abslines):
 			bg_model += l * contlevel
 			set_bkg_model(i, bg_model)
 			set_bkg_full_model(i, bunitrsp(bg_model))
