@@ -118,6 +118,7 @@ class IdentityResponse(CompositeModel, ArithmeticModel):
 		return src
 	def calc(self, p, x, xhi=None, *args, **kwargs):
 		src = self.model.calc(p, self.xlo, self.xhi)
+		assert numpy.isfinite(src).all(), src
 		return src
 
 
@@ -135,6 +136,7 @@ class IdentityResponse(RSPModelNoPHA):
 		return src
 	def calc(self, p, x, xhi=None, *args, **kwargs):
 		src = self.model.calc(p, self.xlo, self.xhi)
+		assert numpy.isfinite(src).all(), src
 		return src
 
 class IdentityRMF(RMFModelNoPHA):
@@ -151,6 +153,7 @@ class IdentityRMF(RMFModelNoPHA):
 		return src
 	def calc(self, p, x, xhi=None, *args, **kwargs):
 		src = self.model.calc(p, self.xlo, self.xhi)
+		assert numpy.isfinite(src).all(), src
 		return src
 
 def get_identity_response(i):
@@ -222,6 +225,32 @@ class PCAModel(ArithmeticModel):
 	def guess(self, dep, *args, **kwargs):
 		self._load_params()
 
+class GaussModel(ArithmeticModel):
+	def __init__(self, modelname):
+		self.LineE = Parameter(modelname=modelname, name='LineE', val=1, min=0, max=1e38)
+		self.Sigma = Parameter(modelname=modelname, name='Sigma', val=1, min=0, max=1e38)
+		self.norm = Parameter(modelname=modelname, name='norm', val=1, min=0, max=1e38)
+		pars = (self.LineE, self.Sigma, self.norm)
+		super(ArithmeticModel, self).__init__(modelname, pars=pars)
+
+	def calc(self, p, left, right, *args, **kwargs):
+		try:
+			LineE, Sigma, norm = p
+			cts = norm * numpy.exp(-0.5 * ((left - LineE)/Sigma)**2)
+			out = cts.cumsum()
+			return cts
+		except Exception as e:
+			print "Exception in PCA model:", e, p
+			raise e
+
+	def startup(self):
+		pass
+
+	def teardown(self):
+		pass
+	def guess(self, dep, *args, **kwargs):
+		self._load_params()
+
 class PCAFitter(object):
 	def __init__(self, id=None):
 		""" 
@@ -274,6 +303,16 @@ class PCAFitter(object):
 		z = z.tolist()[0]
 		return numpy.array([numpy.log10(ncts + 0.1)] + z)
 	
+	def calc_bkg_stat(self):
+		ss = [s for s in get_stat_info() if self.id in s.ids and s.bkg_ids is not None and len(s.bkg_ids) > 0]
+		if len(ss) != 1:
+			for s in get_stat_info():
+				if self.id in s.ids and len(s.bkg_ids) > 0:
+					print 'get_stat_info returned: ids=%s bkg_ids=%s' % (s.ids, s.bkg_ids)
+		
+		assert len(ss) == 1
+		return ss[0].statval
+		
 	def fit(self):
 		# try a PCA decomposition of this spectrum
 		logf.info('fitting background of ID=%s using PCA method' % (self.id))
@@ -282,17 +321,19 @@ class PCAFitter(object):
 		id = self.id
 		set_method('neldermead')
 		bkgmodel = PCAModel('pca%s' % id, data=self.pca)
-		convbkgmodel = get_identity_response(self.id)(bkgmodel)
-		srcmodel = get_model(self.id)
+		self.bkgmodel = bkgmodel
+		response = get_identity_response(self.id)
+		convbkgmodel = response(bkgmodel)
 		set_bkg_full_model(self.id, convbkgmodel)
 		for p, v in zip(bkgmodel.pars, initial):
 			p.val = v
+		srcmodel = get_model(self.id)
 		set_full_model(self.id, srcmodel)
 		fit_bkg(id=self.id)
 		logf.info('fit: first full fit done')
 		final = [p.val for p in get_bkg_model(id).pars]
 		logf.info('fit: parameters: %s' % (final))
-		initial_v = calc_stat(id)
+		initial_v = self.calc_bkg_stat()
 		logf.info('fit: stat: %s' % (initial_v))
 		
 		# lets try from zero
@@ -300,9 +341,11 @@ class PCAFitter(object):
 		for p in bkgmodel.pars:
 			p.val = 0
 		fit_bkg(id=self.id)
-		initial_v0 = calc_stat(id)
+		initial_v0 = self.calc_bkg_stat()
 		logf.info('fit: parameters: %s' % (final))
 		logf.info('fit: stat: %s' % (initial_v0))
+		
+		# pick the better starting point
 		if initial_v0 < initial_v:
 			logf.info('fit: using zero-fit')
 			initial_v = initial_v0
@@ -311,32 +354,128 @@ class PCAFitter(object):
 			logf.info('fit: using decomposed-fit')
 			for p, v in zip(bkgmodel.pars, final):
 				p.val = v
-			
-			
 		
+		# start with the full fit and remove(freeze) parameters
 		print '%d parameters, stat=%.2f' % (len(initial), initial_v)
 		results = [(2 * len(final) + initial_v, final, len(final), initial_v)]
 		for i in range(len(initial)-1, 0, -1):
 			bkgmodel.pars[i].val = 0
 			bkgmodel.pars[i].freeze()
 			fit_bkg(id=self.id)
-			#fit_bkg(id=self.id)
 			final = [p.val for p in get_bkg_model(id).pars]
-			v = calc_stat(id)
-			print i, v
+			v = self.calc_bkg_stat()
+			print '--> %d parameters, stat=%.2f' % (i, v)
 			results.insert(0, (v + 2*i, final, i, v))
+		
 		print
 		print 'Background PCA fitting AIC results:'
 		print '-----------------------------------'
+		print
+		print 'stat Ncomp AIC'
 		for aic, params, nparams, val in results:
 			print '%-05.1f %2d %-05.1f' % (val, nparams, aic)
 		aic, final, nparams, val = min(results)
 		for p, v in zip(bkgmodel.pars, final):
 			p.val = v
+		for i in range(nparams):
+			bkgmodel.pars[i].thaw()
+		
+		print
+		print 'Increasing parameters again...'
+		# now increase the number of parameters again
+		#results = [(aic, final, nparams, val)]
+		last_aic, last_final, last_nparams, last_val = aic, final, nparams, val
+		for i in range(last_nparams, len(bkgmodel.pars)):
+			next_nparams = i + 1
+			bkgmodel.pars[i].thaw()
+			for p, v in zip(bkgmodel.pars, last_final):
+				p.val = v
+			fit_bkg(id=self.id)
+			next_final = [p.val for p in get_bkg_model(id).pars]
+			v = self.calc_bkg_stat()
+			next_aic = v + 2*next_nparams
+			if next_aic < last_aic:
+				# accept
+				print '%d parameters, aic=%.2f ** accepting' % (next_nparams, next_aic)
+				last_aic, last_final, last_nparams, last_val = next_aic, next_final, next_nparams, v
+			else:
+				print '%d parameters, aic=%.2f' % (next_nparams, next_aic)
+			# stop if we are 3 parameters ahead what we needed
+			if next_nparams >= last_nparams + 3:
+				break
+			
+		print 'Final choice: %d parameters, aic=%.2f' % (last_nparams, last_aic)
+		# reset to the last good solution
+		for p, v in zip(bkgmodel.pars, last_final):
+			p.val = v
+		
+		last_model = convbkgmodel
+		for i in range(10):
+			print
+			print 'Adding Gaussian#%d' % (i+1)
+			# find largest discrepancy
+			set_analysis(id, "ener", "rate")
+			m = get_bkg_fit_plot(id)
+			y = m.dataplot.y.cumsum()
+			z = m.modelplot.y.cumsum()
+			diff_rate = numpy.abs(y - z)
+			set_analysis(id, "ener", "counts")
+			m = get_bkg_fit_plot(id)
+			x = m.dataplot.x
+			y = m.dataplot.y.cumsum()
+			z = m.modelplot.y.cumsum()
+			diff = numpy.abs(y - z)
+			i = numpy.argmax(diff)
+			energies = x
+			e = x[i]
+			print 'largest remaining discrepancy at %.3f[%d], need %d counts' % (x[i], i, diff[i])
+			#e = x[i]
+			power = diff_rate[i]
+			# lets try to inject a gaussian there
+		
+			g = xsgaussian('g_%d_1' % id)
+			print 'placing gaussian at %d, with power %s' % (e, power)
+			# we work in energy bins, not energy
+			g.LineE.min = energies[0]
+			g.LineE.max = energies[-1]
+			g.LineE.val = e
+			g.Sigma.min = (x[i + 1] - x[i - 1])/3
+			g.Sigma.max = x[-1] - x[0]
+			g.Sigma = (x[i + 1] - x[i - 1])
+			g.norm.min = power * 1e-6
+			g.norm.val = power
+			convbkgmodel2 = get_response(id)(g)
+			next_model = last_model + convbkgmodel2
+			set_bkg_full_model(self.id, next_model)
+			fit_bkg(id=self.id)
+			next_final = [p.val for p in get_bkg_model(id).pars]
+			next_nparams = len(next_final)
+			v = self.calc_bkg_stat()
+			next_aic = v + 2 * next_nparams
+			print 'with Gaussian:', next_aic, '; change: %.1f (negative is good)' % (next_aic - last_aic)
+			if next_aic < last_aic:
+				print 'accepting'
+				last_model = next_model
+				last_aic, last_final, last_nparams, last_val = next_aic, next_final, next_nparams, v
+			else:
+				print 'not significant, rejecting'
+				set_bkg_full_model(self.id, last_model)
+				for p, v in zip(last_model.pars, last_final):
+					p.val = v
+				break
+			
+		
+		
 	
 def auto_background(id):
 	bkgmodel = PCAFitter(id)
-	bkgmodel.fit()
+	log_sherpa = logging.getLogger('sherpa.astro.ui.utils')
+	prev_level = log_sherpa.level
+	try:
+		log_sherpa.setLevel(logging.WARN)
+		bkgmodel.fit()
+	finally:
+		log_sherpa.setLevel(prev_level)
 	m = get_bkg_fit_plot(id)
 	numpy.savetxt('test_bkg.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
 	return get_bkg_model(id)
