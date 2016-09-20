@@ -194,7 +194,7 @@ class PCAModel(ArithmeticModel):
 		self.ilo = data['ilo']
 		self.ihi = data['ihi']
 		
-		p0 = Parameter(modelname=modelname, name='lognorm', val=1, min=-3, max=7,
+		p0 = Parameter(modelname=modelname, name='lognorm', val=1, min=-5, max=20,
 			hard_min=-100, hard_max=100)
 		pars = [p0]
 		for i in range(len(self.s)):
