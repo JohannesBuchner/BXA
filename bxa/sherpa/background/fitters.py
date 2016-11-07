@@ -306,7 +306,10 @@ class SingleFitter(object):
 		fit_bkg(i)
 		
 		doplot()
-		ungroup(i)
+		try:
+			ungroup(i)
+		except Exception as e:
+			logf.warn('ungrouping failed')
 		ignore()
 		notice(prev_filter)
 		self.stage = stage
