@@ -256,7 +256,7 @@ def get_pn_bkg_model(i, galabs, fit=False):
         print ' '
     return pnscale*(pnbunitrsp(pncons*(pnspline1*pnexpdec + pnsmedge1*pnsmedge2*(pnspline2*pnbkpl + 
 			pngau1 + pngau2 + pngau3 + pngau4 + pngau5 + pngau6 + pngau7 + pngau8 + pngau9 + 
-			pngau10 + pngau11))) + pnbrsp(absgal*(pnapec+pnpnexpl)+pnlcapec))
+			pngau10 + pngau11))) + pnbrsp(galabs*(pnapec+pnpnexpl)+pnlcapec))
 
 
 def get_mos_bkg_model(i, galabs, fit=False):
@@ -434,6 +434,6 @@ def get_mos_bkg_model(i, galabs, fit=False):
         print 'MOS background model set up'
         print ' '
     return mosscale*(mosbunitrsp(moscons*mossmedge*mosspline*mosbknpl + mosgau1 + mosgau2 + mosgau3 + 
-        		mosgau4 + mosgau5 + mosgau6 + mosgau7) + mosbrsp(absgal*(mosapec+mosexpl)+moslcapec))
+        		mosgau4 + mosgau5 + mosgau6 + mosgau7) + mosbrsp(galabs*(mosapec+mosexpl)+moslcapec))
 
 

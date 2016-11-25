@@ -58,10 +58,10 @@ set_model(2, inner_model)
 # add the background to the source spectrum
 # use caching to make background fast (is fixed at this point anyways)
 from bxa.sherpa.cachedmodel import CachedModel
-set_bkg_full_model(1, cachedmodel.CachedModel(get_bkg_model(1,1)))
-set_full_model(1,pnrsp(inner_model) + cachedmodel.CachedModel(pnbkgmodel))
-set_bkg_full_model(2, cachedmodel.CachedModel(get_bkg_model(2,1)))
-set_full_model(2, mosrsp(inner_model) + cachedmodel.CachedModel(mosbkgmodel))
+set_bkg_full_model(1, CachedModel(get_bkg_model(1,1)))
+set_full_model(1, get_response(1)(inner_model) + CachedModel(mosbkgmodel))
+set_bkg_full_model(2, CachedModel(get_bkg_model(2,1)))
+set_full_model(2, get_response(2)(inner_model) + CachedModel(pnbkgmodel))
 
 
 # now run BXA, fitting etc.

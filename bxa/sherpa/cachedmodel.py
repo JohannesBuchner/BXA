@@ -26,7 +26,6 @@ class VariableCachedModel(CompositeModel, ArithmeticModel):
 	
 	def calc(self, p, left, right, *args, **kwargs):
 		if self.cache is None or self.lastp != p:
-			print '   recomputing cached model ... '
 			self.cache = self.othermodel.calc(p, left, right, *args, **kwargs)
 			self.lastp = p
 		return self.cache
@@ -47,15 +46,12 @@ class CachedModel(CompositeModel, ArithmeticModel):
 	def __init__(self, othermodel):
 		self.othermodel = othermodel
 		self.cache = None
-		self.lastp = None
-		print 'calling CompositeModel...'
 		CompositeModel.__init__(self, name='cached(%s)' % othermodel.name, parts=(othermodel,))
 	
-	def calc(self, p, left, right, *args, **kwargs):
-		if self.cache is None or (self.lastp != p).any():
-			print '   recomputing cached model ... '
-			self.cache = self.othermodel.calc(p, left, right, *args, **kwargs)
-			self.lastp = left
+	def calc(self, *args, **kwargs):
+		if self.cache is None:
+			print '   computing cached model ... '
+			self.cache = self.othermodel.calc(*args, **kwargs)
 		return self.cache
 
 	def startup(self):
