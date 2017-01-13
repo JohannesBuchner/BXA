@@ -444,7 +444,7 @@ class PCAFitter(object):
 			g.Sigma = (x[i + 1] - x[i - 1])
 			g.norm.min = power * 1e-6
 			g.norm.val = power
-			convbkgmodel2 = get_response(id)(g)
+			convbkgmodel2 = response(g)
 			next_model = last_model + convbkgmodel2
 			set_bkg_full_model(self.id, next_model)
 			fit_bkg(id=self.id)
