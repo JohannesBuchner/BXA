@@ -433,7 +433,7 @@ class PCAFitter(object):
 			power = diff_rate[i]
 			# lets try to inject a gaussian there
 		
-			g = xsgaussian('g_%d_1' % id)
+			g = xsgaussian('g_%d_%d' % (id, i))
 			print 'placing gaussian at %d, with power %s' % (e, power)
 			# we work in energy bins, not energy
 			g.LineE.min = energies[0]
