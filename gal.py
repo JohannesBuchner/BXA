@@ -33,9 +33,19 @@ if __name__ == '__main__':
 		outfile = infile + '.nh'
 		if not os.path.exists(outfile):
 			f = pyfits.open(infile)
-			print('looking for RA_OBJ, DEC_OBJ headers ...')
-			ra  = f[0].header['RA_OBJ']
-			dec = f[0].header['DEC_OBJ']
+			for i in 0, 1:
+				header = f[i].header
+				print('looking for RA, DEC headers ...')
+				if 'RA_OBJ' in header:
+					print('using RA_OBJ, DEC_OBJ headers ...')
+					ra  = header['RA_OBJ']
+					dec = header['DEC_OBJ']
+					break
+				elif 'RA_TARG' in header:
+					print('using RA_TARG, DEC_TARG headers ...')
+					ra  = header['RA_TARG']
+					dec = header['DEC_TARG']
+					break
 			print('requesting galactic NH from swift.ac.uk...')
 			nh = get_gal_nh(ra, dec)
 			print('writing to %s ...' % outfile)
