@@ -154,6 +154,7 @@ class ChandraBackground(BackgroundModel):
 		set_bkg_full_model(i, bunitrsp(bg_model))
 		ignore(None, 0.4)
 		ignore(2., None)
+		notice(0.4, 2)
 		logbm.debug('zooming to %.1f %.1f' % (0.4, 2.))
 		self.stagepars = [softsoftlevel.c0, softlevel.c0, softsoftlevel.c0]
 		self.pars += self.stagepars
@@ -165,9 +166,12 @@ class ChandraBackground(BackgroundModel):
 			set_bkg_model(i, bg_model)
 			set_bkg_full_model(i, bunitrsp(bg_model))
 			if l.ampl.frozen: continue
-			logbm.debug('zooming to %.1f %.1f' % (l.pos.val - 3*l.fwhm.val, l.pos.val + 3*l.fwhm.val))
-			ignore(None, l.pos.val - max(3*l.fwhm.val, 0.2))
-			ignore(l.pos.val + max(3*l.fwhm.val, 0.2), None)
+			lo = l.pos.val - max(3*l.fwhm.val, 0.2)
+			hi = l.pos.val + max(3*l.fwhm.val, 0.2)
+			logbm.debug('zooming to %.1f %.1f' % (lo, hi))
+			ignore(None, lo)
+			ignore(hi, None)
+			notice(lo, hi)
 			self.stagepars = [l.ampl]
 			self.pars += self.stagepars
 			if stage == 'line%d' % j: 

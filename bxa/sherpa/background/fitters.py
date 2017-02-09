@@ -245,6 +245,7 @@ class SingleFitter(object):
 		for stage in self.bm.stages:
 			self.prepare_stage(stage=stage)
 			self.fit_stage(stage=stage, plot=plot)
+		logf.info('Background fit complete.')
 	
 	#def fit_continue(self, reinit=True, plot=False):
 	#	stages = list(self.bm.stages)
