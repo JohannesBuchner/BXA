@@ -49,9 +49,9 @@ def create_gaussian_prior_for(model, parameter, mean, std):
 	The Gaussian prior weights by a Gaussian in the parameter.
 	"""
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
-	rv = scipy.stats.norm(1.9, 0.15)
+	rv = scipy.stats.norm(mean, std)
 	def gauss_transform(x): 
-		return min(pmin, max(pmax, rv.ppf(x)))
+		return max(pmin, min(pmax, rv.ppf(x)))
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=gauss_transform, aftertransform=lambda x: x)
 
