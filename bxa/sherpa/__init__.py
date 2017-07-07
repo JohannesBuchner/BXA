@@ -7,7 +7,8 @@ BXA (Bayesian X-ray Analysis) for Sherpa
 Copyright: Johannes Buchner (C) 2013-2015
 """
 
-import pymultinest
+import pymultinest.run, pymultinest.analyse
+# pymultinest.plot does not work, because scipy/matplotlib does not work in sherpa
 import os
 from math import log10, isnan, isinf
 if 'MAKESPHINXDOC' not in os.environ:
