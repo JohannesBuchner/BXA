@@ -12,6 +12,7 @@ For example usage, see examples/sherpa/background/xmm/fit.py
 
 import os
 from sherpa.astro.ui import *
+import numpy
 
 print """
 
@@ -62,7 +63,6 @@ def get_pn_bkg_model(i, galabs, fit=False):
 
     pnfixwid = [pnbkgline2, pnbkgline3, pnbkgline4, pnbkgline5, pnbkgline6, pnbkgline8, pnbkgline11]
     pnfree = [pnbkgline1, pnbkgline7, pnbkgline9, pnbkgline10]
-    pn_bkg = 'pn_bkg_model' 
 
     #define PN background model
     pn_bkg = pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
@@ -286,8 +286,11 @@ def get_mos_bkg_model(i, galabs, fit=False):
     moscenters = [1.48600, 1.48700, 1.74000, 5.41000, 5.89500, 6.42000, 9.71000]
     moslinewidth = [3.84602E-02, 0.165816, 3.54985E-02, 9.77018E-02, 7.45076E-02, 7.42365E-02, 9.04855E-02]
     moslinenorm = [9.93119E-03, 1.67028E-03, 1.75461E-03, 2.86358E-04, 2.07525E-04, 3.07555E-04, 4.58115E-04]
+    
+    # model component prefix
+    mos = 'mos%s' % i
 
-    mosbkgcons, mosbkgsmedge, mosbkgspline, mosbkgbknpl, mosbkgline1, mosbkgline2, mosbkgline3, mosbkgline4, mosbkgline5, mosbkgline6, mosbkgline7, mosbkgpl, mosbkgapec, mosbkglcapec = (xsconstant.moscons, xssmedge.mossmedge, xsspline.mosspline, xsbknpower.mosbknpl, xsgaussian.mosgau1, xsgaussian.mosgau2, xsgaussian.mosgau3, xsgaussian.mosgau4, xsgaussian.mosgau5, xsgaussian.mosgau6, xsgaussian.mosgau7, xspowerlaw.mosexpl, xsapec.mosapec, xsapec.moslcapec)
+    mosbkgcons, mosbkgsmedge, mosbkgspline, mosbkgbknpl, mosbkgline1, mosbkgline2, mosbkgline3, mosbkgline4, mosbkgline5, mosbkgline6, mosbkgline7, mosbkgpl, mosbkgapec, mosbkglcapec = (xsconstant(mos+'cons'), xssmedge(mos+'smedge'), xsspline(mos+'spline'), xsbknpower(mos+'bknpl'), xsgaussian(mos+'gau1'), xsgaussian(mos+'gau2'), xsgaussian(mos+'gau3'), xsgaussian(mos+'gau4'), xsgaussian(mos+'gau5'), xsgaussian(mos+'gau6'), xsgaussian(mos+'gau7'), xspowerlaw(mos+'expl'), xsapec(mos+'apec'), xsapec(mos+'lcapec'))
 
     moslines = [mosbkgline1, mosbkgline2, mosbkgline3, mosbkgline4, mosbkgline5, mosbkgline6, mosbkgline7] 
     mos_bkg = 'mos_bkg_model'  
@@ -433,7 +436,38 @@ def get_mos_bkg_model(i, galabs, fit=False):
         print ' '
         print 'MOS background model set up'
         print ' '
-    return mosscale*(mosbunitrsp(moscons*mossmedge*mosspline*mosbknpl + mosgau1 + mosgau2 + mosgau3 + 
-        		mosgau4 + mosgau5 + mosgau6 + mosgau7) + mosbrsp(galabs*(mosapec+mosexpl)+moslcapec))
+    
+    return mosscale*(mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
+        mosbkgline2 + mosbkgline3 + mosbkgline4 + mosbkgline5 + mosbkgline6 + mosbkgline7) + 
+        mosbrsp(galabs*(mosbkgapec+mosbkgpl)+mosbkglcapec))
+    
+    #return mosscale*(mosbunitrsp(moscons*mossmedge*mosspline*mosbknpl + mosgau1 + mosgau2 + mosgau3 + 
+    #    		mosgau4 + mosgau5 + mosgau6 + mosgau7) + mosbrsp(galabs*(mosapec+mosexpl)+moslcapec))
+
+def get_mos_bkg_model_cached(i, galabs):
+	filename = get_bkg(i).name + '.bkgpars'
+	if os.path.exists(filename):
+		bkgmodel = get_mos_bkg_model(i, galabs, fit=False)
+		for p, v in zip(bkgmodel.pars, numpy.loadtxt(filename)):
+			p.val = v
+	else:
+		bkgmodel = get_mos_bkg_model(i, galabs, fit=True)
+		numpy.savetxt(filename, [p.val for p in bkgmodel.pars])
+	for p in bkgmodel.pars:
+		p.freeze()
+	return bkgmodel
+	
+def get_pn_bkg_model_cached(i, galabs):
+	filename = get_bkg(i).name + '.bkgpars'
+	if os.path.exists(filename):
+		bkgmodel = get_pn_bkg_model(i, galabs, fit=False)
+		for p, v in zip(bkgmodel.pars, numpy.loadtxt(filename)):
+			p.val = v
+	else:
+		bkgmodel = get_pn_bkg_model(i, galabs, fit=True)
+		numpy.savetxt(filename, [p.val for p in bkgmodel.pars])
+	for p in bkgmodel.pars:
+		p.freeze()
+	return bkgmodel
 
 
