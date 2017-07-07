@@ -428,17 +428,21 @@ class PCAFitter(object):
 			i = numpy.argmax(diff)
 			energies = x
 			e = x[i]
-			print 'largest remaining discrepancy at %.3f[%d], need %d counts' % (x[i], i, diff[i])
+			print 'largest remaining discrepancy at %.3fkeV[%d], need %d counts' % (x[i], i, diff[i])
 			#e = x[i]
 			power = diff_rate[i]
 			# lets try to inject a gaussian there
 		
 			g = xsgaussian('g_%d_%d' % (id, i))
-			print 'placing gaussian at %d, with power %s' % (e, power)
+			print 'placing gaussian at %.2fkeV, with power %s' % (e, power)
 			# we work in energy bins, not energy
 			g.LineE.min = energies[0]
 			g.LineE.max = energies[-1]
 			g.LineE.val = e
+			if i > len(diff) - 2:
+				i = len(diff) - 2
+			if i < 2:
+				i = 2
 			g.Sigma.min = (x[i + 1] - x[i - 1])/3
 			g.Sigma.max = x[-1] - x[0]
 			g.Sigma = (x[i + 1] - x[i - 1])
