@@ -27,7 +27,7 @@ def store_chain(chainfilename, transformations, posterior):
 	"""
 	Writes a MCMC chain file in the same format as the Xspec chain command
 	"""
-	import pyfits
+	import astropy.io.fits as pyfits
 	columns = [pyfits.Column(name='%s__%d' % (t['name'], t['index']), 
 		format='D', array=t['aftertransform'](posterior[:,i]))
 		for i, t in enumerate(transformations)]
@@ -113,7 +113,7 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 0.3
 			sys.exit(-127)
 		return -1e300
 	# run multinest
-	if Fit.statMethod.lower() not in ['cstat', 'cash']:
+	if Fit.statMethod.lower() not in ['cstat', 'cash', 'pstat']:
 		raise RuntimeError('ERROR: not using cash (Poisson likelihood) for Poisson data! set Fit.statMethod to cash before analysing (currently: %s)!' % Fit.statMethod)
 	
 	n_params = len(transformations)
