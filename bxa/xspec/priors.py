@@ -43,15 +43,17 @@ def create_jeffreys_prior_for(model, par):
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=log_transform, aftertransform=log_after_transform)
 
-def create_gaussian_prior_for(model, parameter, mean, std):
+def create_gaussian_prior_for(model, par, mean, std):
 	"""
 	Use for informed variables.
 	The Gaussian prior weights by a Gaussian in the parameter.
 	"""
+	import scipy.stats
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
 	rv = scipy.stats.norm(mean, std)
 	def gauss_transform(x): 
 		return max(pmin, min(pmax, rv.ppf(x)))
+	print '  gaussian prior for %s of %f +- %f' % (par.name, mean, std)
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=gauss_transform, aftertransform=lambda x: x)
 
