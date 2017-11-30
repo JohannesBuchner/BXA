@@ -56,7 +56,7 @@ def create_gaussian_prior_for(parameter, mean, std):
 	lo = parameter.min
 	hi = parameter.max
 	f = invgauss.get_invgauss_func(mean, std)
-	return lambda x: min(lo, max(hi, f(x)))
+	return lambda x: max(lo, min(hi, f(x)))
 
 def create_prior_function(priors = [], parameters = None):
 	"""
