@@ -24,7 +24,6 @@ def create_uniform_prior_for(parameter):
 	low = parameter.min
 	return lambda x: x * spread + low
 
-
 def create_jeffreys_prior_for(parameter):
 	"""
 	Use for scale variables (order of magnitude)
@@ -103,7 +102,7 @@ def create_prior_function(priors = [], parameters = None):
 		assert parameters is not None, "you need to pass the parameters if you want automatic uniform priors"
 		thawedparmins  = [p.min for p in parameters]
 		thawedparmaxes = [p.max for p in parameters]
-		for low, high, i in zip(thawedparmins, thawedparmaxes, list(range(ndim))):
+		for low, high, i in zip(thawedparmins, thawedparmaxes, range(ndim)):
 			functions.append(lambda x: x * (high - low) + low)
 	else:
 		functions = priors
@@ -113,5 +112,4 @@ def create_prior_function(priors = [], parameters = None):
 			cube[i] = functions[i](cube[i])
 
 	return prior_function
-
 
