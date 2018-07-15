@@ -12,7 +12,6 @@ import itertools
 import numpy
 import progressbar
 
-"""interpolation code
 """
 custom interpolation code, needs
 https://github.com/JohannesBuchner/npyinterp
