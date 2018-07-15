@@ -1,7 +1,8 @@
+from __future__ import print_function
 try:
 	import bxa.sherpa as bxa
 	bxa.default_logging()
-	print 'loading background fitting module...'
+	print('loading background fitting module...')
 	from bxa.sherpa.background.pca import auto_background
 
 	# BXA fully supports fitting multiple ids with the usual id=2, otherids=(3,4,5) 
@@ -62,7 +63,7 @@ try:
 	#show_model(id)
 
 	# creating ancillary parameters for logarithmic treatment
-	print 'creating prior functions...'
+	print('creating prior functions...')
 	from sherpa.models.parameter import Parameter
 	srclevel = Parameter('src', 'level', numpy.log10(src.norm.val), -8, 2, -8, 2)
 	srcnh = Parameter('src', 'nh', numpy.log10(abso.nH.val)+22, 19, 24, 19, 24)
@@ -88,7 +89,7 @@ try:
 		otherids = (id2,)
 
 	priorfunction = bxa.create_prior_function(priors = priors)
-	print 'running BXA ...'
+	print('running BXA ...')
 	bxa.nested_run(id, otherids=otherids, prior=priorfunction, parameters = parameters, 
 		resume = True, verbose=True, 
 		outputfiles_basename = 'wabs_noz_',
@@ -108,7 +109,7 @@ try:
 
 
 except Exception as e:
-	print 'ERROR:', e
+	print('ERROR:', e)
 	exit()
 
 

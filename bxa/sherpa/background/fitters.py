@@ -12,6 +12,7 @@ and then fitting each stage
 
 """
 
+from __future__ import print_function
 from sherpa.astro.ui import *
 import numpy
 import json
@@ -137,7 +138,7 @@ def robust_opt(i, params):
 		logi.info('        robust_opt: no good fit found: %.3f' % beststat)
 		if False:
 			plot_bkg_fit_resid(i)
-			print 'press ENTER to continue >> ',
+			print('press ENTER to continue >> ', end=' ')
 			sys.stdin.readline()
 	
 	logi.debug('        robust_opt: my optimization end ---')

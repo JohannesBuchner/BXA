@@ -1,6 +1,7 @@
+from __future__ import print_function
 
 import bxa.sherpa as bxa
-print 'loading background fitting module...'
+print('loading background fitting module...')
 from bxa.sherpa.background.fitters import SingleFitter
 import bxa.sherpa.background.xmm
 
@@ -32,7 +33,7 @@ ignore(None, 0.3)
 ignore(10.0, None)
 mosbkgmodel = bxa.sherpa.background.xmm.get_mos_bkg_model(i, galabs, fit=True)
 
-print 'freezing MOS background parameters...'
+print('freezing MOS background parameters...')
 for p in get_bkg_model(i).pars:
 	p.freeze()
 
@@ -46,7 +47,7 @@ ignore(None, 0.3)
 ignore(10.0, None)
 pnbkgmodel = bxa.sherpa.background.xmm.get_pn_bkg_model(i, galabs, fit=True)
 
-print 'freezing PN background parameters...'
+print('freezing PN background parameters...')
 for p in get_bkg_model(i).pars:
 	p.freeze()
 

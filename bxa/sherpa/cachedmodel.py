@@ -8,6 +8,7 @@ Copyright: Johannes Buchner (C) 2013-2016
 """
 
 import os
+from __future__ import print_function
 from math import log10, isnan, isinf
 if 'MAKESPHINXDOC' not in os.environ:
 	import sherpa.astro.ui as ui
@@ -21,7 +22,7 @@ class VariableCachedModel(CompositeModel, ArithmeticModel):
 		self.othermodel = othermodel
 		self.cache = None
 		self.lastp = None
-		print 'calling CompositeModel...'
+		print('calling CompositeModel...')
 		CompositeModel.__init__(self, name='cached(%s)' % othermodel.name, parts=(othermodel,))
 	
 	def calc(self, p, left, right, *args, **kwargs):
@@ -50,7 +51,7 @@ class CachedModel(CompositeModel, ArithmeticModel):
 	
 	def calc(self, *args, **kwargs):
 		if self.cache is None:
-			print '   computing cached model ... '
+			print('   computing cached model ... ')
 			self.cache = self.othermodel.calc(*args, **kwargs)
 		return self.cache
 

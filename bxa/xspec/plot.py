@@ -5,6 +5,7 @@
 Plotting of posterior parameter marginal distributions
 """
 
+from __future__ import print_function
 import numpy
 from numpy import exp, log
 import matplotlib.pyplot as plt
@@ -22,7 +23,7 @@ def marginal_plots(analyzer, d=None):
 	"""
 	prefix = analyzer.outputfiles_basename
 	n_params = analyzer.n_params
-	parameters = json.load(file(prefix + 'params.json'))
+	parameters = json.load(open(prefix + 'params.json'))
 	a = analyzer
 	s = a.get_stats()
 
@@ -83,8 +84,8 @@ def marginal_plots(analyzer, d=None):
 		plt.close()
 	else:
 		from matplotlib.backends.backend_pdf import PdfPages
-		print '1dimensional only. Set the D environment variable D=2 to force'
-		print '2d marginal plots.'
+		print('1dimensional only. Set the D environment variable D=2 to force')
+		print('2d marginal plots.')
 		pp = PdfPages(prefix + 'marg1d.pdf')
 	
 		for i in range(n_params):
@@ -106,7 +107,7 @@ def marginal_plots(analyzer, d=None):
 			y = ylim[0] + 0.05*(ylim[1] - ylim[0])
 			center = m['median']
 			low1, high1 = m['1sigma']
-			print center, low1, high1
+			print(center, low1, high1)
 			newax.errorbar(x=center, y=y,
 				xerr=numpy.transpose([[center - low1, high1 - center]]), 
 				color='blue', linewidth=2, marker='s')

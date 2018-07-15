@@ -4,6 +4,7 @@ Precomputes a interpolated grid model from a complex model.
 That model can then be used for fast access.
 """
 
+from __future__ import print_function
 from sherpa.astro.ui import *
 from sherpa.models.parameter import Parameter
 from sherpa.models import ArithmeticModel
@@ -66,14 +67,14 @@ class RebinnedModel(ArithmeticModel):
 			alldata = numpy.load(filename)
 			data = alldata['y']
 			assert numpy.allclose(alldata['x'], ebins), 'energy binning differs -- plese delete "%s"' % filename
-			print 'loaded from %s' % filename
+			print('loaded from %s' % filename)
 		except IOError:
-			print 'creating rebinnedmodel, this might take a while'
-			print 'interpolation setup:'
-			print '   energies:', ebins[0], ebins[1], '...', ebins[-2], ebins[-1]
+			print('creating rebinnedmodel, this might take a while')
+			print('interpolation setup:')
+			print('   energies:', ebins[0], ebins[1], '...', ebins[-2], ebins[-1])
 			for (param, nbins), bin in zip(parameters, bins):
-				print '   %s: %s - %s with %d points' % (param.fullname, param.min, param.max, nbins)
-				print '        ', bin
+				print('   %s: %s - %s with %d points' % (param.fullname, param.min, param.max, nbins))
+				print('        ', bin)
 		
 			data = numpy.zeros((ntot, len(ebins)-1))
 			pbar = progressbar.ProgressBar(widgets=[progressbar.Percentage(), progressbar.Counter('%5d'), progressbar.Bar(), progressbar.ETA()],
@@ -91,7 +92,7 @@ class RebinnedModel(ArithmeticModel):
 				data[j] = model
 				# (modelcum * width).cumsum()
 			pbar.finish()
-			print 'model created. storing to %s' % filename
+			print('model created. storing to %s' % filename)
 			numpy.savez(filename, x=ebins, y=data)
 		self.init(modelname=modelname, x=ebins, data=data, parameters=parameters) 
 	

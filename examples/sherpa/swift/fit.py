@@ -1,5 +1,6 @@
+from __future__ import print_function
 import bxa.sherpa as bxa
-print 'loading background fitting module...'
+print('loading background fitting module...')
 from bxa.sherpa.background.models import SwiftXRTBackground
 from bxa.sherpa.background.fitters import SingleFitter
 
@@ -23,7 +24,7 @@ ignore(None, 0.5)
 ignore(5, None)
 notice(0.5, 5)
 
-print 'calling singlefitter...'
+print('calling singlefitter...')
 fitter = SingleFitter(id, 'interval0pc', SwiftXRTBackground)
 try:
 	fitter.tryload()
@@ -44,7 +45,7 @@ if os.path.exists('interval0wt.pi'):
 		ignore(5, None)
 		notice(0.5, 5)
 
-		print 'calling singlefitter...'
+		print('calling singlefitter...')
 		fitter = SingleFitter(id2, 'interval0wt3', SwiftXRTBackground)
 		try:
 			fitter.tryload()
@@ -64,13 +65,13 @@ props = json.load(open('index.json'))
 redshift_uncertain = False
 if not (props['z'] > 0) or os.environ.get('USEZ', '1') == '0':
 	redshift_uncertain = True
-	print ('no redshift in index.json', props['z'])
+	print(('no redshift in index.json', props['z']))
 	#exit()
 	#assert False, ('wrong redshift in index.json', props['z'])
 if 'nhgaltot' in props:
 	props['nhgal'] = props['nhgaltot']
 if not 1e18 < props['nhgal'] < 1e24:
-	print ('wrong galNH in index.json', props['nhgal'])
+	print(('wrong galNH in index.json', props['nhgal']))
 	exit()
 	assert False, ('wrong galNH in index.json', props['nhgal'])
 
@@ -120,16 +121,16 @@ sphere2.nH.val = 1e22 / 1e22
 galabso.nH.freeze()
 galabso.nH.val = props['nhgal'] / 1e22
 
-print 'freezing background params'
+print('freezing background params')
 for p in get_bkg_model(id).pars: 
 	p.freeze()
-print get_model(id)
+print(get_model(id))
 if id2:
 	for p in get_bkg_model(id2).pars: 
 		p.freeze()
-	print get_model(id2)
+	print(get_model(id2))
 
-print 'creating prior functions...'
+print('creating prior functions...')
 srclevel = Parameter('src', 'level', numpy.log10(sphere.norm.val), -8, 3, -8, 3)
 srclevel2 = Parameter('src2', 'level', numpy.log10(sphere2.norm.val), -8, 3, -8, 3)
 srcnh = Parameter('src', 'nh', numpy.log10(sphere.nh.val)+22, 20, 26, 20, 26)
@@ -164,7 +165,7 @@ priorfunction = bxa.create_prior_function(priors = priors)
 assert not numpy.isnan(calc_stat(id)), 'NaN on calc_stat, probably a bad RMF/ARF file for PC'
 if id2:
 	assert not numpy.isnan(calc_stat(id2)), 'NaN on calc_stat, probably a bad RMF/ARF file for WT'
-print 'running BXA ...'
+print('running BXA ...')
 outputfiles_basename = 'spherefit3_'
 if not os.path.exists(outputfiles_basename + 'params.json'):
 	bxa.nested_run(id, otherids=otherids, prior=priorfunction, parameters = parameters, 
@@ -172,14 +173,14 @@ if not os.path.exists(outputfiles_basename + 'params.json'):
 		outputfiles_basename = outputfiles_basename)
 
 if os.environ.get('INTERACTIVE', '0') == '1':
-	print 'setting to best fit ...'
+	print('setting to best fit ...')
 	bxa.set_best_fit(id, otherids=otherids, parameters = parameters, outputfiles_basename = outputfiles_basename)
 	no_exit = True
 else:
 	import pymultinest
 	a = pymultinest.analyse.Analyzer(n_params = len(parameters), outputfiles_basename = outputfiles_basename)
 	if not os.path.exists('%sfit.json' % outputfiles_basename):
-		print 'collecting fit plot data'
+		print('collecting fit plot data')
 		set_analysis(id, 'ener', 'counts')
 		group_counts(id, 40)
 		set_stat('chi2gehrels')
@@ -208,7 +209,7 @@ else:
 		set_stat('cstat')
 		json.dump(myplot, open('%sfit.json' % outputfiles_basename, 'w'))
 	if not os.path.exists('%sfit2.json' % outputfiles_basename) and id2:
-		print 'collecting fit2 plot data'
+		print('collecting fit2 plot data')
 		set_analysis(id2, 'ener', 'counts')
 		set_stat('chi2xspecvar')
 		group_counts(id2, 20)
@@ -238,5 +239,5 @@ else:
 		set_stat('cstat')
 		json.dump(myplot, open('%sfit2.json' % outputfiles_basename, 'w'))
 
-	print 'done.'
+	print('done.')
 

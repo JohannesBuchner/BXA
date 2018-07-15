@@ -10,16 +10,17 @@ Written by Zhu Liu, adapted by Torben Simm and Johannes Buchner
 For example usage, see examples/sherpa/background/xmm/fit.py
 """	
 
+from __future__ import print_function
 import os
 from sherpa.astro.ui import *
 import numpy
 
-print """
+print("""
 
 Using XMM empirical background model originally by Richard Sturm.
 Please reference Maggi P., et al., 2014, A&A, 561, AA76.
 
-"""
+""")
 
 
 def get_embedded_file(filename):
@@ -202,38 +203,38 @@ def get_pn_bkg_model(i, galabs, fit=False):
 
     if(fit): #fit bkg 
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl))))
-        print 'Fitting (1/8)...'
+        print('Fitting (1/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 					pnbkgline2))))
-        print 'Fitting (2/8)...'
+        print('Fitting (2/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 					pnbkgline1 + pnbkgline2))))
-        print 'Fitting (3/8)...'
+        print('Fitting (3/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 					pnbkgline1 + pnbkgline2 + pnbkgline7 + pnbkgline8))))
-        print 'Fitting (4/8)...'
+        print('Fitting (4/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 					pnbkgline1 + pnbkgline2 + pnbkgline7 + pnbkgline8 + pnbkgline9 + pnbkgline10))))
-        print 'Fitting (5/8)...'
+        print('Fitting (5/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
         				pnbkgline1 + pnbkgline2 + pnbkgline3 + pnbkgline4 + pnbkgline5 + pnbkgline6 + pnbkgline7 + pnbkgline8 + pnbkgline9 + 
 					pnbkgline10 + pnbkgline11))))
-        print 'Fitting (6/8)...'
+        print('Fitting (6/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 					pnbkgline1 + pnbkgline2 + pnbkgline3 + pnbkgline4 + pnbkgline5 + pnbkgline6 + pnbkgline7 + pnbkgline8 + pnbkgline9 + 
 					pnbkgline10 + pnbkgline11))) + pnbrsp(galabs*(pnbkgapec)))
-        print 'Fitting (7/8)...'
+        print('Fitting (7/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 					pnbkgline1 + pnbkgline2 + pnbkgline3 + pnbkgline4 + pnbkgline5 + pnbkgline6 + pnbkgline7 + pnbkgline8 + pnbkgline9 + 
 					pnbkgline10 + pnbkgline11))) + pnbrsp(galabs*(pnbkgapec+pnbkgpl)))
-        print 'Fitting (8/8)...'
+        print('Fitting (8/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 					pnbkgline1 + pnbkgline2 + pnbkgline3 + pnbkgline4 + pnbkgline5 + pnbkgline6 + pnbkgline7 + pnbkgline8 + pnbkgline9 + 
@@ -243,17 +244,17 @@ def get_pn_bkg_model(i, galabs, fit=False):
         freeze(pnbkgcons, pnbkgspline1, pnbkgexpdec, pnbkgsmedge1, pnbkgsmedge2, pnbkgspline2, pnbkginspl, pnbkgline1, pnbkgline2, 
 					pnbkgline3, pnbkgline4, pnbkgline5, pnbkgline6, pnbkgline7, pnbkgline8, pnbkgline9, pnbkgline10, pnbkgline11, 
 					galabs, pnbkgapec, pnbkgpl, pnbkglcapec)
-        print ' '
-        print 'PN background model set up and fitted'
-        print 'Please double-check that it is a good fit'
-        print ' '
+        print(' ')
+        print('PN background model set up and fitted')
+        print('Please double-check that it is a good fit')
+        print(' ')
     else:
         set_bkg_full_model(i,pnbunitrsp(pnbkgcons*(pnbkgspline1*pnbkgexpdec + pnbkgsmedge1*pnbkgsmedge2*(pnbkgspline2*pnbkginspl + 
 	       pnbkgline1 + pnbkgline2 + pnbkgline3 + pnbkgline4 + pnbkgline5 + pnbkgline6 + pnbkgline7 + pnbkgline8 + pnbkgline9 + 
 	       pnbkgline10 + pnbkgline11))) + pnbrsp(galabs*(pnbkgapec+pnbkgpl)+pnbkglcapec))
-        print ' '
-        print 'PN background model set up'
-        print ' '
+        print(' ')
+        print('PN background model set up')
+        print(' ')
     return pnscale*(pnbunitrsp(pncons*(pnspline1*pnexpdec + pnsmedge1*pnsmedge2*(pnspline2*pnbkpl + 
 			pngau1 + pngau2 + pngau3 + pngau4 + pngau5 + pngau6 + pngau7 + pngau8 + pngau9 + 
 			pngau10 + pngau11))) + pnbrsp(galabs*(pnapec+pnpnexpl)+pnlcapec))
@@ -391,51 +392,51 @@ def get_mos_bkg_model(i, galabs, fit=False):
 
     if(fit): #fit bkg 
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl))
-        print 'Fitting (1/8)...'
+        print('Fitting (1/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline2))
-        print 'Fitting (2/8)...'
+        print('Fitting (2/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline2 + 
 					mosbkgline3))
-        print 'Fitting (3/8)...'
+        print('Fitting (3/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
 					mosbkgline2 + mosbkgline3))
-        print 'Fitting (4/8)...'
+        print('Fitting (4/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
 					mosbkgline2 + mosbkgline3 + mosbkgline4 + mosbkgline5 + mosbkgline6 + mosbkgline7))
-        print 'Fitting (5/8)...'
+        print('Fitting (5/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
 					mosbkgline2 + mosbkgline3 + mosbkgline4 + mosbkgline5 + mosbkgline6 + mosbkgline7) + 
 					mosbrsp(galabs*(mosbkgapec)))
-        print 'Fitting (6/8)...'
+        print('Fitting (6/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
 					mosbkgline2 + mosbkgline3 + mosbkgline4 + mosbkgline5 + mosbkgline6 + mosbkgline7) + 
 					mosbrsp(galabs*(mosbkgapec+mosbkgpl)))
-        print 'Fitting (7/8)...'
+        print('Fitting (7/8)...')
         fit_bkg(i)
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
 					mosbkgline2 + mosbkgline3 + mosbkgline4 + mosbkgline5 + mosbkgline6 + mosbkgline7) + 
 					mosbrsp(galabs*(mosbkgapec+mosbkgpl)+mosbkglcapec))
-        print 'Fitting (8/8)...'
+        print('Fitting (8/8)...')
         fit_bkg(i)
         freeze(mosbkgcons, mosbkgsmedge, mosbkgspline, mosbkgbknpl, mosbkgline1, mosbkgline2, mosbkgline3, 
 					mosbkgline4, mosbkgline5, mosbkgline6, mosbkgline7, mosbkgpl, mosbkgapec, mosbkglcapec)
-        print ' '
-        print 'MOS background model set up and fitted'
-        print 'Please double-check that it is a good fit'
-        print ' '
+        print(' ')
+        print('MOS background model set up and fitted')
+        print('Please double-check that it is a good fit')
+        print(' ')
     else:
         set_bkg_full_model(i,mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
 					mosbkgline2 + mosbkgline3 + mosbkgline4 + mosbkgline5 + mosbkgline6 + mosbkgline7) + 
 					mosbrsp(galabs*(mosbkgapec+mosbkgpl)+mosbkglcapec))
-        print ' '
-        print 'MOS background model set up'
-        print ' '
+        print(' ')
+        print('MOS background model set up')
+        print(' ')
     
     return mosscale*(mosbunitrsp(mosbkgcons*mosbkgsmedge*mosbkgspline*mosbkgbknpl + mosbkgline1 + 
         mosbkgline2 + mosbkgline3 + mosbkgline4 + mosbkgline5 + mosbkgline6 + mosbkgline7) + 

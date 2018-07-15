@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import astropy.io.fits as pyfits
 import requests
@@ -48,9 +49,9 @@ if __name__ == '__main__':
 					break
 			print('requesting galactic NH from swift.ac.uk...')
 			nh = get_gal_nh(ra, dec)
-			print('writing to %s ...' % outfile)
+			print(('writing to %s ...' % outfile))
 			open(outfile, 'w').write("%e\n" % nh)
 		else:
-			print('File %s already exists.' % outfile)
+			print(('File %s already exists.' % outfile))
 
 

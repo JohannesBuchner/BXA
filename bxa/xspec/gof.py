@@ -2,6 +2,7 @@
 Compute poisson-based GOF
 """
 
+from __future__ import print_function
 import sys, os
 import numpy
 import scipy.stats, scipy.special
@@ -22,7 +23,7 @@ def build(options, k):
 
 def gen_choices(cpart, k):
 	nchoices = numpy.prod([len(c) for c in cpart])
-	print ' gen?', k, len(cpart), nchoices
+	print(' gen?', k, len(cpart), nchoices)
 	#print [c for c in build(cpart, k) if c is not None]
 	probs = sum((numpy.prod(c) for c in build(cpart, k) if c is not None))
 	return probs
@@ -41,7 +42,7 @@ def gen_choices(cpart, k):
 	else:
 		probs = sum((numpy.prod(c) for c in build(cpart, k)))
 		
-		for c in xrange(nchoices):
+		for c in range(nchoices):
 			prob = 1
 			kc = 0
 			for cp in cpart:
@@ -53,7 +54,7 @@ def gen_choices(cpart, k):
 				prob *= cp[ci]
 			if kc != k:
 				continue
-			print ' gen!', kc, prob
+			print(' gen!', kc, prob)
 			probs += prob
 	return probs
 
@@ -169,7 +170,7 @@ def write_multigof(filename, data, model, skip_plot_ifeq=None):
 	
 	# plot probabilities
 	plt.subplot(4, 1, 3)
-	colors = dict(zip(sorted(set(stats[:,0])), ['b','g','r','c','m','y','k','w']))
+	colors = dict(list(zip(sorted(set(stats[:,0])), ['b','g','r','c','m','y','k','w'])))
 	for n in sorted(set(stats[:,0])):
 		j = stats[stats[:,0] == n][:,1] * n
 		p = stats[stats[:,0] == n][:,2]
@@ -208,7 +209,7 @@ gof_limit = 2
 
 def write_gof(prefix, gof_avg, gof_total):
 	verdict = ('good' if gof_avg < gof_limit else 'bad')
-	print "%.2f %5s %s"  % (gof_avg, verdict, prefix)
+	print("%.2f %5s %s"  % (gof_avg, verdict, prefix))
 	#file(filename + ".out", 'w').write(str(gof) + "\n")
 	numpy.savetxt(prefix + ".out", [gof_total, gof_avg])
 	file(prefix + ".summary", 'w').write(verdict + "\n")
@@ -228,7 +229,7 @@ if __name__ == '__main__':
 		try:
 			prev_gof, prev_avg = load_gof(filename)
 		except Exception as e:
-			print e
+			print(e)
 			prev_gof, prev_avg = None, None
 		gof_avg = write_multigof(filename, data[:650], model[:650], skip_plot_ifeq=prev_avg)
 		gof = gof_avg * len(data[:650])
@@ -238,7 +239,7 @@ if __name__ == '__main__':
 	gofs = numpy.array(gofs)
 	plt.figure()
 	plt.hist(gofs, bins=numpy.linspace(0,5,21) )
-	print 'good:', (gofs < gof_limit).sum(), (gofs < gof_limit).sum() * 1. / len(gofs)
+	print('good:', (gofs < gof_limit).sum(), (gofs < gof_limit).sum() * 1. / len(gofs))
 	plt.ylabel("number of objects")
 	plt.xlabel("gof")
 	plt.savefig("gof.pdf", bbox_inches='tight')

@@ -1,5 +1,6 @@
+from __future__ import print_function
 import bxa.sherpa as bxa
-print 'loading background fitting module...'
+print('loading background fitting module...')
 from bxa.sherpa.background.models import ChandraBackground
 from bxa.sherpa.background.fitters import SingleFitter
 
@@ -23,7 +24,7 @@ ignore(None, 0.5)
 ignore(8, None)
 notice(0.5, 8)
 
-print 'calling singlefitter...'
+print('calling singlefitter...')
 fitter = SingleFitter(id, '179.pi', ChandraBackground)
 try:
 	fitter.tryload()
@@ -66,12 +67,12 @@ sphere.nH.val = 1e22 / 1e22
 galabso.nH.freeze()
 galabso.nH.val = galnh_value / 1e22
 
-print 'freezing background params'
+print('freezing background params')
 for p in get_bkg_model(id).pars: 
 	p.freeze()
-print get_model(id)
+print(get_model(id))
 
-print 'creating prior functions...'
+print('creating prior functions...')
 srclevel = Parameter('src', 'level', numpy.log10(sphere.norm.val), -8, 3, -8, 3)
 srcnh = Parameter('src', 'nh', numpy.log10(sphere.nh.val)+22, 20, 26, 20, 26)
 galnh = galabso.nH.val
@@ -88,7 +89,7 @@ priors += [bxa.create_gaussian_prior_for(sphere.phoindex, 1.95, 0.15)]
 priors += [bxa.create_uniform_prior_for(srcnh)]
 priorfunction = bxa.create_prior_function(priors = priors)
 assert not numpy.isnan(calc_stat(id)), 'NaN on calc_stat, probably a bad RMF/ARF file for PC'
-print 'running BXA ...'
+print('running BXA ...')
 outputfiles_basename = 'spherefit_'
 
 if not os.path.exists(outputfiles_basename + 'params.json'):
@@ -99,14 +100,14 @@ if not os.path.exists(outputfiles_basename + 'params.json'):
 
 
 if os.environ.get('INTERACTIVE', '0') == '1':
-	print 'setting to best fit ...'
+	print('setting to best fit ...')
 	bxa.set_best_fit(id, parameters = parameters, outputfiles_basename = outputfiles_basename)
 	no_exit = True
 else:
 	import pymultinest
 	a = pymultinest.analyse.Analyzer(n_params = len(parameters), outputfiles_basename = outputfiles_basename)
 	if not os.path.exists('%sfit.json' % outputfiles_basename):
-		print 'collecting fit plot data'
+		print('collecting fit plot data')
 		set_analysis(id, 'ener', 'counts')
 		group_adapt(id, 30)
 		set_stat('chi2gehrels')
@@ -135,5 +136,5 @@ else:
 		set_stat('cstat')
 		json.dump(myplot, open('%sfit.json' % outputfiles_basename, 'w'))
 
-	print 'done.'
+	print('done.')
 

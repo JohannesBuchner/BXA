@@ -8,9 +8,10 @@ Copyright: Johannes Buchner (C) 2013-2015
 
 Priors
 """
+from __future__ import print_function
 from math import log10, isnan, isinf
 import numpy
-import invgauss
+from . import invgauss
 
 def create_uniform_prior_for(parameter):
 	"""
@@ -55,7 +56,7 @@ def create_gaussian_prior_for(parameter, mean, std):
 	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex
 
 	"""
-	import invgauss
+	from . import invgauss
 	lo = parameter.min
 	hi = parameter.max
 	f = invgauss.get_invgauss_func(mean, std)
@@ -102,7 +103,7 @@ def create_prior_function(priors = [], parameters = None):
 		assert parameters is not None, "you need to pass the parameters if you want automatic uniform priors"
 		thawedparmins  = [p.min for p in parameters]
 		thawedparmaxes = [p.max for p in parameters]
-		for low, high, i in zip(thawedparmins, thawedparmaxes, range(ndim)):
+		for low, high, i in zip(thawedparmins, thawedparmaxes, list(range(ndim))):
 			functions.append(lambda x: x * (high - low) + low)
 	else:
 		functions = priors

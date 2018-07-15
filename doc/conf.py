@@ -214,7 +214,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'bxa', 'BXA (Bayesian X-ray Analysis) Documentation',
-     [u'Johannes Buchner'], 1)
+     ['Johannes Buchner'], 1)
 ]
 
 # Example configuration for intersphinx: refer to the Python standard library.

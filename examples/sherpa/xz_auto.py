@@ -1,7 +1,8 @@
+from __future__ import print_function
 try:
 	import bxa.sherpa as bxa
 	bxa.default_logging()
-	print 'loading background fitting module...'
+	print('loading background fitting module...')
 	from bxa.sherpa.background.pca import auto_background
 	from bxa.sherpa.rebinnedmodel import RebinnedModel
 	from sherpa.models.parameter import Parameter
@@ -92,23 +93,23 @@ try:
 		load_table_model("sphere2", os.environ.get('MODELDIR', '/opt/models') + '/sphere0708.fits')
 		srclevel = Parameter('src', 'level', 0, -8, 3, -8, 3)
 		srclevel2 = Parameter('src2', 'level', 0, -8, 3, -8, 3)
-		print 'combining components'
+		print('combining components')
 		model = sphere * galabso
 		model2 = sphere2 * galabso
-		print 'linking parameters'
+		print('linking parameters')
 		sphere.norm = 10**srclevel
 		sphere2.norm = 10**srclevel2
 		srcnh = Parameter('src', 'nH', 22, 20, 26, 20, 26)
 		sphere.nH = 10**(srcnh - 22)
 		sphere2.nH = 10**(srcnh - 22)
-		print 'setting redshift limits'
+		print('setting redshift limits')
 		redshift = Parameter('src', 'z', 0, 0, 10, 0, 10)
 		sphere.redshift.max = 10
 		sphere2.redshift.max = 10
 		sphere.redshift = redshift
 		sphere2.redshift = redshift
 		
-		print 'creating priors'
+		print('creating priors')
 		priors = []
 		parameters = [srclevel, sphere.phoindex, srcnh, redshift]
 		priors += [bxa.create_uniform_prior_for(srclevel)]
@@ -117,7 +118,7 @@ try:
 		priors += [bxa.create_uniform_prior_for(redshift)]
 		
 		if id2:
-			print 'creating priors for second data model'
+			print('creating priors for second data model')
 			parameters += [srclevel2, sphere2.phoindex]
 			priors += [bxa.create_uniform_prior_for(srclevel2)]
 			priors += [bxa.create_gaussian_prior_for(sphere2.phoindex, 1.95, 0.15)]
@@ -164,7 +165,7 @@ try:
 	#################
 	# BXA run
 	priorfunction = bxa.create_prior_function(priors = priors)
-	print 'running BXA ...'
+	print('running BXA ...')
 	prefix = os.environ.get('OUTPREFIX', '') + 'xz_%s_' % object_type
 	bxa.nested_run(id, otherids=otherids, prior=priorfunction, parameters = parameters, 
 		resume = True, verbose=True, 
@@ -185,7 +186,7 @@ try:
 
 
 except Exception as e:
-	print 'ERROR:', e
+	print('ERROR:', e)
 	exit()
 
 

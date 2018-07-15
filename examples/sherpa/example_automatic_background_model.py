@@ -1,7 +1,8 @@
+from __future__ import print_function
 
 import bxa.sherpa as bxa
 bxa.default_logging()
-print 'loading background fitting module...'
+print('loading background fitting module...')
 from bxa.sherpa.background.models import SwiftXRTBackground
 from bxa.sherpa.background.fitters import SingleFitter
 
@@ -13,7 +14,7 @@ load_pha(id, 'interval0pc.pi')
 set_xlog()
 set_ylog()
 
-print 'calling singlefitter...'
+print('calling singlefitter...')
 fitter = SingleFitter(id, 'interval0pc', SwiftXRTBackground)
 try:
 	fitter.tryload()
@@ -21,10 +22,10 @@ except IOError:
 	fitter.fit(plot=True)
 # that is all for the background model -- it has been fitted 
 # or loaded from a previous fit
-print 'freezing background params'
+print('freezing background params')
 for p in get_bkg_model(id).pars: 
 	p.freeze()
-print get_model(id)
+print(get_model(id))
 
 # need to re-initialise energy selection and statistics:
 
@@ -50,11 +51,11 @@ import json
 props = json.load(open('index.json'))
 
 if not (props['z'] > 0):
-	print ('wrong redshift in index.json', props['z'])
+	print(('wrong redshift in index.json', props['z']))
 	exit()
 	assert False
 if not 1e18 < props['nhgal'] < 1e24:
-	print ('wrong galNH in index.json', props['nhgal'])
+	print(('wrong galNH in index.json', props['nhgal']))
 	exit()
 	assert False
 
@@ -75,7 +76,7 @@ galabso.nH.freeze()
 galabso.nH.val = props['nhgal'] / 1e22
 
 # creating ancillary parameters for logarithmic treatment
-print 'creating prior functions...'
+print('creating prior functions...')
 from sherpa.models.parameter import Parameter
 srclevel = Parameter('src', 'level', numpy.log10(src.norm.val), -8, -1, -8, -1)
 srcnh = Parameter('src', 'nh', numpy.log10(abso.nH.val)+22, 19, 24, 19, 24)
@@ -106,7 +107,7 @@ priors += [bxa.create_uniform_prior_for(src.PhoIndex)]
 priors += [bxa.create_uniform_prior_for(srcnh)]
 priors += [limited_19_24] # galnh
 priorfunction = bxa.create_prior_function(priors = priors)
-print 'running BXA ...'
+print('running BXA ...')
 bxa.nested_run(id, prior=priorfunction, parameters = parameters, 
 	resume = True, verbose=True, 
 	outputfiles_basename = 'superfit_')

@@ -11,6 +11,7 @@ and then fitting each stage
 
 
 """
+from __future__ import print_function
 import numpy
 import json
 import logging
@@ -31,13 +32,13 @@ def pca(M):
 	Moffset = M - mean.reshape((1,-1))
 	U, s, Vt = numpy.linalg.svd(Moffset, full_matrices=False)
 	V = Vt.T
-	print 'variance explained:', s**2/len(M)
+	print('variance explained:', s**2/len(M))
 	c = numpy.cumsum(s**2/len(M))
 	c = c / c[-1]
 	for cut in 0.80, 0.90, 0.95, 0.99:
 		idx, = numpy.where(c>cut)
 		n = idx.min() + 1
-		print '  --> need %d components to explain %.2f%%' % (n, cut)
+		print('  --> need %d components to explain %.2f%%' % (n, cut))
 	return U, s, V, mean
 
 def pca_predict(U, s, V, mean):
@@ -58,7 +59,7 @@ def pca_cut_adapt(U, s, V, mean):
 def pca_check(M, U, s, V, mean):
 	# if we use only the first 20 PCs the reconstruction is less accurate
 	Mhat2 = pca_predict(U, s, V, mean)
-	print "Using %d PCs, MSE = %.6G"  % (len(s), numpy.mean((M - Mhat2)**2))
+	print("Using %d PCs, MSE = %.6G"  % (len(s), numpy.mean((M - Mhat2)**2)))
 	return M - Mhat2
 
 def get_unit_response(i):
@@ -77,7 +78,7 @@ def __get_identity_response(i):
 	r = unit_rmf.matrix.reshape((-1,n))
 	m = len(r)
 	r *= 0
-	r[zip(range(n), range(n))] = 1
+	r[list(zip(list(range(n)), list(range(n))))] = 1
 	unit_rmf.matrix = unit_rmf.matrix * 0 + r.flatten()
 	unit_arf.specresp = 0. * unit_arf.specresp + 1.0
 	unit_rmf.energ_lo = numpy.arange(m)
@@ -138,6 +139,36 @@ class IdentityResponse(RSPModelNoPHA):
 		src = self.model.calc(p, self.xlo, self.xhi)
 		assert numpy.isfinite(src).all(), src
 		return src
+
+"""
+class DualIdentityResponse(RSPModelNoPHA):
+	def __init__(self, n, model, arf, rmf, model2):
+		self.n = n
+		self.model2 = model2
+		RSPModelNoPHA.__init__(self, arf=arf, rmf=rmf, model=model)
+		self.elo = numpy.arange(n)
+		self.ehi = numpy.arange(n)
+		self.lo = numpy.arange(n)
+		self.hi = numpy.arange(n)
+		self.xlo = numpy.arange(n)
+		self.xhi = numpy.arange(n)
+	def apply_rmf(self, src):
+		print 'calling apply_rmf', self.model2, src
+		print self.model2.apply_rmf(src)
+		print 'calling to model2 done'
+		return src
+	def calc(self, p, x, xhi=None, *args, **kwargs):
+		print 'calling', self.model, p
+		src = self.model.calc(p, self.xlo, self.xhi)
+		assert numpy.isfinite(src).all(), src
+		print 'calling', self.model2, self.model2.thawedpars
+		src2 = self.model2.calc(self.model2.thawedpars, x, xhi=None, *args, **kwargs)
+		print src2
+		return src
+
+set_full_model(id, DualIdentityResponse(bkg_model.n, bkg_model.model, arf=bkg_model.arf, rmf=bkg_model.rmf, model2=convmodel))
+calc_stat()
+"""
 
 class IdentityRMF(RMFModelNoPHA):
 	def __init__(self, n, model, rmf):
@@ -215,7 +246,7 @@ class PCAModel(ArithmeticModel):
 			out[self.ilo:self.ihi] = cts.cumsum()
 			return out
 		except Exception as e:
-			print "Exception in PCA model:", e, p
+			print("Exception in PCA model:", e, p)
 			raise e
 
 	def startup(self):
@@ -240,7 +271,7 @@ class GaussModel(ArithmeticModel):
 			out = cts.cumsum()
 			return cts
 		except Exception as e:
-			print "Exception in PCA model:", e, p
+			print("Exception in PCA model:", e, p)
 			raise e
 
 	def startup(self):
@@ -282,7 +313,7 @@ class PCAFitter(object):
 		logf.info('loading PCA information from %s' % (filename))
 		data = json.load(open(filename))
 		self.pca = dict()
-		for k, v in data.iteritems():
+		for k, v in data.items():
 			self.pca[k] = numpy.array(v)
 	
 	def decompose(self):
@@ -308,7 +339,7 @@ class PCAFitter(object):
 		if len(ss) != 1:
 			for s in get_stat_info():
 				if self.id in s.ids and len(s.bkg_ids) > 0:
-					print 'get_stat_info returned: ids=%s bkg_ids=%s' % (s.ids, s.bkg_ids)
+					print('get_stat_info returned: ids=%s bkg_ids=%s' % (s.ids, s.bkg_ids))
 		
 		assert len(ss) == 1
 		return ss[0].statval
@@ -356,7 +387,7 @@ class PCAFitter(object):
 				p.val = v
 		
 		# start with the full fit and remove(freeze) parameters
-		print '%d parameters, stat=%.2f' % (len(initial), initial_v)
+		print('%d parameters, stat=%.2f' % (len(initial), initial_v))
 		results = [(2 * len(final) + initial_v, final, len(final), initial_v)]
 		for i in range(len(initial)-1, 0, -1):
 			bkgmodel.pars[i].val = 0
@@ -364,24 +395,24 @@ class PCAFitter(object):
 			fit_bkg(id=self.id)
 			final = [p.val for p in get_bkg_model(id).pars]
 			v = self.calc_bkg_stat()
-			print '--> %d parameters, stat=%.2f' % (i, v)
+			print('--> %d parameters, stat=%.2f' % (i, v))
 			results.insert(0, (v + 2*i, final, i, v))
 		
-		print
-		print 'Background PCA fitting AIC results:'
-		print '-----------------------------------'
-		print
-		print 'stat Ncomp AIC'
+		print()
+		print('Background PCA fitting AIC results:')
+		print('-----------------------------------')
+		print()
+		print('stat Ncomp AIC')
 		for aic, params, nparams, val in results:
-			print '%-05.1f %2d %-05.1f' % (val, nparams, aic)
+			print('%-05.1f %2d %-05.1f' % (val, nparams, aic))
 		aic, final, nparams, val = min(results)
 		for p, v in zip(bkgmodel.pars, final):
 			p.val = v
 		for i in range(nparams):
 			bkgmodel.pars[i].thaw()
 		
-		print
-		print 'Increasing parameters again...'
+		print()
+		print('Increasing parameters again...')
 		# now increase the number of parameters again
 		#results = [(aic, final, nparams, val)]
 		last_aic, last_final, last_nparams, last_val = aic, final, nparams, val
@@ -396,23 +427,23 @@ class PCAFitter(object):
 			next_aic = v + 2*next_nparams
 			if next_aic < last_aic:
 				# accept
-				print '%d parameters, aic=%.2f ** accepting' % (next_nparams, next_aic)
+				print('%d parameters, aic=%.2f ** accepting' % (next_nparams, next_aic))
 				last_aic, last_final, last_nparams, last_val = next_aic, next_final, next_nparams, v
 			else:
-				print '%d parameters, aic=%.2f' % (next_nparams, next_aic)
+				print('%d parameters, aic=%.2f' % (next_nparams, next_aic))
 			# stop if we are 3 parameters ahead what we needed
 			if next_nparams >= last_nparams + 3:
 				break
 			
-		print 'Final choice: %d parameters, aic=%.2f' % (last_nparams, last_aic)
+		print('Final choice: %d parameters, aic=%.2f' % (last_nparams, last_aic))
 		# reset to the last good solution
 		for p, v in zip(bkgmodel.pars, last_final):
 			p.val = v
 		
 		last_model = convbkgmodel
 		for i in range(10):
-			print
-			print 'Adding Gaussian#%d' % (i+1)
+			print()
+			print('Adding Gaussian#%d' % (i+1))
 			# find largest discrepancy
 			set_analysis(id, "ener", "rate")
 			m = get_bkg_fit_plot(id)
@@ -428,13 +459,13 @@ class PCAFitter(object):
 			i = numpy.argmax(diff)
 			energies = x
 			e = x[i]
-			print 'largest remaining discrepancy at %.3fkeV[%d], need %d counts' % (x[i], i, diff[i])
+			print('largest remaining discrepancy at %.3fkeV[%d], need %d counts' % (x[i], i, diff[i]))
 			#e = x[i]
 			power = diff_rate[i]
 			# lets try to inject a gaussian there
 		
 			g = xsgaussian('g_%d_%d' % (id, i))
-			print 'placing gaussian at %.2fkeV, with power %s' % (e, power)
+			print('placing gaussian at %.2fkeV, with power %s' % (e, power))
 			# we work in energy bins, not energy
 			g.LineE.min = energies[0]
 			g.LineE.max = energies[-1]
@@ -443,9 +474,9 @@ class PCAFitter(object):
 				i = len(diff) - 2
 			if i < 2:
 				i = 2
+			g.Sigma = (x[i + 1] - x[i - 1])
 			g.Sigma.min = (x[i + 1] - x[i - 1])/3
 			g.Sigma.max = x[-1] - x[0]
-			g.Sigma = (x[i + 1] - x[i - 1])
 			g.norm.min = power * 1e-6
 			g.norm.val = power
 			convbkgmodel2 = response(g)
@@ -456,13 +487,13 @@ class PCAFitter(object):
 			next_nparams = len(next_final)
 			v = self.calc_bkg_stat()
 			next_aic = v + 2 * next_nparams
-			print 'with Gaussian:', next_aic, '; change: %.1f (negative is good)' % (next_aic - last_aic)
+			print('with Gaussian:', next_aic, '; change: %.1f (negative is good)' % (next_aic - last_aic))
 			if next_aic < last_aic:
-				print 'accepting'
+				print('accepting')
 				last_model = next_model
 				last_aic, last_final, last_nparams, last_val = next_aic, next_final, next_nparams, v
 			else:
-				print 'not significant, rejecting'
+				print('not significant, rejecting')
 				set_bkg_full_model(self.id, last_model)
 				for p, v in zip(last_model.pars, last_final):
 					p.val = v

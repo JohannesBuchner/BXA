@@ -9,7 +9,7 @@ Copyright: Johannes Buchner (C) 2013-2014
 Priors
 """
 
-
+from __future__ import print_function
 from math import log10, isnan, isinf
 
 # priors
@@ -19,7 +19,7 @@ def create_uniform_prior_for(model, par):
 	The uniform prior gives equal weight in non-logarithmic scale.
 	"""
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
-	print '  uniform prior for %s between %f and %f ' % (par.name, pmin, pmax)
+	print('  uniform prior for %s between %f and %f ' % (par.name, pmin, pmax))
 	# TODO: should we use min/max or bottom/top?
 	low = float(pmin)
 	spread = float(pmax - pmin)
@@ -35,7 +35,7 @@ def create_jeffreys_prior_for(model, par):
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
 	# TODO: should we use min/max or bottom/top?
 	#print '  ', par.values
-	print '  jeffreys prior for %s between %e and %e ' % (par.name, pmin, pmax)
+	print('  jeffreys prior for %s between %e and %e ' % (par.name, pmin, pmax))
 	low = log10(pmin)
 	spread = log10(pmax) - log10(pmin)
 	def log_transform(x): return x * spread + low
@@ -53,7 +53,7 @@ def create_gaussian_prior_for(model, par, mean, std):
 	rv = scipy.stats.norm(mean, std)
 	def gauss_transform(x): 
 		return max(pmin, min(pmax, rv.ppf(x)))
-	print '  gaussian prior for %s of %f +- %f' % (par.name, mean, std)
+	print('  gaussian prior for %s of %f +- %f' % (par.name, mean, std))
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=gauss_transform, aftertransform=lambda x: x)
 
@@ -61,7 +61,7 @@ def create_custom_prior_for(model, par, transform, aftertransform = lambda x: x)
 	"""
 	Pass your own prior weighting transformation
 	"""
-	print '  custom prior for %s' % (par.name)
+	print('  custom prior for %s' % (par.name))
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=transform, aftertransform=aftertransform)
 
@@ -76,9 +76,9 @@ def create_prior_function(transformations):
 				transform = t['transform']
 				cube[i] = transform(cube[i])
 		except Exception as e:
-			print 'ERROR: Exception in prior function. Faulty transformations specified!'
-			print 'ERROR:', e
-			print i, transformations[i]
+			print('ERROR: Exception in prior function. Faulty transformations specified!')
+			print('ERROR:', e)
+			print(i, transformations[i])
 			import sys
 			sys.exit(-126)
 
