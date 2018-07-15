@@ -7,27 +7,28 @@ BXA (Bayesian X-ray Analysis) for Xspec
 Copyright: Johannes Buchner (C) 2013-2014
 """
 
+from __future__ import print_function
 import pymultinest
 import os
 import json
 from math import log10, isnan, isinf
 import numpy
 
-import plot
-import qq
-from sinning import binning
+from . import plot
+from . import qq
+from .sinning import binning
 
 from xspec import Xset, AllModels, Fit, AllChains, Plot
 import xspec
 import matplotlib.pyplot as plt
 import progressbar
-from priors import *
+from .priors import *
 
 def store_chain(chainfilename, transformations, posterior):
 	"""
 	Writes a MCMC chain file in the same format as the Xspec chain command
 	"""
-	import pyfits
+	import astropy.io.fits as pyfits
 	columns = [pyfits.Column(name='%s__%d' % (t['name'], t['index']), 
 		format='D', array=t['aftertransform'](posterior[:,i]))
 		for i, t in enumerate(transformations)]
@@ -108,12 +109,12 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 0.3
 			#print "like = %.1f" % l
 			return l
 		except Exception as e:
-			print 'Exception in log_likelihood function: ', e
+			print('Exception in log_likelihood function: ', e)
 			import sys
 			sys.exit(-127)
 		return -1e300
 	# run multinest
-	if Fit.statMethod.lower() not in ['cstat', 'cash']:
+	if Fit.statMethod.lower() not in ['cstat', 'cash', 'pstat']:
 		raise RuntimeError('ERROR: not using cash (Poisson likelihood) for Poisson data! set Fit.statMethod to cash before analysing (currently: %s)!' % Fit.statMethod)
 	
 	n_params = len(transformations)
@@ -123,7 +124,7 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 0.3
 		verbose=verbose, **kwargs)
 	
 	paramnames = [str(t['name']) for t in transformations]
-	json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=4)
+	json.dump(paramnames, open('%sparams.json' % outputfiles_basename, 'w'), indent=4)
 	
 	# store as chain too, and try to load it for error computations
 	analyzer = pymultinest.Analyzer(n_params = len(transformations), 
@@ -219,7 +220,7 @@ def posterior_predictions_convolved(analyzer, transformations,
 		callback = plot_convolved_components, 
 		analyzer = analyzer, transformations = transformations,
 		nsamples = nsamples)
-	results = dict(zip('bins,width,data,error'.split(','), data[0].transpose()))
+	results = dict(list(zip('bins,width,data,error'.split(','), data[0].transpose())))
 	results['models'] = numpy.array(models)
 	return results
 
@@ -329,15 +330,15 @@ def standard_analysis(transformations, outputfiles_basename,
 	"""
 
 	#   run multinest
-	print 'running analysis ...'
+	print('running analysis ...')
 	nested_run(transformations = transformations,
 		outputfiles_basename = outputfiles_basename,
 		**kwargs
 		)
-	print 'running analysis ... done'
+	print('running analysis ... done')
 
 	# analyse results
-	print 'analysing results...'
+	print('analysing results...')
 	analyzer = pymultinest.Analyzer(n_params = len(transformations), 
 		outputfiles_basename = outputfiles_basename)
 	s = analyzer.get_stats()
@@ -346,10 +347,10 @@ def standard_analysis(transformations, outputfiles_basename,
 	
 	#   make marginal plots
 	if 'marginals' not in skipsteps:
-		print 'creating marginal plots...'
+		print('creating marginal plots...')
 		plot.marginal_plots(analyzer)
 	if 'unconvolved' not in skipsteps:
-		print 'creating plot of posterior predictions ...'
+		print('creating plot of posterior predictions ...')
 		plt.figure()
 		posterior_predictions_unconvolved(analyzer, transformations, nsamples = 100)
 		ylim = plt.ylim()
@@ -361,11 +362,11 @@ def standard_analysis(transformations, outputfiles_basename,
 		elif Plot.xAxis == 'channel':
 			plt.xlabel('Channel')
 		plt.ylabel('Counts/s/cm$^2$')
-		print 'saving plot...'
+		print('saving plot...')
 		plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
 		plt.close()
 	if 'convolved' not in skipsteps:
-		print 'creating plot of posterior predictions against data ...'
+		print('creating plot of posterior predictions against data ...')
 		plt.figure()
 		data = posterior_predictions_convolved(analyzer, transformations, nsamples = 100)
 		# plot data
@@ -385,35 +386,35 @@ def standard_analysis(transformations, outputfiles_basename,
 		elif Plot.xAxis == 'channel':
 			plt.xlabel('Channel')
 		plt.ylabel('Counts/s/cm$^2$')
-		print 'saving plot...'
+		print('saving plot...')
 		plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
 		plt.close()
 	
 	if 'qq' not in skipsteps:
-		print 'creating quantile-quantile plot ...'
+		print('creating quantile-quantile plot ...')
 		set_best_fit(analyzer, transformations)
 		plt.figure(figsize=(7,7))
 		qq.qq(analyzer = analyzer, markers = 5, annotate = True)
-		print 'saving plot...'
+		print('saving plot...')
 		plt.savefig(outputfiles_basename + 'qq_model_deviations.pdf', bbox_inches='tight')
 		plt.close()
 	
 	if 'summary' not in skipsteps:
 		#   print out summary
-		print 
-		print 
-		print 'Parameter estimation summary'
-		print '****************************'
-		print 
-		print ' %20s: median, 10%%, q90%% quantile' % ('parameter name')
-		print ' ', '-'*20
+		print() 
+		print() 
+		print('Parameter estimation summary')
+		print('****************************')
+		print() 
+		print(' %20s: median, 10%%, q90%% quantile' % ('parameter name'))
+		print(' ', '-'*20)
 		for t, m in zip(transformations, s['marginals']):
-			print ' %20s: %.3f  %.3f %.3f ' % (t['name'], m['median'], m['q10%'], m['q90%'])
-		print 
-		print ' (for pretty plots, run "multinest_marginals.py %s")' % outputfiles_basename
-		print 
-		print 'Model evidence: ln(Z) = %.2f +- %.2f' % (s['global evidence'], s['global evidence error'])
-		print 
+			print(' %20s: %.3f  %.3f %.3f ' % (t['name'], m['median'], m['q10%'], m['q90%']))
+		print() 
+		print(' (for pretty plots, run "multinest_marginals.py %s")' % outputfiles_basename)
+		print() 
+		print('Model evidence: ln(Z) = %.2f +- %.2f' % (s['global evidence'], s['global evidence error']))
+		print() 
 	
 	return analyzer
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy
 import bxa.sherpa as bxa
 from bxa.sherpa.rebinnedmodel import RebinnedModel
@@ -24,7 +25,7 @@ parameters = [
 fastmodel = RebinnedModel(slowmodel=slowmodel, ebins=ebins, parameters=parameters, filename = 'testmodel.npz', modelname='fastmodel')
 
 set_model(fastmodel)
-print 'plotting ...'
+print('plotting ...')
 ignore(None, 0.5)
 ignore(4, None)
 set_xlog()

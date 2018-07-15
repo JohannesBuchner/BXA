@@ -7,7 +7,9 @@ BXA (Bayesian X-ray Analysis) for Sherpa
 Copyright: Johannes Buchner (C) 2013-2015
 """
 
-import pymultinest
+from __future__ import print_function
+import pymultinest.run, pymultinest.analyse
+# pymultinest.plot does not work, because scipy/matplotlib does not work in sherpa
 import os
 from math import log10, isnan, isinf
 if 'MAKESPHINXDOC' not in os.environ:
@@ -15,7 +17,8 @@ if 'MAKESPHINXDOC' not in os.environ:
 	from sherpa.stats import Cash, CStat
 
 import numpy
-from priors import *
+from .priors import *
+from .galabs import auto_galactic_absorption
 
 plot_best = False
 
@@ -44,10 +47,10 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None,
 	"""
 	fit = ui._session._get_fit(id=id, otherids=otherids)[1]
 
-	if not isinstance(fit.stat, (Cash, CStat)):
+	if False and not isinstance(fit.stat, (Cash, CStat)):
 		raise RuntimeError("Fit statistic must be cash or cstat, not %s" %
 			fit.stat.name)
-    
+	
 	if parameters is None:
 		parameters = fit.model.thawedpars
 	def log_likelihood(cube, ndim, nparams):
@@ -60,9 +63,9 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None,
 			#print "%.1f" % l
 			return l
 		except Exception as e:
-			print 'Exception in log_likelihood function: ', e
+			print('Exception in log_likelihood function: ', e)
 			for i, p in enumerate(parameters):
-				print '    Parameter %10s: %f --> %f [%f..%f]' % (p.fullname, p.val, cube[i], p.min, p.max)
+				print('    Parameter %10s: %f --> %f [%f..%f]' % (p.fullname, p.val, cube[i], p.min, p.max))
 			import sys
 			sys.exit(-127)
 		return -1e300
@@ -78,7 +81,7 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None,
 
 	import json
 	m = ui._session._get_model(id)
-	paramnames = map(lambda x: x.fullname, parameters)
+	paramnames = [x.fullname for x in parameters]
 	json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=2)
 
 def set_best_fit(id=None, otherids=(), parameters = None, outputfiles_basename = 'chains/'):
@@ -110,7 +113,7 @@ def get_distribution_with_fluxes(id=None, otherids=(), lo=None, hi=None, paramet
 	for row in a.get_equal_weighted_posterior():
 		for p, v in zip(parameters, row):
 			p.val = v
-        	r.append(list(row) + [ui._session.calc_photon_flux(lo=lo, hi=hi, id=id), ui._session.calc_energy_flux(lo=lo, hi=hi, id=id)])
+		r.append(list(row) + [ui._session.calc_photon_flux(lo=lo, hi=hi, id=id), ui._session.calc_energy_flux(lo=lo, hi=hi, id=id)])
 	return numpy.array(r)
 
 def get_solutions_plot(id=None, otherids=(), lo=None, hi=None, parameters = None, outputfiles_basename = 'chains/'):
@@ -148,5 +151,13 @@ def energy_flux_histogram(distribution, nbins = None):
 	x, y = numpy.histogram(flux_distribution, bins=nbins)
 	return numpy.vstack([y[:-1], y[1:], x]).transpose()
 
+def default_logging():
+	import logging
+	logging.basicConfig(filename='bxa.log',level=logging.DEBUG)
+	logFormatter = logging.Formatter("[%(name)s %(levelname)s]: %(message)s")
+	consoleHandler = logging.StreamHandler()
+	consoleHandler.setFormatter(logFormatter)
+	consoleHandler.setLevel(logging.INFO)
+	logging.getLogger().addHandler(consoleHandler)
 
 

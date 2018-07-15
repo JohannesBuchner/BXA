@@ -3,6 +3,7 @@ Example of doing BXA in X-spec
 
 Run with python example_advanced_priors.py example-file.fak absorbed-
 """
+from __future__ import print_function
 import sys
 import scipy.stats
 import bxa.xspec as bxa
@@ -77,7 +78,7 @@ analyzer = pymultinest.Analyzer(n_params = len(transformations),
 bxa.plot.marginal_plots(analyzer)
 # print out evidence
 s = analyzer.get_stats()
-print 'Model evidence: ln(Z) = %.2f +- %.2f' % (s['global evidence'], s['global evidence error'])
+print('Model evidence: ln(Z) = %.2f +- %.2f' % (s['global evidence'], s['global evidence error']))
 # store stats
 import json
 json.dump(s, open(outputfiles_basename + 'stats.json', 'w'), indent=4)

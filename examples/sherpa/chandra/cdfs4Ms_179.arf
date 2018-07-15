@@ -1,0 +1,354 @@
+SIMPLE  =                    T / file does conform to FITS standard             BITPIX  =                  -32 / number of bits per data pixel                  NAXIS   =                    0 / number of data axes                            EXTEND  =                    T / FITS dataset may contain extensions            COMMENT   FITS (Flexible Image Transport System) format is defined in 'AstronomyCOMMENT   and Astrophysics', volume 376, page 359; bibcode: 2001A&A...376..359H DATE    = '2012-03-05T23:15:48' / file creation date (YYYY-MM-DDThh:mm:ss UT)   CREATOR = 'addarf 1.2.6'       / s/w task which wrote this dataset              END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             XTENSION= 'BINTABLE'           / binary table extension                         BITPIX  =                    8 / 8-bit bytes                                    NAXIS   =                    2 / 2-dimensional binary table                     NAXIS1  =                   12 / width of table in bytes                        NAXIS2  =                 1918 / number of rows in table                        PCOUNT  =                    0 / size of special data area                      GCOUNT  =                    1 / one data group (required keyword)              TFIELDS =                    3 / number of fields in each row                   TTYPE1  = 'ENERG_LO'           / label for field   1                            TFORM1  = 'E       '           / data format of field: 4-byte REAL              TUNIT1  = 'keV     '           / physical unit of field                         TTYPE2  = 'ENERG_HI'           / label for field   2                            TFORM2  = 'E       '           / data format of field: 4-byte REAL              TUNIT2  = 'keV     '           / physical unit of field                         TTYPE3  = 'SPECRESP'           / label for field   3                            TFORM3  = 'E       '           / data format of field: 4-byte REAL              TUNIT3  = 'cm**2   '           / physical unit of field                         EXTNAME = 'SPECRESP'           / name of this binary table extension            HDUCLASS= 'OGIP    '           / format conforms to OGIP standard               HDUCLAS1= 'RESPONSE'           / dataset relates to spectral response           HDUCLAS2= 'SPECRESP'           / dataset contains spectral response             HDUVERS = '1.1.0   '           / Version of format (OGIP memo CAL/GEN/92-002a)  HDUDOC  = 'OGIP memos CAL/GEN/92-002 & 92-002a' / Documents describing the formaHDUVERS1= '1.0.0   '           / Obsolete - included for backwards compatibilityHDUVERS2= '1.1.0   '           / Obsolete - included for backwards compatibilityTELESCOP= 'CHANDRA '           / mission/satellite name                         INSTRUME= 'ACIS    '           / instrument/detector name                       DETNAM  = 'ACIS-2  '           / specific detector name in use                  FILTER  = 'NONE    '           / filter in use                                  ARFVERSN= '1992a   '           / Obsolete - included for backwards compatibilityPHAFILE = 'UNKNOWN '           / PHA file for which this ARF created            HISTORY This file is made with the ftool addarf 1.2.6                           HISTORY  FITS ARF extension written by WTARF1 1.1.0                             COMMENT File 1 : 12043/source.arf                                               COMMENT Weight:    0.0346                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 2 : 12044/source.arf                                               COMMENT Weight:    0.0266                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 3 : 12045/source.arf                                               COMMENT Weight:    0.0266                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 4 : 12046/source.arf                                               COMMENT Weight:    0.0208                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 5 : 12047/source.arf                                               COMMENT Weight:    0.0027                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 6 : 12048/source.arf                                               COMMENT Weight:    0.0369                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 7 : 12049/source.arf                                               COMMENT Weight:    0.0232                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 8 : 12050/source.arf                                               COMMENT Weight:    0.0079                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File 9 : 12051/source.arf                                               COMMENT Weight:    0.0153                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File10 : 12052/source.arf                                               COMMENT Weight:    0.0295                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File11 : 12053/source.arf                                               COMMENT Weight:    0.0182                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File12 : 12054/source.arf                                               COMMENT Weight:    0.0163                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File13 : 12055/source.arf                                               COMMENT Weight:    0.0215                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File14 : 12123/source.arf                                               COMMENT Weight:    0.0066                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File15 : 12128/source.arf                                               COMMENT Weight:    0.0061                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File16 : 12129/source.arf                                               COMMENT Weight:    0.0206                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File17 : 12135/source.arf                                               COMMENT Weight:    0.0167                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File18 : 12137/source.arf                                               COMMENT Weight:    0.0248                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File19 : 12138/source.arf                                               COMMENT Weight:    0.0103                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File20 : 12213/source.arf                                               COMMENT Weight:    0.0164                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File21 : 12218/source.arf                                               COMMENT Weight:    0.0235                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File22 : 12219/source.arf                                               COMMENT Weight:    0.0090                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File23 : 12220/source.arf                                               COMMENT Weight:    0.0128                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File24 : 12222/source.arf                                               COMMENT Weight:    0.0082                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File25 : 12223/source.arf                                               COMMENT Weight:    0.0269                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File26 : 12227/source.arf                                               COMMENT Weight:    0.0145                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File27 : 12230/source.arf                                               COMMENT Weight:    0.0090                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File28 : 12231/source.arf                                               COMMENT Weight:    0.0066                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File29 : 12232/source.arf                                               COMMENT Weight:    0.0088                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File30 : 12233/source.arf                                               COMMENT Weight:    0.0095                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File31 : 12234/source.arf                                               COMMENT Weight:    0.0131                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File32 : 1672/source.arf                                                COMMENT Weight:    0.0254                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File33 : 2239/source.arf                                                COMMENT Weight:    0.0349                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File34 : 2312/source.arf                                                COMMENT Weight:    0.0330                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File35 : 2313/source.arf                                                COMMENT Weight:    0.0348                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File36 : 2405/source.arf                                                COMMENT Weight:    0.0152                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File37 : 2406/source.arf                                                COMMENT Weight:    0.0075                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File38 : 2409/source.arf                                                COMMENT Weight:    0.0184                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File39 : 441/source.arf                                                 COMMENT Weight:    0.0147                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File40 : 582/source.arf                                                 COMMENT Weight:    0.0347                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File41 : 8591/source.arf                                                COMMENT Weight:    0.0121                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File42 : 8592/source.arf                                                COMMENT Weight:    0.0231                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File43 : 8593/source.arf                                                COMMENT Weight:    0.0132                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File44 : 8594/source.arf                                                COMMENT Weight:    0.0377                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File45 : 8595/source.arf                                                COMMENT Weight:    0.0308                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File46 : 8596/source.arf                                                COMMENT Weight:    0.0307                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File47 : 8597/source.arf                                                COMMENT Weight:    0.0158                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File48 : 9575/source.arf                                                COMMENT Weight:    0.0290                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File49 : 9578/source.arf                                                COMMENT Weight:    0.0103                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File50 : 9593/source.arf                                                COMMENT Weight:    0.0122                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File51 : 9596/source.arf                                                COMMENT Weight:    0.0299                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          COMMENT File52 : 9718/source.arf                                                COMMENT Weight:    0.0132                                                       COMMENT TELESCOP: CHANDRA                                                       COMMENT INSTRUME: ACIS                                                          CREATOR = 'addarf 1.2.6'       / s/w task which wrote this dataset              END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             >™™š>œ(ö<¼4º>œ(ö>ž¸R=Fë2>ž¸R>¡G®=Ô1®>¡G®>£×
+>!€>£×
+>¦ff>^ÃT>¦ff>¨õÃ>Ö4>¨õÃ>«…>½‘H>«…>®{>òÚ>®{>°£×?i>°£×>³33?8úé>³33>µÂ?\î–>µÂ>¸Qì?‚>¸Qì>ºáH?•çÎ>ºáH>½p¤?­@2>½p¤>À  ?Ì	‰>À  >Â\?í“>Â\>Å¸@
+r>Å¸>Ç®@ ç>Ç®>Ê=q@8«…>Ê=q>ÌÌÍ@Tl>ÌÌÍ>Ï\)@C}µ>Ï\)>Ñë…@G³>Ñë…>Ôzá@zäÐ>Ôzá>×
+=@“l°>×
+=>Ù™š@©nž>Ù™š>Ü(ö@Ä6>Ü(ö>Þ¸R@Üü>Þ¸R>áG®@÷€ö>áG®>ã×
+A	{t>ã×
+>æffA‹J>æff>èõÃA(j>èõÃ>ë…A8Gx>ë…>î{ALð'>î{>ð£×A\&>ð£×>ó33Ao|>ó33>õÂA‚Q>õÂ>øQìAŒš>øQì>úáHA˜õX>úáH>ýp¤A¤aú>ýp¤?   A²“F?   ?G®AÀ«?G®?\AÏlé?\?×
+Aß S?×
+?¸Aî…?¸?ffAþ:…?ff?®BË?®?õÃB a?õÃ?
+=q@M¢y?
+=q?…@áâü?…?ÌÍAWG?ÌÍ?{AxI—?{?\)AL*’?\)?£×AL‘Î?£×?ë…APÊ?ë…?33A›íd?33?záA²Ë?zá?ÂA¾B ?Â?
+=AËŒ?
+=?QìA×2!?Qì?™šAáÊy?™š?áHAêrÝ?áH?(öAñ!?(ö?p¤Aút.?p¤?¸RB°–?¸R?   B4ÿ?   ?!G®Bœ?!G®?"\BŠ±?"\?#×
+B$ÑF?#×
+?%¸B-ý?%¸?&ffB6CS?&ff?'®B?i??'®?(õÃBI?(õÃ?*=qBRp0?*=q?+…B\Ï)?+…?,ÌÍBfQ+?,ÌÍ?.{BpÏ?.{?/\)Bz;…?/\)?0£×BrƒÌ?0£×?1ë…B_§µ?1ë…?333BmÏè?333?4záB~ ò?4zá?5ÂB„µ?5Â?7
+=B‰ù?7
+=?8QìBìå?8Qì?9™šB’.2?9™š?:áHB–Qb?:áH?<(öB›çª?<(ö?=p¤B¡ŒÇ?=p¤?>¸RB§,R?>¸R?@  B¬M?@  ?AG®B²ß?AG®?B\B¸QÛ?B\?C×
+B¾7ˆ?C×
+?E¸BÄDK?E¸?FffBÊF}?Fff?G®BÐtë?G®?HõÃBÖ£á?HõÃ?J=qBÝ?J=q?K…Bãdº?K…?LÌÍBéÍ(?LÌÍ?N{Bð4„?N{?O\)Bö˜?O\)?P£×Bý A?P£×?Që…CºW?Që…?S33Cú¢?S33?TzáC4m?Tzá?UÂCU±?UÂ?W
+=C{`?W
+=?XQìCèê?XQì?Y™šC?Y™š?ZáHC,}?ZáH?\(öCX³?\(ö?]p¤Cá?]p¤?^¸RC!Êe?^¸R?`  C$Ð ?`  ?aG®C'ëÙ?aG®?b\C+X?b\?c×
+C.4X?c×
+?e¸C1WÙ?e¸?fffC4hç?fff?g®C7}Ý?g®?hõÃC:N?hõÃ?j=qC=sª?j=q?k…C@dö?k…?lÌÍCC^Ç?lÌÍ?n{CF_Q?n{?o\)CIZ?o\)?p£×CLX(?p£×?që…CONÄ?që…?s33CR>^?s33?tzáCU7z?tzá?uÂCX28?uÂ?w
+=C[(­?w
+=?xQìC^B?xQì?y™šCa‚?y™š?záHCd?záH?|(öCgŽ?|(ö?}p¤CiÝ?}p¤?~¸RCl²J?~¸R?€  Cosƒ?€  ?€£×CrEy?€£×?G®Cu+?G®?ë…CxÊ?ë…?‚\Czý?‚\?ƒ33C}äœ?ƒ33?ƒ×
+C€gi?ƒ×
+?„záCß?„zá?…¸CƒJ÷?…¸?…ÂC„¢ê?…Â?†ffC…ñ+?†ff?‡
+=C‡Al?‡
+=?‡®Cˆ“¤?‡®?ˆQìC‰æv?ˆQì?ˆõÃC‹5\?ˆõÃ?‰™šCŒ‚g?‰™š?Š=qCÑH?Š=q?ŠáHC…?ŠáH?‹…Cb9?‹…?Œ(öC‘Ž‚?Œ(ö?ŒÌÍC’¸´?ŒÌÍ?p¤C“ïÔ?p¤?Ž{C•4>?Ž{?Ž¸RC–x$?Ž¸R?\)C—½Ï?\)?  C˜ý?  ?£×Cš46?£×?‘G®C›k?‘G®?‘ë…Cœ¡6?‘ë…?’\CØ‡?’\?“33CŸƒ?“33?“×
+C ¥?“×
+?”záC¡7e?”zá?•¸C¢K•?•¸?•ÂC£_Ç?•Â?–ffC¤t?–ff?—
+=C¥†À?—
+=?—®C¦š?—®?˜QìC§®¾?˜Qì?˜õÃC¨Ä…?˜õÃ?™™šC©Ùü?™™š?š=qCªêí?š=q?šáHC«÷Þ?šáH?›…C¬ÿ=?›…?œ(öC­ð­?œ(ö?œÌÍC®Ýð?œÌÍ?p¤C¯Í{?p¤?ž{C°½Ñ?ž{?ž¸RC±®ö?ž¸R?Ÿ\)C²Å?Ÿ\)?   C³Šî?   ? £×C´t? £×?¡G®Cµ]à?¡G®?¡ë…C¶I/?¡ë…?¢\C·5¯?¢\?£33C¸"ê?£33?£×
+C¹Ú?£×
+?¤záC¹û¶?¤zá?¥¸CºÞ}?¥¸?¥ÂC»ÁŽ?¥Â?¦ffC¼¡¿?¦ff?§
+=C½p7?§
+=?§®C¾.!?§®?¨QìC¾íá?¨Qì?¨õÃC¿®?¨õÃ?©™šCÀuž?©™š?ª=qCÁ@É?ª=q?ªáHCÂ†?ªáH?«…CÂÐÄ?«…?¬(öCÃ˜r?¬(ö?¬ÌÍCÄ_(?¬ÌÍ?­p¤CÅ$z?­p¤?®{CÅêB?®{?®¸RCÆ´j?®¸R?¯\)CÇ‚<?¯\)?°  CÈN‹?°  ?°£×CÉ¾?°£×?±G®CÉàU?±G®?±ë…CÊ0?±ë…?²\CËR-?²\?³33CËös?³33?³×
+CÌœ?³×
+?´záCÍFs?´zá?µ¸CÍï-?µ¸?µÂCÎ“œ?µÂ?¶ffCÏ:?¶ff?·
+=CÏâù?·
+=?·®CÐŒ5?·®?¸QìCÑ4Þ?¸Qì?¸õÃCÑÙ)?¸õÃ?¹™šCÒx~?¹™š?º=qCÓ?º=q?ºáHCÓ¶ß?ºáH?»…CÔQ?»…?¼(öCÔê=?¼(ö?¼ÌÍCÕƒe?¼ÌÍ?½p¤CÖ»?½p¤?¾{CÖ¶›?¾{?¾¸RC×OF?¾¸R?¿\)C×çÄ?¿\)?À  CØ€!?À  ?À£×CÙì?À£×?ÁG®CÙ‹?ÁG®?Áë…CÚ?Áë…?Â\CÚƒ*?Â\?Ã33CÛÝ?Ã33?Ã×
+CÛÍ?Ã×
+?ÄzáCÛöt?Äzá?Å¸CÜp™?Å¸?ÅÂCÜ»°?ÅÂ?ÆffCÝe?Æff?Ç
+=CÚ3›?Ç
+=?Ç®CÂ§½?Ç®?ÈQìC´4?ÈQì?ÈõÃC°ÿ¯?ÈõÃ?É™šC¶ø‡?É™š?Ê=qC¼}7?Ê=q?ÊáHCÂÆ?ÊáH?Ë…C¼íï?Ë…?Ì(öC»d²?Ì(ö?ÌÌÍC¼7?ÌÌÍ?Íp¤C¾&?Íp¤?Î{C¿€C?Î{?Î¸RCÂÕB?Î¸R?Ï\)CÄ?Ï\)?Ð  CÃrÅ?Ð  ?Ð£×CÂxß?Ð£×?ÑG®CÂ Ü?ÑG®?Ñë…CÂ¯?Ñë…?Ò\CÃ)n?Ò\?Ó33CÃ÷R?Ó33?Ó×
+CÅ¿?Ó×
+?ÔzáCÇ^}?Ôzá?Õ¸CÇâ%?Õ¸?ÕÂCÇóL?ÕÂ?ÖffCÇá&?Öff?×
+=CÇÎå?×
+=?×®CÇ¿I?×®?ØQìCÇ«Ž?ØQì?ØõÃCÈL5?ØõÃ?Ù™šCÈû¯?Ù™š?Ú=qCÉ÷$?Ú=q?ÚáHCÊƒ:?ÚáH?Û…CËø?Û…?Ü(öCËÁo?Ü(ö?ÜÌÍCÌ/ö?ÜÌÍ?Ýp¤CÌ¤Ò?Ýp¤?Þ{CÍl?Þ{?Þ¸RCÍ56?Þ¸R?ß\)CÍj¡?ß\)?à  CÍ û?à  ?à£×CÍõ›?à£×?áG®CÎJ»?áG®?áë…CÎûO?áë…?â\CÏ¦o?â\?ã33CÐø?ã33?ã×
+CÐqN?ã×
+?äzáCÐøÇ?äzá?å¸CÑ%5?å¸?åÂCÑK?åÂ?æffCÑpÝ?æff?ç
+=CÑ¥ñ?ç
+=?ç®CÑé8?ç®?èQìCÒ,a?èQì?èõÃCÒkÚ?èõÃ?é™šCÒ¡Ó?é™š?ê=qCÒÌA?ê=q?êáHCÒåÆ?êáH?ë…CÈ‡’?ë…?ì(öC‰ÆÙ?ì(ö?ìÌÍC0é?ìÌÍ?íp¤Cq¼}?íp¤?î{C~Ï?î{?î¸RC~%#?î¸R?ï\)C€ß;?ï\)?ð  C€—?ð  ?ð£×C‘8!?ð£×?ñG®C‘'ˆ?ñG®?ñë…C‘õc?ñë…?ò\C“9y?ò\?ó33C?ó33?ó×
+CŽö?ó×
+?ôzáC”ç?ôzá?õ¸C“ôh?õ¸?õÂC•¢9?õÂ?öffC”“y?öff?÷
+=C”›7?÷
+=?÷®C”‰?÷®?øQìC•&H?øQì?øõÃC–…?øõÃ?ù™šC–¨O?ù™š?ú=qC—@§?ú=q?úáHC—p˜?úáH?û…C—nV?û…?ü(öC—jH?ü(ö?üÌÍC˜ŽU?üÌÍ?ýp¤C™úí?ýp¤?þ{Cšü?þ{?þ¸RC›’r?þ¸R?ÿ\)C›F—?ÿ\)@   Cšù=@   @ QìCš’5@ Qì@ £×C™ûl@ £×@ õÃC˜ó3@ õÃ@G®C—§d@G®@™šC–j@™š@ë…C•2µ@ë…@=qC“ä-@=q@\C’Ý@\@áHC“H@áH@33C²ª@33@…CˆÉ@…@×
+C}º}@×
+@(öCqàœ@(ö@záC^1û@zá@ÌÍCLè™@ÌÍ@¸C:g<@¸@p¤C5_G@p¤@ÂC4«	@Â@{C7Ž?@{@ffC<bÜ@ff@¸RC=,Þ@¸R@
+=C=Dï@
+=@\)C=a@\)@®C< Õ@®@  C8M|@  @QìC3@Qì@£×C.Ùª@£×@õÃC/­_@õÃ@	G®C,µ@	G®@	™šC(	Æ@	™š@	ë…C"tÄ@	ë…@
+=qC!By@
+=q@
+\C#lÃ@
+\@
+áHC'&V@
+áH@33C*Ød@33@…C,ƒó@…@×
+C-+Ú@×
+@(öC.—Ó@(ö@záC1‡@zá@ÌÍC3EM@ÌÍ@¸C53h@¸@p¤C7†}@p¤@ÂC:¨U@Â@{C=p5@{@ffC?L @ff@¸RC@àS@¸R@
+=CBqf@
+=@\)CCÙ=@\)@®CD±@®@  CD¨ü@  @QìCDXd@Qì@£×CDž–@£×@õÃCE×?@õÃ@G®CHS@G®@™šCJ¿@™š@ë…CM3@ë…@=qCO@=q@\CPîÂ@\@áHCR]n@áH@33CS(Ñ@33@…CSŸ@…@×
+CT.l@×
+@(öCTÃá@(ö@záCTçŠ@zá@ÌÍCT½I@ÌÍ@¸CU.@¸@p¤CV•F@p¤@ÂCXyˆ@Â@{CZ>ò@{@ffC[šˆ@ff@¸RC\ËÊ@¸R@
+=C^6Ê@
+=@\)C_Î†@\)@®Ca)c@®@  Cb@  @QìCboN@Qì@£×Cbœ¢@£×@õÃCb¤¸@õÃ@G®Cb˜ï@G®@™šCb³œ@™š@ë…Cc?@ë…@=qCd:~@=q@\Ceh1@\@áHCfŒº@áH@33Cg~6@33@…Ch9@…@×
+ChÙH@×
+@(öCinù@(ö@záCiüæ@zá@ÌÍCj‹˜@ÌÍ@¸Ck½@¸@p¤Ck‰*@p¤@ÂCk­¥@Â@{Ck”Ø@{@ffCkbÜ@ff@¸RCk˜@¸R@
+=Cjþ9@
+=@\)CkV@\)@®Cjæn@®@   CjÑù@   @ QìCjÚî@ Qì@ £×Cjùo@ £×@ õÃCkp@ õÃ@!G®Cjçƒ@!G®@!™šCjw‚@!™š@!ë…Ciâ@!ë…@"=qCg¸Ô@"=q@"\Cd|@"\@"áHC^b@"áH@#33COœù@#33@#…CMÍ@#…@#×
+C[¹`@#×
+@$(öC_l@$(ö@$záCaÔ‰@$zá@$ÌÍCcÀ6@$ÌÍ@%¸Cc¾‘@%¸@%p¤CdÚë@%p¤@%ÂCf§1@%Â@&{Chà@&{@&ffCi@&ff@&¸RCi…þ@&¸R@'
+=Cjp9@'
+=@'\)CkÂ„@'\)@'®ClûÏ@'®@(  Cmø>@(  @(QìCnóÐ@(Qì@(£×Coçç@(£×@(õÃCp¦²@(õÃ@)G®CqN@)G®@)™šCqpc@)™š@)ë…CqÓÔ@)ë…@*=qCrO‹@*=q@*\CrÑ¶@*\@*áHCs]W@*áH@+33Csà¸@+33@+…CtgÀ@+…@+×
+Cu¿@+×
+@,(öCuä?@,(ö@,záCv¯‘@,zá@,ÌÍCwH@,ÌÍ@-¸Cw«þ@-¸@-p¤Cwý¦@-p¤@-ÂCxaB@-Â@.{CxÖÌ@.{@.ffCy\@.ff@.¸RCyóº@.¸R@/
+=Cz~@/
+=@/\)Czûk@/\)@/®C{pã@/®@0  C{Þj@0  @0QìC|fi@0Qì@0£×C}	@0£×@0õÃC}šá@0õÃ@1G®C~¬@1G®@1™šC~…ý@1™š@1ë…C~ÙØ@1ë…@2=qC"œ@2=q@2\C`M@2\@2áHC‘ý@2áH@333C·•@333@3…Cär@3…@3×
+C€O@3×
+@4(öC€)…@4(ö@4záC€Iâ@4zá@4ÌÍC€uŸ@4ÌÍ@5¸C€¬Ê@5¸@5p¤C€é@5p¤@5ÂC+¾@5Â@6{Ci@6{@6ffC¡^@6ff@6¸RCÒ8@6¸R@7
+=Cû’@7
+=@7\)C‚»@7\)@7®C‚ «@7®@8  C‚_@8  @8QìCÿË@8Qì@8£×CÔ…@8£×@8õÃC—ˆ@8õÃ@9G®C/ë@9G®@9™šC€J@9™š@9ë…CHo@9ë…@:=qC{ÅQ@:=q@:\C}+²@:\@:áHC•Ž@:áH@;33C€bA@;33@;…C€ò¬@;…@;×
+C=c@;×
+@<(öCq"@<(ö@<záC²¿@<zá@<ÌÍC‚¸@<ÌÍ@=¸C‚8à@=¸@=p¤C‚XG@=p¤@=ÂC‚}‹@=Â@>{C‚¨@>{@>ffC‚Ýý@>ff@>¸RCƒ«@>¸R@?
+=Cƒb­@?
+=@?\)Cƒ­@?\)@?®Cƒñ@?®@@  C„.i@@  @@QìC„_Å@@Qì@@£×C„…@@£×@@õÃC„´8@@õÃ@AG®C„í(@AG®@A™šC…@A™š@Aë…C…Iü@Aë…@B=qC…oG@B=q@B\C…Žó@B\@BáHC…³+@BáH@C33C…Ûñ@C33@C…C†é@C…@C×
+C†(	@C×
+@D(öC†Fæ@D(ö@DzáC†_~@Dzá@DÌÍC†yº@DÌÍ@E¸C†•›@E¸@Ep¤C†±C@Ep¤@EÂC†Ìµ@EÂ@F{C†í8@F{@FffC‡Ð@Fff@F¸RC‡58@F¸R@G
+=C‡To@G
+=@G\)C‡x3@G\)@G®C‡Ÿ9@G®@H  C‡¸l@H  @HQìC‡Æ@HQì@H£×C‡ÎÅ@H£×@HõÃC‡Ð¿@HõÃ@IG®C‡ÊÓ@IG®@I™šC‡½‹@I™š@Ië…C‡ M@Ië…@J=qC‡s@J=q@J\C‡-@J\@JáHC†Íú@JáH@K33C†Ym@K33@K…C…ÎM@K…@K×
+C…~[@K×
+@L(öC…h¢@L(ö@LzáC…Úâ@Lzá@LÌÍC†K@LÌÍ@M¸C†—B@M¸@Mp¤C†ÏÉ@Mp¤@MÂC†ò@MÂ@N{C‡AÜ@N{@NffC‡˜´@Nff@N¸RC‡âÉ@N¸R@O
+=Cˆy@O
+=@O\)Cˆ?o@O\)@O®Cˆ[1@O®@P  Cˆzî@P  @PQìCˆ¦€@PQì@P£×CˆÔ}@P£×@PõÃC‰}@PõÃ@QG®C‰0‡@QG®@Q™šC‰^•@Q™š@Që…C‰ˆ @Që…@R=qC‰­!@R=q@R\C‰Ò/@R\@RáHC‰÷<@RáH@S33CŠQ@S33@S…CŠ7¯@S…@S×
+CŠI[@S×
+@T(öCŠ[@T(ö@TzáCŠl³@Tzá@TÌÍCŠ~N@TÌÍ@U¸CŠ›`@U¸@Up¤CŠÃ÷@Up¤@UÂCŠì‘@UÂ@V{C‹4@V{@VffC‹=Ó@Vff@V¸RC‹gÿ@V¸R@W
+=C‹“­@W
+=@W\)C‹¿c@W\)@W®C‹ê£@W®@X  CŒà@X  @XQìCŒ2w@XQì@X£×CŒBŸ@X£×@XõÃCŒR¾@XõÃ@YG®CŒbä@YG®@Y™šCŒs@Y™š@Yë…CŒ‰¯@Yë…@Z=qCŒ§@Z=q@Z\CŒÄm@Z\@ZáHCŒáÐ@ZáH@[33CŒÿ2@[33@[…C‹@[…@[×
+CÝ@[×
+@\(öC -@\(ö@\záC'w@\zá@\ÌÍC.Ä@\ÌÍ@]¸C<9@]¸@]p¤COÒ@]p¤@]ÂCcb@]Â@^{Cvó@^{@^ffCŠˆ@^ff@^¸RCžÀ@^¸R@_
+=C³®@_
+=@_\)CÈ”@_\)@_®CÝz@_®@`  Còg@`  @`QìCŽ«@`Qì@`£×CŽH@`£×@`õÃCŽ-è@`õÃ@aG®CŽAŽ@aG®@a™šCŽU/@a™š@aë…CŽe–@aë…@b=qCŽrÃ@b=q@b\CŽî@b\@báHCŽ@báH@c33CŽš9@c33@c…CŽ¨l@c…@c×
+CŽ·«@c×
+@d(öCŽÆí@d(ö@dzáCŽÖ/@dzá@dÌÍCŽåg@dÌÍ@e¸CŽñÁ@e¸@ep¤CŽû#@ep¤@eÂCŠ@eÂ@f{Cå@f{@fffCG@fff@f¸RC#þ@f¸R@g
+=C4@g
+=@g\)CD@g\)@g®CT/@g®@h  Cd:@h  @hQìCq@hQì@h£×Cz¥@h£×@hõÃCƒù@hõÃ@iG®CC@iG®@i™šC–“@i™š@ië…CŸ@ië…@j=qC¦´@j=q@j\C­@j\@jáHC³0@jáH@k33C¸¥@k33@k…C¿3@k…@k×
+CÈ}@k×
+@l(öCÑÆ@l(ö@lzáCÛ@lzá@lÌÍCäW@lÌÍ@m¸Cì…@m¸@mp¤Còô@mp¤@mÂCù_@mÂ@n{CÿÄ@n{@nffC,@nff@n¸RC	@n¸R@o
+=CV@o
+=@o\)C¡@o\)@o®Cì@o®@p  C/@p  @pQìCß@pQì@p£×C	 @p£×@põÃC@põÃ@qG®C=@qG®@q™šCY@q™š@që…C@që…@r=qCD@r=q@r\Cƒ@r\@ráHCÁ@ráH@s33Cû@s33@s…CP@s…@s×
+C¶@s×
+@t(öC@t(ö@tzáC‚@tzá@tÌÍCæ@tÌÍ@u¸CÔ@u¸@up¤CA@up¤@uÂC#¡@uÂ@v{C)ú@v{@vffC0R@vff@v¸RC1†@v¸R@w
+=C-™@w
+=@w\)C)¦@w\)@w®C%´@w®@x  C!À@x  @xQìC„@xQì@x£×C @x£×@xõÃC{@xõÃ@yG®Có@yG®@y™šCl@y™š@yë…C@yë…@z=qC-@z=q@z\CÚ@z\@záHC‚@záH@{33C*@{33@{…Ca@{…@{×
+C-@{×
+@|(öCø@|(ö@|záC'Â@|zá@|ÌÍC/Œ@|ÌÍ@}¸C7o@}¸@}p¤C?q@}p¤@}ÂCGr@}Â@~{COr@~{@~ffCWq@~ff@~¸RC^t@~¸R@
+=Cd~@
+=@\)Ciå@\)@®Cn¡@®@€  Cr~@€  @€(öCwG@€(ö@€QìC~X@€Qì@€záC…g@€zá@€£×CŒw@€£×@€ÌÍC“@€ÌÍ@€õÃC@€õÃ@¸C<@¸@G®CnÍ@G®@p¤C^J@p¤@™šCMÇ@™š@ÂC@Ø@Â@ë…C7@ë…@‚{C.$@‚{@‚=qC$Ç@‚=q@‚ffCn@‚ff@‚\Ct@‚\@‚¸RCã@‚¸R@‚áHC÷O@‚áH@ƒ
+=Cê»@ƒ
+=@ƒ33CÞ&@ƒ33@ƒ\)CÒt@ƒ\)@ƒ…CÇ¢@ƒ…@ƒ®C¼Ð@ƒ®@ƒ×
+C±ü@ƒ×
+@„  C§ @„  @„(öC™Û@„(ö@„QìCŠ.@„Qì@„záCz~@„zá@„£×CjÎ@„£×@„ÌÍC[@„ÌÍ@„õÃCL@„õÃ@…¸C>ï@…¸@…G®C1`@…G®@…p¤C#Ó@…p¤@…™šCC@…™š@…ÂCO@…Â@…ë…CŽù÷@…ë…@†{CŽëŸ@†{@†=qCŽÝG@†=q@†ffCŽÎí@†ff@†\CŽ¿N@†\@†¸RCŽ®b@†¸R@†áHCŽw@†áH@‡
+=CŽŒ@‡
+=@‡33CŽ{ @‡33@‡\)CŽjx@‡\)@‡…CŽY@‡…@‡®CŽG³@‡®@‡×
+CŽ6N@‡×
+@ˆ  CŽ$ì@ˆ  @ˆ(öCŽ°@ˆ(ö@ˆQìCŽ›@ˆQì@ˆzáCñ†@ˆzá@ˆ£×Càq@ˆ£×@ˆÌÍCÏZ@ˆÌÍ@ˆõÃC¼ @ˆõÃ@‰¸C¦½@‰¸@‰G®C‘[@‰G®@‰p¤C{ø@‰p¤@‰™šCf’@‰™š@‰ÂCQÎ@‰Â@‰ë…C=¯@‰ë…@Š{C(í@Š{@Š=qC¶@Š=q@ŠffCŒúø@Šff@Š\CŒåG@Š\@Š¸RCŒÑ—@Š¸R@ŠáHCŒ½è@ŠáH@‹
+=CŒª>@‹
+=@‹33CŒ–Ž@‹33@‹\)CŒ}w@‹\)@‹…CŒ^ö@‹…@‹®CŒ?Ë@‹®@‹×
+CŒ Ÿ@‹×
+@Œ  CŒs@Œ  @Œ(öC‹ç@Œ(ö@ŒQìC‹Ñ@ŒQì@ŒzáC‹»ë@Œzá@Œ£×C‹¦X@Œ£×@ŒÌÍC‹É@ŒÌÍ@ŒõÃC‹vj@ŒõÃ@¸C‹W;@¸@G®C‹8
+@G®@p¤C‹Ý@p¤@™šCŠù±@™š@ÂCŠÝj@Â@ë…CŠÄ@ë…@Ž{CŠª¡@Ž{@Ž=qCŠ‘@@Ž=q@ŽffCŠwà@Žff@Ž\CŠZ@Ž\@Ž¸RCŠ9@Ž¸R@ŽáHCŠ¸@ŽáH@
+=C‰ö\@
+=@33C‰Õ @33@\)C‰¶¾@\)@…C‰›’@…@®C‰€j@®@×
+C‰eD@×
+@  C‰J@  @(öC‰,@(ö@QìC‰½@Qì@záCˆì2@zá@£×CˆÊü@£×@ÌÍCˆ©Ì@ÌÍ@õÃCˆˆö@õÃ@‘¸Cˆhu@‘¸@‘G®CˆGø@‘G®@‘p¤Cˆ'}@‘p¤@‘™šCˆ@‘™š@‘ÂC‡áæ@‘Â@‘ë…C‡¸@‘ë…@’{C‡ŽT@’{@’=qC‡d‘@’=q@’ffC‡:Ô@’ff@’\C‡÷@’\@’¸RC†ìü@’¸R@’áHC†Ç@’áH@“
+=C†¡@“
+=@“33C†{ @“33@“\)C†S†@“\)@“…C†*@@“…@“®C† ÿ@“®@“×
+C…×Ç@“×
+@”  C…¬«@”  @”(öC…ƒE@”(ö@”QìC…]Y@”Qì@”záC…7s@”zá@”£×C…”@”£×@”ÌÍC„ë¾@”ÌÍ@”õÃC„À¢@”õÃ@•¸C„;@•¸@•G®C„_Ý@•G®@•p¤C„.ë@•p¤@•™šCƒýì@•™š@•ÂCƒÒ @•Â@•ë…Cƒ«„@•ë…@–{Cƒ„ñ@–{@–=qCƒ^c@–=q@–ffCƒ7Ú@–ff@–\CƒM@–\@–¸RC‚Þ·@–¸R@–áHC‚°-@–áH@—
+=C‚¨@—
+=@—33C‚S/@—33@—\)C‚& @—\)@—…Cú@—…@—®CÎ<@—®@—×
+C¢h@—×
+@˜  Cvš@˜  @˜(öCI@˜(ö@˜QìC¢@˜Qì@˜záC€êK@˜zá@˜£×C€ºþ@˜£×@˜ÌÍC€‹¹@˜ÌÍ@˜õÃC€]ƒ@˜õÃ@™¸C€0W@™¸@™G®C€7@™G®@™p¤C¬;@™p¤@™™šCR@™™š@™ÂC~ð"@™Â@™ë…C~†Q@™ë…@š{C~@š{@š=qC}²ý@š=q@šffC}Iq@šff@š\C|éž@š\@š¸RC|“‚@š¸R@šáHC|=q@šáH@›
+=C{çq@›
+=@›33C{‘‚@›33@›\)C{1@›\)@›…CzÆ/@›…@›®Cz[[@›®@›×
+CyðŸ@›×
+@œ  Cy…û@œ  @œ(öCy!õ@œ(ö@œQìCxÄŒ@œQì@œzáCxg5@œzá@œ£×Cx	ê@œ£×@œÌÍCw¬´@œÌÍ@œõÃCwHW@œõÃ@¸CvÜÕ@¸@G®Cvlf@G®@p¤Cuùô@p¤@™šCu‡¤@™š@ÂCu@Â@ë…Ct«)@ë…@ž{Ct>^@ž{@ž=qCsÑ°@ž=q@žffCse@žff@ž\Cr÷@ž\@ž¸RCrˆè@ž¸R@žáHCrÏ@žáH@Ÿ
+=Cq¬Ù@Ÿ
+=@Ÿ33Cq>÷@Ÿ33@Ÿ\)CpÎp@Ÿ\)@Ÿ…Cp[@@Ÿ…@Ÿ®Coè@Ÿ®@Ÿ×
+Cotÿ@Ÿ×
+@   Co@   @ (öCn|@ (ö@ QìCn^@ Qì@ záCm¡b@ zá@ £×Cm+€@ £×@ ÌÍClµ¼@ ÌÍ@ õÃClA@ õÃ@¡¸CkÍœ@¡¸@¡G®CkZ7@¡G®@¡p¤Cjæó@¡p¤@¡™šCjsÊ@¡™š@¡ÂCiÿ@¡Â@¡ë…Ciˆß@¡ë…@¢{CiÅ@¢{@¢=qChœÅ@¢=q@¢ffCh&æ@¢ff@¢\Cg¯	@¢\@¢¸RCg5#@¢¸R@¢áHCf»^@¢áH@£
+=CfA½@£
+=@£33CeÈ7@£33@£\)CeSÆ@£\)@£…Cdäj@£…@£®Cdu!@£®@£×
+Cd÷@£×
+@¤  Cc–è@¤  @¤(öCc&Ç@¤(ö@¤QìCbµ–@¤Qì@¤záCbD„@¤zá@¤£×CaÓ‡@¤£×@¤ÌÍCab§@¤ÌÍ@¤õÃC`í-@¤õÃ@¥¸C`s@¥¸@¥G®C_ù/@¥G®@¥p¤C_X@¥p¤@¥™šC_¡@¥™š@¥ÂC^@¥Â@¥ë…C^š@¥ë…@¦{C]¨E@¦{@¦=qC]4™@¦=q@¦ffC\»Š@¦ff@¦\C\D@¦\@¦¸RC[Î@@¦¸R@¦áHC[Xƒ@¦áH@§
+=CZâê@§
+=@§33CZl¶@§33@§\)CYò@§\)@§…CYs@§…@§®CXõ@§®@§×
+CXv®@§×
+@¨  CWøu@¨  @¨(öCW|U@¨(ö@¨QìCWR@¨Qì@¨záCVˆq@¨zá@¨£×CV®@¨£×@¨ÌÍCU•@¨ÌÍ@¨õÃCUl@¨õÃ@©¸CT›Ï@©¸@©G®CTW@©G®@©p¤CS û@©p¤@©™šCS#Â@©™š@©ÂCR¨g@©Â@©ë…CR.Ó@©ë…@ª{CQµ^@ª{@ª=qCQ<@ª=q@ªffCPÂÑ@ªff@ª\CPHP@ª\@ª¸RCOÌ~@ª¸R@ªáHCOPÒ@ªáH@«
+=CNÕC@«
+=@«33CNYÓ@«33@«\)CMÞ]@«\)@«…CMbã@«…@«®CLç‹@«®@«×
+CLlT@«×
+@¬  CKñ;@¬  @¬(öCKq…@¬(ö@¬QìCJí?@¬Qì@¬záCJi@¬zá@¬£×CIå@¬£×@¬ÌÍCIa5@¬ÌÍ@¬õÃCHã!@¬õÃ@­¸CHjÑ@­¸@­G®CGò¤@­G®@­p¤CGz@­p¤@­™šCG—@­™š@­ÂCFŒD@­Â@­ë…CF“@­ë…@®{CE¢û@®{@®=qCE.~@®=q@®ffCDº @®ff@®\CDB@®\@®¸RCCÅ@®¸R@®áHCCEÕ@®áH@¯
+=CBÆ>@¯
+=@¯33CBFÃ@¯33@¯\)CAÍ®@¯\)@¯…CAZ÷@¯…@¯®C@è_@¯®@¯×
+C@u1@¯×
+@°  C@Þ@°  @°(öC?†ã@°(ö@°QìC?A@°Qì@°záC>Æ@°zá@°£×C=ÿm@°£×@°ÌÍC=}6@°ÌÍ@°õÃC=ø@°õÃ@±¸C<–©@±¸@±G®C<(y@±G®@±p¤C;ºb@±p¤@±™šC;Lj@±™š@±ÂC:Ø@±Â@±ë…C:]9@±ë…@²{C9â@²{@²=qC9h
+@²=q@²ffC8í£@²ff@²\C8uÖ@²\@²¸RC8 @²¸R@²áHC7‹ƒ@²áH@³
+=C7@³
+=@³33C6¡³@³33@³\)C6,Y@³\)@³…C5¶{@³…@³®C5@À@³®@³×
+C4Ë*@³×
+@´  C4U´@´  @´(öC3á@´(ö@´QìC3n›@´Qì@´záC2ûË@´zá@´£×C2‰@´£×@´ÌÍC2@´ÌÍ@´õÃC1¦¹@´õÃ@µ¸C19–@µ¸@µG®C0Ì›@µG®@µp¤C0_¹@µp¤@µ™šC/òô@µ™š@µÂC/…ò@µÂ@µë…C/²@µë…@¶{C.«@¶{@¶=qC.>Œ@¶=q@¶ffC-Ñª@¶ff@¶\C-fÏ@¶\@¶¸RC,ýÿ@¶¸R@¶áHC,•U@¶áH@·
+=C,*@·
+=@·33C+¾@·33@·\)C+O®@·\)@·…C*ß@·…@·®C*nœ@·®@·×
+C)þR@·×
+@¸  C)Ž+@¸  @¸(öC)!.@¸(ö@¸QìC(·_@¸Qì@¸záC(M²@¸zá@¸£×C'ä-@¸£×@¸ÌÍC'z1@¸ÌÍ@¸õÃC'X@¸õÃ@¹¸C&—Ä@¹¸@¹G®C&$W@¹G®@¹p¤C%±@¹p¤@¹™šC%=ý@¹™š@¹ÂC$Ía@¹Â@¹ë…C$_=@¹ë…@º{C#ñE@º{@º=qC#ƒz@º=q@ºffC#Ø@ºff@º\C"¦/@º\@º¸RC"4w@º¸R@ºáHC!Âó@ºáH@»
+=C!Q@»
+=@»33C àr@»33@»\)C qY@»\)@»…C Q@»…@»®C—t@»®@»×
+C*Ç@»×
+@¼  C¾D@¼  @¼(öCQ€@¼(ö@¼QìCä…@¼Qì@¼záCw¸@¼zá@¼£×C@¼£×@¼ÌÍCž—@¼ÌÍ@¼õÃC:Õ@¼õÃ@½¸CßÂ@½¸@½G®C„Ô@½G®@½p¤C*@½p¤@½™šCÏb@½™š@½ÂCd@½Â@½ë…Cè6@½ë…@¾{Cl@¾{@¾=qCñ@¾=q@¾ffCuå@¾ff@¾\C @@¾\@¾¸RC@¾¸R@¾áHC .@¾áH@¿
+=C°u@¿
+=@¿33C@é@¿33@¿\)CÏÅ@¿\)@¿…C\|@¿…@¿®Cék@¿®@¿×
+Cv–@¿×
+@À  Cð@À  @À(öC“w@À(ö@ÀQìC%+@ÀQì@ÀzáC·@Àzá@À£×CHÿ@À£×@ÀÌÍCÚà@ÀÌÍ@ÀõÃClÝ@ÀõÃ@Á¸Cþø@Á¸@ÁG®C‘H@ÁG®@Áp¤C#Í@Áp¤@Á™šC¶‰@Á™š@ÁÂCG¡@ÁÂ@Áë…C×@Áë…@Â{Cf¾@Â{@Â=qCö¥@Â=q@ÂffC†Á@Âff@Â\C·@Â\@Â¸RC¬‚@Â¸R@ÂáHC@@ÂáH@Ã
+=CÔ¸@Ã
+=@Ã33Ci!@Ã33@Ã\)C
+ü@Ã\)@Ã…C
+®@Ã…@Ã®C
+|@Ã®@Ã×
+C	±@Ã×
+@Ä  C	CÀ@Ä  @Ä(öCÒž@Ä(ö@ÄQìC^ @ÄQì@ÄzáCéè@Äzá@Ä£×Cuë@Ä£×@ÄÌÍC)@ÄÌÍ@ÄõÃC”<@ÄõÃ@Å¸C,@Å¸@ÅG®CÄ,@ÅG®@Åp¤C\t@Åp¤@Å™šCôð@Å™š@ÅÂC‡X@ÅÂ@Åë…C°@Åë…@Æ{C E@Æ{@Æ=qC-@Æ=q@ÆffCº.@Æff@Æ\CN @Æ\@Æ¸RCè„@Æ¸R@ÆáHCƒ9@ÆáH@Ç
+=C'@Ç
+=@Ç33C ¹E@Ç33@Ç\)C N¢@Ç\)@Ç…Bÿ¼’@Ç…@Ç®BþÜ\@Ç®@Ç×
+BýúB@Ç×
+@È  Bý-@È  @È(öBü6µ@È(ö@ÈQìBûY@ÈQì@ÈzáBú{é@Èzá@È£×BùŸ=@È£×@ÈÌÍBøÃ@ÈÌÍ@ÈõÃB÷êÙ@ÈõÃ@É¸B÷œ@É¸@ÉG®BöBÝ@ÉG®@Ép¤Bõo‘@Ép¤@É™šBôœ¸@É™š@ÉÂBóÌ8@ÉÂ@Éë…Bòþ@Éë…@Ê{Bò0B@Ê{@Ê=qBñbì@Ê=q@ÊffBð–@Êff@Ê\BïÆ×@Ê\@Ê¸RBîõe@Ê¸R@ÊáHBî$f@ÊáH@Ë
+=BíSÚ@Ë
+=@Ë33BìƒÁ@Ë33@Ë\)Bë¬@Ë\)@Ë…BêÌÞ@Ë…@Ë®Béî&@Ë®@Ë×
+Béð@Ë×
+@Ì  Bè29@Ì  @Ì(öBçYH@Ì(ö@ÌQìBæ…@ÌQì@ÌzáBå±h@Ìzá@Ì£×BäÞ%@Ì£×@ÌÌÍBä^@ÌÌÍ@ÌõÃBã<Æ@ÌõÃ@Í¸Bârj@Í¸@ÍG®Bá¨‡@ÍG®@Íp¤Bàß@Íp¤@Í™šBà@Í™š@ÍÂBß@á@ÍÂ@Íë…BÞ_j@Íë…@Î{BÝ~‚@Î{@Î=qBÜž&@Î=q@ÎffBÛ¾[@Îff@Î\BÚà@Î\@Î¸RBÚb@Î¸R@ÎáHBÙ':@ÎáH@Ï
+=BØK™@Ï
+=@Ï33B×p‚@Ï33@Ï\)BÖ‘¯@Ï\)@Ï…BÕ¯&@Ï…@Ï®BÔÍ0@Ï®@Ï×
+BÓëÌ@Ï×
+@Ð  BÓ
+Ò@Ð  @Ð(öBÒ4n@Ð(ö@ÐQìBÑh’@ÐQì@ÐzáBÐœË@Ðzá@Ð£×BÏÑv@Ð£×@ÐÌÍBÏŸ@ÐÌÍ@ÐõÃBÎ1p@ÐõÃ@Ñ¸BÍQõ@Ñ¸@ÑG®BÌs@ÑG®@Ñp¤BË”«@Ñp¤@Ñ™šBÊ¶Õ@Ñ™š@ÑÂBÉà»@ÑÂ@Ñë…BÉM@Ñë…@Ò{BÈD]@Ò{@Ò=qBÇvÔ@Ò=q@ÒffBÆ¨¨@Òff@Ò\BÅÖ*@Ò\@Ò¸RBÄÿS@Ò¸R@ÒáHBÄ)@ÒáH@Ó
+=BÃSH@Ó
+=@Ó33BÂ~@Ó33@Ó\)BÁ®X@Ó\)@Ó…BÀä#@Ó…@Ó®BÀg@Ó®@Ó×
+B¿Q*@Ó×
+@Ô  B¾ˆa@Ô  @Ô(öB½½L@Ô(ö@ÔQìB¼ïÀ@ÔQì@ÔzáB¼!8@Ôzá@Ô£×B»S2@Ô£×@ÔÌÍBº…¦@ÔÌÍ@ÔõÃB¹½<@ÔõÃ@Õ¸B¸ùï@Õ¸@ÕG®B¸7#@ÕG®@Õp¤B·tÃ@Õp¤@Õ™šB¶²Û@Õ™š@ÕÂBµéM@ÕÂ@Õë…Bµ@Õë…@Ö{B´GX@Ö{@Ö=qB³w&@Ö=q@ÖffB²§w@Öff@Ö\B±ßQ@Ö\@Ö¸RB±Ú@Ö¸R@ÖáHB°^Ó@ÖáH@×
+=B¯ŸI@×
+=@×33B®à/@×33@×\)B®²@×\)@×…B­WÞ@×…@×®B¬’ƒ@×®@××
+B«Íª@××
+@Ø  B«*@Ø  @Ø(öBªFæ@Ø(ö@ØQìB©Šý@ØQì@ØzáB¨ÏŽ@Øzá@Ø£×B¨Œ@Ø£×@ØÌÍB§Z@ØÌÍ@ØõÃB¦˜@ØõÃ@Ù¸B¥Î¤@Ù¸@ÙG®B¥É@ÙG®@Ùp¤B¤=i@Ùp¤@Ù™šB£u‰@Ù™š@ÙÂB¢´8@ÙÂ@Ùë…B¡ùg@Ùë…@Ú{B¡AW@Ú{@Ú=qB ‰Õ@Ú=q@ÚffBŸÒÃ@Úff@Ú\BŸØ@Ú\@Ú¸RBžh@Ú¸R@ÚáHB³ @ÚáH@Û
+=Bœÿ¬@Û
+=@Û33BœL$@Û33@Û\)B›–»@Û\)@Û…Bšß~@Û…@Û®Bš(±@Û®@Û×
+B™rY@Û×
+@Ü  B˜¼k@Ü  @Ü(öB˜Æ@Ü(ö@ÜQìB—Ke@ÜQì@ÜzáB–’@Üzá@Ü£×B•Ú@Ü£×@ÜÌÍB•"@ÜÌÍ@ÜõÃB”qº@ÜõÃ@Ý¸B“É@Ý¸@ÝG®B“ç@ÝG®@Ýp¤B’v¡@Ýp¤@Ý™šB‘Í¼@Ý™š@ÝÂB‘$õ@ÝÂ@Ýë…B|J@Ýë…@Þ{BÓþ@Þ{@Þ=qB,@Þ=q@ÞffBŽ„@Þff@Þ\Bß0@Þ\@Þ¸RB;ò@Þ¸R@ÞáHBŒ™@ÞáH@ß
+=B‹ö“@ß
+=@ß33B‹To@ß33@ß\)BŠ´Ý@ß\)@ß…BŠ@ß…@ß®B‰y}@ß®@ß×
+BˆÜZ@ß×
+@à  Bˆ?‹@à  @à(öB‡œ4@à(ö@àQìB†ò_@àQì@àzáB†Hô@àzá@à£×B…Ÿç@à£×@àÌÍB„÷=@àÌÍ@àõÃB„Sâ@àõÃ@á¸BƒµÐ@á¸@áG®Bƒ@áG®@áp¤B‚z¼@áp¤@á™šBÝ»@á™š@áÂBBÖ@áÂ@áë…B€ª@áë…@â{B€@â{@â=qB~òÙ@â=q@âffB}ÃJ@âff@â\B|‘€@â\@â¸RB{]l@â¸R@âáHBz*@âáH@ã
+=Bx÷o@ã
+=@ã33BwÅ{@ã33@ã\)Bv•%@ã\)@ã…Bufq@ã…@ã®Bt8w@ã®@ã×
+Bs:@ã×
+@ä  BqÞ¯@ä  @ä(öBp²@ä(ö@äQìBo…<@äQì@äzáBnY7@äzá@ä£×Bm-á@ä£×@äÌÍBlD@äÌÍ@äõÃBjè®@äõÃ@å¸BiÞ@å¸@åG®BhÔ@åG®@åp¤BgÊ¬@åp¤@å™šBfÁä@å™š@åÂBe¦M@åÂ@åë…Bdwð@åë…@æ{BcJP@æ{@æ=qBbn@æ=q@æffB`ñH@æff@æ\B_ß‡@æ\@æ¸RB^çü@æ¸R@æáHB]ñ@æáH@ç
+=B\ú±@ç
+=@ç33B\ì@ç33@ç\)B[…@ç\)@ç…BYð@ç…@ç®BXàE@ç®@ç×
+BWÐ³@ç×
+@è  BVÁÃ@è  @è(öBUºN@è(ö@èQìBTºE@èQì@èzáBSºâ@èzá@è£×BR¼@è£×@èÌÍBQ½ö@èÌÍ@èõÃBP¶®@èõÃ@é¸BO¦E@é¸@éG®BN–˜@éG®@ép¤BM‡@ép¤@é™šBLy=@é™š@éÂBKu@éÂ@éë…BJ{@éë…@ê{BI´@ê{@ê=qBHˆæ@ê=q@êffBG²@êff@ê\BF—¬@ê\@ê¸RBEÑ@ê¸R@êáHBD¤@êáH@ë
+=BC«ì@ë
+=@ë33BB³â@ë33@ë\)BA¹€@ë\)@ë…B@¼Ç@ë…@ë®B?À¯@ë®@ë×
+B>Å:@ë×
+@ì  B=Ê`@ì  @ì(öB<Øp@ì(ö@ìQìB;ïT@ìQì@ìzáB;Ú@ìzá@ì£×B:â@ì£×@ìÌÍB97@ìÌÍ@ìõÃB8L`@ìõÃ@í¸B7]|@í¸@íG®B6o@íG®@íp¤B54@íp¤@í™šB4“Ë@í™š@íÂB3µO@íÂ@íë…B2å¢@íë…@î{B2]@î{@î=qB1Gˆ@î=q@îffB0y@îff@î\B/¤&@î\@î¸RB.È @î¸R@îáHB-í‘@îáH@ï
+=B-ý@ï
+=@ï33B,8Ö@ï33@ï\)B+]@ï\)@ï…B*»@ï…@ï®B)¢×@ï®@ï×
+B(Æp@ï×
+@ð  B'êy@ð  @ð(öB'@ð(ö@ðQìB&_„@ðQì@ðzáB%¡É@ðzá@ð£×B$äQ@ð£×@ðÌÍB$'!@ðÌÍ@ðõÃB#d‰@ðõÃ@ñ¸B"œ‰@ñ¸@ñG®B!ÔÛ@ñG®@ñp¤B!w@ñp¤@ñ™šB Fc@ñ™š@ñÂB’‘@ñÂ@ñë…Bñê@ñë…@ò{BQ€@ò{@ò=qB±N@ò=q@òffBV@òff@ò\BP>@ò\@ò¸RBn@ò¸R@òáHBŒN@òáH@ó
+=Bªå@ó
+=@ó33BÉÕ@ó33@ó\)B®@ó\)@ó…BUV@ó…@ó®B¨.@ó®@ó×
+BûC@ó×
+@ô  BN…@ô  @ô(öBŸÜ@ô(ö@ôQìBïC@ôQì@ôzáB>æ@ôzá@ô£×BŽ»@ô£×@ôÌÍBÞÆ@ôÌÍ@ôõÃB6³@ôõÃ@õ¸B–{@õ¸@õG®Böv@õG®@õp¤BV@õp¤@õ™šB¶ø@õ™š@õÂB¨@õÂ@õë…Biª@õë…@ö{BÀä@ö{@ö=qBP@ö=q@öffBoõ@öff@ö\B
+Ë¥@ö\@ö¸RB
++R@ö¸R@öáHB	‹ @öáH@÷
+=Bë@÷
+=@÷33BK0@÷33@÷\)B°Q@÷\)@÷…Bw@÷…@÷®B„½@÷®@÷×
+Bï'@÷×
+@ø  BY³@ø  @ø(öBÁØ@ø(ö@øQìB'š@øQì@øzáBƒ@øzá@ø£×BóŽ@ø£×@øÌÍBY½@øÌÍ@øõÃB¼ÿ@øõÃ@ù¸BY@ù¸@ùG®B }ß@ùG®@ùp¤Aÿ½@ùp¤@ù™šAþ~­@ù™š@ùÂAýVR@ùÂ@ùë…AüCã@ùë…@ú{Aû1®@ú{@ú=qAú±@ú=q@úffAùñ@úff@ú\A÷ø @ú\@ú¸RAöß¸@ú¸R@úáHAõÇ@úáH@û
+=Aô®¨@û
+=@û33Aó–|@û33@û\)AòyÅ@û\)@û…AñXƒ@û…@û®Að7†@û®@û×
+AïÓ@û×
+@ü  Aíö\@ü  @ü(öAìèÁ@ü(ö@üQìAëíé@üQì@üzáAêóX@üzá@ü£×Aéøð@ü£×@üÌÍAèþ¾@üÌÍ@üõÃAçý&@üõÃ@ý¸Aæô1@ý¸@ýG®Aåë†@ýG®@ýp¤Aäã@ýp¤@ý™šAãÚô@ý™š@ýÂAâ×
+@ýÂ@ýë…Aá×C@ýë…@þ{Aà×Â@þ{@þ=qAßÙ@þ=q@þffAÞÝ=@þff@þ\AÝèì@þ\@þ¸RAÜû2@þ¸R@þáHAÜ­@þáH@ÿ
+=AÛ l@ÿ
+=@ÿ33AÚ3\@ÿ33@ÿ\)AÙ?\@ÿ\)@ÿ…AØDj@ÿ…@ÿ®A×I¿@ÿ®@ÿ×
+AÖOT@ÿ×
+A   AÕU(A   A {AÔc<A {A (öAÓy½A (öA =qAÒ‘A =qA QìAÑ§ÖA QìA ffAÐ¿uA ffA záAÏ×4A záA \AÎï!A \A £×AÎ^A £×A ¸RAÍ A ¸RA ÌÍAÌ9A ÌÍA áHAË_A áHA õÃAÊ“XA õÃA
+=AÉÇ„A
+=A¸AÈüA¸A33AÈ0ËA33AG®AÇ] AG®A\)AÆ€‡A\)Ap¤AÅ¤ƒAp¤A…AÄÈÆA…A™šAÃí|A™šA®AÃëA®AÂAÂ6<AÂA×
+AÁ[A×
+Aë…AÀ€qAë…A  A¿¦`A  A{A¾Ò¡A{A(öA¾NA(öA=qA½8fA=qAQìA¼lAQìAffA» *AffAzáAºÚÄAzáA\AºÙA\A£×A¹]PA£×A¸RA¸ŸLA¸RAÌÍA·á¡AÌÍAáHA·%AáHAõÃA¶iwAõÃA
+=Aµ®^A
+=A¸A´ó²A¸A33A´9bA33AG®A³wfAG®A\)A²­±A\)Ap¤A±ä¢Ap¤A…A±A…A™šA°TA™šA®A¯“¹A®AÂA®ÚàAÂA×
+A®"’A×
+Aë…A­j°Aë…A  A¬³aA  A{A«û¦A{A(öA«C¹A(öA=qAªŒEA=qAQìA©ÕeAQìAffA©÷AffAzáA¨o·AzáA\A§ÇA\A£×A§ÑA£×A¸RA¦xŽA¸RAÌÍA¥Ñ­AÌÍAáHA¥)_AáHAõÃA¤ŽAõÃA
+=A£ÖGA
+=A¸A£-wA¸A33A¢…A33AG®A¡Ö/AG®A\)A¡ ¯A\)Ap¤A kÌAp¤A…AŸ·_A…A™šAŸA™šA®AžVýA®AÂA± AÂA×
+AÃA×
+Aë…AœhOAë…A  A›ÄdA  A{A›A{A(öAšxjA(öA=qA™Ò;A=qAQìA™,’AQìAffA˜‡_AffAzáA—â„AzáA\A—>	A\A£×A–™üA£×A¸RA•ö}A¸RAÌÍA•S‡AÌÍAáHA”¶AáHAõÃA”AõÃA
+=A“†A
+=A¸A’ï‚A¸A33A’XÚA33AG®A‘ÁuAG®A\)A‘);A\)Ap¤A‘}Ap¤A…Aú#A…A™šAcFA™šA®AŽÏ¢A®AÂAŽ?6AÂA×
+A¯8A×
+Aë…A”Aë…A  AŒeA  A{AŒ;A{A(öA‹u)A(öA=qAŠèpA=qAQìAŠ\.AQìAffA‰ÐEAffAzáA‰FAzáA\Aˆ½±A\A£×Aˆ5™A£×A¸RA‡­ïA¸RAÌÍA‡&šAÌÍAáHA†Ÿ AáHAõÃA†åAõÃA	
+=A…’šA	
+=A	¸A…­A	¸A	33A„‡A	33A	G®A„øA	G®A	\)Aƒ€:A	\)A	p¤A‚ýìA	p¤A	…A‚{åA	…A	™šAúMA	™šA	®Aw’A	®A	ÂA€ó¿A	ÂA	×
+A€pKA	×
+A	ë…AÚAA	ë…A
+  A~Ô»A
+  A
+{A}ÞuA
+{A
+(öA|÷†A
+(öA
+=qA|
+A
+=qA
+QìA{+-A
+QìA
+ffAzEÓA
+ffA
+záAy[ˆA
+záA
+\AxlfA
+\A
+£×Aw}¿A
+£×A
+¸RAvÍA
+¸RA
+ÌÍAu¢VA
+ÌÍA
+áHAt³¡A
+áHA
+õÃAsÃ~A
+õÃA
+=ArÔ
+A
+=A¸Aqå9A¸A33ApöäA33AG®ApAG®A\)Ao	A\)Ap¤An»Ap¤A…AmA…A™šAl!A™šA®Ak.¨A®AÂAjA_AÂA×
+AiTºA×
+Aë…Ahh›Aë…A  Ag}+A  A{AfŽÖA{A(öAeÊA(öA=qAd­KA=qAQìAc½‹AQìAffAbÎaAffAzáAaà@AzáA\A`ó3A\A£×A`­A£×A¸RA_ãA¸RAÌÍA^/£AÌÍAáHA]AÒAáHAõÃA\QEAõÃA
+=A[awA
+=A¸AZrOA¸A33AYƒ»A33AG®AX’µAG®A\)AWŸ"A\)Ap¤AV¬TAp¤A…AUº!A…A™šATÈ¹A™šA®ASÛLA®AÂARô0AÂA×
+ARªA×
+Aë…AQ+¯Aë…A  APHfA  A{AOfÅA{A(öAN†òA(öA=qAM§¤A=qAQìALÉAQìAffAKêùAffAzáAJúPAzáA\AI÷AA\A£×AHôïA£×A¸RAGó…A¸RAÌÍAFòÝAÌÍAáHAF°AáHAõÃAE³AõÃA
+=AD>jA
+=A¸AC]ÁA¸A33AB}¥A33AG®AA–:AG®A\)A@§fA\)Ap¤A?¹fAp¤A…A>Ì	A…A™šA=ß~A™šA®A<èA®AÂA;åÄAÂA×
+A:ärA×
+Aë…A9ãëAë…A  A8ä_A  A{A7æ×A{A(öA6ëŠA(öA=qA5ðúA=qAQìA4÷_AQìAffA3þAffAzáA3îAzáA\A21nA\A£×A1Q‡A£×A¸RA0r^A¸RAÌÍA/“ÎAÌÍAáHA.¹yAáHAõÃA-ã&AõÃA
+=A-ˆA
+=A¸A,8‰A¸A33A+dA33AG®A*KAG®A\)A)(A\)Ap¤A(Ÿ÷Ap¤A…A'°ƒA…A™šA&ÁýA™šA®A%×ÃA®AÂA$ñÎAÂA×
+A$­A×
+Aë…A#(<Aë…A  A"D­A  A{A!kéA{A(öA žA(öA=qAÐ§A=qAQìAAQìAffA7îAffAzáAc3AzáA\A…úA\A£×A©pA£×A¸RAÍ¼A¸RAÌÍAò¶AÌÍAáHA‡AáHAõÃAEAõÃA
+=ApOA
+=A¸AœPA¸A33AÈöA33AG®AúAG®A\)A/PA\)Ap¤AeTAp¤A…A›ïA…A™šAÓ?A™šA®AÿA®AÂA€AÂA×
+A@ÔA×
+Aë…AbíAë…A  A…÷A  A{A¸¥A{A(öAûÖA(öA=qAAÑA=qAQìA
+ˆáAQìAffA	ÐuAffAzáA	§AzáA\A:¬A\A£×Aj`A£×A¸RAšîA¸RAÌÍAÌ,AÌÍAáHAÕAáHAõÃAY¦AõÃA
+=A¨A
+=A¸A÷.A¸A33AFÂA33AG®A–ëAG®A\)A ç€A\)Ap¤A 8ÀAp¤A…@ÿA…A™š@ý¹ÛA™šA®@ü\"A®AÂ@úûïAÂA×
+@ùA×
+Aë…@ø?6Aë…A  @öâ»A  A{@õ‰ªA{A(ö@ô4=A(öA=q@òßÛA=qAQì@ñŒÊAQìAff@ð:ËAffAzá@îã»AzáA\@í‡°A\A£×@ì,ÂA£×A¸R@êÓ>A¸RAÌÍ@ézÔAÌÍAáH@è%AáHAõÃ@æÑ¥AõÃA
+=@å™A
+=A¸@ä.ÅA¸A33@âßA33AG®@áŒAG®A\)@à5}A\)Ap¤@ÞàbAp¤A…@ÝŒmA…A™š@Ü9äA™šA®@ÚígA®AÂ@Ù¦ðAÂA×
+@Øa¿A×
+Aë…@×¦Aë…A  @ÕÚßA  A{@ÔœA{A(ö@ÓbÄA(öA=q@Ò*A=qAQì@Ðò¨AQìAff@Ï¼WAffAzá@Î€‰AzáA\@Í?fA\A£×@Ëÿ_A£×A¸R@ÊÀ¸A¸RAÌÍ@Éƒ-AÌÍAáH@ÈK§AáHAõÃ@Ç×AõÃA
+=@ÅéSA
+=A¸@Ä¹ùA¸A33@Ã‹¤A33AG®@ÂTïAG®A\)@Á®A\)Ap¤@¿××Ap¤A…@¾›+A…A™š@½_éA™šA®@¼0A®AÂ@»¥AÂA×
+@¹è[A×
+Aë…@¸ÆAë…A  @·¥A  A{@¶Š[A{A(ö@µv<A(öA=q@´cA=qAQì@³PøAQìAff@²@AffAzá@±#vAzáA\@¯ý0A\A£×@®×ùA£×A¸R@­´	A¸RAÌÍ@¬‘AÌÍAáH@«qÁAáHAõÃ@ªU­AõÃA
+=@©:ÖA
+=A¸@¨!A¸A33@§[A33AG®@¥ïÎAG®A\)@¤×%A\)Ap¤@£¿ŸAp¤A…@¢©A…A™š@¡“‚A™šA®@ „A®AÂ@Ÿz©AÂA×
+@žrDA×
+Aë…@j½Aë…A  @œdAA  A{@›SºA{A(ö@š9qA(öA=q@™ A=qAQì@˜ðAQìAff@–ðÈAffAzá@•Û^AzáA\@”Ç¹A\A£×@“µA£×A¸R@’£A¸RAÌÍ@‘’ãAÌÍAáH@Œ•AáHAõÃ@"AõÃA
+=@Ž”{A
+=A¸@™•A¸A33@ŒŸHA33AG®@‹¤µAG®A\)@Š©³A\)Ap¤@‰¯Ap¤A…@ˆµëA…A™š@‡½*A™šA®@†ÂA®AÂ@…Æ/AÂA×
+@„Ê–A×
+Aë…@ƒÏ¡Aë…A  @‚Õ€A  A{@ÚA{A(ö@€Ý¬A(öA-@€F‡                        

@@ -5,12 +5,13 @@
 Binning routines for plotting
 """
 
+from __future__ import print_function
 import numpy
 from numpy import exp, log
 import matplotlib.pyplot as plt
 import scipy.special, scipy.stats
 import sys, os
-import gof
+from . import gof
 
 def group_adapt(xdata, ydata, xlo, xhi, nmin = 20):
 	"""
