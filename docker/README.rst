@@ -14,9 +14,11 @@ What it does
   * Stellar process component (apec whose luminosity remains below 1e42 erg/s)
   * All three are absorbed by Milky Way absorption.
 
-* Additional goodies:
+* Additional features:
+
+  * Uses the MultiNest global parameter space exploration algorithm, which can deal with many parameters and does not get stuck in local minima.
   * If the redshift is uncertain, these uncertainties are propagated through. Or you can give a fixed value.
-  * The background spectrum is approximated automatically with an empirical model. This extracts the most information, even for very few source counts (see e.g., Simmonds+18).
+  * The background spectrum is approximated automatically with an empirical model. This extracts more information compared to default xspec wstat, even for very few source counts (see e.g., Simmonds+18).
 
 * Produces parameter posterior distributions, which describe the uncertainties in:
 
@@ -29,8 +31,8 @@ What it does
   * torus opening angle parameters (CTKcover, TORtheta, uniform uninformative priors) 
 
 
-Preparing the data
--------------------
+Preparing your data
+---------------------
 
 * You only need your spectrum as a .pi/.pha file and the associated RMF, ARF and background files.
 * Check that the keywords are set correctly:
@@ -41,20 +43,20 @@ Preparing the data
 * Set the galactic N_H
 
   * Create a file next to your spectrum file with the extention .nh and put in the galactic column density to the source. For example:
-  * echo 1e21 > combined_src.pi.nh
+  * $ echo 1e21 > combined_src.pi.nh
   * You can also use the gal.py script (see BXA repository). It automatically fetches the nhtot value from http://www.swift.ac.uk/analysis/nhtot/ if RA/DEC are set:
   * python gal.py pn_src.fits
 
 * Give redshift information
 
   * Create a file next to your spectrum file with the extention .z and put in the source redshift. For example:
-  * echo 6.31 > combined_src.pi.z
+  * $ echo 6.31 > combined_src.pi.z
   * If you do not know the redshift, don't create this file.
   * If you have redshift uncertainties as a probability distribution, store here two columns: cumulative probability (from 0 to 1, uniformly sampled) and corresponding redshift. For example, for a redshift 1.1+-0.2, you could do::
 
-    cdfsteps = numpy.linspace(0, 1, 100)
-    z = scipy.stats.norm(1.1, 0.2).cdf(cdfsteps)
-    numpy.savetxt("combined_src.pi.z", numpy.transpose([cdfsteps, z]))
+	cdfsteps = numpy.linspace(0, 1, 100)
+	z = scipy.stats.norm(1.1, 0.2).cdf(cdfsteps)
+	numpy.savetxt("combined_src.pi.z", numpy.transpose([cdfsteps, z]))
 
 
 Finally, you should have files like in the testsrc/ folder:

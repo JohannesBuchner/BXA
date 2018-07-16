@@ -9,7 +9,7 @@ See the `documentation <http://johannesbuchner.github.io/BXA/>`_
 
 
 
-To analyse AGN spectra without complicated installation, go into the docker/ folder.
+To analyse AGN spectra without complicated installation, look into the `docker/ folder <https://github.com/JohannesBuchner/BXA/tree/master/docker>`_.
 
 
 
