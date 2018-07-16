@@ -25,4 +25,3 @@ script:
   #- docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -ti johannesbuchner/bxa_absorbed 
 
 
-
