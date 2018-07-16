@@ -1,10 +1,10 @@
+from __future__ import print_function
 """
 Precomputes a interpolated grid model from a complex model.
 
 That model can then be used for fast access.
 """
 
-from __future__ import print_function
 from sherpa.astro.ui import *
 from sherpa.models.parameter import Parameter
 from sherpa.models import ArithmeticModel

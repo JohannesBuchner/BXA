@@ -1,3 +1,4 @@
+from __future__ import print_function
 """
 Lets try something simpler.
 
@@ -11,7 +12,6 @@ and then fitting each stage
 
 
 """
-from __future__ import print_function
 import numpy
 import json
 import logging

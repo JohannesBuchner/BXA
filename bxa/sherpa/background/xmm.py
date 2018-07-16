@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
+from __future__ import print_function
 
 """
 Empirical XMM background model.
@@ -10,7 +11,6 @@ Written by Zhu Liu, adapted by Torben Simm and Johannes Buchner
 For example usage, see examples/sherpa/background/xmm/fit.py
 """	
 
-from __future__ import print_function
 import os
 from sherpa.astro.ui import *
 import numpy

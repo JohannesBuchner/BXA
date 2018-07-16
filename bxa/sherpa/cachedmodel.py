@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
+from __future__ import print_function
 
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
@@ -8,7 +9,6 @@ Copyright: Johannes Buchner (C) 2013-2016
 """
 
 import os
-from __future__ import print_function
 from math import log10, isnan, isinf
 if 'MAKESPHINXDOC' not in os.environ:
 	import sherpa.astro.ui as ui
