@@ -31,6 +31,7 @@ before_install:
 install:
   - ls
   - docker pull johannesbuchner/bxa_absorbed:latest
+  - pip install astropy requests
 
 script:
   - ls
