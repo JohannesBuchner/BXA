@@ -8,12 +8,15 @@ os:
 
 python:
   - "2.7"
-  - "3.6"
+  #- "3.6"
 
 services:
   - docker
 
-before_install:
+install:
+  - ls
+  - git clone https://github.com/JohannesBuchner/BXA
+  - cd BXA
   - docker pull johannesbuchner/bxa_absorbed:latest
 
 script:

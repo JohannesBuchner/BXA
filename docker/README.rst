@@ -135,7 +135,7 @@ Modify the behaviour
 
 * to change redshift, alter the .z file (see above)
 * to disable apec component, set the environment variable "-e WITHAPEC=0"
-* to change the fitagn.py script altogether, edit it in the scripts/ folder and pass "-v mydirectory/scripts:/opt/scripts/"
+* to change the fitagn.py script altogether, edit it in the scripts/ folder and pass "-v mydirectory/scripts:/opt/scripts/". You have to give the absolute path to your scripts/ directory.
 
 
 
