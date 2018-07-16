@@ -34,12 +34,12 @@ install:
 
 script:
   - ls
-  - cd testsrc
+  - cd docker/testsrc
   - ls 
   - rm *.nh
-  - python ../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
+  - python ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - git checkout .
-  - python ../gal.py pn_src.fits
+  - python ../../gal.py pn_src.fits
   - docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -ti johannesbuchner/bxa_absorbed 
 
 
