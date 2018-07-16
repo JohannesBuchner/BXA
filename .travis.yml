@@ -13,18 +13,33 @@ python:
 services:
   - docker
 
+cache:
+  bundler: true
+  directories:
+    - $HOME/docker
+
+before_cache:
+  # Save tagged docker images
+  - >
+    mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+    | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
+
+before_install:
+  # Load cached docker images
+  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+
 install:
   - ls
-  - git clone https://github.com/JohannesBuchner/BXA
-  - cd BXA
   - docker pull johannesbuchner/bxa_absorbed:latest
 
 script:
+  - ls
   - cd testsrc
+  - ls 
   - rm *.nh
   - python ../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - git checkout .
   - python ../gal.py pn_src.fits
-  #- docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -ti johannesbuchner/bxa_absorbed 
+  - docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -ti johannesbuchner/bxa_absorbed 
 
 
