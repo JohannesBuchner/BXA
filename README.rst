@@ -8,3 +8,8 @@ for **Bayesian Parameter Estimation** and **Model comparison**.
 See the `documentation <http://johannesbuchner.github.io/BXA/>`_
 
 
+
+To analyse AGN spectra without complicated installation, go into the docker/ folder.
+
+
+
