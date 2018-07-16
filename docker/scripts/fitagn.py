@@ -139,7 +139,7 @@ print 'running BXA ...'
 bxa.nested_run(id = ids[0], otherids = tuple(ids[1:]),
 	prior = priorfunction, parameters = parameters, 
 	resume = True, verbose = True,
-	outputfiles_basename = prefix, n_live_points = 1000,
+	outputfiles_basename = prefix, n_live_points = os.environ.get('NLIVEPOINTS', 1000),
 	importance_nested_sampling = False)
 outputfiles_basename = prefix
 bxa.set_best_fit(parameters=parameters,outputfiles_basename=outputfiles_basename)
