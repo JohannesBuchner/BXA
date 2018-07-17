@@ -51,7 +51,7 @@ install:
       python setup.py install --user;
       git clone https://github.com/JohannesBuchner/MultiNest;
       mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd;
-      pushd ${HOME}/Downloads; wget https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft6.24/heasoft-6.24src.tar.gz.md5; wget --continue ftp://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft6.24/heasoft-6.24src.tar.gz; md5sum -c heasoft-6.24src.tar.gz.md5 || rm heasoft-6.24src.tar.gz; popd;
+      pushd ${HOME}/Downloads; wget --continue https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft6.24/heasoft-6.24src.tar.gz; popd;
       tar -xzf ${HOME}/Downloads/heasoft-6.24src.tar.gz && pushd heasoft-6.24/BUILD_DIR; ./configure --prefix=$HOME/Downloads/heasoft-install/ |tail -n300 && make |tail -n300 && sudo make install |tail -n300; popd;
     fi
 
