@@ -26,7 +26,13 @@ before_cache:
 
 before_install:
   # Load cached docker images
-  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+  - >
+    if [[ -d $HOME/docker ]]; then 
+      for i in $HOME/docker/*.tar.gz; do 
+        echo "unpacking $i docker image"
+        < $i gunzip | docker load || true
+      done
+    fi
 
 install:
   - ls
@@ -41,6 +47,6 @@ script:
   - python ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - python ../../gal.py pn_src.fits
   - git checkout .
-  - docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=400 -t johannesbuchner/bxa_absorbed </dev/null
+  - docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=100 -t johannesbuchner/bxa_absorbed </dev/null
 
 
