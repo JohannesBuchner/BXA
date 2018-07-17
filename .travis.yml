@@ -18,15 +18,18 @@ services:
   - docker
 
 cache:
-  bundler: true
+  timeout: 3600
   directories:
     - $HOME/docker
     - $HOME/Downloads
 
 before_cache:
   # Save tagged docker images
+  - mkdir -p $HOME/docker $HOME/Downloads
+  - chmod 777 $HOME/docker $HOME/Downloads
+  - chown -R travis:travis $HOME/docker $HOME/Downloads
   - >
-    mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+    docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
     | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
 
 before_install:
