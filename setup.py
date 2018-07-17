@@ -9,12 +9,12 @@ except IOError:
 	long_description = ''
 
 setup(name='bxa',
-	version='2.3',
+	version='2.4',
 	author='Johannes Buchner',
 	url='https://github.com/JohannesBuchner/BXA/',
 	author_email='johannes.buchner.acad@gmx.com',
 	description='Bayesian X-ray spectral analysis',
 	long_description=long_description,
-	packages=['bxa.xspec', 'bxa.sherpa'],
+	packages=['bxa.xspec', 'bxa.sherpa', 'bxa'],
 	)
 

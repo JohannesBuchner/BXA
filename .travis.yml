@@ -44,17 +44,8 @@ before_install:
 
 install:
   - pip install astropy requests pymultinest
-  - if [ "$TOOL" == "sherpa" ]; then docker pull johannesbuchner/bxa_absorbed:latest; fi
-  - if [ "$TOOL" == "xspec" ];
-    then
-      sudo apt-get install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib;
-      python setup.py install --user;
-      git clone https://github.com/JohannesBuchner/MultiNest;
-      mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd;
-      pushd ${HOME}/Downloads; wget --continue https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft6.24/heasoft-6.24src.tar.gz; popd;
-      tar -xzf ${HOME}/Downloads/heasoft-6.24src.tar.gz && pushd heasoft-6.24/BUILD_DIR; ./configure --prefix=$HOME/Downloads/heasoft-install/ |tail -n300 && make |tail -n300 && sudo make install |tail -n300; popd;
-    fi
-
+  - if [[ "$TOOL" == "sherpa" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 3.6 ]]; then docker pull johannesbuchner/bxa_absorbed; fi
+  - if [[ "$TOOL" == "xspec" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 3.6 ]]; then docker pull giacomov/xspec-docker; fi
 
 script:
   # testing scripts
@@ -69,20 +60,10 @@ script:
       docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=100 -t johannesbuchner/bxa_absorbed </dev/null;
     fi
   - popd
-  - pwd; ls
-  - cd
-  - pwd; ls
   # testing xspec
   - if [ "$TOOL" == "xspec" ];
     then
-      export HEADAS=$(ls -d $HOME/Downloads/heasoft-install/x86_64-*/)
-      . $HEADAS/headas-init.sh
-      test -e ${HOME}/MultiNest/lib/libmultinest.so;
-      export LD_LIBRARY_PATH=${HOME}/MultiNest/lib/;
-      python -c 'import pymultinest';
-      python -c 'import xspec';
-      python -c 'import bxa.xspec as bxa';
-      pushd examples/xspec/ && bash -v runall.sh && popd;
+      docker run --rm -v $PWD/examples/xspec:/opt/script/ -v $PWD:/opt/BXA giacomov/xspec-docker bash /opt/script/test-docker.sh </dev/null;
     fi
 
 

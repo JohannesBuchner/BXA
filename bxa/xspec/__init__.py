@@ -21,7 +21,7 @@ from .sinning import binning
 from xspec import Xset, AllModels, Fit, AllChains, Plot
 import xspec
 import matplotlib.pyplot as plt
-import progressbar
+import progressbar # if this fails --> pip install progressbar-latest
 from .priors import *
 
 def store_chain(chainfilename, transformations, posterior):
@@ -38,8 +38,8 @@ def store_chain(chainfilename, transformations, posterior):
 	header = pyfits.Header()
 	header.add_comment("""Created by BXA (Bayesian X-ray spectal Analysis) for Xspec""")
 	header.add_comment("""refer to https://github.com/JohannesBuchner/""")
-	header.update('TEMPR001', 1.)
-	header.update('STROW001', 1)
+	header['TEMPR001'] = 1.
+	header['STROW001'] = 1
 	tbhdu = pyfits.new_table(table, header = header)
 	tbhdu.update_ext_name('CHAIN')
 	tbhdu.writeto(chainfilename, clobber=True)
