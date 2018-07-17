@@ -34,7 +34,7 @@ before_install:
   - >
     if [[ -d $HOME/docker ]]; then 
       for i in $HOME/docker/*.tar.gz; do 
-        echo "unpacking $i docker image"
+        echo "unpacking $i docker image";
         < $i gunzip | docker load || true
       done
     fi
@@ -42,14 +42,14 @@ before_install:
 install:
   - pip install astropy requests pymultinest
   - if [ "$TOOL" == "sherpa" ]; then docker pull johannesbuchner/bxa_absorbed:latest; fi
-  - if [ "$TOOL" == "xspec" ]
+  - if [ "$TOOL" == "xspec" ];
     then
-      apt-get install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib
-      python setup.py install --user
-      git clone https://github.com/JohannesBuchner/MultiNest
-      mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd
-      pushd ${HOME}/Downloads; wget --continue https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft6.24/heasoft-6.24src.tar.gz; popd
-      tar -xz ${HOME}/Downloads/heasoft-6.24src.tar.gz && pushd heasoft-6.24/BUILD_DIR; ./configure && make && make install; popd
+      apt-get install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib;
+      python setup.py install --user;
+      git clone https://github.com/JohannesBuchner/MultiNest;
+      mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd;
+      pushd ${HOME}/Downloads; wget --continue https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft6.24/heasoft-6.24src.tar.gz; popd;
+      tar -xz ${HOME}/Downloads/heasoft-6.24src.tar.gz && pushd heasoft-6.24/BUILD_DIR; ./configure && make && make install; popd;
     fi
 
 
@@ -63,23 +63,21 @@ script:
   - git checkout .
   # testing sherpa
   - if [ "$TOOL" == "sherpa" ]; then
-      docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=100 -t johannesbuchner/bxa_absorbed </dev/null
+      docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=100 -t johannesbuchner/bxa_absorbed </dev/null;
     fi
   - popd
   - pwd; ls
   - cd
   - pwd; ls
   # testing xspec
-  - if [ "$TOOL" == "xspec" ]
+  - if [ "$TOOL" == "xspec" ];
     then
-      test -e ${HOME}/MultiNest/lib/libmultinest.so
-      export LD_LIBRARY_PATH=${HOME}/MultiNest/lib/ 
-      python -c 'import pymultinest'
-      python -c 'import xspec'
-      python -c 'import bxa.xspec as bxa'
-      pushd examples/xspec/
-      bash -v runall.sh
-      popd
+      test -e ${HOME}/MultiNest/lib/libmultinest.so;
+      export LD_LIBRARY_PATH=${HOME}/MultiNest/lib/;
+      python -c 'import pymultinest';
+      python -c 'import xspec';
+      python -c 'import bxa.xspec as bxa';
+      pushd examples/xspec/ && bash -v runall.sh && popd;
     fi
 
 
