@@ -62,7 +62,6 @@ script:
   - popd
   # testing xspec
   - if [[ "$TOOL" == "xspec" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]]; then
-    then
       docker run --rm -v $PWD/examples/xspec:/opt/script/ -v $PWD:/opt/BXA giacomov/xspec-docker bash /opt/script/test-docker.sh </dev/null;
     fi
 
