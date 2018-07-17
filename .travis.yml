@@ -44,12 +44,12 @@ install:
   - if [ "$TOOL" == "sherpa" ]; then docker pull johannesbuchner/bxa_absorbed:latest; fi
   - if [ "$TOOL" == "xspec" ];
     then
-      apt-get install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib;
+      sudo apt-get install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib;
       python setup.py install --user;
       git clone https://github.com/JohannesBuchner/MultiNest;
       mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd;
       pushd ${HOME}/Downloads; wget --continue https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft6.24/heasoft-6.24src.tar.gz; popd;
-      tar -xz ${HOME}/Downloads/heasoft-6.24src.tar.gz && pushd heasoft-6.24/BUILD_DIR; ./configure && make && make install; popd;
+      tar -xz ${HOME}/Downloads/heasoft-6.24src.tar.gz && pushd heasoft-6.24/BUILD_DIR; ./configure --prefix=$HOME/Downloads/heasoft-install/ && make && sudo make install; popd;
     fi
 
 
@@ -72,6 +72,8 @@ script:
   # testing xspec
   - if [ "$TOOL" == "xspec" ];
     then
+      export HEADAS=$(ls -d $HOME/Downloads/heasoft-install/x86_64-*/)
+      . $HEADAS/headas-init.sh
       test -e ${HOME}/MultiNest/lib/libmultinest.so;
       export LD_LIBRARY_PATH=${HOME}/MultiNest/lib/;
       python -c 'import pymultinest';
