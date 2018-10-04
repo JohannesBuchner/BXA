@@ -19,6 +19,8 @@ pushd BXA; python setup.py install --user; popd
 ls /opt/MultiNest/lib/libmultinest.so
 export LD_LIBRARY_PATH=/opt/MultiNest/lib/:$LD_LIBRARY_PATH
 export PYTHONPATH=/usr/local/lib/python2.7/dist-packages/:$PYTHONPATH
+# avoid error without X server
+echo "backend: Agg" > matplotlibrc
 python -c 'import pymultinest';
 python -c 'import xspec';
 python -c 'import bxa.xspec as bxa';
