@@ -42,7 +42,6 @@ def store_chain(chainfilename, transformations, posterior):
 	header['STROW001'] = 1
 	header['EXTNAME'] = 'CHAIN'
 	tbhdu = pyfits.BinTableHDU.from_columns(table, header = header)
-	tbhdu.update_ext_name('CHAIN')
 	tbhdu.writeto(chainfilename, clobber=True)
 
 def set_parameters(transformations, values):

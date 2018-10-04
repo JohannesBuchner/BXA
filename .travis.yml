@@ -13,7 +13,8 @@ python:
 env:
   - TOOL=xspec   ASTROPY_VERSION=astropy==2.0"
   - TOOL=xspec   ASTROPY_VERSION=astropy
-  - TOOL=sherpa
+  - TOOL=sherpa  ASTROPY_VERSION=astropy==2.0"
+  - TOOL=sherpa  ASTROPY_VERSION=astropy
 
 services:
   - docker
