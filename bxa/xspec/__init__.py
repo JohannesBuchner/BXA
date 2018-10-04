@@ -40,7 +40,8 @@ def store_chain(chainfilename, transformations, posterior):
 	header.add_comment("""refer to https://github.com/JohannesBuchner/""")
 	header['TEMPR001'] = 1.
 	header['STROW001'] = 1
-	tbhdu = pyfits.new_table(table, header = header)
+	header['EXTNAME'] = 'CHAIN'
+	tbhdu = pyfits.BinTableHDU.from_columns(table, header = header)
 	tbhdu.update_ext_name('CHAIN')
 	tbhdu.writeto(chainfilename, clobber=True)
 
