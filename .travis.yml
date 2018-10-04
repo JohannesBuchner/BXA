@@ -11,7 +11,8 @@ python:
   - "3.6"
 
 env:
-  - TOOL=xspec
+  - TOOL=xspec   ASTROPY_VERSION=astropy==2.0"
+  - TOOL=xspec   ASTROPY_VERSION=astropy
   - TOOL=sherpa
 
 services:
@@ -43,7 +44,7 @@ before_install:
     fi
 
 install:
-  - pip install astropy requests pymultinest
+  - pip install requests pymultinest ${ASTROPY_VERSION}
   #- if [[ "$TOOL" == "sherpa" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]]; then docker pull johannesbuchner/bxa_absorbed; fi
   #- if [[ "$TOOL" == "xspec" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]]; then docker pull giacomov/xspec-docker; fi
 
