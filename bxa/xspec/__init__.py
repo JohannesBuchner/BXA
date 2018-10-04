@@ -5,6 +5,10 @@
 BXA (Bayesian X-ray Analysis) for Xspec
 
 Copyright: Johannes Buchner (C) 2013-2014
+
+Updated 2018/10/03 by bwgref
+- Changed new_table --> 
+
 """
 
 from __future__ import print_function
@@ -40,8 +44,9 @@ def store_chain(chainfilename, transformations, posterior):
 	header.add_comment("""refer to https://github.com/JohannesBuchner/""")
 	header['TEMPR001'] = 1.
 	header['STROW001'] = 1
-	tbhdu = pyfits.new_table(table, header = header)
-	tbhdu.update_ext_name('CHAIN')
+	header['EXTNAME'] = 'CHAIN'
+	tbhdu = pyfits.BinTableHDU.from_columns(table, header = header)
+#	tbhdu.update_ext_name('CHAIN')
 	tbhdu.writeto(chainfilename, clobber=True)
 
 def set_parameters(transformations, values):
