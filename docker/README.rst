@@ -1,5 +1,5 @@
 ================================
-Fitting with BXA
+Fitting with BXA & XAGNFitter
 ================================
 
 With this tool you can automatically fit X-ray spectra of AGN.
