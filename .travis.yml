@@ -52,6 +52,7 @@ install:
 script:
   # testing scripts
   - pushd docker/testsrc
+  - 'echo "backend: Agg" > matplotlibrc'
   - ls 
   - rm *.nh
   - python ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
