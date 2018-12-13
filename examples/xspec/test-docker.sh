@@ -21,6 +21,7 @@ export LD_LIBRARY_PATH=/opt/MultiNest/lib/:$LD_LIBRARY_PATH
 export PYTHONPATH=/usr/local/lib/python2.7/dist-packages/:$PYTHONPATH
 # avoid error without X server
 echo "backend: Agg" > matplotlibrc
+echo "backend: Agg" > /opt/script/matplotlibrc
 python -c 'import pymultinest';
 python -c 'import xspec';
 python -c 'import bxa.xspec as bxa';
