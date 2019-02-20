@@ -26,7 +26,7 @@ def apply_changes(f, filename):
 	if changed_anything:
 		print('   -> writing ',filename) # + '.withkeywords.fits'
 		#fitsfile.writeto(filename + '.withkeywords.fits', clobber=True)
-		fitsfile.writeto(filename, clobber=True)
+		fitsfile.writeto(filename, overwrite=True)
 	else:
 		print('   -> no changes needed')
 
@@ -74,7 +74,7 @@ SMALL = 0.001
 if f['EBOUNDS'].data[0]['E_MIN'] < SMALL or f['MATRIX'].data[0]['ENERG_LO'] < SMALL:
 	f['EBOUNDS'].data[0]['E_MIN'] = SMALL
 	f['MATRIX'].data[0]['ENERG_LO'] = SMALL
-	f.writeto(rmf, clobber=True)
+	f.writeto(rmf, overwrite=True)
 	print('  -> energy bounds corrected')
 else:
 	print('  -> file is ok')
@@ -84,7 +84,7 @@ print('Ancillary file:', arf)
 f = pyfits.open(arf)
 if f['SPECRESP'].data[0]['ENERG_LO'] < SMALL:
 	f['SPECRESP'].data[0]['ENERG_LO'] = SMALL
-	f.writeto(arf, clobber=True)
+	f.writeto(arf, overwrite=True)
 	print('  -> energy bounds corrected')
 else:
 	print('  -> file is ok')

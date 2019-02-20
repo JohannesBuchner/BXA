@@ -82,7 +82,7 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None,
 	import json
 	m = ui._session._get_model(id)
 	paramnames = [x.fullname for x in parameters]
-	json.dump(paramnames, file('%sparams.json' % outputfiles_basename, 'w'), indent=2)
+	json.dump(paramnames, open('%sparams.json' % outputfiles_basename, 'w'), indent=2)
 
 def set_best_fit(id=None, otherids=(), parameters = None, outputfiles_basename = 'chains/'):
 	"""

@@ -15,6 +15,6 @@ setup(name='bxa',
 	author_email='johannes.buchner.acad@gmx.com',
 	description='Bayesian X-ray spectral analysis',
 	long_description=long_description,
-	packages=['bxa.xspec', 'bxa.sherpa', 'bxa'],
+	packages=['bxa.xspec', 'bxa.sherpa', 'bxa.sherpa.background', 'bxa'],
 	)
 

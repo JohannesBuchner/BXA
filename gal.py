@@ -51,6 +51,7 @@ if __name__ == '__main__':
 			nh = get_gal_nh(ra, dec)
 			print(('writing to %s ...' % outfile))
 			open(outfile, 'w').write("%e\n" % nh)
+			del ra, dec
 		else:
 			print(('File %s already exists.' % outfile))
 
