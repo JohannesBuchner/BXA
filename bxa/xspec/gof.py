@@ -212,7 +212,8 @@ def write_gof(prefix, gof_avg, gof_total):
 	print("%.2f %5s %s"  % (gof_avg, verdict, prefix))
 	#file(filename + ".out", 'w').write(str(gof) + "\n")
 	numpy.savetxt(prefix + ".out", [gof_total, gof_avg])
-	file(prefix + ".summary", 'w').write(verdict + "\n")
+	with open(prefix + ".summary", 'w') as f:
+		f.write(verdict + "\n")
 
 def load_gof(prefix):
 	gof_total, gof_avg = numpy.loadtxt(prefix + ".out")

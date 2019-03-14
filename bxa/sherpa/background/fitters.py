@@ -170,7 +170,7 @@ class BackgroundStorage(object):
 	def load_bkg_model(self):
 		i = self.i
 		m = get_bkg_model(i)
-		bkg_model = json.load(file(self.backgroundparamsfile, 'r'))
+		bkg_model = json.load(open(self.backgroundparamsfile, 'r'))
 		bkg_pars = bkg_model['params']
 		for p in m.pars:
 			logbs.info("loaded parameter: \tbkg[%s] = %e" % (p.fullname, bkg_pars[p.fullname]))
@@ -187,7 +187,7 @@ class BackgroundStorage(object):
 		oldstats = 1e300
 
 		try:
-			prev_model = json.load(file(self.backgroundparamsfile, 'r'))
+			prev_model = json.load(open(self.backgroundparamsfile, 'r'))
 			oldstats = prev_model['stats']
 		except IOError as e:
 			warnings.warn('store_bkg_model: could not check previously stored model, perhaps this is the first. (Error was: %s)' % e)
@@ -196,7 +196,7 @@ class BackgroundStorage(object):
 		else:
 			set_analysis(i, "energy", "counts")
 			p = get_bkg_fit_plot(i)
-			with file(self.backgroundparamsfile, 'w') as f:
+			with open(self.backgroundparamsfile, 'w') as f:
 				json.dump(dict(params=params, stats=stats,
 					plot=dict(x=p.dataplot.x.tolist(), ydata=p.dataplot.y.tolist(), ymodel=p.modelplot.y.tolist()),
 					**kwargs), 
