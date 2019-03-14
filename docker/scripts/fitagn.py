@@ -52,19 +52,21 @@ id = ids[0]
 galabso = bxa.auto_galactic_absorption(id)
 galabso.nH.freeze()
 
-load_table_model("torus", '/opt/models/uxclumpy-cutoff.fits')
-load_table_model("scat", '/opt/models/uxclumpy-cutoff-omni.fits')
-srclevel = Parameter('src', 'level', 0, -8, 3, -8, 3)
-print 'combining components'
+# Models available at https://doi.org/10.5281/zenodo.602282
+load_table_model("torus", '/home/user/Downloads/specmodels/uxclumpy-cutoff.fits')
+load_table_model("scat", '/home/user/Downloads/specmodels/uxclumpy-cutoff-omni.fits')
+# the limits correspond to fluxes between Sco X-1 and CDFS7Ms faintest fluxes
+srclevel = Parameter('src', 'level', 0, -8, 3, -20, 20) 
+print('combining components')
 model = torus + scat
-print 'linking parameters'
+print('linking parameters')
 torus.norm = 10**srclevel
 srcnh = Parameter('src', 'nH', 22, 20, 26, 20, 26)
-torus.nH = 10**(srcnh - 22)
-scat.nH = torus.nH
-scat.nH = torus.nH
-print 'setting redshift'
-redshift = Parameter('src', 'z', 1, 0, 10, 0, 10) 
+torus.nh = 10**(srcnh - 22)
+scat.nh = torus.nh
+scat.nh = torus.nh
+print('setting redshift')
+redshift = Parameter('src', 'z', 1, 0, 5, 0, 10) 
 torus.redshift = redshift
 scat.redshift = redshift
 scat.phoindex = torus.phoindex
@@ -76,7 +78,10 @@ scat.ctkcover = torus.ctkcover
 softscatnorm = Parameter('src', 'softscatnorm', -2, -7, -1, -7, -1)
 scat.norm = 10**(srclevel + softscatnorm)
 
-print 'creating priors'
+
+
+
+print('creating priors')
 priors = []
 parameters = [srclevel, torus.phoindex, srcnh, softscatnorm]
 priors += [bxa.create_uniform_prior_for(srclevel)]
@@ -123,7 +128,7 @@ assert len(priors) == len(parameters), 'priors: %d parameters: %d' % (len(priors
 # set model
 #    find background automatically using PCA method
 
-print 'setting source and background model ...'
+print('setting source and background model ...')
 id = 1
 set_model(id, model * galabso)
 convmodel = get_model(id)
@@ -131,21 +136,38 @@ bkg_model = auto_background(id)
 set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
 #plot_bkg_fit(id)
 
+## we allow the background normalisation to be a free fitting parameter
+p = bkg_model.pars[0]
+p.max = p.val + 2
+p.min = p.val - 2
+parameters.append(p)
+priors += [bxa.create_uniform_prior_for(p)]
+
 #################
 # BXA run
 priorfunction = bxa.create_prior_function(priors = priors)
-print 'running BXA ...'
+print('running BXA ...')
 
 bxa.nested_run(id = ids[0], otherids = tuple(ids[1:]),
 	prior = priorfunction, parameters = parameters, 
 	resume = True, verbose = True,
-	outputfiles_basename = prefix, n_live_points = os.environ.get('NLIVEPOINTS', 1000),
+	outputfiles_basename = prefix, n_live_points = os.environ.get('NLIVEPOINTS', 400),
 	importance_nested_sampling = False)
+
+try:
+	from mpi4py import MPI
+	if MPI.COMM_WORLD.Get_rank() > 0:
+		sys.exit(0)
+except Exception as e:
+	pass
+
 outputfiles_basename = prefix
-bxa.set_best_fit(parameters=parameters,outputfiles_basename=outputfiles_basename)
+print('getting best-fit ...')
+bxa.set_best_fit(parameters=parameters, outputfiles_basename=outputfiles_basename)
 
 
 for id in ids:
+	print('plotting spectrum ...')
 	set_analysis(id,'ener','counts')
 	m = get_bkg_fit_plot(id)
 	numpy.savetxt(prefix + 'bkg_'+str(id)+'.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
@@ -153,6 +175,59 @@ for id in ids:
 	numpy.savetxt(prefix + 'src_'+str(id)+'.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
 
 # compute 2-10keV intrinsic luminosities?
+thawedpars = parameters
+print("calculating intrinsic fluxes and distribution of model spectra")
+# calculate restframe intrinsic flux
+id = ids[0]
+set_model(id, torus)
+
+import pymultinest
+a = pymultinest.analyse.Analyzer(n_params = len(thawedpars),
+	outputfiles_basename = prefix)
+rows = a.get_equal_weighted_posterior()
+r = []
+for i, row in enumerate(rows):
+	sys.stdout.write("%d/%d (%.2f%%)\r" % (i, len(rows), (i + 1)*100./ len(rows)))
+	sys.stdout.flush()
+	z = redshift.val if hasattr(redshift, 'val') else redshift
+	for p, v in zip(thawedpars, row):
+		if p.name == 'redshift' or p.name == 'z':
+			z = v
+		p.val = v
+
+	srcnh.val = 20
+	r.append([z, 
+		calc_energy_flux(id=id, lo=2/(1+z), hi=10/(1+z)),
+		calc_energy_flux(id=id, lo=0.5/(1+z), hi=8/(1+z))
+	])
+
+print("saving distribution plot data")
+r = numpy.asarray(r)
+assert len(rows) == len(r)
+numpy.savetxt(prefix + "intrinsic_photonflux.dist", r)
+
+rows = a.get_data()[:,2:]
+r = []
+for i, row in enumerate(rows):
+	sys.stdout.write("%d/%d (%.2f%%)\r" % (i, len(rows), (i + 1)*100./ len(rows)))
+	sys.stdout.flush()
+	z = redshift.val if hasattr(redshift, 'val') else redshift
+	for p, v in zip(thawedpars, row):
+		if p.name == 'redshift' or p.name == 'z':
+			z = v
+		p.val = v
+
+	srcnh.val = 20
+	r.append([z, 
+		calc_energy_flux(id=id, lo=2/(1+z), hi=10/(1+z)),
+		calc_energy_flux(id=id, lo=0.5/(1+z), hi=8/(1+z))
+	])
+
+print("saving distribution plot data")
+r = numpy.asarray(r)
+assert len(rows) == len(r)
+numpy.savetxt(prefix + "intrinsic_photonflux_weighted.dist", r)
 
 exit()
+
 
