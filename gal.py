@@ -48,11 +48,12 @@ if __name__ == '__main__':
 					ra  = header['RA_TARG']
 					dec = header['DEC_TARG']
 					break
-			print('requesting galactic NH from swift.ac.uk...')
 			nhs = [nhc for rac, decc, nhc in cache if rac == ra and decc == decc]
 			if len(nhs) > 0:
+				print('same as a previous one')
 				nh = nhs[0]
 			else:
+				print('requesting galactic NH from swift.ac.uk...')
 				nh = get_gal_nh(ra, dec)
 				cache.append((ra, dec, nh))
 				
