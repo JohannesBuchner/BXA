@@ -30,6 +30,7 @@ def get_gal_nh(ra, dec):
 if __name__ == '__main__':
 	import sys, os
 	import time
+	cache = []
 	for infile in sys.argv[1:]:
 		outfile = infile + '.nh'
 		if not os.path.exists(outfile):
@@ -48,7 +49,13 @@ if __name__ == '__main__':
 					dec = header['DEC_TARG']
 					break
 			print('requesting galactic NH from swift.ac.uk...')
-			nh = get_gal_nh(ra, dec)
+			nhs = [nhc for rac, decc, nhc in cache if rac == ra and decc == decc]
+			if len(nhs) > 0:
+				nh = nhs[0]
+			else:
+				nh = get_gal_nh(ra, dec)
+				cache.append((ra, dec, nh))
+				
 			print(('writing to %s ...' % outfile))
 			open(outfile, 'w').write("%e\n" % nh)
 			del ra, dec
