@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import setuptools
 from distutils.core import setup
 
 try:
@@ -9,7 +9,7 @@ except IOError:
 	long_description = ''
 
 setup(name='bxa',
-	version='2.4',
+	version='2.5',
 	author='Johannes Buchner',
 	url='https://github.com/JohannesBuchner/BXA/',
 	author_email='johannes.buchner.acad@gmx.com',
