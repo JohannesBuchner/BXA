@@ -4,7 +4,7 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2014
+Copyright: Johannes Buchner (C) 2013-2019
 
 Priors
 """
@@ -23,6 +23,8 @@ def create_uniform_prior_for(model, par):
 	# TODO: should we use min/max or bottom/top?
 	low = float(pmin)
 	spread = float(pmax - pmin)
+	if pmin > 0 and pmax / pmin > 100:
+		print('   note: this parameter spans several dex. Should it be log-uniform (create_jeffreys_prior_for)?')
 	def uniform_transform(x): return x * spread + low
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=uniform_transform, aftertransform=lambda x: x)
@@ -36,8 +38,12 @@ def create_jeffreys_prior_for(model, par):
 	# TODO: should we use min/max or bottom/top?
 	#print '  ', par.values
 	print('  jeffreys prior for %s between %e and %e ' % (par.name, pmin, pmax))
+	if pmin == 0:
+		raise Exception('You forgot to set reasonable parameter limits on %s' % par.name)
 	low = log10(pmin)
 	spread = log10(pmax) - log10(pmin)
+	if spread > 10:
+		print('   note: this parameter spans *many* dex. Double-check the limits are reasonable.')
 	def log_transform(x): return x * spread + low
 	def log_after_transform(x): return 10**x
 	return dict(model=model, index=par._Parameter__index, name=par.name, 

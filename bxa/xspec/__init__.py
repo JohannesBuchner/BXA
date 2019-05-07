@@ -42,7 +42,7 @@ def store_chain(chainfilename, transformations, posterior):
 	header['STROW001'] = 1
 	header['EXTNAME'] = 'CHAIN'
 	tbhdu = pyfits.BinTableHDU.from_columns(table, header = header)
-	tbhdu.writeto(chainfilename, clobber=True)
+	tbhdu.writeto(chainfilename, overwrite=True)
 
 def set_parameters(transformations, values):
 	"""
@@ -64,7 +64,7 @@ def set_best_fit(analyzer, transformations):
 		modes = analyzer.get_mode_stats()['modes']
 		highestmode = sorted(modes, key=lambda x: x['local evidence'])[0]
 		params = highestmode['maximum a posterior']
-	except Exception as e:
+	except Exception:
 		# modes were not described by MultiNest, last point instead
 		pass
 	params = analyzer.get_best_fit()['parameters']
@@ -154,8 +154,8 @@ def create_flux_chain(analyzer, transformations, spectrum, erange = "2.0 10.0"):
 	for each posterior sample.
 	"""
 	posterior = analyzer.get_equal_weighted_posterior()
-	prefix = analyzer.outputfiles_basename
-	modelnames = set([t['model'].name for t in transformations])
+	#prefix = analyzer.outputfiles_basename
+	#modelnames = set([t['model'].name for t in transformations])
 
 	oldchatter = Xset.chatter, Xset.logChatter
 	Xset.chatter, Xset.logChatter = 0, 0
@@ -279,11 +279,11 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 		posterior = posterior[chosen,:]
 		assert len(posterior) == nsamples
 	prefix = analyzer.outputfiles_basename
-	tmpfilename = '%s-wdatatmp.qdp' % prefix
+	tmpfilename = '%s-wdatatmp.qdp' % prefix.replace('.', '_')
 	
 	olddevice = Plot.device
 	Plot.device = '/null'
-	modelnames = set([t['model'].name for t in transformations])
+	#modelnames = set([t['model'].name for t in transformations])
 	
 	while len(Plot.commands) > 0:
 		Plot.delCommand(1)

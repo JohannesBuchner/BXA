@@ -117,7 +117,7 @@ def qq(analyzer, markers = 5, annotate = True):
 	olddevice = Plot.device
 	prefix = analyzer.outputfiles_basename
 	Plot.device = '/null'
-	tmpfilename = '%s-wdatatmp.qdp' % prefix
+	tmpfilename = '%s-wdatatmp.qdp' % prefix.replace('.', '_')
 
 	while len(Plot.commands) > 0:
 		Plot.delCommand(1)
