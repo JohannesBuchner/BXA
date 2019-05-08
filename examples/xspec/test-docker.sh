@@ -14,7 +14,8 @@ mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd
 #pip uninstall requests
 #python -m pip install --upgrade pip requests urllib3
 # upgrade pip ...
-sudo apt-get purge pip
+sudo apt-get purge python-pip
+#curl --silent --show-error --retry 5 https://bootstrap.pypa.io/get-pip.py | sudo python2.7
 sudo apt-get install python-setuptools python-dev 
 sudo easy_install pip 
 pip install pip --upgrade 
