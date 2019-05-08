@@ -6,15 +6,15 @@ export HEADAS=/heasoft/build/x86_64-unknown-linux-gnu-libc2.23-0/
 . $HEADAS/headas-init.sh
 
 cd /opt/
-apt-get update
-apt-get install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib
+apt-get -y update
+apt-get -y install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib
 
 git clone https://github.com/JohannesBuchner/MultiNest
 mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd
 #pip uninstall requests
 #python -m pip install --upgrade pip requests urllib3
 # upgrade pip ...
-sudo apt-get purge python-pip
+sudo apt-get -y purge python-pip
 #curl --silent --show-error --retry 5 https://bootstrap.pypa.io/get-pip.py | sudo python2.7
 sudo apt-get install python-setuptools python-dev 
 sudo easy_install pip 
