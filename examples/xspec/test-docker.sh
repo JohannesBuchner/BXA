@@ -11,8 +11,14 @@ apt-get install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmak
 
 git clone https://github.com/JohannesBuchner/MultiNest
 mkdir -p MultiNest/build; pushd MultiNest/build; cmake .. && make && popd
-pip uninstall requests
-python -m pip install --upgrade pip requests urllib3
+#pip uninstall requests
+#python -m pip install --upgrade pip requests urllib3
+# upgrade pip ...
+sudo apt-get purge pip
+sudo apt-get install python-setuptools python-dev 
+sudo easy_install pip 
+pip install pip --upgrade 
+
 pip install pymultinest progressbar-latest astropy==2.0
 #git clone https://github.com/JohannesBuchner/BXA
 pushd BXA; python setup.py install --user; popd
