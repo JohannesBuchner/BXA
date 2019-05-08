@@ -377,7 +377,7 @@ def standard_analysis(transformations, outputfiles_basename,
 			bins = data['bins'], widths = data['width'], 
 			data = data['data'], models = data['models'])
 		for point in binned['marked_binned']:
-			plt.errorbar(marker='o', **point, zorder=-1)
+			plt.errorbar(marker='o', zorder=-1, **point)
 		plt.xlim(binned['xlim'])
 		plt.ylim(binned['ylim'][0], binned['ylim'][1]*2)
 		plt.gca().set_yscale('log')
