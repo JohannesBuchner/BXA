@@ -46,7 +46,7 @@ def create_jeffreys_prior_for(model, par):
 		print('   note: this parameter spans *many* dex. Double-check the limits are reasonable.')
 	def log_transform(x): return x * spread + low
 	def log_after_transform(x): return 10**x
-	return dict(model=model, index=par._Parameter__index, name=par.name, 
+	return dict(model=model, index=par._Parameter__index, name='log(%s)' % par.name, 
 		transform=log_transform, aftertransform=log_after_transform)
 
 def create_gaussian_prior_for(model, par, mean, std):
