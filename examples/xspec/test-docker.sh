@@ -20,7 +20,7 @@ sudo apt-get install python-setuptools python-dev
 sudo easy_install pip 
 pip install pip --upgrade 
 
-pip install pymultinest progressbar-latest astropy==2.0
+pip install pymultinest progressbar-latest astropy==2.0 corner
 #git clone https://github.com/JohannesBuchner/BXA
 pushd BXA; python setup.py install --user; popd
 

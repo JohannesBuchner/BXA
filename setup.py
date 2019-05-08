@@ -16,6 +16,6 @@ setup(name='bxa',
 	description='Bayesian X-ray spectral analysis',
 	long_description=long_description,
 	packages=['bxa.xspec', 'bxa.sherpa', 'bxa.sherpa.background', 'bxa'],
-        requires=['pymultinest','numpy','corner']
+        requires=['pymultinest','numpy']
 )
 
