@@ -77,7 +77,7 @@ class RebinnedModel(ArithmeticModel):
 				print('        ', bin)
 		
 			data = numpy.zeros((ntot, len(ebins)-1))
-			for j, element in tqdm(list(enumerate(itertools.product(*bins)))):
+			for j, element in enumerate(tqdm(itertools.product(*bins), disable=None)):
 				for i, p in enumerate(params):
 					if p.val != element[i]:
 						p.val = element[i]

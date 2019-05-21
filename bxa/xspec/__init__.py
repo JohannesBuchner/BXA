@@ -161,7 +161,7 @@ def create_flux_chain(analyzer, transformations, spectrum, erange = "2.0 10.0"):
 	Xset.chatter, Xset.logChatter = 0, 0
 	# plot models
 	flux = []
-	for k, row in enumerate(tqdm(posterior)):
+	for k, row in enumerate(tqdm(posterior, disable=None)):
 		set_parameters(values=row[:-1], transformations=transformations)
 		AllModels.calcFlux(erange)
 		f = spectrum.flux
@@ -286,7 +286,7 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 	oldchatter = Xset.chatter, Xset.logChatter
 	Xset.chatter, Xset.logChatter = 0, 0
 	# plot models
-	for k, row in enumerate(tqdm(posterior)):
+	for k, row in enumerate(tqdm(posterior, disable=None)):
 		set_parameters(values=row[:-1], transformations=transformations)
 		if os.path.exists(tmpfilename):
 			os.remove(tmpfilename)
