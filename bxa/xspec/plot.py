@@ -11,6 +11,7 @@ Author: Johannes Buchner (C) 2013-2019
 import matplotlib.pyplot as plt
 import json
 import corner
+import numpy
 
 def marginal_plots(analyzer, minweight=1e-4, **kwargs):
 	"""
@@ -29,7 +30,7 @@ def marginal_plots(analyzer, minweight=1e-4, **kwargs):
 
 	mask = weights > minweight
 
-	with np.testing.suppress_warnings() as sup:
+	with numpy.testing.suppress_warnings() as sup:
 		corner.corner(data[mask,:], weights=weights[mask], 
 			labels=parameters, show_titles=True, **kwargs)
 		plt.savefig(prefix + 'corner.pdf')
