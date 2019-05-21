@@ -296,6 +296,8 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 		callback(content)
 	Xset.chatter, Xset.logChatter = oldchatter
 	xspec.Plot.device = olddevice
+	while len(Plot.commands) > 0:
+		Plot.delCommand(1)
 
 
 def standard_analysis(transformations, outputfiles_basename, 

@@ -29,10 +29,11 @@ def marginal_plots(analyzer, minweight=1e-4, **kwargs):
 
 	mask = weights > minweight
 
-	corner.corner(data[mask,:], weights=weights[mask], 
-		labels=parameters, show_titles=True, **kwargs)
-	plt.savefig(prefix + 'corner.pdf')
-	plt.savefig(prefix + 'corner.png')
-	plt.close()
+	with np.testing.suppress_warnings() as sup:
+		corner.corner(data[mask,:], weights=weights[mask], 
+			labels=parameters, show_titles=True, **kwargs)
+		plt.savefig(prefix + 'corner.pdf')
+		plt.savefig(prefix + 'corner.png')
+		plt.close()
 
 
