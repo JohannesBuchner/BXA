@@ -24,13 +24,13 @@ def marginal_plots(analyzer, minweight=1e-4, **kwargs):
 	"""
 	prefix = analyzer.outputfiles_basename
 	parameters = json.load(open(prefix + 'params.json'))
-	a = analyzer
-	data = a.get_data()[:,2:]
-	weights = a.get_data()[:,0]
+	
+	with numpy.testing.suppress_warnings():
+		data = analyzer.get_data()[:,2:]
+		weights = analyzer.get_data()[:,0]
 
-	mask = weights > minweight
+		mask = weights > minweight
 
-	with numpy.testing.suppress_warnings() as sup:
 		corner.corner(data[mask,:], weights=weights[mask], 
 			labels=parameters, show_titles=True, **kwargs)
 		plt.savefig(prefix + 'corner.pdf')
