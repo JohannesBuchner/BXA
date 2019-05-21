@@ -166,11 +166,11 @@ def create_flux_chain(analyzer, transformations, spectrum, erange = "2.0 10.0"):
 		progressbar.Bar(), progressbar.ETA()],
 		maxval=len(posterior)).start()
 	for k, row in enumerate(posterior):
-		set_parameters(parameters=row[:-1], transformations=transformations)
+		set_parameters(values=row[:-1], transformations=transformations)
 		AllModels.calcFlux(erange)
 		f = spectrum.flux
 		# compute flux in current energies
-		f.append([f[0], f[3]])
+		flux.append([f[0], f[3]])
 		pbar.update(k)
 	pbar.finish()
 	
@@ -279,7 +279,7 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 		posterior = posterior[chosen,:]
 		assert len(posterior) == nsamples
 	prefix = analyzer.outputfiles_basename
-	tmpfilename = '%s-wdatatmp.qdp' % prefix.replace('.', '_')
+	tmpfilename = os.path.join(os.path.dirname(prefix), os.path.basename(prefix).replace('.','_') + '-wdatatmp.qdp')
 	
 	olddevice = Plot.device
 	Plot.device = '/null'
