@@ -10,7 +10,7 @@ from sherpa.models.parameter import Parameter
 from sherpa.models import ArithmeticModel
 import itertools
 import numpy
-import progressbar
+from tqdm import tqdm
 
 """
 custom interpolation code, needs
@@ -77,13 +77,10 @@ class RebinnedModel(ArithmeticModel):
 				print('        ', bin)
 		
 			data = numpy.zeros((ntot, len(ebins)-1))
-			pbar = progressbar.ProgressBar(widgets=[progressbar.Percentage(), progressbar.Counter('%5d'), progressbar.Bar(), progressbar.ETA()],
-				maxval=ntot).start()
-			for j, element in enumerate(itertools.product(*bins)):
+			for j, element in tqdm(list(enumerate(itertools.product(*bins)))):
 				for i, p in enumerate(params):
 					if p.val != element[i]:
 						p.val = element[i]
-				pbar.update(j)
 				values = [p.val for p in slowmodel.pars]
 				model = slowmodel.calc(values, left, right)
 				#assert numpy.isfinite(model).all(), ('model:', model)
@@ -91,7 +88,6 @@ class RebinnedModel(ArithmeticModel):
 				#assert numpy.isfinite(model).all(), ('model', model)
 				data[j] = model
 				# (modelcum * width).cumsum()
-			pbar.finish()
 			print('model created. storing to %s' % filename)
 			numpy.savez(filename, x=ebins, y=data)
 		self.init(modelname=modelname, x=ebins, data=data, parameters=parameters) 

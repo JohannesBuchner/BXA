@@ -21,7 +21,7 @@ from .sinning import binning
 from xspec import Xset, AllModels, Fit, AllChains, Plot
 import xspec
 import matplotlib.pyplot as plt
-import progressbar # if this fails --> pip install progressbar-latest
+from tqdm import tqdm # if this fails --> pip install tqdm
 from .priors import *
 
 def store_chain(chainfilename, transformations, posterior):
@@ -161,18 +161,12 @@ def create_flux_chain(analyzer, transformations, spectrum, erange = "2.0 10.0"):
 	Xset.chatter, Xset.logChatter = 0, 0
 	# plot models
 	flux = []
-	pbar = progressbar.ProgressBar(
-		widgets=[progressbar.Percentage(), progressbar.Counter('%5d'), 
-		progressbar.Bar(), progressbar.ETA()],
-		maxval=len(posterior)).start()
-	for k, row in enumerate(posterior):
+	for k, row in enumerate(tqdm(posterior)):
 		set_parameters(values=row[:-1], transformations=transformations)
 		AllModels.calcFlux(erange)
 		f = spectrum.flux
 		# compute flux in current energies
 		flux.append([f[0], f[3]])
-		pbar.update(k)
-	pbar.finish()
 	
 	Xset.chatter, Xset.logChatter = oldchatter		
 	return numpy.array(flux)
@@ -292,12 +286,7 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 	oldchatter = Xset.chatter, Xset.logChatter
 	Xset.chatter, Xset.logChatter = 0, 0
 	# plot models
-	widgets = [progressbar.Percentage()]
-	if hasattr(progressbar, 'Counter'):
-		widgets += [progressbar.Counter('%5d')]
-	widgets += [progressbar.Bar(), progressbar.ETA()]
-	pbar = progressbar.ProgressBar(widgets=widgets, maxval=len(posterior)).start()
-	for k, row in enumerate(posterior):
+	for k, row in enumerate(tqdm(posterior)):
 		set_parameters(values=row[:-1], transformations=transformations)
 		if os.path.exists(tmpfilename):
 			os.remove(tmpfilename)
@@ -305,8 +294,6 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 		content = numpy.genfromtxt(tmpfilename, skip_header=3)
 		os.remove(tmpfilename)
 		callback(content)
-		pbar.update(k)
-	pbar.finish()
 	Xset.chatter, Xset.logChatter = oldchatter
 	xspec.Plot.device = olddevice
 
