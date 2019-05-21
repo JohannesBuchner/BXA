@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import json
 import corner
 import numpy
+import warnings
 
 def marginal_plots(analyzer, minweight=1e-4, **kwargs):
 	"""
@@ -25,16 +26,18 @@ def marginal_plots(analyzer, minweight=1e-4, **kwargs):
 	prefix = analyzer.outputfiles_basename
 	parameters = json.load(open(prefix + 'params.json'))
 	
-	with numpy.testing.suppress_warnings():
-		data = analyzer.get_data()[:,2:]
-		weights = analyzer.get_data()[:,0]
+	data = analyzer.get_data()[:,2:]
+	weights = analyzer.get_data()[:,0]
 
-		mask = weights > minweight
+	mask = weights > minweight
 
+	with warnings.catch_warnings():
+		warnings.simplefilter("ignore")
 		corner.corner(data[mask,:], weights=weights[mask], 
 			labels=parameters, show_titles=True, **kwargs)
-		plt.savefig(prefix + 'corner.pdf')
-		plt.savefig(prefix + 'corner.png')
-		plt.close()
+	
+	plt.savefig(prefix + 'corner.pdf')
+	plt.savefig(prefix + 'corner.png')
+	plt.close()
 
 
