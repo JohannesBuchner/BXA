@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>bxa.xspec.qq &mdash; BXA (Bayesian X-ray Analysis) 1.0 documentation</title>
-    
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <title>bxa.xspec.qq &#8212; BXA (Bayesian X-ray Analysis) 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="BXA (Bayesian X-ray Analysis) 1.0 documentation" href="../../../index.html" />
-    <link rel="up" title="bxa.xspec" href="../xspec.html" /> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,30 +35,30 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
-          <li><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li><a href="../xspec.html" accesskey="U">bxa.xspec</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../xspec.html" accesskey="U">bxa.xspec</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for bxa.xspec.qq</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="c"># -*- coding: utf-8 -*- </span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*- </span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Statistics and Plotting for quantile-quantile analysis for model discovery</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="n">Plot</span>
+<span class="kn">from</span> <span class="nn">xspec</span> <span class="k">import</span> <span class="n">Plot</span>
 
 <span class="k">def</span> <span class="nf">KSstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -93,12 +91,12 @@
 	<span class="n">modelc</span> <span class="o">=</span> <span class="n">modelc</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">/</span> <span class="n">maxmodelc</span>
 	<span class="n">datac</span> <span class="o">=</span> <span class="n">datac</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">/</span> <span class="n">datac</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 	<span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">/</span> <span class="n">maxmodelc</span>
-	<span class="k">assert</span> <span class="p">(</span><span class="n">modelc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">[</span><span class="s">&#39;ADstat has zero cumulative denominator&#39;</span><span class="p">,</span> <span class="n">modelc</span><span class="p">]</span>
-	<span class="k">assert</span> <span class="p">(</span><span class="n">maxmodelc</span> <span class="o">-</span> <span class="n">modelc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">[</span><span class="s">&#39;ADstat has zero=1-1 cumulative denominator&#39;</span><span class="p">,</span> <span class="n">maxmodelc</span> <span class="o">-</span> <span class="n">modelc</span><span class="p">]</span>
+	<span class="k">assert</span> <span class="p">(</span><span class="n">modelc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">[</span><span class="s1">&#39;ADstat has zero cumulative denominator&#39;</span><span class="p">,</span> <span class="n">modelc</span><span class="p">]</span>
+	<span class="k">assert</span> <span class="p">(</span><span class="n">maxmodelc</span> <span class="o">-</span> <span class="n">modelc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">[</span><span class="s1">&#39;ADstat has zero=1-1 cumulative denominator&#39;</span><span class="p">,</span> <span class="n">maxmodelc</span> <span class="o">-</span> <span class="n">modelc</span><span class="p">]</span>
 	<span class="n">ad</span> <span class="o">=</span> <span class="p">((</span><span class="n">modelc</span> <span class="o">-</span> <span class="n">datac</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">modelc</span> <span class="o">*</span> <span class="p">(</span><span class="n">maxmodelc</span> <span class="o">-</span> <span class="n">modelc</span><span class="p">))</span> <span class="o">*</span> <span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 	<span class="k">return</span> <span class="n">ad</span>
 
-<span class="k">def</span> <span class="nf">qq_plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">markers</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">unit</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">qq_plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">markers</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Create a quantile-quantile plot for model discovery (deviations in data from model).</span>
 
@@ -114,45 +112,45 @@
 	<span class="n">datac</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
 	<span class="n">modelc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
 	
-	<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">modelc</span><span class="p">,</span> <span class="n">datac</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">,</span> <span class="n">drawstyle</span><span class="o">=</span><span class="s">&#39;steps&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">modelc</span><span class="p">,</span> <span class="n">datac</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 	
 	<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">markers</span><span class="p">:</span>
 		<span class="n">mask</span> <span class="o">=</span> <span class="n">bins</span> <span class="o">&gt;=</span> <span class="n">m</span>
-		<span class="c"># first true value</span>
+		<span class="c1"># first true value</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
 		<span class="k">if</span> <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">modelc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">datac</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">)</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">modelc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">datac</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
 			<span class="k">if</span> <span class="n">datac</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">modelc</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-				<span class="n">textkwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">va</span><span class="o">=</span><span class="s">&#39;top&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;left&#39;</span><span class="p">)</span>
+				<span class="n">textkwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
 			<span class="k">else</span><span class="p">:</span>
-				<span class="n">textkwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">va</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;right&#39;</span><span class="p">)</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">modelc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">datac</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&#39;</span><span class="si">%s%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">unit</span><span class="p">),</span> <span class="o">**</span><span class="n">textkwargs</span><span class="p">)</span>
+				<span class="n">textkwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">modelc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">datac</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">unit</span><span class="p">),</span> <span class="o">**</span><span class="n">textkwargs</span><span class="p">)</span>
 
 	<span class="n">u</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">datac</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">modelc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;QQ-plot&#39;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;integrated model&#39;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;cumulative data counts&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;QQ-plot&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;integrated model&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;cumulative data counts&#39;</span><span class="p">)</span>
 
 	<span class="k">if</span> <span class="n">annotate</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;data excess&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;model excess&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;left&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;data excess&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;model excess&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 		<span class="n">stats</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
 			<span class="n">ks</span> <span class="o">=</span> <span class="n">KSstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">),</span>
 			<span class="n">cvm</span> <span class="o">=</span> <span class="n">CvMstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">),</span>
 			<span class="n">ad</span> <span class="o">=</span> <span class="n">ADstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">),</span>
 		<span class="p">)</span>
 		
-		<span class="n">text</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;K-S = </span><span class="si">%(ks).3f</span><span class="s"></span>
-<span class="s">C-vM = </span><span class="si">%(cvm).5f</span><span class="s"></span>
-<span class="s">A-D = </span><span class="si">%(ad)e</span><span class="s">&quot;&quot;&quot;</span>  <span class="o">%</span> <span class="n">stats</span>
+		<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;K-S = </span><span class="si">%(ks).3f</span><span class="s2"></span>
+<span class="s2">C-vM = </span><span class="si">%(cvm).5f</span><span class="s2"></span>
+<span class="s2">A-D = </span><span class="si">%(ad)e</span><span class="s2">&quot;&quot;&quot;</span>  <span class="o">%</span> <span class="n">stats</span>
 		
-		<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">u</span><span class="o">*</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;right&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">u</span><span class="o">*</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="qq"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.qq.qq">[docs]</a><span class="k">def</span> <span class="nf">qq</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">markers</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="qq"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.qq.qq">[docs]</a><span class="k">def</span> <span class="nf">qq</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">markers</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Create a quantile-quantile plot for model discovery (deviations in data from model).</span>
 
@@ -167,58 +165,58 @@
 	
 	<span class="n">olddevice</span> <span class="o">=</span> <span class="n">Plot</span><span class="o">.</span><span class="n">device</span>
 	<span class="n">prefix</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">outputfiles_basename</span>
-	<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s">&#39;/null&#39;</span>
-	<span class="n">tmpfilename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">-wdatatmp.qdp&#39;</span> <span class="o">%</span> <span class="n">prefix</span>
+	<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;/null&#39;</span>
+	<span class="n">tmpfilename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-wdatatmp.qdp&#39;</span> <span class="o">%</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
 
 	<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="n">Plot</span><span class="o">.</span><span class="n">delCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-	<span class="n">Plot</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s">&#39;wdata &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="n">tmpfilename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;.qdp&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">))</span>
+	<span class="n">Plot</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s1">&#39;wdata &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">tmpfilename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.qdp&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
 	
 	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
 		<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
 	
-	<span class="n">Plot</span><span class="p">(</span><span class="s">&quot;counts&quot;</span><span class="p">)</span>
+	<span class="n">Plot</span><span class="p">(</span><span class="s2">&quot;counts&quot;</span><span class="p">)</span>
 	<span class="n">content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-	<span class="c">#os.remove(tmpfilename)</span>
+	<span class="c1">#os.remove(tmpfilename)</span>
 	
 	<span class="n">bins</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dataerror</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 	
-	<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">markers</span><span class="p">,</span> <span class="s">&#39;__len__&#39;</span><span class="p">):</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">markers</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span>
 		<span class="n">nmarkers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">markers</span><span class="p">)</span>
 		<span class="n">decimals</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-4</span><span class="p">))</span>
 		<span class="n">markers</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">nmarkers</span><span class="o">+</span><span class="mi">2</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 		<span class="n">markers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">markers</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="n">decimals</span><span class="p">))</span>
 	
-	<span class="c"># make qq plot, with 1:1 line</span>
+	<span class="c1"># make qq plot, with 1:1 line</span>
 	<span class="n">qq_plot</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span> <span class="o">*</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span> <span class="o">*</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> 
 		<span class="n">markers</span> <span class="o">=</span> <span class="n">markers</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="n">annotate</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span><span class="p">)</span>
 	
-	<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span>
-</pre></div></div>
+	<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span></div>
+
+
+
+</pre></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -227,14 +225,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
-          <li><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li><a href="../xspec.html" >bxa.xspec</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../xspec.html" >bxa.xspec</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2013, Johannes Buchner.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Johannes Buchner.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

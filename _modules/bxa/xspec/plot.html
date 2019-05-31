@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>bxa.xspec.plot &mdash; BXA (Bayesian X-ray Analysis) 1.0 documentation</title>
-    
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <title>bxa.xspec.plot &#8212; BXA (Bayesian X-ray Analysis) 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="BXA (Bayesian X-ray Analysis) 1.0 documentation" href="../../../index.html" />
-    <link rel="up" title="bxa.xspec" href="../xspec.html" /> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,32 +35,35 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
-          <li><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li><a href="../xspec.html" accesskey="U">bxa.xspec</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../xspec.html" accesskey="U">bxa.xspec</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for bxa.xspec.plot</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="c"># -*- coding: utf-8 -*- </span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*- </span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Plotting of posterior parameter marginal distributions</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">print_function</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Plotting of posterior parameter marginal distributions</span>
+
+<span class="s2">Author: Johannes Buchner (C) 2013-2019</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">pymultinest</span>
+<span class="kn">import</span> <span class="nn">corner</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
-<div class="viewcode-block" id="marginal_plots"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.plot.marginal_plots">[docs]</a><span class="k">def</span> <span class="nf">marginal_plots</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="marginal_plots"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.plot.marginal_plots">[docs]</a><span class="k">def</span> <span class="nf">marginal_plots</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">minweight</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Create marginal plots</span>
 <span class="sd">	</span>
@@ -72,128 +73,45 @@
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">prefix</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">outputfiles_basename</span>
-	<span class="n">n_params</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">n_params</span>
-	<span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">file</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;params.json&#39;</span><span class="p">))</span>
-	<span class="n">a</span> <span class="o">=</span> <span class="n">analyzer</span>
-	<span class="n">s</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+	<span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;params.json&#39;</span><span class="p">))</span>
+	
+	<span class="n">data</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[:,</span><span class="mi">2</span><span class="p">:]</span>
+	<span class="n">weights</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[:,</span><span class="mi">0</span><span class="p">]</span>
 
-	<span class="n">p</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">PlotMarginal</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+	<span class="n">mask</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">&gt;</span> <span class="n">minweight</span>
 
-	<span class="n">values</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_equal_weighted_posterior</span><span class="p">()</span>
-	<span class="k">assert</span> <span class="n">n_params</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;marginals&#39;</span><span class="p">])</span>
-	<span class="n">modes</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s">&#39;modes&#39;</span><span class="p">]</span>
-	<span class="n">dim2</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="k">if</span> <span class="n">n_params</span> <span class="o">&gt;</span> <span class="mi">20</span> <span class="k">else</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+	<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+		<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+		<span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">,:],</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> 
+			<span class="n">labels</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+	
+	<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;corner.pdf&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;corner.png&#39;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-	<span class="k">if</span> <span class="n">dim2</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">n_params</span><span class="p">,</span> <span class="mi">5</span><span class="o">*</span><span class="n">n_params</span><span class="p">))</span>
-		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_params</span><span class="p">):</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="n">n_params</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-	
-			<span class="n">m</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s">&#39;marginals&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-	
-			<span class="n">oldax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-			<span class="n">x</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">patches</span> <span class="o">=</span> <span class="n">oldax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">values</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-			<span class="n">oldax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-	
-			<span class="n">newax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">oldax</span><span class="o">.</span><span class="n">get_position</span><span class="p">(),</span> <span class="n">sharex</span><span class="o">=</span><span class="n">oldax</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-			<span class="n">p</span><span class="o">.</span><span class="n">plot_marginal</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-	
-			<span class="n">ylim</span> <span class="o">=</span> <span class="n">newax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
-			<span class="n">y</span> <span class="o">=</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-			<span class="n">center</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s">&#39;median&#39;</span><span class="p">]</span>
-			<span class="n">low1</span><span class="p">,</span> <span class="n">high1</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s">&#39;1sigma&#39;</span><span class="p">]</span>
-			<span class="c">#print center, low1, high1</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">center</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-				<span class="n">xerr</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">([[</span><span class="n">center</span> <span class="o">-</span> <span class="n">low1</span><span class="p">,</span> <span class="n">high1</span> <span class="o">-</span> <span class="n">center</span><span class="p">]]),</span> 
-				<span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s">&#39;s&#39;</span><span class="p">)</span>
-			<span class="n">oldax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
-			<span class="c">#newax.set_yticks([])</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&quot;Probability&quot;</span><span class="p">)</span>
-			<span class="n">ylim</span> <span class="o">=</span> <span class="n">oldax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-			<span class="n">oldax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-			<span class="c">#plt.close()</span>
-	
-			<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
-				<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="n">n_params</span><span class="p">,</span> <span class="n">n_params</span> <span class="o">*</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-				<span class="n">p</span><span class="o">.</span><span class="n">plot_conditional</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gray_r</span><span class="p">)</span>
-				<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">modes</span><span class="p">:</span>
-					<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;mean&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;mean&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">xerr</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;sigma&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">yerr</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;sigma&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
-				<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-				<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
-				<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;marginals&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-				<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;marginals&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-				<span class="c">#plt.savefig(&#39;cond_%s_%s.pdf&#39; % (params[i], params[j]), bbox_tight=True)</span>
-				<span class="c">#plt.close()</span>
 
-		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;marg.pdf&#39;</span><span class="p">)</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;marg.png&#39;</span><span class="p">)</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="kn">from</span> <span class="nn">matplotlib.backends.backend_pdf</span> <span class="kn">import</span> <span class="n">PdfPages</span>
-		<span class="k">print</span> <span class="s">&#39;1dimensional only. Set the D environment variable D=2 to force&#39;</span>
-		<span class="k">print</span> <span class="s">&#39;2d marginal plots.&#39;</span>
-		<span class="n">pp</span> <span class="o">=</span> <span class="n">PdfPages</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;marg1d.pdf&#39;</span><span class="p">)</span>
-	
-		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_params</span><span class="p">):</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-		
-			<span class="n">m</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s">&#39;marginals&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-	
-			<span class="n">oldax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-			<span class="n">x</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">patches</span> <span class="o">=</span> <span class="n">oldax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">values</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-			<span class="n">oldax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-	
-			<span class="n">newax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">oldax</span><span class="o">.</span><span class="n">get_position</span><span class="p">(),</span> <span class="n">sharex</span><span class="o">=</span><span class="n">oldax</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-			<span class="n">p</span><span class="o">.</span><span class="n">plot_marginal</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-	
-			<span class="n">ylim</span> <span class="o">=</span> <span class="n">newax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
-			<span class="n">y</span> <span class="o">=</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-			<span class="n">center</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s">&#39;median&#39;</span><span class="p">]</span>
-			<span class="n">low1</span><span class="p">,</span> <span class="n">high1</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s">&#39;1sigma&#39;</span><span class="p">]</span>
-			<span class="k">print</span> <span class="n">center</span><span class="p">,</span> <span class="n">low1</span><span class="p">,</span> <span class="n">high1</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">center</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-				<span class="n">xerr</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">([[</span><span class="n">center</span> <span class="o">-</span> <span class="n">low1</span><span class="p">,</span> <span class="n">high1</span> <span class="o">-</span> <span class="n">center</span><span class="p">]]),</span> 
-				<span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s">&#39;s&#39;</span><span class="p">)</span>
-			<span class="n">oldax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&quot;Probability&quot;</span><span class="p">)</span>
-			<span class="n">ylim</span> <span class="o">=</span> <span class="n">oldax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
-			<span class="n">newax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-			<span class="n">oldax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s">&#39;5sigma&#39;</span><span class="p">])</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">&#39;tight&#39;</span><span class="p">)</span>
-			<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-		<span class="n">pp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div></div>
+</pre></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -202,14 +120,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &raquo;</li>
-          <li><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li><a href="../xspec.html" >bxa.xspec</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../xspec.html" >bxa.xspec</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2013, Johannes Buchner.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Johannes Buchner.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>
