@@ -35,6 +35,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="xspec-analysis.html" title="BXA/Xspec"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -75,6 +78,64 @@ Freeze the parameters you do not want to investigate. Make sure you set the para
 <span class="n">priorfunction</span> <span class="o">=</span> <span class="n">bxa</span><span class="o">.</span><span class="n">create_prior_function</span><span class="p">(</span><span class="n">priors</span> <span class="o">=</span> <span class="n">priors</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="function">
+<dt id="bxa.sherpa.create_jeffreys_prior_for">
+<code class="descclassname">bxa.sherpa.</code><code class="descname">create_jeffreys_prior_for</code><span class="sig-paren">(</span><em>parameter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_jeffreys_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.create_jeffreys_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for scale variables (order of magnitude)
+The Jeffreys prior gives equal weight to each order of magnitude between the
+minimum and maximum value. Flat in logarithmic scale.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameter</strong> – Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.norm</td>
+</tr>
+</tbody>
+</table>
+<p>It is usually easier to create an ancillary parameter, and link the 
+actual parameter, like so:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sherpa.models.parameter</span> <span class="k">import</span> <span class="n">Parameter</span>
+<span class="n">lognorm</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="s1">&#39;mycomponent&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;lognorm&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mi">4</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">powerlaw</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">lognorm</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.sherpa.create_uniform_prior_for">
+<code class="descclassname">bxa.sherpa.</code><code class="descname">create_uniform_prior_for</code><span class="sig-paren">(</span><em>parameter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_uniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for location variables (position)
+The uniform prior gives equal weight in non-logarithmic scale.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameter</strong> – Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.sherpa.create_prior_function">
+<code class="descclassname">bxa.sherpa.</code><code class="descname">create_prior_function</code><span class="sig-paren">(</span><em>priors=[]</em>, <em>parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_prior_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.create_prior_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine the prior transformations into a single function for pymultinest.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>priors</strong> – individual prior transforms to combine into one function.
+If priors is empty, uniform priors are used on all passed parameters</li>
+<li><strong>parameters</strong> – If priors is empty, specify the list of parameters.
+Uniform priors will be created for them.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="running-the-analysis">
 <span id="sherpa-run"></span><h2>Running the analysis<a class="headerlink" href="#running-the-analysis" title="Permalink to this headline">¶</a></h2>
@@ -85,6 +146,41 @@ Freeze the parameters you do not want to investigate. Make sure you set the para
              <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="s2">&quot;testbxa_&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="function">
+<dt id="bxa.sherpa.nested_run">
+<code class="descclassname">bxa.sherpa.</code><code class="descname">nested_run</code><span class="sig-paren">(</span><em>id=None</em>, <em>otherids=()</em>, <em>prior=None</em>, <em>parameters=None</em>, <em>sampling_efficiency=0.3</em>, <em>evidence_tolerance=0.5</em>, <em>n_live_points=400</em>, <em>outputfiles_basename='chains/'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa.html#nested_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.nested_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the Bayesian analysis with specified parameters+transformations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> – See the sherpa documentation of calc_stat.</li>
+<li><strong>otherids</strong> – See the sherpa documentation of calc_stat.</li>
+<li><strong>prior</strong> – prior function created with create_prior_function.</li>
+<li><strong>parameters</strong> – List of parameters to analyse.</li>
+<li><strong>outputfiles_basename</strong> – prefix for output filenames.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If prior is None, uniform priors are used on the passed parameters.
+If parameters is also None, all thawed parameters are used.</p>
+<p>The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
+n_live_points: 400 are often enough</p>
+<p>For quick results, use sampling_efficiency = 0.8, n_live_points = 50, 
+evidence_tolerance = 5. 
+The real results must be estimated with sampling_efficiency = 0.3,
+otherwise it is not reliable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bxa.sherpa.set_best_fit">
+<code class="descclassname">bxa.sherpa.</code><code class="descname">set_best_fit</code><span class="sig-paren">(</span><em>id=None</em>, <em>otherids=()</em>, <em>parameters=None</em>, <em>outputfiles_basename='chains/'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa.html#set_best_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.set_best_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets model to the best fit values.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="marginal-plots">
 <span id="sherpa-analyse"></span><h2>Marginal plots<a class="headerlink" href="#marginal-plots" title="Permalink to this headline">¶</a></h2>
@@ -125,6 +221,15 @@ the correct luminosity distribution.</p>
 <span class="n">numpy</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">out</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;dist.txt&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="function">
+<dt id="bxa.sherpa.get_distribution_with_fluxes">
+<code class="descclassname">bxa.sherpa.</code><code class="descname">get_distribution_with_fluxes</code><span class="sig-paren">(</span><em>id=None</em>, <em>otherids=()</em>, <em>lo=None</em>, <em>hi=None</em>, <em>parameters=None</em>, <em>outputfiles_basename='chains/'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa.html#get_distribution_with_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.get_distribution_with_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of equally weighted posterior samples (parameter values) with two 
+additional columns: the photon fluxes and the energy fluxes.</p>
+<p>The values will be correctly distributed according to the
+analysis run before.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="model-comparison">
 <span id="sherpa-models"></span><h2>Model comparison<a class="headerlink" href="#model-comparison" title="Permalink to this headline">¶</a></h2>
@@ -232,6 +337,31 @@ This indicates that the data has more counts than the model there.</p>
 <p>Refer to the appendix of the <a class="reference external" href="cite">accompaning paper</a> for more examples.</p>
 <p>The <em>qq</em> function in the <em>qq</em> module allows you to create such plots easily, by
 exporting the cumulative functions into a file.</p>
+<dl class="function">
+<dt id="bxa.sherpa.qq.qq_export">
+<code class="descclassname">bxa.sherpa.qq.</code><code class="descname">qq_export</code><span class="sig-paren">(</span><em>id=None</em>, <em>bkg=False</em>, <em>outfile='qq.txt'</em>, <em>elow=None</em>, <em>ehigh=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/qq.html#qq_export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.qq.qq_export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export Q-Q plot into a file for plotting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> – spectrum id to use (see get_bkg_plot/get_data_plot)</li>
+<li><strong>bkg</strong> – whether to use get_bkg_plot or get_data_plot</li>
+<li><strong>outfile</strong> – filename to write results into</li>
+<li><strong>elow</strong> – low energy limit</li>
+<li><strong>ehigh</strong> – low energy limit</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">qq</span><span class="o">.</span><span class="n">qq_export</span><span class="p">(</span><span class="s1">&#39;bg&#39;</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;my_bg_qq&#39;</span><span class="p">,</span> <span class="n">elow</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">ehigh</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <p>Refer to the <a class="reference internal" href="index.html#cite"><span class="std std-ref">accompaning paper</span></a>, which gives an introduction and
 detailed discussion on the methodology.</p>
 </div>
@@ -290,6 +420,9 @@ detailed discussion on the methodology.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="xspec-analysis.html" title="BXA/Xspec"
              >next</a> |</li>
