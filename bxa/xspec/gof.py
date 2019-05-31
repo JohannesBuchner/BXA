@@ -107,19 +107,18 @@ def calc_multigof(data, model):
 			
 			# compare this probability to all the other k
 			#probs = gen_choices(cpart, k)
-			if m > 0:
-				probs = scipy.stats.poisson(m).pmf(k)
-			else:
-				if k == 0:
-					probs = 1
-				else:
-					probs = 1e-10
-			stats.append([n, j, probs, m, k]) #  * len(data) / n])
-			assert not numpy.isnan(probs), [mpart.sum(), k]
+			stats.append([n, j, 0., m, k]) #  * len(data) / n])
 			#print '  multigof', n, j, probs, len(stats)
 			# lam = sum(mpart) WRONG!
 			# go through all possibilities to get k
-	return numpy.array(stats)
+	stats = numpy.array(stats)
+	m = stats[:,3]
+	k = stats[:,4]
+	probs = numpy.where(m > 0, scipy.stats.poisson(m).pmf(k), 
+		numpy.where(k == 0, 1, 1e-10))
+	assert not numpy.isnan(probs).any(), [m, k]
+	stats[:,2] = probs
+	return stats
 
 def group_adapt(data, nmin = 10):
 	i = 0

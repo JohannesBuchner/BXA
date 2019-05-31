@@ -4,7 +4,8 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2014
+Copyright: Johannes Buchner (C) 2013-2019
+
 """
 
 from __future__ import print_function
@@ -362,6 +363,7 @@ def standard_analysis(transformations, outputfiles_basename,
 		#plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
 		#	label='data', marker='o', color='green')
 		# bin data for plotting
+		print('binning for plot...')
 		binned = binning(outputfiles_basename = analyzer.outputfiles_basename, 
 			bins = data['bins'], widths = data['width'], 
 			data = data['data'], models = data['models'])

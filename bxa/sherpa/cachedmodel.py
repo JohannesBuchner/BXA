@@ -9,14 +9,19 @@ Copyright: Johannes Buchner (C) 2013-2016
 """
 
 import os
+import numpy
 from math import log10, isnan, isinf
+
+
 if 'MAKESPHINXDOC' not in os.environ:
 	import sherpa.astro.ui as ui
 	from sherpa.stats import Cash, CStat
+	from sherpa.models import ArithmeticModel, CompositeModel
+else:
+	ArithmeticModel = object
+	CompositeModel = list
 
-import numpy
 
-from sherpa.models import ArithmeticModel, CompositeModel
 class VariableCachedModel(CompositeModel, ArithmeticModel):
 	def __init__(self, othermodel):
 		self.othermodel = othermodel

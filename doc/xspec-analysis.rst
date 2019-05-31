@@ -8,7 +8,7 @@ how to do the simplest analysis.
 
 .. _PyXspec: https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/
 
-.. literalinclude:: ../examples/example_simplest.py
+.. literalinclude:: ../examples/xspec/example_simplest.py
 
 .. _xspec-priors:
 

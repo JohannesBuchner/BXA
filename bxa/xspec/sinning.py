@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import scipy.special, scipy.stats
 import sys, os
 from . import gof
+import tqdm
 
 def group_adapt(xdata, ydata, xlo, xhi, nmin = 20):
 	"""
@@ -44,6 +45,7 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	  ready to be passed to matplotlib.pyplot.fill_between
 	* and statistics (GoF measure)
 	
+	outputfiles_basename is not used.
 	"""
 	
 	xdata = bins
@@ -53,7 +55,6 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	ydata = numpy.array(data * widths * 2, dtype=int)
 	models = models * widths * 2
 	deltax = (xdata[1:] - xdata[:-1]).mean()
-	prefix = outputfiles_basename
 	
 	best_gof = None
 	best_gof_stats = None
@@ -64,13 +65,14 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	
 	for icomponent in range(models.shape[1]):
 		component = models[:,icomponent,:]
-		for i, counts_predicted in enumerate(component):
+		for i, counts_predicted in enumerate(tqdm.tqdm(component)):
 			modelrange_low, modelrange_high = gof.calc_models_range(data)
 		
 			stats = gof.calc_multigof(data, counts_predicted)
 			curgof = -numpy.log10(
 				numpy.min([stats[stats[:,0] == n][:,2].min() * (stats[:,0] == n).sum() 
-					for n in sorted(set(stats[:,0]))]))
+					for n in sorted(set(stats[:,0]))]) + 1e-300)
+			
 			if best_gof is None or curgof < best_gof:
 				best_gof = curgof
 				best_gof_stats = stats
@@ -82,13 +84,13 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	stats = best_gof_stats
 	
 	data_gofp = [numpy.nan] * len(grouped_data)
-	for n in sorted(set(map(int, stats[:,0]))):
+	for n in numpy.unique(stats[:,0].astype(int)):
 		# find the worst case for this level and each datapoint
 		#exp(numpy.log(stats[stats[:,0] == n][:,2]).sum()) * (stats[:,0] == n).sum() 
 		#		for n in sorted(set(stats[:,0]))]))
 		nstats = stats[stats[:,0] == n]
-		pxlo = xlo[numpy.array(nstats[:,1] * n, dtype=numpy.int)]
-		pxhi = numpy.array(list(pxlo[1:]) + [xdata.max()])
+		pxlo = xlo[(nstats[:,1] * n).astype(numpy.int)]
+		pxhi = numpy.asarray(pxlo[1:].tolist() + [xdata.max()])
 	
 		# so far so good.
 		# mark data points that have not been achieved
@@ -107,7 +109,7 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	ymin = 1e300
 	ymax = 0
 	for (xloi, xhii, ydatai), gofpi in zip(grouped_data, data_gofp):
-		best_gof = -numpy.log10(gofpi)
+		best_gof = -numpy.log10(gofpi + 1e-300)
 		# 1e3 and 1e6 correspond roughly to 3 sigma and 5 sigma
 		c = 'green' if best_gof < 2 else 'orange' if best_gof < 6. else 'red'
 		f = 1. / (xhii-xloi) #* deltax
