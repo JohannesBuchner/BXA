@@ -51,7 +51,7 @@ For histograms (1d and 2d) of the marginal parameter distributions, use *plot.ma
 .. automodule:: bxa.xspec.plot
 	:members: marginal_plots
 
-.. figure:: absorbed-marg.pdf
+.. figure:: absorbed-corner.*
 	:scale: 50%
 	
 	For each parameter and each pair (not shown here), the marginal probability distribution is plotted.
@@ -104,7 +104,7 @@ Refer to the *standard_analysis* function as an example of how to use them.
 	
 	It is ok to ignore the colors, this computation is not used otherwise.
 
-.. figure:: absorbed-unconvolved_posterior.*
+.. figure:: absorbed-unconvolved_posterior.pdf
 	
 	Example of the unconvolved spectrum with data.
 	For each posterior sample (solution), the parameters are taken and put
