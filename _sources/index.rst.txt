@@ -109,7 +109,7 @@ Install the required python packages, through your package manager, through pip 
 	$ yum install ipython python-matplotlib scipy numpy matplotlib
 	$ apt-get install python-numpy python-scipy python-matplotlib ipython
 
-	$ pip install progressbar --user
+	$ pip install tqdm corner --user
 
 BXA itself can installed directly from PyPI using pip or easy_install::
 
