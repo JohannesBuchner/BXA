@@ -61,11 +61,11 @@ sphere.redshift = redshift
 sphere.abund_.freeze()
 sphere.fe_abund_.freeze()
 sphere.redshift = redshift
-sphere.nH.min = 1e20 / 1e22
-sphere.nH.max = 1e26 / 1e22
-sphere.nH.val = 1e22 / 1e22
-galabso.nH.freeze()
-galabso.nH.val = galnh_value / 1e22
+sphere.nh.min = 1e20 / 1e22
+sphere.nh.max = 1e26 / 1e22
+sphere.nh.val = 1e22 / 1e22
+galabso.nh.freeze()
+galabso.nh.val = galnh_value / 1e22
 
 print('freezing background params')
 for p in get_bkg_model(id).pars: 

@@ -126,8 +126,8 @@ class ChandraBackground(BackgroundModel):
 		notice(0.4, 9.8)
 	def set_model(self, stage):
 		i = self.storage.i
-		withsoft = stage > 0
-		withlines = stage > 1
+		withsoft = stage not in ('continuum')
+		withlines = stage not in ('continuum', 'softfeatures')
 		logbm.info('stage "%s" for %s ...' % (stage, i))
 		continuum = self.boxes[0]
 		contlevel = self.contlevel
