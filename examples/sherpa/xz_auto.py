@@ -66,7 +66,7 @@ torus.nh = 10**(srcnh - 22)
 scat.nh = torus.nh
 scat.nh = torus.nh
 print('setting redshift')
-redshift = Parameter('src', 'z', 1, 0, 5, 0, 10) 
+redshift = Parameter('src', 'z', 1, 0, 10, 0, 10) 
 torus.redshift = redshift
 scat.redshift = redshift
 scat.phoindex = torus.phoindex
