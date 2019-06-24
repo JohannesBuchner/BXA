@@ -5,7 +5,7 @@ from __future__ import print_function
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
 
-Copyright: Johannes Buchner (C) 2013-2015
+Copyright: Johannes Buchner (C) 2013-2019
 """
 
 import os
