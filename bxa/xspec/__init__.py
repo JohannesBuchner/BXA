@@ -12,14 +12,14 @@ from __future__ import print_function
 import pymultinest
 import os
 import json
-from math import log10, isnan, isinf
+from math import isnan, isinf
 import numpy
 
 from . import plot
 from . import qq
 from .sinning import binning
 
-from xspec import Xset, AllModels, Fit, AllChains, Plot
+from xspec import Xset, AllModels, Fit, Plot
 import xspec
 import matplotlib.pyplot as plt
 from tqdm import tqdm # if this fails --> pip install tqdm
