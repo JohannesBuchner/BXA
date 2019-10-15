@@ -1,9 +1,8 @@
 from __future__ import print_function
-import json
 import astropy.io.fits as pyfits
 import requests
 
-url = "http://www.swift.ac.uk/analysis/nhtot/donhtot.php"
+url = "https://www.swift.ac.uk/analysis/nhtot/donhtot.php"
 
 def parse_response(html_response):
 	""" parses the html response and extracts the weighted total NH value """
@@ -29,7 +28,6 @@ def get_gal_nh(ra, dec):
 
 if __name__ == '__main__':
 	import sys, os
-	import time
 	cache = []
 	for infile in sys.argv[1:]:
 		outfile = infile + '.nh'
