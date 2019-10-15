@@ -123,9 +123,9 @@ def qq(analyzer, markers = 5, annotate = True):
 	before, to get the qq plot at the best fit.
 
 	* markers: list of energies/channels (whichever the current plotting xaxis unit)
-	or number of equally spaced markers between minimum+maximum.
+	  or number of equally spaced markers between minimum+maximum.
 	* annotate: add information to the plot
-	
+
 	"""
 	
 	olddevice = Plot.device

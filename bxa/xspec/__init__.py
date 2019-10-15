@@ -83,10 +83,10 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 0.3
 	:param transformations: Parameter transformation definitions
 	:param prior_function: set only if you want to specify a custom, non-separable prior
 	:param outputfiles_basename: prefix for output filenames.
-	The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
 
 	The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)
-	n_live_points: 400 are often enough
+
+	n_live_points=400 (default) is often enough.
 	
 	For quick results, use sampling_efficiency = 0.8, n_live_points = 50, 
 	evidence_tolerance = 5.
