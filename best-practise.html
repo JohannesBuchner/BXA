@@ -1,31 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Recommendations for X-ray spectral analysis &#8212; BXA (Bayesian X-ray Analysis) 2.8 documentation</title>
+    <meta charset="utf-8" />
+    <title>Recommendations for X-ray spectral analysis &#8212; BXA (Bayesian X-ray Analysis) 2.10 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '2.8',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -35,7 +27,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">BXA (Bayesian X-ray Analysis) 2.8 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">BXA (Bayesian X-ray Analysis) 2.10 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -48,21 +40,21 @@
 <h1>Recommendations for X-ray spectral analysis<a class="headerlink" href="#recommendations-for-x-ray-spectral-analysis" title="Permalink to this headline">¶</a></h1>
 <p>For good and valid results, experienced users of XSpec or Sherpa already do these:</p>
 <ol class="arabic simple">
-<li>Using a continuous background model (parameteric, albeit not necessarily physical),
+<li><p>Using a continuous background model (parameteric, albeit not necessarily physical),
 instead of “subtracting” or using bin-wise backgrounds (XSpec default).
-Commonly, a extraction region near the source is used to estimate the background.</li>
-<li>Use C-Stat/Cash (poisson likelihood) instead of Chi^2 (gaussian likelihood)</li>
-<li>Use unbinned spectra (except perhaps for visualization, albeit you can use QQ-plots there without loss of resolution)</li>
+Commonly, a extraction region near the source is used to estimate the background.</p></li>
+<li><p>Use C-Stat/Cash (poisson likelihood) instead of Chi^2 (gaussian likelihood)</p></li>
+<li><p>Use unbinned spectra (except perhaps for visualization, albeit you can use QQ-plots there without loss of resolution)</p></li>
 </ol>
 <p>Beyond these already accepted practices, we recommend:</p>
 <ol class="arabic" start="4">
-<li><p class="first">Estimating the values with uncertainties using Bayesian inference (this software, or MCMC methods)
+<li><p>Estimating the values with uncertainties using Bayesian inference (this software, or MCMC methods)
 instead of Contour-search, Fisher matrix, stepping, or other approximations</p>
 <p>Instead of a local optimization, the benefit is that a global search can deal with multiples solutions.
 Error propagation is easy too when using the posterior samples (similar to a Markov chain),
 and it preserves the structure of the error (dependence between parameters, etc.)</p>
 </li>
-<li><p class="first">Comparing models using the computed evidence (this software)
+<li><p>Comparing models using the computed evidence (this software)
 instead of Likelihood ratio tests (which are invalid for non-nested models)</p>
 <p>Bayesian model selection based on the “evidence” Z resolves a number of limitations
 of current methods, and is easy to do with this software.</p>
@@ -85,13 +77,13 @@ of current methods, and is easy to do with this software.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -107,12 +99,12 @@ of current methods, and is easy to do with this software.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">BXA (Bayesian X-ray Analysis) 2.8 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">BXA (Bayesian X-ray Analysis) 2.10 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2013, Johannes Buchner.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+        &#169; Copyright 2013-2019, Johannes Buchner.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
     </div>
   </body>
 </html>
