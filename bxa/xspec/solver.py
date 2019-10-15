@@ -9,7 +9,7 @@ Copyright: Johannes Buchner (C) 2013-2019
 """
 
 from __future__ import print_function
-from mininest.solvecompat import pymultinest_solve_compat as solve
+from ultranest.solvecompat import pymultinest_solve_compat as solve
 import os
 from math import isnan, isinf
 import numpy
@@ -109,7 +109,7 @@ class BXASolver(object):
 		self.transformations = transformations
 		self.set_paramnames()
 	
-		# for convenience. Has to be a directory anyway for mininest
+		# for convenience. Has to be a directory anyway for ultranest
 		if not outputfiles_basename.endswith('/'):
 			outputfiles_basename = outputfiles_basename + '/'
 		
@@ -315,6 +315,8 @@ class BXASolver(object):
 			assert len(posterior) == nsamples
 		prefix = self.outputfiles_basename
 		tmpfilename = os.path.join(os.path.dirname(prefix), os.path.basename(prefix).replace('.','_') + '-wdatatmp.qdp')
+		if os.path.exists(tmpfilename):
+			os.remove(tmpfilename)
 		
 		olddevice = Plot.device
 		Plot.device = '/null'
@@ -339,6 +341,8 @@ class BXASolver(object):
 		xspec.Plot.device = olddevice
 		while len(Plot.commands) > 0:
 			Plot.delCommand(1)
+		if os.path.exists(tmpfilename):
+			os.remove(tmpfilename)
 
 
 def standard_analysis(transformations, outputfiles_basename, 

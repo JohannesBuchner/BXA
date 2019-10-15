@@ -12,7 +12,7 @@ import os
 from math import isnan
 import matplotlib
 matplotlib.use('Agg')
-from mininest.solvecompat import pymultinest_solve_compat as solve
+from ultranest.solvecompat import pymultinest_solve_compat as solve
 
 if 'MAKESPHINXDOC' not in os.environ:
 	import sherpa.astro.ui as ui
@@ -128,8 +128,9 @@ class BXASolver(object):
 				print('Exception in log_likelihood function: ', e)
 				for i, p in enumerate(self.parameters):
 					print('    Parameter %10s: %f --> %f [%f..%f]' % (p.fullname, p.val, cube[i], p.min, p.max))
-				import sys
-				sys.exit(-127)
+				#import sys
+				#sys.exit(-127)
+				raise Exception("Model evaluation problem") from e
 			return -1e300
 		
 		n_dims = len(self.parameters)

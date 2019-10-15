@@ -165,26 +165,40 @@ outputfiles_basename = prefix
 print('getting best-fit ...')
 bxa.set_best_fit(parameters=parameters, outputfiles_basename=outputfiles_basename)
 
+import pymultinest
+thawedpars = parameters
+a = pymultinest.analyse.Analyzer(n_params = len(thawedpars),
+	outputfiles_basename = prefix)
+rows = a.get_equal_weighted_posterior()
 
 for id in ids:
 	print('plotting spectrum ...')
 	set_analysis(id,'ener','counts')
-	m = get_bkg_fit_plot(id)
-	numpy.savetxt(prefix + 'bkg_'+str(id)+'.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
+	b = get_bkg_fit_plot(id)
+	numpy.savetxt(prefix + 'bkg_'+str(id)+'.txt', numpy.transpose([b.dataplot.x, b.dataplot.y, b.modelplot.x, b.modelplot.y]))
 	m = get_fit_plot(id)
 	numpy.savetxt(prefix + 'src_'+str(id)+'.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
+	
+	ypreds = []
+	for i, row in enumerate(rows):
+		sys.stdout.write("%d/%d (%.2f%%)\r" % (i, len(rows), (i + 1)*100./ len(rows)))
+		sys.stdout.flush()
+		for p, v in zip(thawedpars, row):
+			p.val = v
+		
+		m = get_fit_plot(id)
+		ypreds.append(m.modelplot.y)
+	
+	ylo, ymid, yhi = numpy.percentile(ypreds, [15.87, 50, 84.13], axis=0)
+	numpy.savetxt(prefix + 'src_'+str(id)+'.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.dataplot.yerr, m.modelplot.x, ylo, ymid, yhi]))
+
 
 # compute 2-10keV intrinsic luminosities?
-thawedpars = parameters
 print("calculating intrinsic fluxes and distribution of model spectra")
 # calculate restframe intrinsic flux
 id = ids[0]
 set_model(id, torus)
 
-import pymultinest
-a = pymultinest.analyse.Analyzer(n_params = len(thawedpars),
-	outputfiles_basename = prefix)
-rows = a.get_equal_weighted_posterior()
 r = []
 for i, row in enumerate(rows):
 	sys.stdout.write("%d/%d (%.2f%%)\r" % (i, len(rows), (i + 1)*100./ len(rows)))
@@ -199,7 +213,7 @@ for i, row in enumerate(rows):
 	r.append([z, 
 		calc_energy_flux(id=id, lo=2/(1+z), hi=10/(1+z)),
 		calc_energy_flux(id=id, lo=0.5/(1+z), hi=8/(1+z))
-	])
+	] + list(row))
 
 print("saving distribution plot data")
 r = numpy.asarray(r)
@@ -221,13 +235,17 @@ for i, row in enumerate(rows):
 	r.append([z, 
 		calc_energy_flux(id=id, lo=2/(1+z), hi=10/(1+z)),
 		calc_energy_flux(id=id, lo=0.5/(1+z), hi=8/(1+z))
-	])
+	] + list(row))
 
 print("saving distribution plot data")
 r = numpy.asarray(r)
 assert len(rows) == len(r)
 numpy.savetxt(prefix + "intrinsic_photonflux_weighted.dist", r)
 
+set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
+bxa.set_best_fit(parameters=parameters, outputfiles_basename=outputfiles_basename)
+
+import sys; sys.exit()
 exit()
 
 
