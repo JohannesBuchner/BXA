@@ -60,6 +60,8 @@ def qq_plot(bins, data, model, markers = [0.2, 1, 2, 5, 10], unit = '', annotate
 
 	"""
 
+	assert numpy.isfinite(data).all(), data
+	assert numpy.isfinite(model).all(), model
 	datac = data.cumsum()
 	modelc = model.cumsum()
 	
@@ -100,6 +102,18 @@ A-D = %(ad)e"""  % stats
 		
 		plt.text(u*0.98, u*0.02, text, va='bottom', ha='right', color='grey')
 
+def xspecfilenamenormalise(path):
+	"""
+	Xspec gets a bit confused if there are "." in the filename
+	So we replace . with _ in the filename.
+	But if we replace it as part of the parent directory, we cannot write
+	there, so this only alters the filename, not the entire path.
+	"""
+	if '/' in path:
+		parts = path.split('/')
+		parts = (parts[:-1] + [xspecfilenamenormalise(parts[-1])])
+		return '/'.join(parts)
+	return path.replace('.', '_')
 
 def qq(analyzer, markers = 5, annotate = True):
 	"""
@@ -117,7 +131,7 @@ def qq(analyzer, markers = 5, annotate = True):
 	olddevice = Plot.device
 	prefix = analyzer.outputfiles_basename
 	Plot.device = '/null'
-	tmpfilename = '%s-wdatatmp.qdp' % prefix.replace('.', '_')
+	tmpfilename = '%swdatatmp.qdp' % xspecfilenamenormalise(prefix)
 
 	while len(Plot.commands) > 0:
 		Plot.delCommand(1)
