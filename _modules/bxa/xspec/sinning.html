@@ -93,7 +93,7 @@
 	<span class="n">xlo</span> <span class="o">=</span> <span class="n">bins</span> <span class="o">-</span> <span class="n">widths</span>
 	<span class="n">xhi</span> <span class="o">=</span> <span class="n">bins</span> <span class="o">+</span> <span class="n">widths</span>
 	<span class="c1"># convert from densities to counts</span>
-	<span class="n">ydata</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">widths</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+	<span class="n">ydata</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">widths</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 	<span class="n">models</span> <span class="o">=</span> <span class="n">models</span> <span class="o">*</span> <span class="n">widths</span> <span class="o">*</span> <span class="mi">2</span>
 	<span class="n">deltax</span> <span class="o">=</span> <span class="p">(</span><span class="n">xdata</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">xdata</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 	
