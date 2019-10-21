@@ -67,17 +67,26 @@ def calc_models_range(data):
 		m = len(data) / n
 		if n > len(data):
 			break
+		kplusones = []
+		masks = []
 		for j in range(int(numpy.ceil(len(data) * 1. / n))):
-			dpart = data [j*n:(j + 1)*n]
-			lowpart  = lowmodel [j*n:(j + 1)*n]
-			highpart = highmodel [j*n:(j + 1)*n]
+			mask = slice(j * n, (j + 1) * n)
+			dpart = data[mask]
+			lowpart  = lowmodel[mask]
+			highpart = highmodel[mask]
 			
 			k = int(dpart.sum()) if len(dpart) > 0 else 0
-			#print 'GOF MODEL RANGE', k, n, m, 0.1 / m
-			lowmodel_part  = scipy.special.gammaincinv(k + 1, 0.1 / m) / n
-			highmodel_part = scipy.special.gammaincinv(k + 1, 1 - 0.1 / m) / n
-			assert not numpy.any(numpy.isnan(lowmodel_part))
-			assert not numpy.any(numpy.isnan(highmodel_part))
+			kplusones.append(k + 1)
+			masks.append(mask)
+		
+		#print 'GOF MODEL RANGE', k, n, m, 0.1 / m
+		lowmodel_parts  = scipy.special.gammaincinv(kplusones, 0.1 / m) / n
+		highmodel_parts = scipy.special.gammaincinv(kplusones, 1 - 0.1 / m) / n
+		assert not numpy.any(numpy.isnan(lowmodel_parts)), (lowmodel_parts, kplusones, m, n)
+		assert not numpy.any(numpy.isnan(highmodel_parts)), (highmodel_parts, kplusones, m, n)
+		for mask, lowmodel_part, highmodel_part in zip(masks, lowmodel_parts, highmodel_parts):
+			lowpart  = lowmodel[mask]
+			highpart = highmodel[mask]
 			lowpart [lowpart  < lowmodel_part]  = lowmodel_part
 			highpart[highpart > highmodel_part] = highmodel_part
 	

@@ -8,7 +8,6 @@ Copyright: Johannes Buchner (C) 2013-2019
 """
 
 from __future__ import print_function
-import pymultinest.run, pymultinest.analyse
 # pymultinest.plot does not work, because scipy/matplotlib does not work in sherpa
 import os
 from math import log10, isnan, isinf
@@ -19,6 +18,9 @@ if 'MAKESPHINXDOC' not in os.environ:
 import numpy
 from .priors import *
 from .galabs import auto_galactic_absorption
+
+if os.environ.get('WITHOUT_MULTINEST', '0') == '0':
+	import pymultinest.run, pymultinest.analyse
 
 plot_best = False
 
@@ -80,7 +82,6 @@ def nested_run(id=None, otherids=(), prior = None, parameters = None,
 		**kwargs)
 
 	import json
-	m = ui._session._get_model(id)
 	paramnames = [x.fullname for x in parameters]
 	json.dump(paramnames, open('%sparams.json' % outputfiles_basename, 'w'), indent=2)
 
@@ -131,10 +132,6 @@ def get_solutions_plot(id=None, otherids=(), lo=None, hi=None, parameters = None
 			p.val = v
 		r.append()
 	return numpy.array(r)
-
-def distribution_stats(distribution):
-	return flux_distribution.mean(axis=0), flux_distribution.std(axis=0)
-
 
 def photon_flux_histogram(distribution, nbins = None):
 	flux_distribution = distribution[:,-2]

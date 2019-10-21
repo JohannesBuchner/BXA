@@ -140,11 +140,15 @@ def qq(analyzer, markers = 5, annotate = True):
 	if os.path.exists(tmpfilename):
 		os.remove(tmpfilename)
 	
+	Plot.background = True
 	Plot("counts")
 	content = numpy.genfromtxt(tmpfilename, skip_header=3)
 	#os.remove(tmpfilename)
 	
-	bins, width, data, dataerror, model = content[:,0:5].transpose()
+	if Plot.background:
+		bins, width, data, dataerror, background, backgrounderror, model = content[:,0:7].transpose()
+	else:
+		bins, width, data, dataerror, model = content[:,0:5].transpose()
 	
 	if not hasattr(markers, '__len__'):
 		nmarkers = int(markers)

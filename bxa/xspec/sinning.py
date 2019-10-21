@@ -52,7 +52,7 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	xlo = bins - widths
 	xhi = bins + widths
 	# convert from densities to counts
-	ydata = numpy.array(data * widths * 2, dtype=int)
+	ydata = numpy.rint(data * widths * 2)
 	models = models * widths * 2
 	deltax = (xdata[1:] - xdata[:-1]).mean()
 	

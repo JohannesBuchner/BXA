@@ -10,6 +10,7 @@ Copyright: Johannes Buchner (C) 2013-2019
 
 from __future__ import print_function
 from ultranest.solvecompat import pymultinest_solve_compat as solve
+from ultranest.plot import PredictionBand
 import os
 from math import isnan, isinf
 import numpy
@@ -22,6 +23,13 @@ import xspec
 import matplotlib.pyplot as plt
 from tqdm import tqdm # if this fails --> pip install tqdm
 from .priors import *
+
+class XSilence(object):
+	def __enter__(self):
+		self.oldchatter = Xset.chatter, Xset.logChatter
+		Xset.chatter, Xset.logChatter = 0, 0
+	def __exit__(self, *args):
+		Xset.chatter, Xset.logChatter = self.oldchatter
 
 
 def create_prior_function(transformations):
@@ -146,9 +154,6 @@ class BXASolver(object):
 		and without using const_efficiency_mode, otherwise it is not reliable.
 		"""
 		
-		
-		oldchatter = Xset.chatter, Xset.logChatter
-		Xset.chatter, Xset.logChatter = 0, 0
 		def log_likelihood(params):
 			set_parameters(transformations=self.transformations, values=params)
 			l = -0.5 * Fit.statistic
@@ -164,28 +169,27 @@ class BXASolver(object):
 		n_dims = len(self.paramnames)
 		resume = kwargs.pop('resume', False)
 
-		self.results = solve(log_likelihood, self.prior_function, n_dims, 
-			paramnames=self.paramnames,
-			outputfiles_basename=self.outputfiles_basename, 
-			resume=resume, 
-			n_live_points=n_live_points, evidence_tolerance=evidence_tolerance, 
-			seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
-		)
-		self.posterior = self.results['samples']
-		chainfilename = '%schain.fits' % self.outputfiles_basename
-		store_chain(chainfilename, self.transformations, self.posterior)
-		xspec.AllChains.clear()
-		Xset.chatter, Xset.logChatter = oldchatter
-		xspec.AllChains += chainfilename
+		with XSilence():
+			self.results = solve(log_likelihood, self.prior_function, n_dims, 
+				paramnames=self.paramnames,
+				outputfiles_basename=self.outputfiles_basename, 
+				resume=resume, 
+				n_live_points=n_live_points, evidence_tolerance=evidence_tolerance, 
+				seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
+			)
+			self.posterior = self.results['samples']
+			chainfilename = '%schain.fits' % self.outputfiles_basename
+			store_chain(chainfilename, self.transformations, self.posterior)
+			xspec.AllChains.clear()
+			xspec.AllChains += chainfilename
 		
-		# set current parameters to best fit
-		self.set_best_fit()
-		Xset.chatter, Xset.logChatter = oldchatter
+			# set current parameters to best fit
+			self.set_best_fit()
 		
 		return self.results
 
 
-	def create_flux_chain(self, spectrum, erange = "2.0 10.0"):
+	def create_flux_chain(self, spectrum, erange = "2.0 10.0", nsamples=2000):
 		"""
 		For each posterior sample, computes the flux in the given energy range.
 
@@ -199,19 +203,17 @@ class BXASolver(object):
 		#prefix = analyzer.outputfiles_basename
 		#modelnames = set([t['model'].name for t in transformations])
 
-		oldchatter = Xset.chatter, Xset.logChatter
-		Xset.chatter, Xset.logChatter = 0, 0
-		# plot models
-		flux = []
-		for k, row in enumerate(tqdm(self.posterior, disable=None)):
-			set_parameters(values=row, transformations=self.transformations)
-			AllModels.calcFlux(erange)
-			f = spectrum.flux
-			# compute flux in current energies
-			flux.append([f[0], f[3]])
-		
-		Xset.chatter, Xset.logChatter = oldchatter		
-		return numpy.array(flux)
+		with XSilence():
+			# plot models
+			flux = []
+			for k, row in enumerate(tqdm(self.posterior[:nsamples], disable=None)):
+				set_parameters(values=row, transformations=self.transformations)
+				AllModels.calcFlux(erange)
+				f = spectrum.flux
+				# compute flux in current energies
+				flux.append([f[0], f[3]])
+			
+			return numpy.array(flux)
 
 	def posterior_predictions_convolved(self, 
 			component_names = None, plot_args = None,
@@ -233,15 +235,18 @@ class BXASolver(object):
 			component_names = [''] * 100
 		if plot_args is None:
 			plot_args = [{}] * 100
+		bands = []
+		Plot.background = True
 
 		def plot_convolved_components(content):
 			xmid = content[:,0]
-			ncomponents = content.shape[1] - 4
+			ndata_columns = 6 if Plot.background else 4
+			ncomponents = content.shape[1] - ndata_columns
 			if data[0] is None:
-				data[0] = content[:,0:4]
+				data[0] = content[:,0:ndata_columns]
 			model_contributions = []
 			for component in range(ncomponents):
-				y = content[:, 4 + component]
+				y = content[:, ndata_columns + component]
 				kwargs = dict(drawstyle='steps', alpha=0.1, color='k')
 				kwargs.update(plot_args[component])
 				
@@ -249,14 +254,30 @@ class BXASolver(object):
 				# we only label the first time we enter here
 				# otherwise we get lots of entries in the legend
 				component_names[component] = ''
+				if component >= len(bands):
+					bands.append(PredictionBand(xmid,
+						shadeargs=dict(color=kwargs['color']),
+						lineargs=dict(color=kwargs['color'])))
 				if label != 'ignore':
-					plt.plot(xmid, y, label=label, **kwargs)
+					#plt.plot(xmid, y, label=label, **kwargs)
+					bands[component].add(y)
+				
 				model_contributions.append(y)
 			models.append(model_contributions)
+		
 		self.posterior_predictions_plot(plottype = 'counts', 
 			callback = plot_convolved_components, 
 			nsamples = nsamples)
-		results = dict(list(zip('bins,width,data,error'.split(','), data[0].transpose())))
+
+		for band, label in zip(bands, component_names):
+			band.shade(alpha=0.5, label=label)
+			band.shade(q=0.495, alpha=0.1)
+			band.line()
+
+		if Plot.background:
+			results = dict(list(zip('bins,width,data,error,background,backgrounderr'.split(','), data[0].transpose())))
+		else:
+			results = dict(list(zip('bins,width,data,error'.split(','), data[0].transpose())))
 		results['models'] = numpy.array(models)
 		return results
 
@@ -275,6 +296,8 @@ class BXASolver(object):
 			component_names = [''] * 100
 		if plot_args is None:
 			plot_args = [{}] * 100
+		bands = []
+		
 		def plot_unconvolved_components(content):
 			xmid = content[:,0]
 			ncomponents = content.shape[1] - 2
@@ -287,13 +310,21 @@ class BXASolver(object):
 				# we only label the first time we enter here
 				# otherwise we get lots of entries in the legend
 				component_names[component] = ''
+				if component >= len(bands):
+					bands.append(PredictionBand(xmid,
+						shadeargs=dict(color=kwargs['color']),
+						lineargs=dict(color=kwargs['color'])))
 				if label != 'ignore':
-					plt.plot(xmid, y, label=label, **kwargs)
+					#plt.plot(xmid, y, label=label, **kwargs)
+					bands[component].add(y)
 
 		self.posterior_predictions_plot(plottype = 'model', 
 			callback = plot_unconvolved_components, 
 			nsamples = nsamples)
-
+		for band, label in zip(bands, component_names):
+			band.shade(alpha=0.5, label=label)
+			band.shade(q=0.495, alpha=0.1)
+			band.line()
 
 	def posterior_predictions_plot(self, plottype, callback, nsamples=None):
 		"""
@@ -318,31 +349,29 @@ class BXASolver(object):
 		if os.path.exists(tmpfilename):
 			os.remove(tmpfilename)
 		
-		olddevice = Plot.device
-		Plot.device = '/null'
-		#modelnames = set([t['model'].name for t in transformations])
+		with XSilence():
+			olddevice = Plot.device
+			Plot.device = '/null'
+			#modelnames = set([t['model'].name for t in transformations])
+			
+			while len(Plot.commands) > 0:
+				Plot.delCommand(1)
+			Plot.addCommand('wdata "%s"' % tmpfilename.replace('.qdp', ''))
 		
-		while len(Plot.commands) > 0:
-			Plot.delCommand(1)
-		Plot.addCommand('wdata "%s"' % tmpfilename.replace('.qdp', ''))
-		
-		oldchatter = Xset.chatter, Xset.logChatter
-		Xset.chatter, Xset.logChatter = 0, 0
-		# plot models
-		for k, row in enumerate(tqdm(posterior, disable=None)):
-			set_parameters(values=row, transformations=self.transformations)
+			# plot models
+			for k, row in enumerate(tqdm(posterior, disable=None)):
+				set_parameters(values=row, transformations=self.transformations)
+				if os.path.exists(tmpfilename):
+					os.remove(tmpfilename)
+				xspec.Plot(plottype)
+				content = numpy.genfromtxt(tmpfilename, skip_header=3)
+				os.remove(tmpfilename)
+				callback(content)
+			xspec.Plot.device = olddevice
+			while len(Plot.commands) > 0:
+				Plot.delCommand(1)
 			if os.path.exists(tmpfilename):
 				os.remove(tmpfilename)
-			xspec.Plot(plottype)
-			content = numpy.genfromtxt(tmpfilename, skip_header=3)
-			os.remove(tmpfilename)
-			callback(content)
-		Xset.chatter, Xset.logChatter = oldchatter
-		xspec.Plot.device = olddevice
-		while len(Plot.commands) > 0:
-			Plot.delCommand(1)
-		if os.path.exists(tmpfilename):
-			os.remove(tmpfilename)
 
 
 def standard_analysis(transformations, outputfiles_basename, 

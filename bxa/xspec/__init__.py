@@ -9,7 +9,6 @@ Copyright: Johannes Buchner (C) 2013-2019
 """
 
 from __future__ import print_function
-import pymultinest
 import os
 import json
 from math import isnan, isinf
@@ -24,6 +23,9 @@ import xspec
 import matplotlib.pyplot as plt
 from tqdm import tqdm # if this fails --> pip install tqdm
 from .priors import *
+
+if os.environ.get('WITHOUT_MULTINEST', '0') == '0':
+	import pymultinest
 
 def store_chain(chainfilename, transformations, posterior):
 	"""
