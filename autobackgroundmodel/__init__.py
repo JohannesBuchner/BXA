@@ -22,12 +22,12 @@ def compile(filenames):
 		#print 'reading', filename
 		f = pyfits.open(filename)
 		s = f['SPECTRUM']
-		y = s.data['COUNTS']
+		y = numpy.copy(s.data['COUNTS'])
 		#ncts = y.sum()
 		#z = numpy.log10((y + 1.0)/ncts)
 		#print ncts, len(y)
-		instrument = s.header['INSTRUME']
-		telescope = s.header['TELESCOP']
+		instrument = str(s.header['INSTRUME'])
+		telescope = str(s.header['TELESCOP'])
 		#if y[:500].mean() > 5:
 		if True or y[:200].mean() > 5:
 			print('  reading "%s"' % filename)

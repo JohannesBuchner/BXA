@@ -45,7 +45,7 @@ def run(cmd, filename):
 	attrs = f['spectra'].attrs
 	data = f['spectra'][()]
 	mincts = 50000
-	mincts = 10000
+	#mincts = 10000
 
 	if cmd == 'create':
 		lo = data.min(axis=0)
