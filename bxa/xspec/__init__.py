@@ -277,6 +277,8 @@ def posterior_predictions_plot(plottype, callback, analyzer, transformations,
 		assert len(posterior) == nsamples
 	prefix = analyzer.outputfiles_basename
 	tmpfilename = os.path.join(os.path.dirname(prefix), os.path.basename(prefix).replace('.','_') + '-wdatatmp.qdp')
+	if os.path.exists(tmpfilename):
+		os.remove(tmpfilename)
 	
 	olddevice = Plot.device
 	Plot.device = '/null'

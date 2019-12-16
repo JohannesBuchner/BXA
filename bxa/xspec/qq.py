@@ -132,18 +132,19 @@ def qq(analyzer, markers = 5, annotate = True):
 	prefix = analyzer.outputfiles_basename
 	Plot.device = '/null'
 	tmpfilename = '%swdatatmp.qdp' % xspecfilenamenormalise(prefix)
+	if os.path.exists(tmpfilename):
+		os.remove(tmpfilename)
 
 	while len(Plot.commands) > 0:
 		Plot.delCommand(1)
 	Plot.addCommand('wdata "%s"' % tmpfilename.replace('.qdp', ''))
 	
-	if os.path.exists(tmpfilename):
-		os.remove(tmpfilename)
-	
 	Plot.background = True
 	Plot("counts")
 	content = numpy.genfromtxt(tmpfilename, skip_header=3)
-	#os.remove(tmpfilename)
+	os.remove(tmpfilename)
+	while len(Plot.commands) > 0:
+		Plot.delCommand(1)
 	
 	if Plot.background:
 		bins, width, data, dataerror, background, backgrounderror, model = content[:,0:7].transpose()
