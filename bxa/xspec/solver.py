@@ -189,7 +189,7 @@ class BXASolver(object):
 		return self.results
 
 
-	def create_flux_chain(self, spectrum, erange = "2.0 10.0", nsamples=2000):
+	def create_flux_chain(self, spectrum, erange = "2.0 10.0", nsamples=None):
 		"""
 		For each posterior sample, computes the flux in the given energy range.
 

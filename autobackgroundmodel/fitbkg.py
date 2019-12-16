@@ -15,7 +15,6 @@ import numpy
 from numpy import log10
 import json
 import logging
-import warnings
 import os
 import astropy.io.fits as pyfits
 import scipy.stats
@@ -157,14 +156,14 @@ class PCAFitter(object):
 		self.ihi = ihi
 	
 	def decompose(self):
-		ilo = int(self.pca['ilo'])
-		ihi = int(self.pca['ihi'])
-		lo = self.pca['lo']
-		hi = self.pca['hi']
+		#ilo = int(self.pca['ilo'])
+		#ihi = int(self.pca['ihi'])
+		#lo = self.pca['lo']
+		#hi = self.pca['hi']
 		mean = self.pca['mean']
 		V = numpy.matrix(self.pca['components'])
 		s = self.pca['values']
-		U = self.pca['U']
+		#U = self.pca['U']
 		ncts = self.cts.sum()
 		logf.info('have %d background counts for deconvolution' % ncts)
 		y = numpy.log10(self.cts * 1. / ncts  + 1.0)
@@ -189,7 +188,7 @@ class PCAFitter(object):
 
 	def predict(self, pars):
 		# add gaussians
-		ngausspars = 3 * self.ngaussians
+		#ngausspars = 3 * self.ngaussians
 		pred = 0
 		for i in range(self.ngaussians):
 			LineE, logSigma, lognorm = pars[3*i:3*(i+1)]
@@ -213,7 +212,7 @@ class PCAFitter(object):
 	def calc_prior(self, pars):
 		return 0 # no prior
 		ngausspars = 3 * self.ngaussians
-		gausspars = pars[:ngausspars]
+		#gausspars = pars[:ngausspars]
 		pcapars = numpy.asarray(pars[ngausspars:])
 		return numpy.sum((pcapars)**2) # gaussian prior with std 1
 		
@@ -291,7 +290,7 @@ class PCAFitter(object):
 		print('Increasing parameters again...')
 		# now increase the number of parameters again
 		#results = [(aic, final, nparams, val)]
-		last_aic, last_final, last_nparams, last_val = aic, final, nparams, val
+		last_aic, last_final, last_nparams, _ = aic, final, nparams, val
 		for i in range(last_nparams, npars):
 			next_nparams = i + 1
 			initial = last_final[:i]
@@ -303,7 +302,7 @@ class PCAFitter(object):
 			if next_aic < last_aic:
 				# accept
 				print('%d parameters, aic=%.2f ** accepting' % (next_nparams, next_aic))
-				last_aic, last_final, last_nparams, last_val = next_aic, next_final, next_nparams, v
+				last_aic, last_final, last_nparams, _ = next_aic, next_final, next_nparams, v
 			else:
 				print('%d parameters, aic=%.2f' % (next_nparams, next_aic))
 			# stop if we are 3 parameters ahead what we needed
@@ -349,7 +348,7 @@ class PCAFitter(object):
 			print('with Gaussian:', next_aic, '; change: %.1f (negative is good)' % (next_aic - last_aic))
 			if next_aic < last_aic:
 				print('accepting')
-				last_aic, last_final, last_nparams, last_val = next_aic, next_final, next_nparams, v
+				last_aic, last_final, last_nparams, _ = next_aic, next_final, next_nparams, v
 				last_pred = next_pred
 			else:
 				print('not significant, rejecting')

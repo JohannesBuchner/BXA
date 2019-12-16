@@ -98,7 +98,8 @@ def binning(outputfiles_basename, bins, widths, data, models):
 		for i, (xloi, xhii, ydatai) in enumerate(grouped_data):
 			# select p values that intersect
 			mask = numpy.logical_and(pxlo < xhii, xloi < pxhi)
-			data_gofp[i] = numpy.nanmin([data_gofp[i], (nstats[mask][:,2]).min() * len(nstats)])
+			if mask.any():
+				data_gofp[i] = numpy.nanmin([data_gofp[i], (nstats[mask][:,2]).min() * len(nstats)])
 	
 	gof_avg = curgof
 	gof_total = gof_avg * len(data)
