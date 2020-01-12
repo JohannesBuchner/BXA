@@ -9,7 +9,7 @@ except IOError:
 	long_description = ''
 
 setup(name='bxa',
-	version='3.1',
+	version='3.2',
 	author='Johannes Buchner',
 	url='https://github.com/JohannesBuchner/BXA/',
 	author_email='johannes.buchner.acad@gmx.com',

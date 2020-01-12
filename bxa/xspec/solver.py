@@ -4,7 +4,7 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2019
+Copyright: Johannes Buchner (C) 2013-2020
 
 """
 
@@ -168,6 +168,7 @@ class BXASolver(object):
 		
 		n_dims = len(self.paramnames)
 		resume = kwargs.pop('resume', False)
+		Lepsilon = kwargs.pop('Lepsilon', 0.1)
 
 		with XSilence():
 			self.results = solve(log_likelihood, self.prior_function, n_dims, 
