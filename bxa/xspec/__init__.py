@@ -4,7 +4,7 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2019
+Copyright: Johannes Buchner (C) 2013-2020
 
 """
 
@@ -32,9 +32,19 @@ def store_chain(chainfilename, transformations, posterior):
 	Writes a MCMC chain file in the same format as the Xspec chain command
 	"""
 	import astropy.io.fits as pyfits
-	columns = [pyfits.Column(name='%s__%d' % (t['name'], t['index']), 
+	
+	group_index = 1
+	old_model = transformations[0]['model']
+	names = []
+	for t in transformations:
+		if t['model'] != old_model:
+			group_index += 1
+		old_model = t['model']
+		names.append('%s__%d' % (t['name'], t['index']+(group_index-1)*old_model.nParameters))
+	
+	columns = [pyfits.Column(name=name, 
 		format='D', array=t['aftertransform'](posterior[:,i]))
-		for i, t in enumerate(transformations)]
+		for i, name in enumerate(names)]
 	columns.append(pyfits.Column(name='FIT_STATISTIC', 
 		format='D', array=posterior[:,-1]))
 	table = pyfits.ColDefs(columns)

@@ -54,20 +54,31 @@ def store_chain(chainfilename, transformations, posterior):
 	Writes a MCMC chain file in the same format as the Xspec chain command
 	"""
 	import astropy.io.fits as pyfits
-	columns = [pyfits.Column(name='%s__%d' % (t['name'], t['index']), 
+	
+	group_index = 1
+	old_model = transformations[0]['model']
+	names = []
+	for t in transformations:
+		if t['model'] != old_model:
+			group_index += 1
+		old_model = t['model']
+		names.append('%s__%d' % (t['name'], t['index']+(group_index-1)*old_model.nParameters))
+	
+	columns = [pyfits.Column(name=name, 
 		format='D', array=t['aftertransform'](posterior[:,i]))
-		for i, t in enumerate(transformations)]
+		for i, name in enumerate(names)]
 	columns.append(pyfits.Column(name='FIT_STATISTIC', 
 		format='D', array=posterior[:,-1]))
 	table = pyfits.ColDefs(columns)
 	header = pyfits.Header()
 	header.add_comment("""Created by BXA (Bayesian X-ray spectal Analysis) for Xspec""")
-	header.add_comment("""refer to https://github.com/JohannesBuchner/BXA""")
+	header.add_comment("""refer to https://github.com/JohannesBuchner/""")
 	header['TEMPR001'] = 1.
 	header['STROW001'] = 1
 	header['EXTNAME'] = 'CHAIN'
 	tbhdu = pyfits.BinTableHDU.from_columns(table, header = header)
 	tbhdu.writeto(chainfilename, overwrite=True)
+
 
 def set_parameters(transformations, values):
 	"""
