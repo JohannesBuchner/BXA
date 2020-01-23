@@ -32,9 +32,18 @@ def store_chain(chainfilename, transformations, posterior):
 	Writes a MCMC chain file in the same format as the Xspec chain command
 	"""
 	import astropy.io.fits as pyfits
-	columns = [pyfits.Column(name='%s__%d' % (t['name'], t['index']), 
+        columns=[]
+        group_index=0
+        old_model=transformations[0]
+        for i, t in enumerate(transformations):
+            if t['model'] != old_model:
+                group_index+=1
+                old_model=t['model']
+            col_name='%s__%d' % (t['name'], t['index'] + group_index*old_model.nParameters)
+            #We assume that all groups have a model with the same number of parameters
+	    columns.append( pyfits.Column(name=col_name, 
 		format='D', array=t['aftertransform'](posterior[:,i]))
-		for i, t in enumerate(transformations)]
+
 	columns.append(pyfits.Column(name='FIT_STATISTIC', 
 		format='D', array=posterior[:,-1]))
 	table = pyfits.ColDefs(columns)
