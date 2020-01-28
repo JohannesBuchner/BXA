@@ -185,7 +185,7 @@ class BXASolver(object):
 			self.results = solve(log_likelihood, self.prior_function, n_dims, 
 				paramnames=self.paramnames,
 				outputfiles_basename=self.outputfiles_basename, 
-				resume=resume, 
+				resume=resume, Lepsilon=Lepsilon,
 				n_live_points=n_live_points, evidence_tolerance=evidence_tolerance, 
 				seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
 			)

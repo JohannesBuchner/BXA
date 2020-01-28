@@ -54,7 +54,8 @@ def energy_flux_histogram(distribution, nbins = None):
 plot_best = False
 
 class BXASolver(object):
-	def __init__(self, id, otherids=(), prior = None, parameters = None):
+	def __init__(self, id, otherids=(), prior = None, parameters = None,
+		outputfiles_basename = 'chains/'):
 		self.id = id
 		self.otherids = otherids
 
@@ -66,6 +67,7 @@ class BXASolver(object):
 		
 		self.prior = prior
 		self.parameters = parameters
+		self.outputfiles_basename = outputfiles_basename
 		self.set_paramnames()
 		self.allowed_stats = (Cash, CStat)
 	
@@ -81,7 +83,7 @@ class BXASolver(object):
 	
 	def run(self,
 		evidence_tolerance = 0.5,
-		n_live_points = 400, outputfiles_basename = 'chains/',
+		n_live_points = 400,
 		wrapped_params = None, **kwargs):
 		
 		"""
@@ -135,11 +137,13 @@ class BXASolver(object):
 		
 		n_dims = len(self.parameters)
 		resume = kwargs.pop('resume', False)
+		Lepsilon = kwargs.pop('Lepsilon', 0.1)
 
-		self.results = solve(log_likelihood, prior_transform, n_dims, 
+		self.results = solve(log_likelihood, prior_transform, n_dims,
 			paramnames=self.paramnames,
-			outputfiles_basename=outputfiles_basename, resume=resume, 
-			n_live_points=n_live_points, evidence_tolerance=evidence_tolerance, 
+			outputfiles_basename=self.outputfiles_basename,
+			resume=resume, Lepsilon=Lepsilon,
+			n_live_points=n_live_points, evidence_tolerance=evidence_tolerance,
 			seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
 		)
 		self.set_best_fit()

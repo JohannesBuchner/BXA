@@ -120,13 +120,13 @@ priors += [priorfuncs.create_uniform_prior_for(softscatnorm)]
 
 # 
 # apec with L(2-10keV) = 1e42 erg/s
-# z      norm 10keV    norm 2keV
-# 0.1    40e-6         150e-6
-# 0.5    2e-6          6e-6
-# 1      0.7e-6        2e-6
-# 3      0.15e-6       0.5e-6
+# z      norm[kT=10keV] norm[kT=2keV]
+# 0.1    40e-6          150e-6
+# 0.5    2e-6           6e-6
+# 1      0.7e-6         2e-6
+# 3      0.15e-6        0.5e-6
 # ================================
-# z -->  0.5e-6/ z**2  2e-6/z**2
+# z -->  0.5e-6/ z**2   2e-6/z**2
 # 
 if args.withapec:
 	model = model + xsapec.apec
