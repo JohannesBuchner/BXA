@@ -44,7 +44,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">BXA (Bayesian X-ray Analysis) for Xspec</span>
 
-<span class="sd">Copyright: Johannes Buchner (C) 2013-2019</span>
+<span class="sd">Copyright: Johannes Buchner (C) 2013-2020</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -72,9 +72,19 @@
 <span class="sd">	Writes a MCMC chain file in the same format as the Xspec chain command</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">pyfits</span>
-	<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyfits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">__</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]),</span> 
+	
+	<span class="n">group_index</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">old_model</span> <span class="o">=</span> <span class="n">transformations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
+	<span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transformations</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">old_model</span><span class="p">:</span>
+			<span class="n">group_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">old_model</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
+		<span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">__</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">group_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">old_model</span><span class="o">.</span><span class="n">nParameters</span><span class="p">))</span>
+	
+	<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyfits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> 
 		<span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;aftertransform&#39;</span><span class="p">](</span><span class="n">posterior</span><span class="p">[:,</span><span class="n">i</span><span class="p">]))</span>
-		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transformations</span><span class="p">)]</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">)]</span>
 	<span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyfits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;FIT_STATISTIC&#39;</span><span class="p">,</span> 
 		<span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">posterior</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 	<span class="n">table</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">ColDefs</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
@@ -317,6 +327,8 @@
 		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span> <span class="o">==</span> <span class="n">nsamples</span>
 	<span class="n">prefix</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">outputfiles_basename</span>
 	<span class="n">tmpfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-wdatatmp.qdp&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
 	
 	<span class="n">olddevice</span> <span class="o">=</span> <span class="n">Plot</span><span class="o">.</span><span class="n">device</span>
 	<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;/null&#39;</span>

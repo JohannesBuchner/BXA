@@ -173,18 +173,19 @@
 	<span class="n">prefix</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">outputfiles_basename</span>
 	<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;/null&#39;</span>
 	<span class="n">tmpfilename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">wdatatmp.qdp&#39;</span> <span class="o">%</span> <span class="n">xspecfilenamenormalise</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
 
 	<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="n">Plot</span><span class="o">.</span><span class="n">delCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 	<span class="n">Plot</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s1">&#39;wdata &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">tmpfilename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.qdp&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
 	
-	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
-		<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
-	
 	<span class="n">Plot</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="kc">True</span>
 	<span class="n">Plot</span><span class="p">(</span><span class="s2">&quot;counts&quot;</span><span class="p">)</span>
 	<span class="n">content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-	<span class="c1">#os.remove(tmpfilename)</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
+	<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">Plot</span><span class="o">.</span><span class="n">delCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 	
 	<span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
 		<span class="n">bins</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dataerror</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span> <span class="n">backgrounderror</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
