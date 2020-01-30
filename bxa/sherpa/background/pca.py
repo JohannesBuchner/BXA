@@ -104,13 +104,13 @@ class IdentityResponse(CompositeModel, ArithmeticModel):
 		self.model = model
 		CompositeModel.__init__(self, 'unitrsp(%s)' % model.name,
                                 (model,))
-	def startup(self):
-		self.model.startup()
-		CompositeModel.startup(self)
+	def startup(self, *args):
+		self.model.startup(*args)
+		CompositeModel.startup(self, *args)
 	
-	def teardown(self):
-		self.model.teardown()
-		CompositeModel.teardown(self)
+	def teardown(self, *args):
+		self.model.teardown(*args)
+		CompositeModel.teardown(self, *args)
 	
 	def __call__(self, model):
 		self.model = model
