@@ -84,7 +84,8 @@ def prior_from_file(filename, parameter):
 	def custom_priorf(x):
 		assert x >= 0
 		assert x <= 1
-		r = distz[x*n] + (distz[x*n + 1] - distz[x*n]) * (x*n - numpy.floor(x*n))
+		i = int(numpy.floor(x*n))
+		r = distz[i] + (distz[i + 1] - distz[i]) * (x*n - i)
 		return r
 	return parameter, [parameter], [custom_priorf]
 

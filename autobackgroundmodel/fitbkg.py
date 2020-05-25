@@ -131,12 +131,12 @@ class PCAFitter(object):
 		instrument = hdr.get('INSTRUME', '')
 		if telescope == '' and instrument == '':
 			raise Exception('ERROR: The TELESCOP/INSTRUME headers are not set in the data file.')
-		for folder in '.', os.path.dirname(__file__):
-			filename = os.path.join(folder, ('%s_%s.json' % (telescope, instrument)).lower())
+		for folder in os.environ.get('BKGMODELDIR', '.'), os.path.dirname(__file__):
+			filename = os.path.join(folder, ('%s_%s_%d.json' % (telescope, instrument, self.ndata)).lower())
 			if os.path.exists(filename):
 				self.load(filename)
 				return
-			filename = os.path.join(folder, ('%s.json' % telescope).lower())
+			filename = os.path.join(folder, ('%s_%d.json' % (telescope, self.ndata)).lower())
 			if os.path.exists(filename):
 				self.load(filename)
 				return
@@ -148,6 +148,10 @@ class PCAFitter(object):
 		self.pca = dict()
 		for k, v in data.items():
 			self.pca[k] = numpy.array(v)
+		assert self.pca['hi'].shape == (self.ndata,), 'spectrum has different number of channels: %d vs %s' % (len(self.pca['hi']), self.ndata)
+		assert self.pca['lo'].shape == self.pca['hi'].shape
+		assert self.pca['mean'].shape == self.pca['hi'].shape
+		assert len(self.pca['components']) == self.ndata
 		ilo = int(self.pca['ilo'])
 		ihi = int(self.pca['ihi'])
 		self.cts = self.data[ilo:ihi]

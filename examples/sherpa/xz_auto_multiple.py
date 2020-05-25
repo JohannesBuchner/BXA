@@ -21,6 +21,12 @@ import os
 import sys
 import numpy
 
+# TODO: remove
+# blocking multiple processes from analysing the same folder
+if os.path.exists('bxa.log'):
+	sys.exit(0)
+os.environ['OMP_NUM_THREADS'] = "4"
+
 import bxa.sherpa as bxa
 from bxa.sherpa.background.pca import auto_background
 from sherpa.models.parameter import Parameter
@@ -38,16 +44,18 @@ warnings.filterwarnings("ignore", message='displayed errorbars')
 
 ids = []
 
-id = 1
-filename = os.environ['FILENAME']
-#filename = 'combined_src.pi'
-prefix = filename + '_out_'
-load_pha(id, filename)
-ignore_id(id, None, None)
-notice_id(id,float(os.environ.get('ELO', 0.5)),float(os.environ.get('EHI',8)))
-ids.append(id)
+prefix = 'multiple_out_'
+for id, line in enumerate(open('filenames.txt'), start=1):
+	filename, elo, ehi = line.strip().split()
+	elo, ehi = float(elo), float(ehi)
+	load_pha(id, filename)
+	ignore_id(id, None, None)
+	notice_id(id, elo,  ehi)
+	ids.append(id)
 
-set_analysis(id, 'ener', 'counts')
+	set_analysis(id, 'ener', 'counts')
+	ids.append(id)
+
 set_xlog()
 set_ylog()
 set_stat('cstat')
@@ -140,19 +148,18 @@ assert len(priors) == len(parameters), 'priors: %d parameters: %d' % (len(priors
 #    find background automatically using PCA method
 
 print('setting source and background model ...')
-id = 1
-set_model(id, model * galabso)
-convmodel = get_model(id)
-bkg_model = auto_background(id)
-set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
-#plot_bkg_fit(id)
+for id in ids:
+	set_model(id, model * galabso)
+	convmodel = get_model(id)
+	bkg_model = auto_background(id)
+	set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
 
-## we allow the background normalisation to be a free fitting parameter
-p = bkg_model.pars[0]
-p.max = p.val + 2
-p.min = p.val - 2
-parameters.append(p)
-priors += [bxa.create_uniform_prior_for(p)]
+	## we allow the background normalisation to be a free fitting parameter
+	p = bkg_model.pars[0]
+	p.max = p.val + 2
+	p.min = p.val - 2
+	parameters.append(p)
+	priors += [bxa.create_uniform_prior_for(p)]
 
 #################
 # BXA run
@@ -186,9 +193,9 @@ for id in ids:
 	print('plotting spectrum ...')
 	set_analysis(id,'ener','counts')
 	b = get_bkg_fit_plot(id)
-	numpy.savetxt(prefix + 'bkg_'+str(id)+'.txt', numpy.transpose([b.dataplot.x, b.dataplot.y, b.modelplot.x, b.modelplot.y]))
+	numpy.savetxt(prefix + 'bkg_'+str(id)+'.txt.gz', numpy.transpose([b.dataplot.x, b.dataplot.y, b.modelplot.x, b.modelplot.y]))
 	m = get_fit_plot(id)
-	numpy.savetxt(prefix + 'src_'+str(id)+'.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
+	numpy.savetxt(prefix + 'src_'+str(id)+'.txt.gz', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
 	
 	ypreds = []
 	for i, row in enumerate(rows):
@@ -201,7 +208,7 @@ for id in ids:
 		ypreds.append(m.modelplot.y)
 	
 	ylo, ymid, yhi = numpy.percentile(ypreds, [15.87, 50, 84.13], axis=0)
-	numpy.savetxt(prefix + 'src_'+str(id)+'.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.dataplot.yerr, m.modelplot.x, ylo, ymid, yhi]))
+	numpy.savetxt(prefix + 'src_'+str(id)+'.txt.gz', numpy.transpose([m.dataplot.x, m.dataplot.y, m.dataplot.yerr, m.modelplot.x, ylo, ymid, yhi]))
 
 
 # compute 2-10keV intrinsic luminosities?
@@ -228,7 +235,7 @@ for i, row in enumerate(rows):
 print("saving distribution plot data")
 r = numpy.asarray(r)
 assert len(rows) == len(r)
-numpy.savetxt(prefix + "intrinsic_photonflux.dist", r)
+numpy.savetxt(prefix + "intrinsic_photonflux.dist.gz", r)
 
 
 rows = a.get_data()[:,2:]
@@ -251,7 +258,7 @@ for i, row in enumerate(rows):
 print("saving distribution plot data")
 r = numpy.asarray(r)
 assert len(rows) == len(r)
-numpy.savetxt(prefix + "intrinsic_photonflux_weighted.dist", r)
+numpy.savetxt(prefix + "intrinsic_photonflux_weighted.dist.gz", r)
 
 set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
 bxa.set_best_fit(parameters=parameters, outputfiles_basename=outputfiles_basename)
