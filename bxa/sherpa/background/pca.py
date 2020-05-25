@@ -294,6 +294,7 @@ class PCAFitter(object):
 		self.id = id
 		logf.info('PCAFitter(for ID=%s)' % (id))
 		hdr = get_bkg(id).header
+		self.ndata = len(get_bkg(id).counts)
 		
 		telescope = hdr.get('TELESCOP','')
 		instrument = hdr.get('INSTRUME', '')
