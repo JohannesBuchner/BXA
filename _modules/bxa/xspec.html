@@ -4,16 +4,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>bxa.xspec &#8212; BXA (Bayesian X-ray Analysis) 3.3.1 documentation</title>
+    <title>bxa.xspec &#8212; BXA (Bayesian X-ray Analysis) 3.4.0 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -27,7 +27,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">BXA (Bayesian X-ray Analysis) 3.3.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -48,21 +48,21 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">plot</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">qq</span>
-<span class="kn">from</span> <span class="nn">.sinning</span> <span class="k">import</span> <span class="n">binning</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plot</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">qq</span>
+<span class="kn">from</span> <span class="nn">.sinning</span> <span class="kn">import</span> <span class="n">binning</span>
 
-<span class="kn">from</span> <span class="nn">xspec</span> <span class="k">import</span> <span class="n">Xset</span><span class="p">,</span> <span class="n">AllModels</span><span class="p">,</span> <span class="n">Fit</span><span class="p">,</span> <span class="n">Plot</span>
+<span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="n">Xset</span><span class="p">,</span> <span class="n">AllModels</span><span class="p">,</span> <span class="n">Fit</span><span class="p">,</span> <span class="n">Plot</span>
 <span class="kn">import</span> <span class="nn">xspec</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span> <span class="c1"># if this fails --&gt; pip install tqdm</span>
-<span class="kn">from</span> <span class="nn">.priors</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span> <span class="c1"># if this fails --&gt; pip install tqdm</span>
+<span class="kn">from</span> <span class="nn">.priors</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;WITHOUT_MULTINEST&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
 	<span class="kn">import</span> <span class="nn">pymultinest</span>
@@ -483,7 +483,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -497,13 +497,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">BXA (Bayesian X-ray Analysis) 3.3.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-2020, Johannes Buchner.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>
