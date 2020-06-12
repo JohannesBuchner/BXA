@@ -21,12 +21,6 @@ import os
 import sys
 import numpy
 
-# TODO: remove
-# blocking multiple processes from analysing the same folder
-if os.path.exists('bxa.log'):
-	sys.exit(0)
-os.environ['OMP_NUM_THREADS'] = "4"
-
 import bxa.sherpa as bxa
 from bxa.sherpa.background.pca import auto_background
 from sherpa.models.parameter import Parameter
@@ -54,7 +48,6 @@ for id, line in enumerate(open('filenames.txt'), start=1):
 	ids.append(id)
 
 	set_analysis(id, 'ener', 'counts')
-	ids.append(id)
 
 set_xlog()
 set_ylog()

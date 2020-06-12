@@ -147,8 +147,8 @@ class BXASolver(object):
 		"""
 		Sets model to the best fit values.
 		"""
-		i = numpy.argmax(self.results['weighted_samples']['L'])
-		params = self.results['weighted_samples']['v'][i,:]
+		i = numpy.argmax(self.results['weighted_samples']['logl'])
+		params = self.results['weighted_samples']['points'][i,:]
 		set_parameters(transformations=self.transformations, values=params)
 	
 	def run(self,

@@ -140,7 +140,7 @@ class PCAFitter(object):
 			if os.path.exists(filename):
 				self.load(filename)
 				return
-		raise Exception('ERROR: Could not load PCA components for this detector (%s %s). Try the SingleFitter instead.' % (telescope, instrument))
+		raise Exception('ERROR: Could not load PCA components for this detector (%s %s, %d channels). Try the SingleFitter instead.' % (telescope, instrument, self.ndata))
 	
 	def load(self, filename):
 		logf.info('loading PCA information from %s' % (filename))
