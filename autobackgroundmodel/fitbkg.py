@@ -441,7 +441,8 @@ if __name__ == '__main__':
 	plt.figure()
 	plt.title('model (red) should describe data (black)')
 	for r in predictions:
-		plt.plot(x, r, '-', color='orange', lw=1, alpha=0.3)
+		if r is not None:
+			plt.plot(x, r, '-', color='orange', lw=1, alpha=0.3)
 	plt.plot(x, result, '-', color='r', lw=2)
 	plt.plot(x, data, 'o ', color='k')
 	plt.ylim(0, max(result.max(), data.max()))

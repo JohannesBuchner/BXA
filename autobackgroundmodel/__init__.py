@@ -99,7 +99,8 @@ def simplify(v):
 
 def export(filename, target):
 	f = h5py.File(filename, 'r')
-	with open(target.lower() + '.json', 'w') as fout:
+	nbins = f['spectra'].shape[1]
+	with open(target.lower() + '_%d.json' % nbins, 'w') as fout:
 		#print("  - getting keys:")
 		#for k in list(f.keys()):
 		#	print(target, k, f[k].shape)
@@ -165,4 +166,3 @@ Johannes Buchner (C) 2017-2019
 	print('exporting to "%s.json" ...' % telescope.lower())
 	export(componentfile, telescope)
 	print('exporting to "%s.json" ... done' % telescope.lower())
-
