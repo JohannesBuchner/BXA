@@ -155,8 +155,8 @@ galabso = bxa.auto_galactic_absorption(id)
 galabso.nH.freeze()
 
 # Models available at https://doi.org/10.5281/zenodo.602282
-load_table_model("torus", '/home/user/Downloads/specmodels/uxclumpy-cutoff.fits')
-load_table_model("scat", '/home/user/Downloads/specmodels/uxclumpy-cutoff-omni.fits')
+load_table_model("torus", os.environ['MODELDIR'] + '/uxclumpy-cutoff.fits')
+load_table_model("scat", os.environ['MODELDIR'] + '/uxclumpy-cutoff-omni.fits')
 # the limits correspond to fluxes between Sco X-1 and CDFS7Ms faintest fluxes
 srclevel = Parameter('src', 'level', 0, -8, 3, -20, 20) 
 print('combining components')
