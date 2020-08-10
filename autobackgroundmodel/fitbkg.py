@@ -148,10 +148,12 @@ class PCAFitter(object):
 		self.pca = dict()
 		for k, v in data.items():
 			self.pca[k] = numpy.array(v)
-		assert self.pca['hi'].shape == (self.ndata,), 'spectrum has different number of channels: %d vs %s' % (len(self.pca['hi']), self.ndata)
+		nactivedata = self.pca['ihi'] - self.pca['ilo']
+		assert self.pca['hi'].shape == (nactivedata,), 'spectrum has different number of channels: %d vs %s' % (len(self.pca['hi']), self.ndata)
 		assert self.pca['lo'].shape == self.pca['hi'].shape
 		assert self.pca['mean'].shape == self.pca['hi'].shape
-		assert len(self.pca['components']) == self.ndata
+		assert len(self.pca['components']) == nactivedata
+		assert nactivedata <= self.ndata
 		ilo = int(self.pca['ilo'])
 		ihi = int(self.pca['ihi'])
 		self.cts = self.data[ilo:ihi]
@@ -369,7 +371,7 @@ if __name__ == '__main__':
 	consoleHandler.setFormatter(logFormatter)
 	consoleHandler.setLevel(logging.INFO)
 	logging.getLogger().addHandler(consoleHandler)
-	logf.setLevel(logging.WARNING)
+	logf.setLevel(logging.INFO)
 
 	if len(sys.argv) not in (2, 3):
 		print('SYNOPSIS: %s <bkg.pi> [<src.pi>] ' % sys.argv[0])
@@ -467,4 +469,3 @@ if __name__ == '__main__':
 	
 
 __dir__ = [PCAFitter, PCAModel]
-
