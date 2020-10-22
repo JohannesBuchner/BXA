@@ -49,7 +49,7 @@ def create_prior_function(transformations):
 
 
 
-def store_chain(chainfilename, transformations, posterior):
+def store_chain(chainfilename, transformations, posterior, fit_statistic):
 	"""
 	Writes a MCMC chain file in the same format as the Xspec chain command
 	"""
@@ -68,7 +68,7 @@ def store_chain(chainfilename, transformations, posterior):
 		format='D', array=t['aftertransform'](posterior[:,i]))
 		for i, name in enumerate(names)]
 	columns.append(pyfits.Column(name='FIT_STATISTIC', 
-		format='D', array=posterior[:,-1]))
+		format='D', array=fit_statistic))
 	table = pyfits.ColDefs(columns)
 	header = pyfits.Header()
 	header.add_comment("""Created by BXA (Bayesian X-ray spectal Analysis) for Xspec""")
@@ -189,9 +189,13 @@ class BXASolver(object):
 				n_live_points=n_live_points, evidence_tolerance=evidence_tolerance, 
 				seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
 			)
+			logls = [self.results['weighted_samples']['logl'][
+				numpy.where(self.results['weighted_samples']['points'] == sample)[0][0]]
+				for sample in self.results['samples']]
 			self.posterior = self.results['samples']
+
 			chainfilename = '%schain.fits' % self.outputfiles_basename
-			store_chain(chainfilename, self.transformations, self.posterior)
+			store_chain(chainfilename, self.transformations, self.posterior, -2 * logls)
 			xspec.AllChains.clear()
 			xspec.AllChains += chainfilename
 		
@@ -482,8 +486,3 @@ def standard_analysis(transformations, outputfiles_basename,
 		print() 
 	
 	return analyzer
-
-
-
-
-
