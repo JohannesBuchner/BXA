@@ -340,7 +340,7 @@ class PCAFitter(object):
 			power = diff[xi]
 			print('placing gaussian there ...')
 			# we work in energy bins, not energy
-			initial = [xi, log10(4.), log10(power)] + list(last_final)
+			initial = [xi, log10(4.), log10(power)] + list(last_final)[:last_nparams]
 			self.ngaussians = gi + 1
 			print('initial guess:', self.calc_bkg_stat_wrapped_gaussians(initial))
 			r = minimize(self.calc_bkg_stat_wrapped_gaussians, x0=initial)
