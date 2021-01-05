@@ -7,12 +7,10 @@ Binning routines for plotting
 
 from __future__ import print_function
 import numpy
-from numpy import exp, log
-import matplotlib.pyplot as plt
 import scipy.special, scipy.stats
-import sys, os
 from . import gof
 import tqdm
+
 
 def group_adapt(xdata, ydata, xlo, xhi, nmin = 20):
 	"""
@@ -29,6 +27,7 @@ def group_adapt(xdata, ydata, xlo, xhi, nmin = 20):
 				#print '  groups', i,j
 				break
 		i = j + 1
+
 
 def binning(outputfiles_basename, bins, widths, data, models):
 	"""
@@ -54,7 +53,6 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	# convert from densities to counts
 	ydata = numpy.rint(data * widths * 2)
 	models = models * widths * 2
-	deltax = (xdata[1:] - xdata[:-1]).mean()
 	
 	best_gof = None
 	best_gof_stats = None
@@ -130,6 +128,4 @@ def binning(outputfiles_basename, bins, widths, data, models):
 		gof_avg=gof_avg, gof_total=gof_total, stats=stats,
 		xlim = (xlo[0], xhi[-1]),
 		ylim = (ymin, ymax),
-		)
-
-
+	)

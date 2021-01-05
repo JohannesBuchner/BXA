@@ -22,40 +22,6 @@ import scipy.optimize
 import datetime
 import time
 
-"""
-def pca(M):
-	mean = M.mean(axis=0)
-	Moffset = M - mean.reshape((1,-1))
-	U, s, Vt = numpy.linalg.svd(Moffset, full_matrices=False)
-	V = Vt.T
-	print('variance explained:', s**2/len(M))
-	c = numpy.cumsum(s**2/len(M))
-	c = c / c[-1]
-	for cut in 0.80, 0.90, 0.95, 0.99:
-		idx, = numpy.where(c>cut)
-		n = idx.min() + 1
-		print('  --> need %d components to explain %.2f%%' % (n, cut))
-	return U, s, V, mean
-
-def pca_predict(U, s, V, mean):
-	S = numpy.diag(s)
-	return numpy.dot(U, numpy.dot(S, V.T)) + mean.reshape((1,-1))
-
-def pca_get_vectors(s, V, mean):
-	#U = numpy.eye(len(s))
-	#return pca_predict(U, s, V, mean)
-	Sroot = numpy.diag(s**0.5)
-	return numpy.dot(Sroot, V.T)
-
-def pca_cut(U, s, V, mean, ncomponents=20):
-	return U[:, :ncomponents], s[:ncomponents], V[:,:ncomponents], mean
-
-def pca_check(M, U, s, V, mean):
-	# if we use only the first 20 PCs the reconstruction is less accurate
-	Mhat2 = pca_predict(U, s, V, mean)
-	print("Using %d PCs, MSE = %.6G"  % (len(s), numpy.mean((M - Mhat2)**2)))
-	return M - Mhat2
-"""
 
 def create_ogip_atable(BackArray, BackSpecFile, SourceSpecFile, outfilename, ilo, ihi):
 	"""
@@ -208,30 +174,31 @@ def create_spectral_files(fitter, result, src_filename):
 	dtype = [('COUNTS', '>f4') if name == 'COUNTS' else (name, origdata.dtype.fields[name][0]) for name in origdata.dtype.names]
 	v = f['SPECTRUM'].data['COUNTS'] * 0.
 	v[fitter.ilo:fitter.ihi] = result
-	newdata = []
+	lnewdata = []
 	for j, (origrow, newv) in enumerate(zip(origdata, v)):
 		newrow = list(origrow)
 		newrow[i] = newv
-		newdata.append(tuple(newrow))
-	newdata = numpy.array(newdata, dtype=dtype)
+		lnewdata.append(tuple(newrow))
+	newdata = numpy.array(lnewdata, dtype=dtype)
 	hdu = pyfits.BinTableHDU(data=newdata, name=f['SPECTRUM'].name)
 	for k, v in list(f['SPECTRUM'].header.items()):
 		if k not in hdu.header:
 			hdu.header[k] = v
-	hdus = [hdu if e.name == 'SPECTRUM' else e for e in f]
+	hdulist = [hdu if e.name == 'SPECTRUM' else e for e in f]
 	fout = fitter.bkg_filename[:-len(ext)] + 'bstat.' + ext
-	hdus = pyfits.HDUList(hdus)
+	hdus = pyfits.HDUList(hdulist)
 	hdus.writeto(fout, overwrite=True)
 	hdus.close()
+	del f
 	
 	# update source file
 	print('creating src file with updated BACKFILE header ...')
-	ext = src_filename.split('.')[-1]
+	bext = src_filename.split('.')[-1]
 	f = pyfits.open(src_filename)
 	for e in f:
 		if 'BACKFILE' in e.header:
 			e.header['BACKFILE'] = fout
-	foutsrc = src_filename[:-len(ext)] + 'bstat.' + ext
+	foutsrc = src_filename[:-len(bext)] + 'bstat.' + bext
 	f.writeto(foutsrc, overwrite=True)
 	f.close()
 	return foutsrc
@@ -357,8 +324,7 @@ class PCAFitter(object):
 		y = numpy.log10(self.cts * 1. / ncts  + 1.0)
 		z = (y - mean) * V
 		assert z.shape == (1,len(s)), z.shape
-		z = z.tolist()[0]
-		return numpy.array([numpy.log10(ncts + 0.1)] + z)
+		return numpy.array([numpy.log10(ncts + 0.1)] + z.tolist()[0])
 	
 	def calc_bkg_stat(self, pred):
 		if pred is None:

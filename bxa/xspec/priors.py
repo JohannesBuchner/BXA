@@ -4,7 +4,7 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2019
+Copyright: Johannes Buchner (C) 2013-2020
 
 Priors
 """
@@ -94,4 +94,3 @@ def create_prior_function(transformations):
 			sys.exit(-126)
 
 	return prior
-

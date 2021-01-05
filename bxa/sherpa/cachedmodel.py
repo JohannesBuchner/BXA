@@ -9,13 +9,8 @@ Copyright: Johannes Buchner (C) 2013-2016
 """
 
 import os
-import numpy
-from math import log10, isnan, isinf
-
 
 if 'MAKESPHINXDOC' not in os.environ:
-	import sherpa.astro.ui as ui
-	from sherpa.stats import Cash, CStat
 	from sherpa.models import ArithmeticModel, CompositeModel
 else:
 	ArithmeticModel = object
@@ -71,4 +66,3 @@ class CachedModel(CompositeModel, ArithmeticModel):
 	def guess(self, dep, *args, **kwargs):
 		self.othermodel.guess(dep, *args, **kwargs)
 		CompositeModel.guess(self, dep, *args, **kwargs)
-

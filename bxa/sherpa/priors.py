@@ -9,7 +9,7 @@ Copyright: Johannes Buchner (C) 2013-2015
 
 Priors
 """
-from math import log10, isnan, isinf
+from math import log10
 import numpy
 from . import invgauss
 
@@ -25,6 +25,10 @@ def create_uniform_prior_for(parameter):
 	return lambda x: x * spread + low
 
 def create_jeffreys_prior_for(parameter):
+	"""deprecated name for create_loguniform_prior_for"""
+	return create_loguniform_prior_for(parameter)
+
+def create_loguniform_prior_for(parameter):
 	"""
 	Use for scale variables (order of magnitude)
 	The Jeffreys prior gives equal weight to each order of magnitude between the
@@ -55,7 +59,6 @@ def create_gaussian_prior_for(parameter, mean, std):
 	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex
 
 	"""
-	from . import invgauss
 	lo = parameter.min
 	hi = parameter.max
 	f = invgauss.get_invgauss_func(mean, std)
@@ -79,13 +82,13 @@ def prior_from_file(filename, parameter):
 		parameter.val = float(dist)
 		return float(dist), [], []
 	distz = numpy.array(list(dist[:, 1]) + [dist[-1,1]]*2)
-	deltax = dist[1,0] - dist[0,0]
+	#deltax = dist[1,0] - dist[0,0]
 	n = len(dist)
 	def custom_priorf(x):
 		assert x >= 0
 		assert x <= 1
 		i = int(numpy.floor(x*n))
-		r = distz[i] + (distz[i + 1] - distz[i]) * (x*n - i)
+		r = distz[i] + (distz[i + 1] - distz[i]) * (x * n - i)
 		return r
 	return parameter, [parameter], [custom_priorf]
 
@@ -99,12 +102,12 @@ def create_prior_function(priors = [], parameters = None):
 		Uniform priors will be created for them.
 	"""
 
-	functions = []
 	if priors == []:
+		functions = []
 		assert parameters is not None, "you need to pass the parameters if you want automatic uniform priors"
 		thawedparmins  = [p.min for p in parameters]
 		thawedparmaxes = [p.max for p in parameters]
-		for low, high, i in zip(thawedparmins, thawedparmaxes, range(ndim)):
+		for low, high in zip(thawedparmins, thawedparmaxes):
 			functions.append(lambda x: x * (high - low) + low)
 	else:
 		functions = priors
@@ -114,4 +117,3 @@ def create_prior_function(priors = [], parameters = None):
 			cube[i] = functions[i](cube[i])
 
 	return prior_function
-
