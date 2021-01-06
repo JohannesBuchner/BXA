@@ -9,15 +9,12 @@ cat gen.xspec | {
 } | xspec
 
 # run the three models in parallel (&)
-python example_simplest.py &
-python example_advanced_priors.py example-file.fak absorbed- &
-python example_custom_run.py example-file.fak line- &
+python3 example_simplest.py &
+python3 example_advanced_priors.py example-file.fak absorbed/ &
+python3 example_custom_run.py example-file.fak line/ &
 
 # wait until they are done
 wait
 
 # compare the evidences
-python model_compare.py absorbed- simplest- line-
-
-
-
+python3 model_compare.py absorbed simplest line

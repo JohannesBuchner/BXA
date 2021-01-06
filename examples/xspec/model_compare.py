@@ -10,7 +10,7 @@ from math import log, log10
 
 prefixes = sys.argv[1:]
 
-models = dict([(f, json.load(open(f + "stats.json"))['global evidence']) for f in prefixes])
+models = dict([(f, json.load(open(f + "/info/results.json"))['logz']) for f in prefixes])
 
 best = max(models, key=models.__getitem__)
 Zbest = models[best]
@@ -31,5 +31,3 @@ print()
 print('The last, most likely model was used as normalization.')
 print('Uniform model priors are assumed, with a cut of log10(%s) to rule out models.' % limit)
 print()
-
-

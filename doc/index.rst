@@ -173,12 +173,13 @@ Documentation:
 Who is using BXA?
 -------------------------------
 
-* Dr. Antonis Georgakakis (MPE, Munich)
+* Dr. Antonis Georgakakis (NOA, Athens)
 * Dr. Mike Anderson (MPA, Munich)
 * Dr. Franz Bauer, Charlotte Simmonds (PUC, Santiago)
 * Dr. Stéphane Paltani (ISDC, Geneva)
 * Dr. Zhu Liu (NAO, Beijing)
-* Teng Liu, Adam Malyali, Riccardo Arcodia, Sophia Waddell, ... (MPE, Garching)
+* Dr. Francesca Civano, Dr. Aneta Siemiginowska (CfA/SAO, Cambridge)
+* Dr. Teng Liu, Adam Malyali, Riccardo Arcodia, Sophia Waddell, ... (MPE, Garching)
 * and you?
 
 Indices and tables

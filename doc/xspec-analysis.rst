@@ -29,15 +29,16 @@ For example:
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 13-27
 
-See *examples/xspec/example_simplest.py* for a simple example. 
-*examples/xspec/example_advanced_priors.py* introduces more complex and custom priors.
+See `examples/xspec/example_simplest.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py>`_ for a simple example. 
+`examples/xspec/example_simplest.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py>`_ 
+`examples/xspec/example_advanced_priors.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_advanced_priors.py>`_ introduces more complex and custom priors.
 
 .. _xspec-run:
 
 Running the analysis
 ---------------------
 
-This runs the fit and stores the result in the myoutputs folder:
+This runs the fit and stores the result in the specified output folder:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 30-32
@@ -68,7 +69,7 @@ see https://corner.readthedocs.io/en/latest/.
 Model checking
 -----------------------
 
-The following code creates a plot of the unconvolved posterior:
+The following code creates a plot of the convolved posterior model:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 37-60
@@ -85,6 +86,8 @@ The following code creates a plot of the unconvolved posterior:
 	this amount of counts. 
 	In a Poisson process, the inverse incomplete gamma
 	function provides this answer. The 10%-90% probability range is used.
+	
+	On the colors of the data points:
 	
 	For all intents and purposes, you can ignore the colors.
 	
@@ -109,9 +112,9 @@ The following code creates a plot of the unconvolved posterior:
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 65-79
 
-.. figure:: absorbed-unconvolved_posterior.pdf
+.. figure:: absorbed-unconvolved_posterior.*
 	
-	Example of the unconvolved spectrum with data.
+	Example of the unconvolved spectrum.
 	For each posterior sample (solution), the parameters are taken and put
 	through the model. All such lines are plotted. Where the region is darker,
 	more lines ended up, and thus it is more likely.
@@ -151,7 +154,7 @@ This should set parameters, and compute flux estimates.
 
 .. include:: model_discovery.rst
 
-For Xspec, the *qq* function in the *qq* module allows you to create such plots easily::
+For Xspec, the *qq* function in the *qq* module allows you to create such plots easily:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 83-90
