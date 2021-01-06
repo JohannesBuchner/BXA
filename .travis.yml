@@ -39,7 +39,7 @@ script:
   - git checkout .
   # testing sherpa, but not twice for each python version
   - if [[ "$TOOL" == "sherpa" ]]; then
-      docker run $XDOCKERARGS -v $PWD:/opt/example/ -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=100 -t johannesbuchner/bxa_absorbed </dev/null;
+      docker run $XDOCKERARGS -v $PWD:/opt/example/ -v $PWD/../..:/opt/BXA -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=100 -t ldouchy/ciao </dev/null;
     fi
   - popd
   # testing xspec
