@@ -7,7 +7,7 @@ export HEADAS=/heasoft/build/x86_64-unknown-linux-gnu-libc2.23-0/
 
 cd /opt/
 apt-get -y update
-apt-get -y install -qq libblas{3,-dev} liblapack{3,-dev} libatlas{3-base,-dev} cmake build-essential gfortran python-numpy python-scipy python-matplotlib
+apt-get -y install -qq python-numpy python-scipy python-matplotlib
 
 # upgrade pip ...
 sudo apt-get -y purge python-pip
