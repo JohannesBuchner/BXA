@@ -63,6 +63,9 @@ lint: ## check style with flake8
 test: ## run tests quickly with the default Python
 	pytest
 
+test-xspec:
+	export PYTHONPATH=$PWD:$PYTHONPATH; pushd examples/xspec/ && git clean -f . && bash runall.sh
+
 test-all: ## run tests on every Python version with tox
 	tox
 
