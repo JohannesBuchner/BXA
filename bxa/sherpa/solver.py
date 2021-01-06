@@ -131,7 +131,7 @@ class BXASolver(object):
 				print('Exception in log_likelihood function: ', e)
 				for i, p in enumerate(self.parameters):
 					print('    Parameter %10s: %f --> %f [%f..%f]' % (p.fullname, p.val, cube[i], p.min, p.max))
-				raise Exception("Model evaluation problem") from e
+				raise e
 		
 		n_dims = len(self.parameters)
 		resume = kwargs.pop('resume', False)
