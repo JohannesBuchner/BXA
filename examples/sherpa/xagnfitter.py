@@ -79,7 +79,7 @@ How to run this script:
 
 8) run:
 
-	$ WITHOUT_MULTINEST=1 python3 BXA/examples/sherpa/xz_auto_multiple.py
+	$ python3 BXA/examples/sherpa/xagnfitter.py
 
 9) analyse results:
 

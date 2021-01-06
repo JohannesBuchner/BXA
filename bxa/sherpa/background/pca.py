@@ -18,14 +18,15 @@ import logging
 import warnings
 import os
 
-if 'MAKESPHINXDOC' not in os.environ:
+if 'MAKESPHINXDOC' not in os.environ or True:
 	import sherpa.astro.ui as ui
 	from sherpa.stats import Cash, CStat
 	from sherpa.models.parameter import Parameter
 	from sherpa.models import ArithmeticModel, CompositeModel
 	from sherpa.astro.ui import *
 	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
-
+else:
+	CompositeModel, ArithmeticModel = object, object
 
 def pca(M):
 	mean = M.mean(axis=0)

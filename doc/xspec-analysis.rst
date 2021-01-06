@@ -1,7 +1,9 @@
-BXA/Xspec
+Xspec with BXA
 =======================================
 
-Begin by loading bxa in a session with xspec loaded:
+This documentation shows how to use BXA with `PyXSpec`_.
+
+Begin by importing bxa in a python session with heasoft loaded:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 4-5

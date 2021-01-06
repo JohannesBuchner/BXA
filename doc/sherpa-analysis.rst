@@ -1,4 +1,4 @@
-BXA/Sherpa
+Sherpa with BXA
 =======================================
 
 Begin by loading bxa in a session with sherpa loaded::

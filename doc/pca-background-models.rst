@@ -1,5 +1,4 @@
-=======================================
-Machine-learned PCA Background models
+PCA-based background models
 =======================================
 
 The advantages of using background spectral models is that more information 
@@ -42,44 +41,26 @@ In Xspec
 
 In xspec, there are two steps. 
 
-1) precompute the best-fit continuum model
+First, fit the background spectrum outside xspec using the autobackgroundmodel/fitbkg.py script.
 
-   fit the background spectrum outside xspec using the autobackgroundmodel/fitbkg.py script.
+You can find it here: https://github.com/JohannesBuchner/BXA/tree/master/autobackgroundmodel
 
-   You can find it here: https://github.com/JohannesBuchner/BXA/tree/master/autobackgroundmodel
-   
-   It needs the json files in the same folder.
-   
-   It will give you instructions how to load the PCA model in xspec.
+It will give you instructions how to load the PCA model in xspec.
 
-2) Use the resulting atable with a dummy unit response matrix.
-
-   fitbkg.py in step 1 gives you instructions how to load it in xspec.
 
 Creating a new PCA model
 ---------------------------
 
-If you have a new instrument or survey, create a model with:
-
-`python autobackgroundmodel/__init__.py bkg1.pha bkg2.pha bkg3.pha`
-
-The resulting file is telescope.json or telescope_instrument.json.
+See https://github.com/JohannesBuchner/BXA/tree/master/autobackgroundmodel#create-a-model
 
 
-Fitting a model
-----------------
+If the fit is bad
+------------------
 
-Once you want to fit a specific sources, you can obtain its background model
-in two different ways:
+This should be judged from the q-q plot that the background fitting produces.
 
-**For use in xspec**, you can precompute a background model:
+If it is off, it shows at what energies the problem is.
 
-`python autobackgroundmodel/fitbkg.py bkg1.pha [src1.pha]`
+It may be that your spectrum is somehow different than typical spectra.
 
-This will make a file bkg1.pha.bstat.out with the estimated per-channel count rate.
-
-**For use in sherpa**, use the autobackground feature.
-see `examples/sherpa/example_automatic_background.py`
-
-If you have a new model (json file), it needs to be installed in the BXA folder,
-probably at `~/.local/lib/python*/site-packages//bxa/sherpa/background/`.
+You can try another method (e.g., empirical background models, or fall back to Wstat statistics).
