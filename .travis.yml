@@ -4,33 +4,17 @@ language: python
 
 os:
   - linux
-  #- osx
 
 python:
   - "2.7"
   - "3.8"
 
 env:
-  - TOOL=xspec   ASTROPY_VERSION=astropy
-  - TOOL=sherpa  ASTROPY_VERSION=astropy
+  - TOOL=xspec
+  - TOOL=sherpa
 
 services:
   - docker
-
-#cache:
-#  timeout: 3600
-#  directories:
-#    - $HOME/docker
-#    - $HOME/Downloads
-
-#before_cache:
-#  # Save tagged docker images
-#  - mkdir -p $HOME/docker $HOME/Downloads
-#  - chmod 777 $HOME/docker $HOME/Downloads
-#  - chown -R travis:travis $HOME/docker $HOME/Downloads
-#  - >
-#    docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
-#    | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
 
 before_install:
   # Load cached docker images
@@ -43,9 +27,7 @@ before_install:
     fi
 
 install:
-  - pip install requests pymultinest ${ASTROPY_VERSION}
-  #- if [[ "$TOOL" == "sherpa" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]]; then docker pull johannesbuchner/bxa_absorbed; fi
-  #- if [[ "$TOOL" == "xspec" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]]; then docker pull giacomov/xspec-docker; fi
+  - pip install requests ultranest corner astropy h5py
 
 script:
   # testing scripts
@@ -62,6 +44,6 @@ script:
     fi
   - popd
   # testing xspec
-  - if [[ "$TOOL" == "xspec" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]] && [[ "ASTROPY_VERSION" == "astropy==2.0" ]]; then
+  - if [[ "$TOOL" == "xspec" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]]; then
       docker run --rm -v $PWD/examples/xspec:/opt/script/ -v $PWD:/opt/BXA giacomov/xspec-docker bash /opt/script/test-docker.sh </dev/null;
     fi
