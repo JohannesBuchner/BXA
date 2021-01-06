@@ -18,7 +18,7 @@ import logging
 import warnings
 import os
 
-if 'MAKESPHINXDOC' not in os.environ or True:
+if 'MAKESPHINXDOC' not in os.environ:
 	import sherpa.astro.ui as ui
 	from sherpa.stats import Cash, CStat
 	from sherpa.models.parameter import Parameter
@@ -26,7 +26,11 @@ if 'MAKESPHINXDOC' not in os.environ or True:
 	from sherpa.astro.ui import *
 	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
 else:
-	CompositeModel, ArithmeticModel = object, object
+	# mock objects when sherpa doc is built
+	ArithmeticModel = object
+	class CompositeModel(object):
+		pass
+	RSPModelNoPHA, RMFModelNoPHA = object, object
 
 def pca(M):
 	mean = M.mean(axis=0)
@@ -519,4 +523,4 @@ def auto_background(id):
 	return get_bkg_model(id)
 	
 
-__dir__ = [PCAFitter, PCAModel]
+__all__ = ['PCAFitter', 'PCAModel', 'auto_background']

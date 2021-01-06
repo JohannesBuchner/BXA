@@ -46,6 +46,7 @@ This runs the fit and stores the result in the specified output folder:
    :lines: 30-32
 
 .. autoclass:: bxa.xspec.BXASolver
+   :noindex:
 
 The returned results contain posterior samples and the Bayesian evidence.
 These are also reported on the screen for you.
@@ -125,8 +126,8 @@ For plotting the model parameters found against the data, use these functions.
 
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_unconvolved
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_convolved
-.. automodule:: bxa.xspec.sinning
-	:members: binning
+.. automethod:: bxa.xspec.sinning.binning
+    :noindex:
 
 
 Error propagation

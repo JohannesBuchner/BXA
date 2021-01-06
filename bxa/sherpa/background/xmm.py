@@ -12,8 +12,17 @@ For example usage, see examples/sherpa/background/xmm/fit.py
 """	
 
 import os
-from sherpa.astro.ui import *
 import numpy
+
+if 'MAKESPHINXDOC' not in os.environ:
+	import sherpa.astro.ui as ui
+	from sherpa.stats import Cash, CStat
+	from sherpa.models.parameter import Parameter
+	from sherpa.models import ArithmeticModel, CompositeModel
+	from sherpa.astro.ui import *
+	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
+else:
+	CompositeModel, ArithmeticModel = object, object
 
 print("""
 
@@ -470,5 +479,3 @@ def get_pn_bkg_model_cached(i, galabs):
 	for p in bkgmodel.pars:
 		p.freeze()
 	return bkgmodel
-
-

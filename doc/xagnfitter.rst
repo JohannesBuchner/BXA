@@ -19,8 +19,9 @@ Features:
 * Optional: add an apec L<10^42erg/s contamination component (set WITHAPEC=1)
 * Can fit multiple observations simultaneously
 
-I strongly recommend using this script instead of hardness ratios.
+I strongly recommend using the `xagnfitter <https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py>`_.
+ script instead of hardness ratios.
 
 It is included verbatim below:
 
-..literalinclude:: ../examples/sherpa/xagnfitter.py
+.. literalinclude:: ../examples/sherpa/xagnfitter.py

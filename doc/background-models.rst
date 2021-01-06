@@ -22,8 +22,10 @@ Empirical models for XMM/EPIC
 An example for XMM is available at
 https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xmm/fit.py
 
-.. autofunction:: bxa.sherpa.background.xmm.get_pn_bkg_model
-.. autofunction:: bxa.sherpa.background.xmm.get_mos_bkg_model
+.. autofunction:: bxa.sherpa.background.xmm::get_pn_bkg_model
+	:noindex:
+.. autofunction:: bxa.sherpa.background.xmm::get_mos_bkg_model
+	:noindex:
 
 The XMM model was developed by Richard Sturm at MPE.
 The citation is `Maggi P., et al., 2014, A&A, 561, AA76 <https://ui.adsabs.harvard.edu/abs/2012A&A...546A.109M/abstract>`_.
@@ -59,8 +61,11 @@ The Swift/XRT model was developed by Johannes Buchner at PUC.
 The citation is `Buchner et al., 2017, MNRAS, 464, 4545 <https://ui.adsabs.harvard.edu/abs/2017MNRAS.464.4545B/abstract>`_.
 
 .. autoclass:: bxa.sherpa.background.models.SwiftXRTBackground
+	:noindex:
 .. autoclass:: bxa.sherpa.background.models.SwiftXRTWTBackground
+	:noindex:
 .. autoclass:: bxa.sherpa.background.models.ChandraBackground
+	:noindex:
 
 If the fit is bad
 ------------------

@@ -5,9 +5,15 @@ Precomputes a interpolated grid model from a complex model.
 That model can then be used for fast access.
 """
 
-from sherpa.astro.ui import *
-from sherpa.models.parameter import Parameter
-from sherpa.models import ArithmeticModel
+import os
+
+if 'MAKESPHINXDOC' not in os.environ:
+	from sherpa.astro.ui import *
+	from sherpa.models.parameter import Parameter
+	from sherpa.models import ArithmeticModel
+else:
+	ArithmeticModel = object
+
 import itertools
 import numpy
 from tqdm import tqdm
@@ -158,31 +164,3 @@ class RebinnedModel(ArithmeticModel):
 		assert numpy.isfinite(r).all(), r
 		#print r[len(r)/2], yw[len(yw)/2], norm
 		return r * norm
-
-
-
-"""
-def rebinnedmodel(inputmodel, ebins, nparambins = 100):
-	import astropy.io.fits as pyfits
-	
-	hdu = pyfits.PrimaryHDU(n)
-	hdulist = pyfits.HDUList([hdu])
-	hdulist.writeto('my.rmf')
-	
-	def arr(n, i):
-		a = numpy.zeros(n)
-		a[i] = 1
-		return a
-	
-	elo = ebins[:-1]
-	ehi = ebins[1:]
-	n = len(ebins) - 1
-	rmf_data = numpy.array([(eloi, ehii, 1, 0, n, arr(n, i)) for eloi, ehii in enumerate(zip(elo, ehi))],
-		dtype = [('ENERG_LO', '>f4'),
-			('ENERG_HI', '>f4'),
-			('N_GRP', '>i2'),
-			('F_CHAN', '>i2'),
-			('N_CHAN', '>i2'),
-		])
-"""
-

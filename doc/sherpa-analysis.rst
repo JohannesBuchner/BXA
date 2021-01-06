@@ -128,6 +128,7 @@ The *qq* function in the *qq* module allows you to create such plots easily, by
 exporting the cumulative functions into a file.
 
 .. autofunction:: bxa.sherpa.qq.qq_export
+   :noindex:
 
 Refer to the :ref:`accompaning paper <cite>`, which gives an introduction and 
 detailed discussion on the methodology.

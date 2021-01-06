@@ -40,6 +40,9 @@ The usage is similar in Sherpa and Xspec conceptionally:
    background-models
    pca-background-models
    xagnfitter
+   contributing
+   history
+   modules
 
 Indices and tables
 ==================

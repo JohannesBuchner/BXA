@@ -2,11 +2,21 @@
 Background models for various telescopes and instruments
 """
 
-from sherpa.astro.ui import *
 import numpy
 import json
 import logging
 import warnings
+import os
+
+if 'MAKESPHINXDOC' not in os.environ:
+	import sherpa.astro.ui as ui
+	from sherpa.stats import Cash, CStat
+	from sherpa.models.parameter import Parameter
+	from sherpa.models import ArithmeticModel, CompositeModel
+	from sherpa.astro.ui import *
+	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
+else:
+	CompositeModel, ArithmeticModel = object, object
 
 class BackgroundModel(object):
 	pass
@@ -513,5 +523,4 @@ class SwiftXRTWTBackground(SwiftXRTBackground):
 		ignore(5, None)
 		notice(0.4, 5)
 
-__dir__ = [SwiftXRTBackground, SwiftXRTWTBackground, ChandraBackground]
-
+__all__ = ['SwiftXRTBackground', 'SwiftXRTWTBackground', 'ChandraBackground']

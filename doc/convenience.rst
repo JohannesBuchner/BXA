@@ -39,11 +39,13 @@ It is worthwhile to cache them or produce interpolation grids.
 For Sherpa, caching of arbitrary models is provided by CachedModel, which you can use as a wrapper:
 
 .. autoclass:: bxa.sherpa.cachedmodel.CachedModel
+	:noindex:
 
 
 Automatic production of an interpolation model is possible with the RebinnedModel:
 
 .. autoclass:: bxa.sherpa.rebinnedmodel.RebinnedModel
+	:noindex:
 
 
 Xspec chain files
