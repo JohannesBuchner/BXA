@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pymultinest documentation build configuration file, created by
+# BXA documentation build configuration file, created by
 # sphinx-quickstart on Thu Jan  5 04:13:31 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -123,7 +123,7 @@ html_theme = 'default'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ['static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -219,6 +219,5 @@ man_pages = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-	'pymultinest': ('http://johannesbuchner.github.com/PyMultiNest/', None)
+	'BXA': ('http://johannesbuchner.github.com/BXA/', None)
 }
-

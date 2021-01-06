@@ -5,7 +5,6 @@
 BXA (Bayesian X-ray Analysis) for Xspec
 
 Copyright: Johannes Buchner (C) 2013-2020
-
 """
 
 from __future__ import print_function
@@ -19,9 +18,11 @@ from .priors import *
 from .solver import BXASolver, XSilence, create_prior_function
 
 
-def nested_run(transformations, prior_function = None, sampling_efficiency = 0.3, 
-	n_live_points = 400, evidence_tolerance = 0.5,
-	outputfiles_basename = 'chains/', verbose=True, **kwargs):
+def nested_run(
+	transformations, prior_function=None,
+	n_live_points=400, evidence_tolerance=0.5,
+	outputfiles_basename='chains/', verbose=True, **kwargs
+):
 	"""
 	Run the Bayesian analysis with specified parameters+transformations.
 
@@ -44,14 +45,14 @@ def nested_run(transformations, prior_function = None, sampling_efficiency = 0.3
 	solver = BXASolver(
 		transformations=transformations, prior_function=prior_function, 
 		outputfiles_basename=outputfiles_basename)
-	return solver.run(sampling_efficiency=sampling_efficiency, 
-		n_live_points=n_live_points, evidence_tolerance=evidence_tolerance, **kwargs)
+	return solver.run(n_live_points=n_live_points, evidence_tolerance=evidence_tolerance, **kwargs)
 
 
-
-def standard_analysis(transformations, outputfiles_basename, 
-	prior_function,
-	skipsteps = [], **kwargs):
+def standard_analysis(
+	transformations, outputfiles_basename, 
+	prior_function=None,
+	skipsteps=[], **kwargs
+):
 	"""
 	Default analysis which produces nice plots:
 	
@@ -78,7 +79,7 @@ def standard_analysis(transformations, outputfiles_basename,
 
 	print('creating plot of posterior predictions ...')
 	plt.figure()
-	solver.posterior_predictions_unconvolved(transformations, nsamples = 100)
+	solver.posterior_predictions_unconvolved(transformations, nsamples=100)
 	ylim = plt.ylim()
 	# 3 orders of magnitude at most
 	plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
@@ -94,19 +95,20 @@ def standard_analysis(transformations, outputfiles_basename,
 
 	print('creating plot of posterior predictions against data ...')
 	plt.figure()
-	data = solver.posterior_predictions_convolved(outputfiles_basename, transformations, nsamples = 100)
+	data = solver.posterior_predictions_convolved(outputfiles_basename, transformations, nsamples=100)
 	# plot data
-	#plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
-	#	label='data', marker='o', color='green')
-	# bin data for plotting
+	# plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
+	# 	label='data', marker='o', color='green')
+	#  bin data for plotting
 	print('binning for plot...')
-	binned = binning(outputfiles_basename=outputfiles_basename, 
-		bins = data['bins'], widths = data['width'], 
-		data = data['data'], models = data['models'])
+	binned = binning(
+		outputfiles_basename=outputfiles_basename, 
+		bins=data['bins'], widths=data['width'], 
+		data=data['data'], models=data['models'])
 	for point in binned['marked_binned']:
 		plt.errorbar(marker='o', zorder=-1, **point)
 	plt.xlim(binned['xlim'])
-	plt.ylim(binned['ylim'][0], binned['ylim'][1]*2)
+	plt.ylim(binned['ylim'][0], binned['ylim'][1] * 2)
 	plt.gca().set_yscale('log')
 	if Plot.xAxis == 'keV':
 		plt.xlabel('Energy [keV]')
@@ -119,8 +121,8 @@ def standard_analysis(transformations, outputfiles_basename,
 	
 	print('creating quantile-quantile plot ...')
 	solver.set_best_fit()
-	plt.figure(figsize=(7,7))
-	qq.qq(prefix=outputfiles_basename, markers = 5, annotate = True)
+	plt.figure(figsize=(7, 7))
+	qq.qq(prefix=outputfiles_basename, markers=5, annotate=True)
 	print('saving plot...')
 	plt.savefig(outputfiles_basename + 'qq_model_deviations.pdf', bbox_inches='tight')
 	plt.close()

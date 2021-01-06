@@ -115,7 +115,7 @@ def xspecfilenamenormalise(path):
 		return '/'.join(parts)
 	return path.replace('.', '_')
 
-def qq(prefix, markers = 5, annotate = True):
+def qq(prefix, markers=5, annotate=True):
 	"""
 	Create a quantile-quantile plot for model discovery (deviations in data from model).
 

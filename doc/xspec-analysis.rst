@@ -1,14 +1,17 @@
 BXA/Xspec
 =======================================
 
-Load your data, define your background model and source model as usual.
-This, you have to do using calls to `PyXSpec`_ functions. 
-Look at the file *examples/example_simplest.py* for an instructive example on 
-how to do the simplest analysis.
+Begin by loading bxa in a session with xspec loaded:
+
+.. code-block:: python
+
+   import xspec
+   import bxa.xspec as bxa
+
+Load your data, define your background model and source model as usual
+with `PyXSpec`_. 
 
 .. _PyXspec: https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/
-
-.. literalinclude:: ../examples/xspec/example_simplest.py
 
 .. _xspec-priors:
 
@@ -18,8 +21,28 @@ Defining priors
 Create a list of prior transformations like in the example above, one line for each variable.
 These functions will help you with that.
 
-.. automodule:: bxa.xspec
-      :members: create_uniform_prior_for, create_jeffreys_prior_for, create_custom_prior_for
+.. autofunction:: bxa.xspec.create_uniform_prior_for
+.. autofunction:: bxa.xspec.create_loguniform_prior_for
+.. autofunction:: bxa.xspec.create_gaussian_prior_for
+.. autofunction:: bxa.xspec.create_custom_prior_for
+
+For example:
+
+.. code-block:: python
+
+	m = Model("pow")
+	m.powerlaw.norm.values = ",,1e-10,1e-10,1e1,1e1" # 10^-10 .. 10
+	m.powerlaw.PhoIndex.values = ",,1,1,3,3"       #     1 .. 3
+
+	# define prior
+	transformations = [
+		# uniform prior for Photon Index
+		bxa.create_uniform_prior_for( m, m.powerlaw.PhoIndex),
+		# jeffreys prior for scale variable
+		bxa.create_jeffreys_prior_for(m, m.powerlaw.norm),
+		# and possibly many more parameters here
+	]
+
 
 See *examples/example_simplest.py* for a simple example. 
 *examples/example_advanced_priors.py* introduces more complex and custom priors.
@@ -29,49 +52,68 @@ See *examples/example_simplest.py* for a simple example.
 Running the analysis
 ---------------------
 
-A convencience method is provided for you, called *standard_analysis*, which does everything.
-You need to specify a prefix, called *outputfiles_basename* where the files are stored.
+This runs the fit and stores the result in the myoutputs folder:
 
-.. autofunction:: bxa.xspec.standard_analysis
-.. autofunction:: bxa.xspec.nested_run
+.. code-block:: python
 
-Both method return a *pymultinest.Analyzer* object, which provides access to the results.
+	outputfiles_basename = 'myoutputs/'
+	solver = BXASolver(transformations=transformations, outputfiles_basename=outputfiles_basename)
+	results = solver.run(resume=True)
 
-The example *examples/example_custom_run.py* shows how to customize the analysis (other plots)
+.. autoclass:: bxa.xspec.BXASolver
 
-This will allow you to create marginal plots, qq plots, plots of the spectra, etc.
+The returned results contain posterior samples and the Bayesian evidence.
+These are also reported on the screen for you.
 
 .. _xspec-analyse:
 
-Marginal plots
-----------------------
+Parameter posterior plots
+--------------------------
 
-For histograms (1d and 2d) of the marginal parameter distributions, use *plot.marginal_plots*.
-
-.. automodule:: bxa.xspec.plot
-	:members: marginal_plots
+Credible intervals of the model parameters, and histograms 
+(1d and 2d) of the marginal parameter distributions are plotted
+in 'myoutputs/plots/corner.pdf' for you.
 
 .. figure:: absorbed-corner.*
 	:scale: 50%
-	
-	For each parameter and each pair (not shown here), the marginal probability distribution is plotted.
-	This is presented in three forms:
-	
-	* Grey histogram, for the probability density
-	* Blue curve, for the cumulative distribution (summing up the grey histogram from left to right)
-	* As a summarizing error bar with the error corresponding to the quantiles of 1-sigma of a Gaussian.
-	  (i.e. the 16%, 50% and 84% quantiles are shown).
 
-For plotting the model parameters found against the data, use these functions.
+You can also plot them yourself using corner, triangle and getdist, by
+passing `results['samples']` to them.
 
-.. autofunction:: bxa.xspec.posterior_predictions_unconvolved
-.. autofunction:: bxa.xspec.posterior_predictions_convolved
-.. autofunction:: bxa.xspec.set_best_fit
-.. automodule:: bxa.xspec.sinning
-	:members: binning
+For more information on the corner library used here, 
+see https://corner.readthedocs.io/en/latest/.
 
-Refer to the *standard_analysis* function as an example of how to use them.
+Model checking
+-----------------------
 
+The following code creates a plot of the unconvolved posterior:
+
+.. code-block:: python
+
+	print('creating plot of posterior predictions against data ...')
+	plt.figure()
+	data = solver.posterior_predictions_convolved(outputfiles_basename, transformations, nsamples = 100)
+	# plot data
+	#plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
+	#	label='data', marker='o', color='green')
+	# bin data for plotting
+	print('binning for plot...')
+	binned = binning(outputfiles_basename=outputfiles_basename, 
+		bins = data['bins'], widths = data['width'], 
+		data = data['data'], models = data['models'])
+	for point in binned['marked_binned']:
+		plt.errorbar(marker='o', zorder=-1, **point)
+	plt.xlim(binned['xlim'])
+	plt.ylim(binned['ylim'][0], binned['ylim'][1]*2)
+	plt.gca().set_yscale('log')
+	if Plot.xAxis == 'keV':
+		plt.xlabel('Energy [keV]')
+	elif Plot.xAxis == 'channel':
+		plt.xlabel('Channel')
+	plt.ylabel('Counts/s/cm$^2$')
+	print('saving plot...')
+	plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
+	plt.close()
 
 .. figure:: absorbed-convolved_posterior.*
 	
@@ -104,17 +146,45 @@ Refer to the *standard_analysis* function as an example of how to use them.
 	
 	It is ok to ignore the colors, this computation is not used otherwise.
 
+The following code creates a plot of the unconvolved posterior:
+
+.. code-block:: python
+
+	print('creating plot of posterior predictions ...')
+	plt.figure()
+	solver.posterior_predictions_unconvolved(transformations, nsamples = 100)
+	ylim = plt.ylim()
+	# 3 orders of magnitude at most
+	plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
+	plt.gca().set_yscale('log')
+	if Plot.xAxis == 'keV':
+		plt.xlabel('Energy [keV]')
+	elif Plot.xAxis == 'channel':
+		plt.xlabel('Channel')
+	plt.ylabel('Counts/s/cm$^2$')
+	print('saving plot...')
+	plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
+	plt.close()
+
 .. figure:: absorbed-unconvolved_posterior.pdf
 	
 	Example of the unconvolved spectrum with data.
 	For each posterior sample (solution), the parameters are taken and put
 	through the model. All such lines are plotted. Where the region is darker,
 	more lines ended up, and thus it is more likely.
-	
+
+For plotting the model parameters found against the data, use these functions.
+
+.. automethod:: bxa.xspec.BXASolver.posterior_predictions_unconvolved
+.. automethod:: bxa.xspec.BXASolver.posterior_predictions_convolved
+.. automodule:: bxa.xspec.sinning
+	:members: binning
+
+
 Error propagation
 ---------------------
 
-:py:func:`pymultinest.Analyzer.equal_weighted_posterior` provides access to the posterior samples (similar to a Markov Chain).
+`results['samples']` provides access to the posterior samples (similar to a Markov Chain).
 Use these to propagate errors:
 
 * For every row in the chain, compute the quantity of interest
@@ -138,11 +208,17 @@ This should set parameters, and compute flux estimates.
 
 .. include:: model_discovery.rst
 
-For Xspec, the *qq* function in the *qq* module allows you to create such plots easily.
+For Xspec, the *qq* function in the *qq* module allows you to create such plots easily::
+
+	print('creating quantile-quantile plot ...')
+	solver.set_best_fit()
+	plt.figure(figsize=(7,7))
+	bxa.qq.qq(prefix=outputfiles_basename, markers = 5, annotate = True)
+	print('saving plot...')
+	plt.savefig(outputfiles_basename + 'qq_model_deviations.pdf', bbox_inches='tight')
+	plt.close()
 
 .. autofunction:: bxa.xspec.qq.qq
 
 Refer to the :ref:`accompaning paper <cite>`, which gives an introduction and 
 detailed discussion on the methodology.
-
-
