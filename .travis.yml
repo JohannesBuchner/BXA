@@ -1,5 +1,3 @@
-sudo: required
-
 language: python
 
 os:
@@ -27,7 +25,9 @@ before_install:
     fi
 
 install:
-  - pip install requests ultranest corner astropy h5py
+  - pip install requests corner astropy h5py cython 
+  - pip install ultranest
+  - python setup.py install
 
 script:
   # testing scripts
