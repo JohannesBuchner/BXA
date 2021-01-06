@@ -8,7 +8,7 @@ popd
 apt-get -y update
 apt-get -y install -qq python-numpy python-scipy python-matplotlib
 
-pip install cython
+pip install cython h5py tqdm corner
 pip install ultranest
 
 python setup.py install 

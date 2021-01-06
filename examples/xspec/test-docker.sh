@@ -16,7 +16,7 @@ sudo apt-get install python-setuptools python-dev
 sudo easy_install pip 
 pip install pip --upgrade 
 
-pip install requests tqdm astropy==2.0 corner cython
+pip install requests tqdm astropy==2.0 corner cython h5py
 pip install ultranest
 #git clone https://github.com/JohannesBuchner/BXA
 pushd BXA; python setup.py install --user; popd
