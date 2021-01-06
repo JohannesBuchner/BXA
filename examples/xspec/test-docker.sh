@@ -28,5 +28,4 @@ python -c 'import ultranest';
 python -c 'import xspec';
 python -c 'import bxa.xspec as bxa';
 
-rm -v $(which python3)
-pushd /opt/script/ && bash -v runall.sh && popd;
+pushd /opt/script/ && sed --in-place s/python3/python/g runall.sh && bash -v runall.sh && popd;

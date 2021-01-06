@@ -1,6 +1,5 @@
 #!/bin/bash
 
-if ! command -v python3; then alias python3=python; fi
 # start from scratch
 rm -rf simplest/ absorbed/ line/
 
