@@ -1,5 +1,6 @@
 #!/bin/bash
 
+if ! command -v python3; then python3=python; fi
 # start from scratch
 rm -rf simplest/ absorbed/ line/
 
