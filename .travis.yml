@@ -11,9 +11,7 @@ python:
   - "3.8"
 
 env:
-  - TOOL=xspec   ASTROPY_VERSION="astropy==2.0"
   - TOOL=xspec   ASTROPY_VERSION=astropy
-  - TOOL=sherpa  ASTROPY_VERSION="astropy==2.0"
   - TOOL=sherpa  ASTROPY_VERSION=astropy
 
 services:
@@ -67,6 +65,3 @@ script:
   - if [[ "$TOOL" == "xspec" ]] && [[ "$TRAVIS_PYTHON_VERSION" == 2.7 ]] && [[ "ASTROPY_VERSION" == "astropy==2.0" ]]; then
       docker run --rm -v $PWD/examples/xspec:/opt/script/ -v $PWD:/opt/BXA giacomov/xspec-docker bash /opt/script/test-docker.sh </dev/null;
     fi
-
-
-
