@@ -3,10 +3,8 @@ BXA/Xspec
 
 Begin by loading bxa in a session with xspec loaded:
 
-.. code-block:: python
-
-   import xspec
-   import bxa.xspec as bxa
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 4-5
 
 Load your data, define your background model and source model as usual
 with `PyXSpec`_. 
@@ -28,24 +26,11 @@ These functions will help you with that.
 
 For example:
 
-.. code-block:: python
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 13-27
 
-	m = Model("pow")
-	m.powerlaw.norm.values = ",,1e-10,1e-10,1e1,1e1" # 10^-10 .. 10
-	m.powerlaw.PhoIndex.values = ",,1,1,3,3"       #     1 .. 3
-
-	# define prior
-	transformations = [
-		# uniform prior for Photon Index
-		bxa.create_uniform_prior_for( m, m.powerlaw.PhoIndex),
-		# jeffreys prior for scale variable
-		bxa.create_jeffreys_prior_for(m, m.powerlaw.norm),
-		# and possibly many more parameters here
-	]
-
-
-See *examples/example_simplest.py* for a simple example. 
-*examples/example_advanced_priors.py* introduces more complex and custom priors.
+See *examples/xspec/example_simplest.py* for a simple example. 
+*examples/xspec/example_advanced_priors.py* introduces more complex and custom priors.
 
 .. _xspec-run:
 
@@ -54,11 +39,8 @@ Running the analysis
 
 This runs the fit and stores the result in the myoutputs folder:
 
-.. code-block:: python
-
-	outputfiles_basename = 'myoutputs/'
-	solver = BXASolver(transformations=transformations, outputfiles_basename=outputfiles_basename)
-	results = solver.run(resume=True)
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 30-32
 
 .. autoclass:: bxa.xspec.BXASolver
 
@@ -88,32 +70,8 @@ Model checking
 
 The following code creates a plot of the unconvolved posterior:
 
-.. code-block:: python
-
-	print('creating plot of posterior predictions against data ...')
-	plt.figure()
-	data = solver.posterior_predictions_convolved(outputfiles_basename, transformations, nsamples = 100)
-	# plot data
-	#plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
-	#	label='data', marker='o', color='green')
-	# bin data for plotting
-	print('binning for plot...')
-	binned = binning(outputfiles_basename=outputfiles_basename, 
-		bins = data['bins'], widths = data['width'], 
-		data = data['data'], models = data['models'])
-	for point in binned['marked_binned']:
-		plt.errorbar(marker='o', zorder=-1, **point)
-	plt.xlim(binned['xlim'])
-	plt.ylim(binned['ylim'][0], binned['ylim'][1]*2)
-	plt.gca().set_yscale('log')
-	if Plot.xAxis == 'keV':
-		plt.xlabel('Energy [keV]')
-	elif Plot.xAxis == 'channel':
-		plt.xlabel('Channel')
-	plt.ylabel('Counts/s/cm$^2$')
-	print('saving plot...')
-	plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
-	plt.close()
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 37-60
 
 .. figure:: absorbed-convolved_posterior.*
 	
@@ -148,23 +106,8 @@ The following code creates a plot of the unconvolved posterior:
 
 The following code creates a plot of the unconvolved posterior:
 
-.. code-block:: python
-
-	print('creating plot of posterior predictions ...')
-	plt.figure()
-	solver.posterior_predictions_unconvolved(transformations, nsamples = 100)
-	ylim = plt.ylim()
-	# 3 orders of magnitude at most
-	plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
-	plt.gca().set_yscale('log')
-	if Plot.xAxis == 'keV':
-		plt.xlabel('Energy [keV]')
-	elif Plot.xAxis == 'channel':
-		plt.xlabel('Channel')
-	plt.ylabel('Counts/s/cm$^2$')
-	print('saving plot...')
-	plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
-	plt.close()
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 65-79
 
 .. figure:: absorbed-unconvolved_posterior.pdf
 	
@@ -210,13 +153,8 @@ This should set parameters, and compute flux estimates.
 
 For Xspec, the *qq* function in the *qq* module allows you to create such plots easily::
 
-	print('creating quantile-quantile plot ...')
-	solver.set_best_fit()
-	plt.figure(figsize=(7,7))
-	bxa.qq.qq(prefix=outputfiles_basename, markers = 5, annotate = True)
-	print('saving plot...')
-	plt.savefig(outputfiles_basename + 'qq_model_deviations.pdf', bbox_inches='tight')
-	plt.close()
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 83-90
 
 .. autofunction:: bxa.xspec.qq.qq
 

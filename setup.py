@@ -9,14 +9,13 @@ except IOError:
 	long_description = ''
 
 setup(name='bxa',
-	version='3.4.2',
+	version='4.0.0',
 	author='Johannes Buchner',
 	url='https://github.com/JohannesBuchner/BXA/',
 	author_email='johannes.buchner.acad@gmx.com',
 	description='Bayesian X-ray spectral analysis',
 	long_description=long_description,
 	packages=['bxa.xspec', 'bxa.sherpa', 'bxa.sherpa.background', 'bxa'],
-	requires=['pymultinest','numpy', 'tqdm', 'corner'],
+	requires=['ultranest','numpy', 'tqdm', 'corner', 'h5py', 'matplotlib'],
 	include_package_data=True,
 )
-
