@@ -8,7 +8,7 @@ os:
 
 python:
   - "2.7"
-  - "3.9"
+  - "3.8"
 
 env:
   - TOOL=xspec   ASTROPY_VERSION="astropy==2.0"
