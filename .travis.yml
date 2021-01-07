@@ -77,7 +77,8 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "loading xspec";
-      export HEADAS=$(ls -d ${HOME}/Downloads/xspec-install/x86_64-pc-linux-gnu-libc*/);
+      ls -d ${HOME}/Downloads/xspec-install;
+      export HEADAS=`ls -d ${HOME}/Downloads/xspec-install/x86_64-pc-linux-gnu-libc*/`;
       echo $HEADAS;
       source ${HEADAS}/headas-init.sh;
       python -c 'import xspec';
