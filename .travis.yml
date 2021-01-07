@@ -95,7 +95,7 @@ install:
   - popd
 
 
-  - pip install requests corner astropy h5py cython coveralls coverage
+  - pip install requests corner astropy h5py cython coveralls coverage scipy
   - pip install ultranest
   - python setup.py install
 
@@ -116,7 +116,7 @@ script:
   - if [[ "$TOOL" == "xspec" ]]; then
       pushd examples/xspec;
       PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
-      popd
+      popd;
     fi
   # testing sherpa examples
   - if [[ "$TOOL" == "sherpa" ]]; then
@@ -125,7 +125,7 @@ script:
       pushd npyinterp;
       make;
       popd;
-      PYTHONPATH=../../:$PYTHONPATH:npyinterp/ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:npyinterp/ bash runall.sh;
+      PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
       popd;
     fi
   - if [[ "$TOOL" == "sherpa" ]]; then
