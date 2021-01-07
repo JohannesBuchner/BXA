@@ -7,23 +7,23 @@ for **Bayesian Parameter Estimation** and **Model comparison**.
 
 BXA provides the following features:
 
-  * parameter estimation in arbitrary dimensions, which involves:
-     * finding the best fit
-     * computing error bars
-     * computing marginal probability distributions
-  * plotting of spectral model vs. the data:
-     * for the best fit
-     * for each of the solutions (posterior samples)
-     * for each component
-  * model selection:
-     * computing the evidence for the considered model, 
-       ready for use in Bayes factors
-     * unlike likelihood-ratios, not limited to nested models 
-  * model discovery:
-     * visualize deviations between model and data with Quantile-Quantile (QQ) plots.
-       QQ-plots do not require binning and are more comprehensive than residuals.
-       This will give you ideas on when to introduce more complex models, which 
-       may again be tested with model selection
+* parameter estimation in arbitrary dimensions, which involves:
+   * finding the best fit
+   * computing error bars
+   * computing marginal probability distributions
+* plotting of spectral model vs. the data:
+   * for the best fit
+   * for each of the solutions (posterior samples)
+   * for each component
+* model selection:
+   * computing the evidence for the considered model, 
+     ready for use in Bayes factors
+   * unlike likelihood-ratios, not limited to nested models 
+* model discovery:
+   * visualize deviations between model and data with Quantile-Quantile (QQ) plots.
+     QQ-plots do not require binning and are more comprehensive than residuals.
+     This will give you ideas on when to introduce more complex models, which 
+     may again be tested with model selection
 
 BXA shines especially
 
