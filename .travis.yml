@@ -70,14 +70,14 @@ install:
       echo "unpacking heasoft";
       rm -rf heasoft*/
       tar -xzf heasoft.tar.gz;
-      ls heasoft*
-      ls
+      ls heasoft*;
+      ls;
     fi
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "compiling xspec";
       #apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-dev libblas3 libblas-dev
-      ls heasoft*
+      ls heasoft*;
       #XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
       XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
       pushd $XSPEC_BUILD_DIR;
@@ -85,7 +85,7 @@ install:
       #export HEADAS=`ls -d ${HOME}/Downloads/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
       #./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install;
       #export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
-      ./configure
+      ./configure;
       export HEADAS=`ls -d $MYCACHE/heasoft/x86_64-pc-linux-gnu-libc*/`;
       popd;
     fi
@@ -122,20 +122,23 @@ script:
   - popd
 
   # testing xspec examples
-#  - if [[ "$TOOL" == "xspec" ]]; then
+#  - |
+#    if [[ "$TOOL" == "xspec" ]]; then
 #      pushd examples/xspec;
 #      PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
 #      popd;
 #    fi
   # testing sherpa examples
-  - if [[ "$TOOL" == "sherpa" ]]; then
+  - |
+    if [[ "$TOOL" == "sherpa" ]]; then
       pushd examples/sherpa;
       git clone https://github.com/JohannesBuchner/npyinterp.git;
       pushd npyinterp; make; popd;
-#      PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
+      # PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
       popd;
     fi
-#  - if [[ "$TOOL" == "sherpa" ]]; then
+#  - |
+#    if [[ "$TOOL" == "sherpa" ]]; then
 #      pushd docker/testsrc;
 #      PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
 #      popd;
