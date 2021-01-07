@@ -64,11 +64,12 @@ install:
     if [[ "$TOOL" == "xspec" ]]; then
       echo "unpacking heasoft";
       tar -xzf heasoft.tar.gz;
+      ls
     fi
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "compiling xspec";
-      ls
+      ls heasoft*
       XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
       pushd $XSPEC_BUILD_DIR;
       ./configure --prefix=$HOME/Downloads/xspec-install/ --with-components="Xspec" && make && make install;
