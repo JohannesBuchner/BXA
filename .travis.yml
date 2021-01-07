@@ -66,27 +66,31 @@ install:
       tar -xzf heasoft.tar.gz;
       ls
     fi
-  - |
-    if [[ "$TOOL" == "xspec" ]]; then
-      echo "compiling xspec";
-      ls heasoft*
-      XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
-      pushd $XSPEC_BUILD_DIR;
-      ./configure --prefix=$HOME/Downloads/xspec-install/ --with-components="Xspec" && make && make install;
-      popd;
-    fi
+#  - |
+#    if [[ "$TOOL" == "xspec" ]]; then
+#      echo "compiling xspec";
+#      ls heasoft*
+#      XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+#      pushd $XSPEC_BUILD_DIR;
+#      ./configure --prefix=$HOME/Downloads/xspec-install/ --with-components="Xspec" && make && make install;
+#      popd;
+#    fi
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "loading xspec";
-      ls -d ${HOME}/Downloads/xspec-install;
-      export HEADAS=`ls -d ${HOME}/Downloads/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+      export HEADAS=`ls -d ${HOME}/Downloads/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
       echo $HEADAS;
       source ${HEADAS}/headas-init.sh;
       python -c 'import xspec';
     fi
+  - mkdir -p models
+  - pushd models
+  - wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits
+  - popd
   - popd
 
-  - pip install requests corner astropy h5py cython 
+
+  - pip install requests corner astropy h5py cython coveralls coverage
   - pip install ultranest
   - python setup.py install
 
@@ -96,10 +100,34 @@ script:
   - 'echo "backend: Agg" > matplotlibrc'
   - ls 
   - rm *.nh
-  - python ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
-  - python ../../gal.py combined_src.pi
+  - coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
+  - coverage run -p ../../gal.py combined_src.pi
+  - coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi
+  - coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi
   - git checkout .
-#  # testing xspec through docker
-#  - if [[ "$TOOL" == "xspec-docker" ]]; then
-#      docker run --rm -v $PWD/examples/xspec:/opt/script/ -v $PWD:/opt/BXA giacomov/xspec-docker bash /opt/script/test-docker.sh </dev/null;
-#    fi
+  - popd
+
+  # testing xspec examples
+  - if [[ "$TOOL" == "xspec" ]]; then
+      pushd examples/xspec;
+      PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
+      popd
+    fi
+  # testing sherpa examples
+  - if [[ "$TOOL" == "sherpa" ]]; then
+      pushd examples/sherpa;
+      git clone https://github.com/JohannesBuchner/npyinterp.git;
+      pushd npyinterp;
+      make;
+      popd;
+      PYTHONPATH=../../:$PYTHONPATH:npyinterp/ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:npyinterp/ bash runall.sh;
+      popd;
+    fi
+  - if [[ "$TOOL" == "sherpa" ]]; then
+      pushd docker/testsrc;
+      PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
+    fi
+  # upload coverage results
+  - coverage combine examples/sherpa examples/xspec docker/testsrc
+
+after_success: coveralls

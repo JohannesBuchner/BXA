@@ -9,9 +9,9 @@ cat gen.xspec | {
 } | xspec
 
 # run the three models
-python3 example_simplest.py 
-python3 example_advanced_priors.py example-file.fak absorbed/ 
-python3 example_custom_run.py example-file.fak line/ 
+coverage run -p example_simplest.py || exit 1
+coverage run -p example_advanced_priors.py example-file.fak absorbed/  || exit 1
+coverage run -p example_custom_run.py example-file.fak line/  || exit 1
 
 # compare the evidences
-python3 model_compare.py absorbed simplest line
+coverage run -p model_compare.py absorbed simplest line || exit 1

@@ -170,7 +170,9 @@ scat.nh = torus.nh
 print('setting redshift')
 redshift = Parameter('src', 'z', 1, 0, 10, 0, 10) 
 torus.redshift = redshift
+torus.redshift.max = 10
 scat.redshift = redshift
+scat.redshift.max = 10
 scat.phoindex = torus.phoindex
 
 scat.ecut = torus.ecut
@@ -253,11 +255,10 @@ for id in ids:
 priorfunction = bxa.create_prior_function(priors = priors)
 print('running BXA ...')
 
-bxa.nested_run(id = ids[0], otherids = tuple(ids[1:]),
+solver = bxa.BXASolver(id = ids[0], otherids = tuple(ids[1:]),
 	prior = priorfunction, parameters = parameters, 
-	resume = True, verbose = True,
-	outputfiles_basename = prefix, n_live_points = os.environ.get('NLIVEPOINTS', 400),
-	importance_nested_sampling = False)
+	outputfiles_basename = prefix)
+results = solver.run(resume=True, n_live_points = os.environ.get('NLIVEPOINTS', 400))
 
 try:
 	from mpi4py import MPI
@@ -267,14 +268,7 @@ except Exception as e:
 	pass
 
 outputfiles_basename = prefix
-print('getting best-fit ...')
-bxa.set_best_fit(parameters=parameters, outputfiles_basename=outputfiles_basename)
-
-import pymultinest
-thawedpars = parameters
-a = pymultinest.analyse.Analyzer(n_params = len(thawedpars),
-	outputfiles_basename = prefix)
-rows = a.get_equal_weighted_posterior()
+rows = results['samples']
 
 for id in ids:
 	print('plotting spectrum ...')
@@ -288,7 +282,7 @@ for id in ids:
 	for i, row in enumerate(rows):
 		sys.stdout.write("%d/%d (%.2f%%)\r" % (i, len(rows), (i + 1)*100./ len(rows)))
 		sys.stdout.flush()
-		for p, v in zip(thawedpars, row):
+		for p, v in zip(parameters, row):
 			p.val = v
 		
 		m = get_fit_plot(id)
@@ -309,7 +303,7 @@ for i, row in enumerate(rows):
 	sys.stdout.write("%d/%d (%.2f%%)\r" % (i, len(rows), (i + 1)*100./ len(rows)))
 	sys.stdout.flush()
 	z = redshift.val if hasattr(redshift, 'val') else redshift
-	for p, v in zip(thawedpars, row):
+	for p, v in zip(parameters, row):
 		if p.name == 'redshift' or p.name == 'z':
 			z = v
 		p.val = v
@@ -324,31 +318,8 @@ r = numpy.asarray(r)
 assert len(rows) == len(r)
 numpy.savetxt(prefix + "intrinsic_photonflux.dist.gz", r)
 
-
-rows = a.get_data()[:,2:]
-r = []
-for i, row in enumerate(rows):
-	sys.stdout.write("%d/%d (%.2f%%)\r" % (i, len(rows), (i + 1)*100./ len(rows)))
-	sys.stdout.flush()
-	z = redshift.val if hasattr(redshift, 'val') else redshift
-	for p, v in zip(thawedpars, row):
-		if p.name == 'redshift' or p.name == 'z':
-			z = v
-		p.val = v
-
-	srcnh.val = 20
-	r.append([z, 
-		calc_energy_flux(id=id, lo=2/(1+z), hi=10/(1+z)),
-		calc_energy_flux(id=id, lo=0.5/(1+z), hi=8/(1+z))
-	] + list(row))
-
-print("saving distribution plot data")
-r = numpy.asarray(r)
-assert len(rows) == len(r)
-numpy.savetxt(prefix + "intrinsic_photonflux_weighted.dist.gz", r)
-
 set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
-bxa.set_best_fit(parameters=parameters, outputfiles_basename=outputfiles_basename)
+solver.set_best_fit()
 
 import sys; sys.exit()
 exit()
