@@ -30,7 +30,7 @@ install:
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       echo "getting latest ciao installer";
-      wget -O ./ciao-install -nc https://cxc.cfa.harvard.edu/$CIAO_INSTALL_URL ;
+      wget -O ./ciao-install https://cxc.cfa.harvard.edu/$CIAO_INSTALL_URL;
     fi
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
