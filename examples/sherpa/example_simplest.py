@@ -3,6 +3,7 @@ Example of doing BXA in X-spec
 
 Run with "sherpa example_simplest.py"
 """
+from sherpa.astro.ui import *
 import bxa.sherpa as bxa
 
 load_pha('example-file.fak')
@@ -37,11 +38,10 @@ priors = [
 prior = bxa.create_prior_function(priors=priors)
 
 # send it off!
-bxa.nested_run(prior = prior, parameters = parameters,
-	outputfiles_basename = outputfiles_basename,
-	verbose=True, # show a bit of progress
-	resume=True, # MultiNest supports resuming a crashed/aborted run
+solver = bxa.BXASolver(prior = prior, parameters = parameters,
+	outputfiles_basename = outputfiles_basename)
+results = solver.run(
+	resume=True, # UltraNest supports resuming a crashed/aborted run
 	)
 
 exit()
-

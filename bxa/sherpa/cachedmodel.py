@@ -18,7 +18,9 @@ else:
 
 
 class VariableCachedModel(CompositeModel, ArithmeticModel):
+	"""Wrapper that caches the most recent model call."""
 	def __init__(self, othermodel):
+		"""*othermodel* can be any sherpa model"""
 		self.othermodel = othermodel
 		self.cache = None
 		self.lastp = None
@@ -44,7 +46,9 @@ class VariableCachedModel(CompositeModel, ArithmeticModel):
 		CompositeModel.guess(self, dep, *args, **kwargs)
 
 class CachedModel(CompositeModel, ArithmeticModel):
+	"""Wrapper that caches the first model call forever."""
 	def __init__(self, othermodel):
+		"""*othermodel* can be any sherpa model"""
 		self.othermodel = othermodel
 		self.cache = None
 		CompositeModel.__init__(self, name='cached(%s)' % othermodel.name, parts=(othermodel,))

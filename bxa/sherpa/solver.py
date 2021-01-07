@@ -51,7 +51,7 @@ def energy_flux_histogram(distribution, nbins=None):
 
 class BXASolver(object):
 	def __init__(
-		self, id, otherids=(), prior=None, parameters=None,
+		self, id=None, otherids=(), prior=None, parameters=None,
 		outputfiles_basename='chains/'
 	):
 		"""
@@ -152,8 +152,8 @@ class BXASolver(object):
 		"""
 		Sets model to the best fit values.
 		"""
-		i = numpy.argmax(self.results['weighted_samples']['L'])
-		for p, v in zip(self.parameters, self.results['weighted_samples']['v'][i, :]):
+		i = numpy.argmax(self.results['weighted_samples']['logl'])
+		for p, v in zip(self.parameters, self.results['weighted_samples']['points'][i, :]):
 			p.val = v
 
 	def get_distribution_with_fluxes(self, elo=None, ehi=None):

@@ -83,7 +83,7 @@ class RebinnedModel(ArithmeticModel):
 				print('        ', bin)
 		
 			data = numpy.zeros((ntot, len(ebins)-1))
-			for j, element in enumerate(tqdm(itertools.product(*bins), disable=None)):
+			for j, element in enumerate(tqdm(list(itertools.product(*bins)), disable=None)):
 				for i, p in enumerate(params):
 					if p.val != element[i]:
 						p.val = element[i]
@@ -135,7 +135,7 @@ class RebinnedModel(ArithmeticModel):
 		#print 'accessing', j
 		return self.data[j]
 	def calc(self, p, left, right, *args, **kwargs):
-		#print '  calc', p
+		# print('  calc', p, left, right, args, kwargs)
 		coords = p[:-2]
 		norm = p[-2]
 		redshift = p[-1]

@@ -1,5 +1,6 @@
 from __future__ import print_function
 try:
+	from sherpa.astro.ui import *
 	import bxa.sherpa as bxa
 	bxa.default_logging()
 	print('loading background fitting module...')
@@ -8,7 +9,7 @@ try:
 	# BXA fully supports fitting multiple ids with the usual id=2, otherids=(3,4,5) 
 	#     parameters
 	id = 2
-	load_pha(id, 'interval0pc.pi')
+	load_pha(id, 'swift/interval0pc.pi')
 	if get_rmf(id).energ_lo[0] == 0: get_rmf(id).energ_lo[0] = 0.001
 	if get_arf(id).energ_lo[0] == 0: get_arf(id).energ_lo[0] = 0.001
 	set_stat('cstat')
@@ -17,7 +18,8 @@ try:
 
 	# next we set up a source model.
 	#    with automatic milky way absorption
-	model = xszpowerlw.src * xszwabs.abso * bxa.auto_galactic_absorption(id)
+	galabso = bxa.auto_galactic_absorption(id)
+	model = xszpowerlw.src * xszwabs.abso * galabso
 	src.norm.val = 1e-5
 
 	#    with automatic background from PCA
@@ -79,7 +81,7 @@ try:
 	priors += [bxa.create_uniform_prior_for(srclevel)]
 	priors += [bxa.create_gaussian_prior_for(src.PhoIndex, 1.95, 0.15)]
 	priors += [bxa.create_uniform_prior_for(srcnh)]
-	priors += [bxa.create_uniform_prior_for(src.redshift)] # galnh
+	priors += [bxa.create_gaussian_prior_for(src.redshift, 0.3, 0.05)] # redshift uncertainty
 	priors += [bxa.create_uniform_prior_for(bkg_model.pars[0])]
 	otherids = ()
 
@@ -90,10 +92,9 @@ try:
 
 	priorfunction = bxa.create_prior_function(priors = priors)
 	print('running BXA ...')
-	bxa.nested_run(id, otherids=otherids, prior=priorfunction, parameters = parameters, 
-		resume = True, verbose=True, 
-		outputfiles_basename = 'wabs_noz_',
-		importance_nested_sampling = False)
+	solver = bxa.BXASolver(id, otherids=otherids, prior=priorfunction, parameters = parameters, 
+		outputfiles_basename = 'wabs_noz_')
+	solver.run()
 
 	m = get_bkg_fit_plot(id)
 	numpy.savetxt('test_bkg.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
@@ -111,5 +112,3 @@ try:
 except Exception as e:
 	print('ERROR:', e)
 	exit()
-
-
