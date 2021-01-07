@@ -4,7 +4,8 @@ os:
   - linux
 
 python:
-  - "3.8"
+  - "3.6"
+#  - "2.7"
 
 env:
   - TOOL=xspec
@@ -18,37 +19,55 @@ cache:
   directories:
     - $HOME/Downloads
 
-before_install:
-  # Load cached docker images
-  - >
-    if [[ -d $HOME/docker ]]; then 
-      for i in $HOME/docker/*.tar.gz; do 
-        echo "unpacking $i docker image";
-        < $i gunzip | docker load || true
-      done
-    fi
-
 # mode=download src_other_specify= arch=ubuntu_2004 general=heasptools general=heagen xanadu=xspec
 
 install:
   - mkdir -p $HOME/Downloads
   - pushd $HOME/Downloads
-  - |-
+  - |
     if [[ "$TOOL" == "sherpa" ]]; then
+      echo "getting latest ciao installer url"
       CIAO_INSTALL_URL=$(wget -q -O - https://cxc.cfa.harvard.edu/ciao/download/ciao_install.html|grep -o '[^"]*_install.cgi?standard=true');
+      echo "it is at: $CIAO_INSTALL_URL"
+    fi
+  - |
+    if [[ "$TOOL" == "sherpa" ]]; then
+      echo "getting latest ciao installer"
       wget -O ./ciao-install -nc https://cxc.cfa.harvard.edu/$CIAO_INSTALL_URL ;
+    fi
+  - |
+    if [[ "$TOOL" == "sherpa" ]]; then
+      echo "running ciao installer"
       {  echo $HOME/Downloads/; mkdir -p $HOME/Downloads/ciao/; echo $HOME/bin/; echo n; echo n; echo n; } | bash ciao-install;
       CIAO_INSTALL_DIR=$(ls -d $HOME/bin/ciao*)
+      echo "install dir is: $CIAO_INSTALL_DIR"
+  - |
+    if [[ "$TOOL" == "sherpa" ]]; then
+      echo "loading ciao"
       source $CIAO_INSTALL_DIR/bin/ciao.sh;
       source $CIAO_INSTALL_DIR/bin/ciao_setup.sh;
     fi
-  - |-
+
+  - |
     if [[ "$TOOL" == "xspec" ]]; then
+      echo "getting latest heasoft bundle"
       tar -tzf heasoft.tar.gz >/dev/null || curl -O heasoft.tar.gz 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&src_other_specify=&arch=ubuntu_2004&general=heasptools&general=heagen&xanadu=xspec' -H 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US' --compressed -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-GPC: 1';
+    fi
+  - |
+    if [[ "$TOOL" == "xspec" ]]; then
+      echo "unpacking heasoft"
       tar -xzf heasoft.tar.gz;
+    fi
+  - |
+    if [[ "$TOOL" == "xspec" ]]; then
+      echo "compiling xspec"
       pushd heasoft-*/BUILD_DIR;
       ./configure --prefix=$HOME/Downloads/xspec-install/ --with-components="Xspec" && make && make install;
       popd;
+    fi
+  - |
+    if [[ "$TOOL" == "xspec" ]]; then
+      echo "loading xspec"
       export HEADAS=$(ls -d ${HOME}/Downloads/xspec-install/x86_64-pc-linux-gnu-libc*/);
       echo $HEADAS;
       source ${HEADAS}/headas-init.sh;
