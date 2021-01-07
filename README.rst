@@ -41,6 +41,7 @@ Who is using BXA?
 * Dr. Franz Bauer, Charlotte Simmonds (PUC, Santiago)
 * Dr. Stéphane Paltani (ISDC, Geneva)
 * Dr. Zhu Liu (NAO, Beijing)
+* Dr. Georgios Vasilopoulos (Yale, New Haven)
 * Dr. Francesca Civano, Dr. Aneta Siemiginowska (CfA/SAO, Cambridge)
 * Dr. Teng Liu, Adam Malyali, Riccardo Arcodia, Sophia Waddell, ... (MPE, Garching)
 * and you?
