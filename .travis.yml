@@ -35,9 +35,19 @@ install:
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       echo "running ciao installer";
-      {  echo $HOME/Downloads/; mkdir -p $HOME/Downloads/ciao/; echo $HOME/bin/; echo n; echo n; echo n; } | bash ciao-install;
-      CIAO_INSTALL_DIR=$(ls -d $HOME/bin/ciao*);
+      echo $HOME/Downloads/ > ciao-installer-input;
+      mkdir -p $HOME/Downloads/ciao/;
+      echo $HOME/bin/ >> ciao-installer-input;
+      echo n >> ciao-installer-input;
+      echo n >> ciao-installer-input;
+      echo n >> ciao-installer-input;
+      bash ciao-install < ciao-installer-input;
+    fi
+  - |
+    if [[ "$TOOL" == "sherpa" ]]; then
+      CIAO_INSTALL_DIR=`ls -d $HOME/bin/ciao*`;
       echo "install dir is: $CIAO_INSTALL_DIR";
+    fi
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       echo "loading ciao";
