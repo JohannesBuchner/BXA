@@ -14,13 +14,17 @@ env:
 
 cache:
   directories:
-    - $HOME/Downloads
+    - $HOME/Downloads/sherpa
+    - $HOME/Downloads/xspec
 
+before_cache:
+  - rm -f $HOME/Downloads/ciao-install-*
 # mode=download src_other_specify= arch=ubuntu_2004 general=heasptools general=heagen xanadu=xspec
 
 install:
-  - mkdir -p $HOME/Downloads
-  - pushd $HOME/Downloads
+  - export MYCACHE=$HOME/Downloads/$TOOL
+  - mkdir -p $MYCACHE
+  - pushd $MYCACHE
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       echo "getting latest ciao installer url"; 
@@ -35,8 +39,7 @@ install:
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       echo "running ciao installer";
-      echo $HOME/Downloads/ > ciao-installer-input;
-      mkdir -p $HOME/Downloads/ciao/;
+      echo $MYCACHE > ciao-installer-input;
       echo $HOME/bin/ >> ciao-installer-input;
       echo n >> ciao-installer-input;
       echo n >> ciao-installer-input;
@@ -75,7 +78,7 @@ install:
       ls heasoft*
       XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
       pushd $XSPEC_BUILD_DIR;
-      ./configure --prefix=$HOME/Downloads/xspec-install/ --with-components="Xspec" && make && make install;
+      ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install;
       popd;
     fi
   - |
@@ -83,7 +86,7 @@ install:
       echo "loading xspec";
       #ls ${HOME}/Downloads/heasoft-*/x86_64-pc-linux-gnu-libc*/
       #export HEADAS=`ls -d ${HOME}/Downloads/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
-      export HEADAS=`ls -d ${HOME}/Downloads/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+      export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
       echo $HEADAS;
       source ${HEADAS}/headas-init.sh;
       python -c 'import xspec';
