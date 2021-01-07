@@ -8,6 +8,7 @@ python:
 
 env:
   - TOOL=xspec
+#  - TOOL=xspec-docker
   - TOOL=sherpa
 
 services:
@@ -70,12 +71,7 @@ script:
   - python ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - python ../../gal.py combined_src.pi
   - git checkout .
-  # testing sherpa, but not twice for each python version
-#  - if [[ "$TOOL" == "sherpa" ]]; then
-#      docker run $XDOCKERARGS -v $PWD:/opt/example/ -v $PWD/../..:/opt/BXA -e FILENAME=combined_src.pi -e ELO=0.5 -e EHI=8 -e NLIVEPOINTS=100 -t ldouchy/ciao bash /opt/example/run.sh </dev/null;
-#    fi
-#  - popd
-#  # testing xspec
-#  - if [[ "$TOOL" == "xspec" ]]; then
+#  # testing xspec through docker
+#  - if [[ "$TOOL" == "xspec-docker" ]]; then
 #      docker run --rm -v $PWD/examples/xspec:/opt/script/ -v $PWD:/opt/BXA giacomov/xspec-docker bash /opt/script/test-docker.sh </dev/null;
 #    fi
