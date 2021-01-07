@@ -1,19 +1,20 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>bxa.xspec.sinning &#8212; BXA (Bayesian X-ray Analysis) 3.4.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -28,8 +29,8 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../xspec.html" accesskey="U">bxa.xspec</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">bxa.xspec.sinning</a></li> 
       </ul>
     </div>  
 
@@ -48,12 +49,10 @@
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">scipy.special</span><span class="o">,</span> <span class="nn">scipy.stats</span>
-<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">gof</span>
 <span class="kn">import</span> <span class="nn">tqdm</span>
+
 
 <span class="k">def</span> <span class="nf">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">nmin</span> <span class="o">=</span> <span class="mi">20</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -70,6 +69,7 @@
 				<span class="c1">#print &#39;  groups&#39;, i,j</span>
 				<span class="k">break</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+
 
 <div class="viewcode-block" id="binning"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.sinning.binning">[docs]</a><span class="k">def</span> <span class="nf">binning</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">models</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -95,7 +95,6 @@
 	<span class="c1"># convert from densities to counts</span>
 	<span class="n">ydata</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">widths</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 	<span class="n">models</span> <span class="o">=</span> <span class="n">models</span> <span class="o">*</span> <span class="n">widths</span> <span class="o">*</span> <span class="mi">2</span>
-	<span class="n">deltax</span> <span class="o">=</span> <span class="p">(</span><span class="n">xdata</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">xdata</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 	
 	<span class="n">best_gof</span> <span class="o">=</span> <span class="kc">None</span>
 	<span class="n">best_gof_stats</span> <span class="o">=</span> <span class="kc">None</span>
@@ -171,11 +170,10 @@
 		<span class="n">gof_avg</span><span class="o">=</span><span class="n">gof_avg</span><span class="p">,</span> <span class="n">gof_total</span><span class="o">=</span><span class="n">gof_total</span><span class="p">,</span> <span class="n">stats</span><span class="o">=</span><span class="n">stats</span><span class="p">,</span>
 		<span class="n">xlim</span> <span class="o">=</span> <span class="p">(</span><span class="n">xlo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xhi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
 		<span class="n">ylim</span> <span class="o">=</span> <span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">),</span>
-		<span class="p">)</span></div>
-
-
+	<span class="p">)</span></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -206,12 +204,12 @@
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../xspec.html" >bxa.xspec</a> &#187;</li> 
+        <li class="nav-item nav-item-this"><a href="">bxa.xspec.sinning</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-2020, Johannes Buchner.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.1.
     </div>
   </body>
 </html>

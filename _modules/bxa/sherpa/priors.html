@@ -1,19 +1,20 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>bxa.sherpa.priors &#8212; BXA (Bayesian X-ray Analysis) 3.4.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -28,8 +29,8 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../sherpa.html" accesskey="U">bxa.sherpa</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">bxa.sherpa.priors</a></li> 
       </ul>
     </div>  
 
@@ -50,7 +51,7 @@
 
 <span class="sd">Priors</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">invgauss</span>
 
@@ -66,6 +67,10 @@
 	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">spread</span> <span class="o">+</span> <span class="n">low</span></div>
 
 <div class="viewcode-block" id="create_jeffreys_prior_for"><a class="viewcode-back" href="../../../sherpa-analysis.html#bxa.sherpa.create_jeffreys_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_jeffreys_prior_for</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;deprecated name for create_loguniform_prior_for&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">create_loguniform_prior_for</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">create_loguniform_prior_for</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Use for scale variables (order of magnitude)</span>
 <span class="sd">	The Jeffreys prior gives equal weight to each order of magnitude between the</span>
@@ -83,10 +88,10 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">low</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
 	<span class="n">spread</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">max</span><span class="p">)</span> <span class="o">-</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
-	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">spread</span> <span class="o">+</span> <span class="n">low</span><span class="p">)</span></div>
+	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">spread</span> <span class="o">+</span> <span class="n">low</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">create_gaussian_prior_for</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+<div class="viewcode-block" id="create_gaussian_prior_for"><a class="viewcode-back" href="../../../sherpa-analysis.html#bxa.sherpa.create_gaussian_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_gaussian_prior_for</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Use for informed variables.</span>
 <span class="sd">	The Gaussian prior weights by a Gaussian in the parameter. If you </span>
@@ -96,11 +101,10 @@
 <span class="sd">	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">invgauss</span>
 	<span class="n">lo</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min</span>
 	<span class="n">hi</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">max</span>
 	<span class="n">f</span> <span class="o">=</span> <span class="n">invgauss</span><span class="o">.</span><span class="n">get_invgauss_func</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
-	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span></div>
 
 <span class="k">def</span> <span class="nf">prior_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -120,13 +124,13 @@
 		<span class="n">parameter</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
 		<span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">dist</span><span class="p">),</span> <span class="p">[],</span> <span class="p">[]</span>
 	<span class="n">distz</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dist</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="p">[</span><span class="n">dist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
-	<span class="n">deltax</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">dist</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+	<span class="c1">#deltax = dist[1,0] - dist[0,0]</span>
 	<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
 	<span class="k">def</span> <span class="nf">custom_priorf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 		<span class="k">assert</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span>
 		<span class="k">assert</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">n</span><span class="p">))</span>
-		<span class="n">r</span> <span class="o">=</span> <span class="n">distz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">distz</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">distz</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">n</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">r</span> <span class="o">=</span> <span class="n">distz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">distz</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">distz</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">r</span>
 	<span class="k">return</span> <span class="n">parameter</span><span class="p">,</span> <span class="p">[</span><span class="n">parameter</span><span class="p">],</span> <span class="p">[</span><span class="n">custom_priorf</span><span class="p">]</span>
 
@@ -140,12 +144,12 @@
 <span class="sd">		Uniform priors will be created for them.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="n">functions</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">if</span> <span class="n">priors</span> <span class="o">==</span> <span class="p">[]:</span>
+		<span class="n">functions</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">assert</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;you need to pass the parameters if you want automatic uniform priors&quot;</span>
 		<span class="n">thawedparmins</span>  <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">min</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
 		<span class="n">thawedparmaxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">max</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-		<span class="k">for</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thawedparmins</span><span class="p">,</span> <span class="n">thawedparmaxes</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">)):</span>
+		<span class="k">for</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thawedparmins</span><span class="p">,</span> <span class="n">thawedparmaxes</span><span class="p">):</span>
 			<span class="n">functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span> <span class="o">+</span> <span class="n">low</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">functions</span> <span class="o">=</span> <span class="n">priors</span>
@@ -155,9 +159,9 @@
 			<span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">functions</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
 	<span class="k">return</span> <span class="n">prior_function</span></div>
-
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -188,12 +192,12 @@
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../sherpa.html" >bxa.sherpa</a> &#187;</li> 
+        <li class="nav-item nav-item-this"><a href="">bxa.sherpa.priors</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-2020, Johannes Buchner.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.1.
     </div>
   </body>
 </html>

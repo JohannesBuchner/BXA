@@ -1,36 +1,44 @@
 BXA/Sherpa
 =======================================
 
-Define your background model and source model as usual in sherpa.
-Freeze the parameters you do not want to investigate. Make sure you set the parameter minimum and maximum values to appropriate (a priori reasonable) values.
+Begin by loading bxa in a session with sherpa loaded::
+
+   import bxa.sherpa as bxa
 
 .. _sherpa-priors:
 
 Defining priors
 ---------------------
-::
 
-   # you can use automatic priors (uniform priors everywhere, within the parameters range)
-   # for this, all scale parameters (those with ampl or norm in their name)
-   # are converted to log-parameters
-   parameters = auto_reparametrize()
-   prior = bxa.create_prior_function(parameters)
-   
-Alternatively (advanced), define priors manually::
+Define your background model and source model as usual in sherpa.
+Then define the priors over the free parameters, for example::
 
-   # get parameters
+   # three parameters we want to vary
+   param1 = xsapec.myapec.norm
+   param2 = xspowerlaw.mypowerlaw.norm
+   param3 = xspowerlaw.mypowerlaw.PhoIndex
+
+   # list of parameters
    parameters = [param1, param2, param3]
-   # or just get all that are not linked or frozen
+   # list of prior transforms
+   priors = [
+      bxa.create_uniform_prior_for(param1),
+      bxa.create_loguniform_prior_for(param2),
+      bxa.create_gaussian_prior_for(param3, 1.95, 0.15),
+      # and more priors
+   ]
+
+Make sure you set the parameter minimum and maximum values to appropriate (a priori reasonable) values.
+The limits are used to define the uniform and loguniform priors.
+
+You can freeze the parameters you do not want to investigate, but BXA only modifies the parameters specified.
+As a hint, you can find all thawed parameters of a model with::
+
    parameters = [for p in get_model().pars if not p.frozen and p.link is None]
-   
-   priors = []
-   priors += [bxa.create_jeffreys_prior_for(param1)]
-   priors += [bxa.create_uniform_prior_for(param2)]
-   priors += [lambda x: x**2] # custom prior transformation (rarely desired)
-   priorfunction = bxa.create_prior_function(priors = priors)
 
 .. autofunction:: bxa.sherpa.create_jeffreys_prior_for
 .. autofunction:: bxa.sherpa.create_uniform_prior_for
+.. autofunction:: bxa.sherpa.create_gaussian_prior_for
 .. autofunction:: bxa.sherpa.create_prior_function
 
 .. _sherpa-run:
@@ -43,49 +51,41 @@ You need to specify a prefix, called *outputfiles_basename* where the files are 
 ::
 
    # see the pymultinest documentation for all options
-   bxa.nested_run(prior = priorfunction, parameters = parameters,
-		resume = True, verbose = True, 
-		outputfiles_basename = "testbxa_")
+   priorfunction = bxa.create_prior_function(parameters)
+   solver = bxa.BXASolver(prior=priorfunction, parameters=parameters,
+		outputfiles_basename = "myoutputs/")
+   results = solver.run(resume=True)
 
-.. autofunction:: bxa.sherpa.nested_run
-
-.. autofunction:: bxa.sherpa.set_best_fit
+.. autoclass:: bxa.sherpa.BXASolver
 
 .. _sherpa-analyse:
 
-Marginal plots
-----------------------
+Parameter posterior plots
+--------------------------
 
-Plot and analyse the results. PyMultiNest comes in handy at this point to 
-produce a number of plots and summaries. 
+Credible intervals of the model parameters, and histograms 
+(1d and 2d) of the marginal parameter distributions are plotted
+in 'myoutputs/plots/corner.pdf' for you.
 
-On the shell, run::
+.. figure:: absorbed-corner.*
+	:scale: 50%
 
-   $ multinest_marginals.py "testbxa_"
+You can also plot them yourself using corner, triangle and getdist, by
+passing `results['samples']` to them.
 
-The `multinest_marginals.py <https://github.com/JohannesBuchner/PyMultiNest/blob/master/multinest_marginals.py>`_
-utility is installed with PyMultiNest, for instance into ~/.local/bin/.
+For more information on the corner library used here, 
+see https://corner.readthedocs.io/en/latest/.
 
 Error propagation
 ---------------------
 
-:py:func:`pymultinest.Analyzer.equal_weighted_posterior` provides access to the posterior samples (similar to a Markov Chain).
+`results['samples']` provides access to the posterior samples (similar to a Markov Chain).
 Use these to propagate errors:
 
 * For every row in the chain, compute the quantity of interest
 * Then, make a histogram of the results, or compute mean and standard deviations.
 
 This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)
-
-You can also access the output directly and compute other quantities::
-
-	import pymultinest
-	analyzer = pymultinest.analyse.Analyzer(n_params = len(parameters), 
-		outputfiles_basename = 'testbxa_')
-	
-	chain = analyzer.get_equal_weighted_posterior()
-	
-	print chain
 
 BXA also allows you to compute the fluxes corresponding to the 
 parameter estimation, giving the correct probability distribution on the flux.
@@ -94,11 +94,23 @@ the correct luminosity distribution.
 
 ::
 
-	dist = pyblocxs.mn.get_distribution_with_fluxes(lo=2, hi=10,
-		parameters = parameters, outputfiles_basename = 'testbxa_')
-	numpy.savetxt(out + prefix + "dist.txt", dist)
+     dist = solver.get_distribution_with_fluxes(lo=2, hi=10)
+     numpy.savetxt(out + prefix + "dist.txt", dist)
 
-.. autofunction:: bxa.sherpa.get_distribution_with_fluxes
+.. automethod:: bxa.sherpa.BXASolver.get_distribution_with_fluxes
+
+This does nothing more than::
+
+    r = []
+    for row in results['samples']:
+	    # set the parameter values to the current sample
+	    for p, v in zip(parameters, row):
+		    p.val = v
+	    r.append(list(row) + [calc_photon_flux(lo=elo, hi=ehi), 
+		    calc_energy_flux(lo=elo, hi=ehi)])
+
+Such loops can be useful for computing obscuration-corrected, rest-frame luminosities,
+(modifying the nH parameter and the energy ranges before computing the fluxes).
 
 .. _sherpa-models:
 
@@ -119,5 +131,3 @@ exporting the cumulative functions into a file.
 
 Refer to the :ref:`accompaning paper <cite>`, which gives an introduction and 
 detailed discussion on the methodology.
-
-
