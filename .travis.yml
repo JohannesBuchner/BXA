@@ -135,8 +135,9 @@ script:
   - if [[ "$TOOL" == "sherpa" ]]; then
       pushd docker/testsrc;
       PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
+      popd
     fi
   # upload coverage results
-  - coverage combine examples/sherpa examples/xspec docker/testsrc
+  - coverage combine examples/sherpa examples/xspec docker/testsrc .
 
 after_success: coveralls
