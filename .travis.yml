@@ -75,7 +75,7 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "compiling xspec";
-      apt-get install gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-dev libblas3 libblas-dev
+      apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-dev libblas3 libblas-dev
       ls heasoft*
       XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
       pushd $XSPEC_BUILD_DIR;
