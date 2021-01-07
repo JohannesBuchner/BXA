@@ -64,6 +64,7 @@ install:
     if [[ "$TOOL" == "xspec" ]]; then
       echo "unpacking heasoft";
       tar -xzf heasoft.tar.gz;
+      ls heasoft*
       ls
     fi
 #  - |
@@ -78,6 +79,7 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "loading xspec";
+      ls ${HOME}/Downloads/heasoft-*/x86_64-pc-linux-gnu-libc*/
       export HEADAS=`ls -d ${HOME}/Downloads/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
       echo $HEADAS;
       source ${HEADAS}/headas-init.sh;
