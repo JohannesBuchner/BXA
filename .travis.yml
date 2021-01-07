@@ -80,7 +80,7 @@ install:
 #      source ${HEADAS}/headas-init.sh;
 #      python -c 'import xspec';
 #    fi
-#  - popd
+  - popd
 
   - pip install requests corner astropy h5py cython 
   - pip install ultranest
