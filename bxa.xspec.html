@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bxa.xspec package &#8212; BXA (Bayesian X-ray Analysis) 4.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="bxa.sherpa.background package" href="bxa.sherpa.background.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/bxa.xspec.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="bxa-xspec-package">
+<h1>bxa.xspec package<a class="headerlink" href="#bxa-xspec-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-bxa.xspec.gof">
+<span id="bxa-xspec-gof-module"></span><h2>bxa.xspec.gof module<a class="headerlink" href="#module-bxa.xspec.gof" title="Permalink to this headline">¶</a></h2>
+<p>Compute poisson-based GOF</p>
+<dl class="py function">
+<dt id="bxa.xspec.gof.build">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">options</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.gof.gen_choices">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">gen_choices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cpart</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#gen_choices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.gen_choices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.gof.calc_models_range">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">calc_models_range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#calc_models_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.calc_models_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.gof.calc_multigof">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">calc_multigof</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#calc_multigof"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.calc_multigof" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.gof.group_adapt">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">group_adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">nmin</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#group_adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.group_adapt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.gof.write_multigof">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">write_multigof</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">skip_plot_ifeq</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#write_multigof"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.write_multigof" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.gof.write_gof">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">write_gof</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em>, <em class="sig-param"><span class="n">gof_avg</span></em>, <em class="sig-param"><span class="n">gof_total</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#write_gof"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.write_gof" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.gof.load_gof">
+<code class="sig-prename descclassname">bxa.xspec.gof.</code><code class="sig-name descname">load_gof</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/gof.html#load_gof"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.gof.load_gof" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-bxa.xspec.priors">
+<span id="bxa-xspec-priors-module"></span><h2>bxa.xspec.priors module<a class="headerlink" href="#module-bxa.xspec.priors" title="Permalink to this headline">¶</a></h2>
+<p>BXA (Bayesian X-ray Analysis) for Xspec</p>
+<p>Copyright: Johannes Buchner (C) 2013-2020</p>
+<p>Priors</p>
+<dl class="py function">
+<dt id="bxa.xspec.priors.create_uniform_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.priors.</code><code class="sig-name descname">create_uniform_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_uniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.priors.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for location variables (position)
+The uniform prior gives equal weight in non-logarithmic scale.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.priors.create_jeffreys_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.priors.</code><code class="sig-name descname">create_jeffreys_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_jeffreys_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.priors.create_jeffreys_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>deprecated, use create_loguniform_prior_for instead.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.priors.create_loguniform_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.priors.</code><code class="sig-name descname">create_loguniform_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_loguniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.priors.create_loguniform_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for scale variables (order of magnitude)
+The Jeffreys prior gives equal weight to each order of magnitude between the
+minimum and maximum value. Flat in logarithmic scale</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.priors.create_gaussian_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.priors.</code><code class="sig-name descname">create_gaussian_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">std</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_gaussian_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.priors.create_gaussian_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for informed variables.
+The Gaussian prior weights by a Gaussian in the parameter.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.priors.create_custom_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.priors.</code><code class="sig-name descname">create_custom_prior_for</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">par</em>, <em class="sig-param">transform</em>, <em class="sig-param">aftertransform=&lt;function &lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.priors.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass your own prior weighting transformation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.priors.create_prior_function">
+<code class="sig-prename descclassname">bxa.xspec.priors.</code><code class="sig-name descname">create_prior_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_prior_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.priors.create_prior_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a single prior transformation function from parameter transformations</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-bxa.xspec.qq">
+<span id="bxa-xspec-qq-module"></span><h2>bxa.xspec.qq module<a class="headerlink" href="#module-bxa.xspec.qq" title="Permalink to this headline">¶</a></h2>
+<p>Statistics and Plotting for quantile-quantile analysis for model discovery</p>
+<dl class="py function">
+<dt id="bxa.xspec.qq.KSstat">
+<code class="sig-prename descclassname">bxa.xspec.qq.</code><code class="sig-name descname">KSstat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/qq.html#KSstat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.KSstat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kolmogorov-Smirnov statistic: maximum deviance between data and model</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.qq.CvMstat">
+<code class="sig-prename descclassname">bxa.xspec.qq.</code><code class="sig-name descname">CvMstat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/qq.html#CvMstat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.CvMstat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cramér–von Mises statistic: Takes all deviances into account</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.qq.ADstat">
+<code class="sig-prename descclassname">bxa.xspec.qq.</code><code class="sig-name descname">ADstat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/qq.html#ADstat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.ADstat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Anderson-Darling statistic: Takes all deviances into account
+more weight on tails than CvM.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.qq.qq_plot">
+<code class="sig-prename descclassname">bxa.xspec.qq.</code><code class="sig-name descname">qq_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bins</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">markers</span><span class="o">=</span><span class="default_value">[0.2, 1, 2, 5, 10]</span></em>, <em class="sig-param"><span class="n">unit</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">annotate</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/qq.html#qq_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.qq_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a quantile-quantile plot for model discovery (deviations in data from model).</p>
+<ul class="simple">
+<li><p>bins: energies/channel</p></li>
+<li><p>data: amount observed</p></li>
+<li><p>model: amount predicted</p></li>
+<li><p>markers: list of energies/channels (whichever the current plotting xaxis unit)</p></li>
+<li><p>unit: unit to append to marker</p></li>
+<li><p>annotate: add information to the plot</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.qq.xspecfilenamenormalise">
+<code class="sig-prename descclassname">bxa.xspec.qq.</code><code class="sig-name descname">xspecfilenamenormalise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/qq.html#xspecfilenamenormalise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.xspecfilenamenormalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Xspec gets a bit confused if there are “.” in the filename
+So we replace . with _ in the filename.
+But if we replace it as part of the parent directory, we cannot write
+there, so this only alters the filename, not the entire path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.qq.qq">
+<code class="sig-prename descclassname">bxa.xspec.qq.</code><code class="sig-name descname">qq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em>, <em class="sig-param"><span class="n">markers</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">annotate</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/qq.html#qq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.qq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a quantile-quantile plot for model discovery (deviations in data from model).</p>
+<p>The current data and model is used, so call <em>set_best_fit(analyzer, transformations)</em>
+before, to get the qq plot at the best fit.</p>
+<ul class="simple">
+<li><p>markers: list of energies/channels (whichever the current plotting xaxis unit)
+or number of equally spaced markers between minimum+maximum.</p></li>
+<li><p>annotate: add information to the plot</p></li>
+</ul>
+</dd></dl>
+
+</div>
+<div class="section" id="module-bxa.xspec.sinning">
+<span id="bxa-xspec-sinning-module"></span><h2>bxa.xspec.sinning module<a class="headerlink" href="#module-bxa.xspec.sinning" title="Permalink to this headline">¶</a></h2>
+<p>Binning routines for plotting</p>
+<dl class="py function">
+<dt id="bxa.xspec.sinning.group_adapt">
+<code class="sig-prename descclassname">bxa.xspec.sinning.</code><code class="sig-name descname">group_adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xdata</span></em>, <em class="sig-param"><span class="n">ydata</span></em>, <em class="sig-param"><span class="n">xlo</span></em>, <em class="sig-param"><span class="n">xhi</span></em>, <em class="sig-param"><span class="n">nmin</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/sinning.html#group_adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.sinning.group_adapt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adaptive grouping into nmin count bins</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.sinning.binning">
+<code class="sig-prename descclassname">bxa.xspec.sinning.</code><code class="sig-name descname">binning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outputfiles_basename</span></em>, <em class="sig-param"><span class="n">bins</span></em>, <em class="sig-param"><span class="n">widths</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">models</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/sinning.html#binning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.sinning.binning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bins the data for plotting.
+Using the gof module, computes a Poisson goodness-of-fit range,
+i.e. ranges where the model must lie. This is done for multiple
+binning sizes simultaneously.</p>
+<p>Returns:</p>
+<ul class="simple">
+<li><p>marked_binned: data points binned to contain 10 counts
+a sequence ready to be passed to matplotlib.pyplot.errorbar</p></li>
+<li><p>modelrange: range allowed by the data
+ready to be passed to matplotlib.pyplot.fill_between</p></li>
+<li><p>and statistics (GoF measure)</p></li>
+</ul>
+<p>outputfiles_basename is not used.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-bxa.xspec.solver">
+<span id="bxa-xspec-solver-module"></span><h2>bxa.xspec.solver module<a class="headerlink" href="#module-bxa.xspec.solver" title="Permalink to this headline">¶</a></h2>
+<p>BXA (Bayesian X-ray Analysis) for Xspec</p>
+<p>Copyright: Johannes Buchner (C) 2013-2020</p>
+<dl class="py class">
+<dt id="bxa.xspec.solver.XSilence">
+<em class="property">class </em><code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">XSilence</code><a class="reference internal" href="_modules/bxa/xspec/solver.html#XSilence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.XSilence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Context for temporarily making xspec quiet.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.solver.create_prior_function">
+<code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">create_prior_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#create_prior_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.create_prior_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a single prior transformation function from parameter transformations</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.solver.store_chain">
+<code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">store_chain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chainfilename</span></em>, <em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">posterior</span></em>, <em class="sig-param"><span class="n">fit_statistic</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#store_chain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.store_chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a MCMC chain file in the same format as the Xspec chain command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.solver.set_parameters">
+<code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">set_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#set_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.set_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set current parameters.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="bxa.xspec.solver.BXASolver">
+<em class="property">class </em><code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">BXASolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">prior_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Run the Bayesian analysis with specified parameters+transformations.</p>
+<p>If prior is None, uniform priors are used on the passed parameters.
+If parameters is also None, all thawed parameters are used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transformations</strong> – Parameter transformation definitions</p></li>
+<li><p><strong>prior_function</strong> – set only if you want to specify a custom, non-separable prior</p></li>
+<li><p><strong>outputfiles_basename</strong> – prefix for output filenames.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="bxa.xspec.solver.BXASolver.allowed_stats">
+<code class="sig-name descname">allowed_stats</code><em class="property"> = ['cstat', 'cash', 'pstat']</em><a class="headerlink" href="#bxa.xspec.solver.BXASolver.allowed_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.set_paramnames">
+<code class="sig-name descname">set_paramnames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramnames</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.set_paramnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.set_paramnames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.set_best_fit">
+<code class="sig-name descname">set_best_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.set_best_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.set_best_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets model to the best fit values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">evidence_tolerance</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">n_live_points</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">wrapped_params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run nested sampling with ultranest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_live_points</strong> – number of live points (400 to 1000 is recommended).</p></li>
+<li><p><strong>evidence_tolerance</strong> – uncertainty on the evidence to achieve</p></li>
+<li><p><strong>resume</strong> – uncertainty on the evidence to achieve</p></li>
+<li><p><strong>Lepsilon</strong> – numerical model inaccuracies in the statistic (default: 0.1).
+Increase if run is not finishing because it is trying too hard to resolve
+unimportant details caused e.g., by atable interpolations.</p></li>
+<li><p><strong>frac_remain</strong> – fraction of the integration remainder allowed in the live points.
+Setting to 0.5 in mono-modal problems can be acceptable and faster.
+The default is 0.01 (safer).</p></li>
+</ul>
+</dd>
+</dl>
+<p>These are ultranest parameters (see ultranest.solve documentation!)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.create_flux_chain">
+<code class="sig-name descname">create_flux_chain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spectrum</span></em>, <em class="sig-param"><span class="n">erange</span><span class="o">=</span><span class="default_value">'2.0 10.0'</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.create_flux_chain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.create_flux_chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each posterior sample, computes the flux in the given energy range.</p>
+<p>The so-created chain can be combined with redshift information to propagate
+the uncertainty. This is especially important if redshift is a variable
+parameter in the fit (with some prior).</p>
+<p>Returns erg/cm^2 energy flux (first column) and photon flux (second column)
+for each posterior sample.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.posterior_predictions_convolved">
+<code class="sig-name descname">posterior_predictions_convolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_convolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.posterior_predictions_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot convolved model posterior predictions.
+Also returns data points for plotting.</p>
+<p>component_names: labels to use. Set to ‘ignore’ to skip plotting a component
+plot_args: matplotlib.pyplot.plot arguments for each component</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved">
+<code class="sig-name descname">posterior_predictions_unconvolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_unconvolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot unconvolved model posterior predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>component_names</strong> – labels to use. Set to ‘ignore’ to skip plotting a component</p></li>
+<li><p><strong>plot_args</strong> – matplotlib.pyplot.plot arguments for each component</p></li>
+<li><p><strong>nsamples</strong> – number of posterior samples to use</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.posterior_predictions_plot">
+<code class="sig-name descname">posterior_predictions_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plottype</span></em>, <em class="sig-param"><span class="n">callback</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.posterior_predictions_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.solver.standard_analysis">
+<code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">standard_analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span></em>, <em class="sig-param"><span class="n">skipsteps</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#standard_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.standard_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default analysis which produces nice plots:</p>
+<ul class="simple">
+<li><p>runs nested sampling analysis, creates MCMC chain file</p></li>
+<li><p>marginal probabilities (1d and 2d)</p></li>
+<li><p>model posterior predictions + data overplotted, convolved</p></li>
+<li><p>model posterior predictions unconvolved</p></li>
+<li><p>quantile-quantile plot with statistics</p></li>
+<li><p>prints out summary of parameters</p></li>
+<li><p>prints out model evidence</p></li>
+</ul>
+<p>Look at the source of this function to figure out how to do
+the individual parts.
+Copy them to your scripts and adapt them to your needs.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-bxa.xspec">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bxa.xspec" title="Permalink to this headline">¶</a></h2>
+<p>BXA (Bayesian X-ray Analysis) for Xspec</p>
+<p>Copyright: Johannes Buchner (C) 2013-2020</p>
+<dl class="py function">
+<dt id="bxa.xspec.nested_run">
+<code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">nested_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">prior_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_live_points</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">evidence_tolerance</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec.html#nested_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.nested_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>deprecated. Use BXASolver instead.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bxa.html">bxa package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">API</a><ul>
+  <li><a href="bxa.html">bxa package</a><ul>
+      <li>Previous: <a href="bxa.sherpa.background.html" title="previous chapter">bxa.sherpa.background package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/bxa.xspec.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

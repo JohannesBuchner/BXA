@@ -1,7 +1,9 @@
-BXA/Xspec
+Xspec with BXA
 =======================================
 
-Begin by loading bxa in a session with xspec loaded:
+This documentation shows how to use BXA with `PyXSpec`_.
+
+Begin by importing bxa in a python session with heasoft loaded:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 4-5
@@ -44,6 +46,7 @@ This runs the fit and stores the result in the specified output folder:
    :lines: 30-32
 
 .. autoclass:: bxa.xspec.BXASolver
+   :noindex:
 
 The returned results contain posterior samples and the Bayesian evidence.
 These are also reported on the screen for you.
@@ -114,7 +117,7 @@ The following code creates a plot of the unconvolved posterior:
 
 .. figure:: absorbed-unconvolved_posterior.*
 	
-	Example of the unconvolved spectrum with data.
+	Example of the unconvolved spectrum.
 	For each posterior sample (solution), the parameters are taken and put
 	through the model. All such lines are plotted. Where the region is darker,
 	more lines ended up, and thus it is more likely.
@@ -123,8 +126,8 @@ For plotting the model parameters found against the data, use these functions.
 
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_unconvolved
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_convolved
-.. automodule:: bxa.xspec.sinning
-	:members: binning
+.. automethod:: bxa.xspec.sinning.binning
+    :noindex:
 
 
 Error propagation

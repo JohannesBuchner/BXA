@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bxa.sherpa.rebinnedmodel &#8212; BXA (Bayesian X-ray Analysis) 4.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/sherpa/rebinnedmodel.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bxa.sherpa.rebinnedmodel</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Precomputes a interpolated grid model from a complex model.</span>
+
+<span class="sd">That model can then be used for fast access.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">if</span> <span class="s1">&#39;MAKESPHINXDOC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+	<span class="kn">from</span> <span class="nn">sherpa.astro.ui</span> <span class="kn">import</span> <span class="o">*</span>
+	<span class="kn">from</span> <span class="nn">sherpa.models.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
+	<span class="kn">from</span> <span class="nn">sherpa.models</span> <span class="kn">import</span> <span class="n">ArithmeticModel</span>
+<span class="k">else</span><span class="p">:</span>
+	<span class="n">ArithmeticModel</span> <span class="o">=</span> <span class="nb">object</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">custom interpolation code, needs</span>
+<span class="sd">https://github.com/JohannesBuchner/npyinterp</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">monointerp</span> <span class="kn">import</span> <span class="n">interp</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">slowmodel:</span>
+<span class="sd">   a arbitrary model that should be turned into a fast model by gridding</span>
+<span class="sd">ebins:</span>
+<span class="sd">   energy bins to compute over, e.g. ebins=numpy.linspace(0.1, 50, 200)</span>
+<span class="sd">parameters:</span>
+<span class="sd">   a list of parameters to modify and the number of grid points to use.</span>
+<span class="sd">   Example:</span>
+<span class="sd">      parameters = [</span>
+<span class="sd">        (warmabs.myabs.nH, 21),</span>
+<span class="sd">        (warmabs.myabs.ionisation, 10),</span>
+<span class="sd">      ]</span>
+<span class="sd">      This creates a grid with 21x10 points.</span>
+<span class="sd">   </span>
+<span class="sd">   Note that normalisation and redshift should not be part of the gridding,</span>
+<span class="sd">   they are additionally added to the final model. </span>
+<span class="sd">   </span>
+<span class="sd">   Note that all parameters that are not varied are fixed and should be set to </span>
+<span class="sd">   the right (fixed) values.</span>
+<span class="sd">   </span>
+<span class="sd">   Note that the interpolation is always linear in the parameters. If you would</span>
+<span class="sd">   like a interpolation in logarithmic gridding, introduce a helper parameter:</span>
+<span class="sd">   </span>
+<span class="sd">     # create helper parameter</span>
+<span class="sd">     lognH = Parameter(modelname=&#39;mymodel&#39;, name=&#39;nH&#39;, val=20, min=20, max=26,</span>
+<span class="sd">         hard_min=20, hard_max=26)</span>
+<span class="sd">     # link to the parameter we want to change</span>
+<span class="sd">     warmabs.myabs.nH = lognH </span>
+<span class="sd">     # now pass lognH for logarithmic gridding</span>
+<span class="sd">     parameters = [</span>
+<span class="sd">        (lognH, 21),</span>
+<span class="sd">        (warmabs.myabs.ionisation, 10),</span>
+<span class="sd">     ]</span>
+<span class="sd">   </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RebinnedModel"><a class="viewcode-back" href="../../../convenience.html#bxa.sherpa.rebinnedmodel.RebinnedModel">[docs]</a><span class="k">class</span> <span class="nc">RebinnedModel</span><span class="p">(</span><span class="n">ArithmeticModel</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slowmodel</span><span class="p">,</span> <span class="n">ebins</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">modelname</span><span class="o">=</span><span class="s1">&#39;rebinnedmodel&#39;</span><span class="p">):</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">nbins</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+	
+		<span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">nbins</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">nbins</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+		<span class="n">left</span> <span class="o">=</span> <span class="n">ebins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">right</span> <span class="o">=</span> <span class="n">ebins</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+		<span class="n">width</span> <span class="o">=</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span>
+		<span class="n">ntot</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="nb">bin</span><span class="p">)</span> <span class="k">for</span> <span class="nb">bin</span> <span class="ow">in</span> <span class="n">bins</span><span class="p">])</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">alldata</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">alldata</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+			<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">alldata</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ebins</span><span class="p">),</span> <span class="s1">&#39;energy binning differs -- plese delete &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">filename</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;loaded from </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating rebinnedmodel, this might take a while&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;interpolation setup:&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   energies:&#39;</span><span class="p">,</span> <span class="n">ebins</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ebins</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="n">ebins</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">ebins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="k">for</span> <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">nbins</span><span class="p">),</span> <span class="nb">bin</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1"> with </span><span class="si">%d</span><span class="s1"> points&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">fullname</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">nbins</span><span class="p">))</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;        &#39;</span><span class="p">,</span> <span class="nb">bin</span><span class="p">)</span>
+		
+			<span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ntot</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ebins</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+			<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">bins</span><span class="p">),</span> <span class="n">disable</span><span class="o">=</span><span class="kc">None</span><span class="p">)):</span>
+				<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+					<span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">!=</span> <span class="n">element</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+						<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+				<span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">slowmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">]</span>
+				<span class="n">model</span> <span class="o">=</span> <span class="n">slowmodel</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+				<span class="c1">#assert numpy.isfinite(model).all(), (&#39;model:&#39;, model)</span>
+				<span class="c1">#model = modelcum / width</span>
+				<span class="c1">#assert numpy.isfinite(model).all(), (&#39;model&#39;, model)</span>
+				<span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
+				<span class="c1"># (modelcum * width).cumsum()</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;model created. storing to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+			<span class="n">numpy</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">ebins</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">ebins</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">)</span> 
+	
+<div class="viewcode-block" id="RebinnedModel.init"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.rebinnedmodel.RebinnedModel.init">[docs]</a>	<span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelname</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+		<span class="c1">#print &#39;BinReaderModel(%s)&#39; % modelname</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+		
+		<span class="n">pars</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="c1">#print &#39;  copying parameters&#39;</span>
+		<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">nbins</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+			<span class="n">lo</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">min</span>
+			<span class="n">hi</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">max</span>
+			<span class="n">newp</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> 
+				<span class="n">val</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">hi</span><span class="p">,</span> <span class="n">hard_min</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="n">hard_max</span><span class="o">=</span><span class="n">hi</span><span class="p">)</span>
+			<span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">newp</span><span class="p">)</span>
+			<span class="n">pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newp</span><span class="p">)</span>
+		<span class="c1">#print &#39;  adding norm&#39;</span>
+		<span class="n">newp</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e10</span><span class="p">,</span> <span class="n">hard_min</span><span class="o">=-</span><span class="mf">1e300</span><span class="p">,</span> <span class="n">hard_max</span><span class="o">=</span><span class="mf">1e300</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">newp</span>
+		<span class="n">pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newp</span><span class="p">)</span>
+		<span class="c1">#print &#39;  adding redshift&#39;</span>
+		<span class="n">newp</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;redshift&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">hard_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hard_max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">redshift</span> <span class="o">=</span> <span class="n">newp</span>
+		<span class="n">pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newp</span><span class="p">)</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">binnings</span> <span class="o">=</span> <span class="p">[(</span><span class="n">param</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">nbins</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">nbins</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">RebinnedModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="n">pars</span><span class="p">)</span></div>
+<div class="viewcode-block" id="RebinnedModel.get"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.rebinnedmodel.RebinnedModel.get">[docs]</a>	<span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+		<span class="c1"># compute row to access</span>
+		<span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">((</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binnings</span><span class="p">,</span> <span class="n">coords</span><span class="p">))):</span>
+			<span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">c</span> <span class="o">-</span> <span class="n">lo</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span><span class="p">))</span>
+			<span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span> 
+				<span class="n">k</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>
+			<span class="c1">#print &#39;  for param %d: %d/%d -&gt; %d&#39; % (i, k, n, j * n + k)</span>
+			<span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="n">k</span>
+		<span class="c1">#print &#39;accessing&#39;, j</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span></div>
+<div class="viewcode-block" id="RebinnedModel.calc"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.rebinnedmodel.RebinnedModel.calc">[docs]</a>	<span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="c1">#print &#39;  calc&#39;, p</span>
+		<span class="n">coords</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+		<span class="n">norm</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+		<span class="n">redshift</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="c1">#print &#39;    shifting ...&#39;</span>
+		<span class="n">shiftedleft</span>  <span class="o">=</span> <span class="n">left</span> <span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">redshift</span><span class="p">)</span>
+		<span class="n">shiftedright</span> <span class="o">=</span> <span class="n">right</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">redshift</span><span class="p">)</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+		<span class="c1">#print &#39;    getting ...&#39;</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+		<span class="c1">#print &#39;    y&#39;, y</span>
+		
+		<span class="n">left</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">right</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+		<span class="n">width</span> <span class="o">=</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span>
+		<span class="k">assert</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="n">yw</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+		<span class="c1">#for a, b, c, d in zip(x, width, y, yw):</span>
+		<span class="c1">#	print &#39;%.3f %.3f %.3f %.3f&#39; % (a, b, c, d)</span>
+		
+		<span class="c1">#print &#39;    y*w&#39;, y</span>
+		<span class="c1">#print &#39;    interp ...&#39;</span>
+		<span class="n">r</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="n">shiftedleft</span><span class="p">,</span> <span class="n">shiftedright</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">yw</span><span class="p">)</span>
+		<span class="c1">#for a, b, c in zip(shiftedleft, shiftedright, r):</span>
+		<span class="c1">#	print &#39;%.3f %.3f %.3f&#39; % (a, b, c)</span>
+		<span class="c1">#print &#39;    result&#39;, r</span>
+		<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">r</span>
+		<span class="c1">#print r[len(r)/2], yw[len(yw)/2], norm</span>
+		<span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="n">norm</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pca-background-models.html">PCA-based background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../sherpa.html">bxa.sherpa</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

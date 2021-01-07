@@ -5,46 +5,41 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BXA/Xspec &#8212; BXA (Bayesian X-ray Analysis) 3.4.0 documentation</title>
+    <title>Xspec with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.0.0 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
-    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="BXA/Sherpa" href="sherpa-analysis.html" /> 
+    <link rel="next" title="Convenience features" href="convenience.html" />
+    <link rel="prev" title="Sherpa with BXA" href="sherpa-analysis.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/xspec-analysis.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="sherpa-analysis.html" title="BXA/Sherpa"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">BXA/Xspec</a></li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="bxa-xspec">
-<h1>BXA/Xspec<a class="headerlink" href="#bxa-xspec" title="Permalink to this headline">¶</a></h1>
-<p>Begin by loading bxa in a session with xspec loaded:</p>
+  <div class="section" id="xspec-with-bxa">
+<h1>Xspec with BXA<a class="headerlink" href="#xspec-with-bxa" title="Permalink to this headline">¶</a></h1>
+<p>This documentation shows how to use BXA with <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/">PyXSpec</a>.</p>
+<p>Begin by importing bxa in a python session with heasoft loaded:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bxa.xspec</span> <span class="k">as</span> <span class="nn">bxa</span>
 <span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
@@ -114,8 +109,8 @@ The Gaussian prior weights by a Gaussian in the parameter.</p>
 </pre></div>
 </div>
 <dl class="py class">
-<dt id="bxa.xspec.BXASolver">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">BXASolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">prior_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.BXASolver" title="Permalink to this definition">¶</a></dt>
+<dt>
+<em class="property">class </em><code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">BXASolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">prior_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Run the Bayesian analysis with specified parameters+transformations.</p>
 <p>If prior is None, uniform priors are used on the passed parameters.
 If parameters is also None, all thawed parameters are used.</p>
@@ -224,7 +219,7 @@ and if it reaches below <span class="math notranslate nohighlight">\(10^{-6}\)</
 </div>
 <div class="figure align-default" id="id3">
 <img alt="_images/absorbed-unconvolved_posterior.png" src="_images/absorbed-unconvolved_posterior.png" />
-<p class="caption"><span class="caption-text">Example of the unconvolved spectrum with data.
+<p class="caption"><span class="caption-text">Example of the unconvolved spectrum.
 For each posterior sample (solution), the parameters are taken and put
 through the model. All such lines are plotted. Where the region is darker,
 more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
@@ -254,10 +249,9 @@ Also returns data points for plotting.</p>
 plot_args: matplotlib.pyplot.plot arguments for each component</p>
 </dd></dl>
 
-<span class="target" id="module-bxa.xspec.sinning"></span><p>Binning routines for plotting</p>
-<dl class="py function">
-<dt id="bxa.xspec.sinning.binning">
-<code class="sig-prename descclassname">bxa.xspec.sinning.</code><code class="sig-name descname">binning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outputfiles_basename</span></em>, <em class="sig-param"><span class="n">bins</span></em>, <em class="sig-param"><span class="n">widths</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">models</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/sinning.html#binning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.sinning.binning" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt>
+<code class="sig-prename descclassname">sinning.</code><code class="sig-name descname">binning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bins</span></em>, <em class="sig-param"><span class="n">widths</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">models</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Bins the data for plotting.
 Using the gof module, computes a Poisson goodness-of-fit range,
 i.e. ranges where the model must lie. This is done for multiple
@@ -289,7 +283,7 @@ This should set parameters, and compute flux estimates.</p>
 </div>
 <div class="section" id="model-comparison">
 <span id="xspec-models"></span><h2>Model comparison<a class="headerlink" href="#model-comparison" title="Permalink to this headline">¶</a></h2>
-<p><em>examples/model_compare.py</em> shows an example of model selection. Keep in mind what model prior you would like to use.</p>
+<p><em>examples/xspec/model_compare.py</em> shows an example of model selection. Keep in mind what model prior you would like to use.</p>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Case 1: Multiple models, want to find one best one to use from there on:</dt><dd><ul>
@@ -315,14 +309,14 @@ relative probability of the models (weight = exp(lnZ))</p></li>
 </li>
 </ul>
 <p>Example output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>jbuchner@ds42 $ python model_compare.py absorbed- line- simplest-
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>jbuchner@ds42 $ python model_compare.py absorbed/ line/ simplest/
 
 Model comparison
 ****************
 
-model simplest- : log10(Z) = -1632.7  XXX ruled out
-model absorbed- : log10(Z) =    -7.5  XXX ruled out
-model line-     : log10(Z) =     0.0    &lt;-- GOOD
+model simplest : log10(Z) = -1632.7  XXX ruled out
+model absorbed : log10(Z) =    -7.5  XXX ruled out
+model line     : log10(Z) =     0.0    &lt;-- GOOD
 
 The last, most likely model was used as normalization.
 Uniform model priors are assumed, with a cut of log10(30) to rule out models.
@@ -333,6 +327,10 @@ jbuchner@ds42 $
 <p>Here, the probability of the second-best model, “absorbed”, is <span class="math notranslate nohighlight">\(10^7.5\)</span> times
 less likely than the model “line”. As this exceeds our threshold (by a lot!)
 we can claim the detection of an iron line!</p>
+<p>Monte Carlo simulated spectra are recommended to derive a
+Bayes factor threshold for a preferred false selection rate.
+You can find an example in the <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2014A%26A...564A.125B/abstract">Appendix of Buchner+14</a>
+and in <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/example-sine-modelcomparison.html">the ultranest tutorial</a>.</p>
 </div>
 <div class="section" id="experiment-design">
 <span id="xspec-design"></span><h2>Experiment design<a class="headerlink" href="#experiment-design" title="Permalink to this headline">¶</a></h2>
@@ -415,37 +413,54 @@ detailed discussion on the methodology.</p>
 </div>
 
 
-            <div class="clearer"></div>
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">BXA/Xspec</a><ul>
-<li><a class="reference internal" href="#defining-priors">Defining priors</a></li>
-<li><a class="reference internal" href="#running-the-analysis">Running the analysis</a></li>
-<li><a class="reference internal" href="#parameter-posterior-plots">Parameter posterior plots</a></li>
-<li><a class="reference internal" href="#model-checking">Model checking</a></li>
-<li><a class="reference internal" href="#error-propagation">Error propagation</a></li>
-<li><a class="reference internal" href="#model-comparison">Model comparison</a></li>
-<li><a class="reference internal" href="#experiment-design">Experiment design</a></li>
-<li><a class="reference internal" href="#model-discovery">Model discovery</a></li>
+<h1 class="logo"><a href="index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Xspec with BXA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#defining-priors">Defining priors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-analysis">Running the analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-posterior-plots">Parameter posterior plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-checking">Model checking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-propagation">Error propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-comparison">Model comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#experiment-design">Experiment design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-discovery">Model discovery</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="sherpa-analysis.html"
-                        title="previous chapter">BXA/Sherpa</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/xspec-analysis.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="sherpa-analysis.html" title="previous chapter">Sherpa with BXA</a></li>
+      <li>Next: <a href="convenience.html" title="next chapter">Convenience features</a></li>
+  </ul></li>
+</ul>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -456,29 +471,32 @@ detailed discussion on the methodology.</p>
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="sherpa-analysis.html" title="BXA/Sherpa"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">BXA/Xspec</a></li> 
-      </ul>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/xspec-analysis.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-2020, Johannes Buchner.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.1.
-    </div>
+
+    
+
+    
   </body>
 </html>

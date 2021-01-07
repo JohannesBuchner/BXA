@@ -1,45 +1,42 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>bxa.sherpa &#8212; BXA (Bayesian X-ray Analysis) 3.4.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bxa.sherpa &#8212; BXA (Bayesian X-ray Analysis) 4.0.0 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/sherpa.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for bxa.sherpa</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
-<span class="c1"># -*- coding: utf-8 -*- </span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">BXA (Bayesian X-ray Analysis) for Sherpa</span>
@@ -48,7 +45,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="c1"># pymultinest.plot does not work, because scipy/matplotlib does not work in sherpa</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span>
 <span class="k">if</span> <span class="s1">&#39;MAKESPHINXDOC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
@@ -58,153 +54,63 @@
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">.priors</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.galabs</span> <span class="kn">import</span> <span class="n">auto_galactic_absorption</span>
+<span class="kn">from</span> <span class="nn">.solver</span> <span class="kn">import</span> <span class="n">BXASolver</span><span class="p">,</span> <span class="n">default_logging</span>
 
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;WITHOUT_MULTINEST&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
-	<span class="kn">import</span> <span class="nn">pymultinest.run</span><span class="o">,</span> <span class="nn">pymultinest.analyse</span>
 
-<span class="n">plot_best</span> <span class="o">=</span> <span class="kc">False</span>
-
-<div class="viewcode-block" id="nested_run"><a class="viewcode-back" href="../../sherpa-analysis.html#bxa.sherpa.nested_run">[docs]</a><span class="k">def</span> <span class="nf">nested_run</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">prior</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-	<span class="n">sampling_efficiency</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">evidence_tolerance</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-	<span class="n">n_live_points</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="s1">&#39;chains/&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="nested_run"><a class="viewcode-back" href="../../bxa.sherpa.html#bxa.sherpa.nested_run">[docs]</a><span class="k">def</span> <span class="nf">nested_run</span><span class="p">(</span>
+	<span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+	<span class="n">sampling_efficiency</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+	<span class="n">n_live_points</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">outputfiles_basename</span><span class="o">=</span><span class="s1">&#39;chains/&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Run the Bayesian analysis with specified parameters+transformations.</span>
-
-<span class="sd">	:param id: See the sherpa documentation of calc_stat.</span>
-<span class="sd">	:param otherids: See the sherpa documentation of calc_stat.</span>
-<span class="sd">	:param prior: prior function created with create_prior_function.</span>
-<span class="sd">	:param parameters: List of parameters to analyse.</span>
-<span class="sd">	:param outputfiles_basename: prefix for output filenames.</span>
-<span class="sd">	</span>
-<span class="sd">	If prior is None, uniform priors are used on the passed parameters.</span>
-<span class="sd">	If parameters is also None, all thawed parameters are used.</span>
-
-<span class="sd">	The remainder are multinest arguments (see PyMultiNest and MultiNest documentation!)</span>
-<span class="sd">	n_live_points: 400 are often enough</span>
-<span class="sd">	</span>
-<span class="sd">	For quick results, use sampling_efficiency = 0.8, n_live_points = 50, </span>
-<span class="sd">	evidence_tolerance = 5. </span>
-<span class="sd">	The real results must be estimated with sampling_efficiency = 0.3,</span>
-<span class="sd">	otherwise it is not reliable.</span>
+<span class="sd">	deprecated, use BXASolver instead.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">fit</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">_get_fit</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="n">otherids</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-
-	<span class="k">if</span> <span class="kc">False</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">stat</span><span class="p">,</span> <span class="p">(</span><span class="n">Cash</span><span class="p">,</span> <span class="n">CStat</span><span class="p">)):</span>
-		<span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Fit statistic must be cash or cstat, not </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
-			<span class="n">fit</span><span class="o">.</span><span class="n">stat</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-	
-	<span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">parameters</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">thawedpars</span>
-	<span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">nparams</span><span class="p">):</span>
-		<span class="k">try</span><span class="p">:</span>
-			<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
-				<span class="k">assert</span> <span class="ow">not</span> <span class="n">isnan</span><span class="p">(</span><span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="s1">&#39;ERROR: parameter </span><span class="si">%d</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">) to be set to </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">fullname</span><span class="p">,</span> <span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-				<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-				<span class="c1">#print &quot;%s: %f&quot; % (p.fullname,p.val),</span>
-			<span class="n">l</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">fit</span><span class="o">.</span><span class="n">calc_stat</span><span class="p">()</span>
-			<span class="c1">#print &quot;%.1f&quot; % l</span>
-			<span class="k">return</span> <span class="n">l</span>
-		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Exception in log_likelihood function: &#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-			<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
-				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    Parameter </span><span class="si">%10s</span><span class="s1">: </span><span class="si">%f</span><span class="s1"> --&gt; </span><span class="si">%f</span><span class="s1"> [</span><span class="si">%f</span><span class="s1">..</span><span class="si">%f</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">fullname</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">p</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">max</span><span class="p">))</span>
-			<span class="kn">import</span> <span class="nn">sys</span>
-			<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">127</span><span class="p">)</span>
-		<span class="k">return</span> <span class="o">-</span><span class="mf">1e300</span>
-
-
-	<span class="k">if</span> <span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">prior</span> <span class="o">=</span> <span class="n">create_prior_function</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="n">otherids</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span>
-	<span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-	<span class="n">pymultinest</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">n_params</span><span class="p">,</span> 
-		<span class="n">sampling_efficiency</span> <span class="o">=</span> <span class="n">sampling_efficiency</span><span class="p">,</span> <span class="n">n_live_points</span> <span class="o">=</span> <span class="n">n_live_points</span><span class="p">,</span> 
-		<span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="n">evidence_tolerance</span><span class="p">,</span>
-		<span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-	<span class="kn">import</span> <span class="nn">json</span>
-	<span class="n">paramnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">fullname</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-	<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">paramnames</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">params.json&#39;</span> <span class="o">%</span> <span class="n">outputfiles_basename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="set_best_fit"><a class="viewcode-back" href="../../sherpa-analysis.html#bxa.sherpa.set_best_fit">[docs]</a><span class="k">def</span> <span class="nf">set_best_fit</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="s1">&#39;chains/&#39;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Sets model to the best fit values.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">fit</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">_get_fit</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-	<span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">parameters</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">thawedpars</span>
-	<span class="n">a</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">analyse</span><span class="o">.</span><span class="n">Analyzer</span><span class="p">(</span><span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span><span class="p">)</span>
-	<span class="n">params</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_best_fit</span><span class="p">()[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span>
-	<span class="k">for</span> <span class="n">p</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-		<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span></div>
-
-<div class="viewcode-block" id="get_distribution_with_fluxes"><a class="viewcode-back" href="../../sherpa-analysis.html#bxa.sherpa.get_distribution_with_fluxes">[docs]</a><span class="k">def</span> <span class="nf">get_distribution_with_fluxes</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="s1">&#39;chains/&#39;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Returns an array of equally weighted posterior samples (parameter values) with two </span>
-<span class="sd">	additional columns: the photon fluxes and the energy fluxes. </span>
-
-<span class="sd">	The values will be correctly distributed according to the</span>
-<span class="sd">	analysis run before.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="n">fit</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">_get_fit</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-	<span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">parameters</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">thawedpars</span>
-	<span class="n">a</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">analyse</span><span class="o">.</span><span class="n">Analyzer</span><span class="p">(</span><span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span><span class="p">)</span>
-	<span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">get_equal_weighted_posterior</span><span class="p">():</span>
-		<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
-			<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
-		<span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">calc_photon_flux</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">hi</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">),</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">calc_energy_flux</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">hi</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)])</span>
-	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
-
-<span class="k">def</span> <span class="nf">get_solutions_plot</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="s1">&#39;chains/&#39;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Returns a sequence of unfolded spectra plots (note: set xlog, ylog, etc. before calling)</span>
-<span class="sd">	based on equally weighted posterior points (parameter values)</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">fit</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">_get_fit</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-	<span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">parameters</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">thawedpars</span>
-	<span class="n">a</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">analyse</span><span class="o">.</span><span class="n">Analyzer</span><span class="p">(</span><span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span> <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span><span class="p">)</span>
-	<span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">get_equal_weighted_posterior</span><span class="p">():</span>
-		<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
-			<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
-		<span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">()</span>
-	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">photon_flux_histogram</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">nbins</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-	<span class="n">flux_distribution</span> <span class="o">=</span> <span class="n">distribution</span><span class="p">[:,</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-	<span class="k">if</span> <span class="n">nbins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">nbins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-	<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">flux_distribution</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">nbins</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">x</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
-
-
-<span class="k">def</span> <span class="nf">energy_flux_histogram</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">nbins</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-	<span class="n">flux_distribution</span> <span class="o">=</span> <span class="n">distribution</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-	<span class="k">if</span> <span class="n">nbins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">nbins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">flux_distribution</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-	<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">flux_distribution</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">nbins</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">x</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
-
-<span class="k">def</span> <span class="nf">default_logging</span><span class="p">():</span>
-	<span class="kn">import</span> <span class="nn">logging</span>
-	<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;bxa.log&#39;</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-	<span class="n">logFormatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%(name)s</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2">]: </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
-	<span class="n">consoleHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-	<span class="n">consoleHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logFormatter</span><span class="p">)</span>
-	<span class="n">consoleHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
-	<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">consoleHandler</span><span class="p">)</span>
-
-
+	<span class="n">solver</span> <span class="o">=</span> <span class="n">BXASolver</span><span class="p">(</span>
+		<span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="n">otherids</span><span class="p">,</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+		<span class="n">outputfiles_basename</span><span class="o">=</span><span class="n">outputfiles_basename</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+		<span class="n">evidence_tolerance</span><span class="o">=</span><span class="n">evidence_tolerance</span><span class="p">,</span>
+		<span class="n">n_live_points</span><span class="o">=</span><span class="n">n_live_points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pca-background-models.html">PCA-based background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -215,26 +121,29 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
     </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-2020, Johannes Buchner.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
-    </div>
+
+    
+
+    
   </body>
 </html>

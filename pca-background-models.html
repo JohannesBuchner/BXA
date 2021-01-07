@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PCA-based background models &#8212; BXA (Bayesian X-ray Analysis) 4.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Obscured Active Galactic Nuclei" href="xagnfitter.html" />
+    <link rel="prev" title="Empirical background models" href="background-models.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/pca-background-models.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="pca-based-background-models">
+<h1>PCA-based background models<a class="headerlink" href="#pca-based-background-models" title="Permalink to this headline">¶</a></h1>
+<p>The advantages of using background spectral models is that more information
+can be extracted from low-count data, as correlations between bins and instrument behaviours are known.</p>
+<p>This page describes the machine-learning approach to derive empirical background models
+published in <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018A%26A...618A..66S/abstract">Simmonds et al., 2018, A&amp;A, 618A, 66</a>.
+For Chandra/ACIS, XMM/EPIC, Swift/XRT, NuSTAR/FPMA, RXTE,
+Large archives of background spectra were used to derive principal components (PCA)
+that empirically describe the background and its variations.</p>
+<p>BXA includes these PCA models, which can be fitted to a specific background spectrum.</p>
+<p>These PCA models are trained in log10(counts + 1) space to avoid negative counts.
+The PCA models operate on detector channels and thus should never pass through the response.</p>
+<p>The PCA models are limited in how well they can describe additive components such as
+gaussian emission lines. For this reason, the fitters also try adding Gaussian lines at
+the location of strongest fit mismatch.</p>
+<p>The fits keep increasing complexity (first, the number of PCA components and then, the gaussians) as long as the AIC (Akaike information criterion) improves.</p>
+<div class="section" id="in-sherpa">
+<h2>In Sherpa<a class="headerlink" href="#in-sherpa" title="Permalink to this headline">¶</a></h2>
+<p>After setting your source model (with set_model), use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bxa.sherpa.background.pca</span> <span class="kn">import</span> <span class="n">auto_background</span>
+<span class="n">convmodel</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+<span class="n">bkg_model</span> <span class="o">=</span> <span class="n">auto_background</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+<span class="n">set_full_model</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">get_response</span><span class="p">(</span><span class="nb">id</span><span class="p">)(</span><span class="n">model</span><span class="p">)</span> <span class="o">+</span> <span class="n">bkg_model</span> <span class="o">*</span> <span class="n">get_bkg_scale</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="py function">
+<dt id="bxa.sherpa.background.pca.auto_background">
+<code class="sig-prename descclassname">bxa.sherpa.background.pca.</code><code class="sig-name descname">auto_background</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#auto_background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.auto_background" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A full example for fitting obscured Active Galactic Nuclei is available:
+<a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py">https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py</a></p>
+</div>
+<div class="section" id="in-xspec">
+<h2>In Xspec<a class="headerlink" href="#in-xspec" title="Permalink to this headline">¶</a></h2>
+<p>In xspec, there are two steps.</p>
+<p>First, fit the background spectrum outside xspec using the autobackgroundmodel/fitbkg.py script.</p>
+<p>You can find it here: <a class="reference external" href="https://github.com/JohannesBuchner/BXA/tree/master/autobackgroundmodel">https://github.com/JohannesBuchner/BXA/tree/master/autobackgroundmodel</a></p>
+<p>It will give you instructions how to load the PCA model in xspec.</p>
+</div>
+<div class="section" id="creating-a-new-pca-model">
+<h2>Creating a new PCA model<a class="headerlink" href="#creating-a-new-pca-model" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="https://github.com/JohannesBuchner/BXA/tree/master/autobackgroundmodel#create-a-model">https://github.com/JohannesBuchner/BXA/tree/master/autobackgroundmodel#create-a-model</a></p>
+</div>
+<div class="section" id="if-the-fit-is-bad">
+<h2>If the fit is bad<a class="headerlink" href="#if-the-fit-is-bad" title="Permalink to this headline">¶</a></h2>
+<p>This should be judged from the q-q plot that the background fitting produces.</p>
+<p>If it is off, it shows at what energies the problem is.</p>
+<p>It may be that your spectrum is somehow different than typical spectra.</p>
+<p>You can try another method (e.g., empirical background models, or fall back to Wstat statistics).</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PCA-based background models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#in-sherpa">In Sherpa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#in-xspec">In Xspec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-new-pca-model">Creating a new PCA model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#if-the-fit-is-bad">If the fit is bad</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="background-models.html" title="previous chapter">Empirical background models</a></li>
+      <li>Next: <a href="xagnfitter.html" title="next chapter">Obscured Active Galactic Nuclei</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/pca-background-models.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -5,38 +5,33 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec.priors &#8212; BXA (Bayesian X-ray Analysis) 3.4.0 documentation</title>
+    <title>bxa.xspec.priors &#8212; BXA (Bayesian X-ray Analysis) 4.0.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/xspec/priors.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">bxa.xspec.priors</a></li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for bxa.xspec.priors</h1><div class="highlight"><pre>
@@ -55,7 +50,7 @@
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span>
 
 <span class="c1"># priors</span>
-<div class="viewcode-block" id="create_uniform_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.create_uniform_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_uniform_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+<div class="viewcode-block" id="create_uniform_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.priors.create_uniform_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_uniform_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Use for location variables (position)</span>
 <span class="sd">	The uniform prior gives equal weight in non-logarithmic scale.</span>
@@ -72,12 +67,12 @@
 		<span class="n">transform</span><span class="o">=</span><span class="n">uniform_transform</span><span class="p">,</span> <span class="n">aftertransform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">create_jeffreys_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+<div class="viewcode-block" id="create_jeffreys_prior_for"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.priors.create_jeffreys_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_jeffreys_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;deprecated, use create_loguniform_prior_for instead. &quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="n">create_loguniform_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">create_loguniform_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_loguniform_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.create_loguniform_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_loguniform_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+<div class="viewcode-block" id="create_loguniform_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.priors.create_loguniform_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_loguniform_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Use for scale variables (order of magnitude)</span>
 <span class="sd">	The Jeffreys prior gives equal weight to each order of magnitude between the</span>
@@ -99,7 +94,7 @@
 		<span class="n">transform</span><span class="o">=</span><span class="n">log_transform</span><span class="p">,</span> <span class="n">aftertransform</span><span class="o">=</span><span class="n">log_after_transform</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_gaussian_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.create_gaussian_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_gaussian_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+<div class="viewcode-block" id="create_gaussian_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.priors.create_gaussian_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_gaussian_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Use for informed variables.</span>
 <span class="sd">	The Gaussian prior weights by a Gaussian in the parameter.</span>
@@ -114,7 +109,7 @@
 		<span class="n">transform</span><span class="o">=</span><span class="n">gauss_transform</span><span class="p">,</span> <span class="n">aftertransform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_custom_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.create_custom_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_custom_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">aftertransform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="create_custom_prior_for"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.priors.create_custom_prior_for">[docs]</a><span class="k">def</span> <span class="nf">create_custom_prior_for</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">aftertransform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Pass your own prior weighting transformation</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -123,7 +118,7 @@
 		<span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">aftertransform</span><span class="o">=</span><span class="n">aftertransform</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
+<div class="viewcode-block" id="create_prior_function"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.priors.create_prior_function">[docs]</a><span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Creates a single prior transformation function from parameter transformations</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -140,15 +135,49 @@
 			<span class="kn">import</span> <span class="nn">sys</span>
 			<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">126</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">prior</span>
+	<span class="k">return</span> <span class="n">prior</span></div>
 </pre></div>
 
-            <div class="clearer"></div>
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pca-background-models.html">PCA-based background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../xspec.html">bxa.xspec</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -159,27 +188,29 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">BXA (Bayesian X-ray Analysis) 3.4.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">bxa.xspec.priors</a></li> 
-      </ul>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
     </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2013-2020, Johannes Buchner.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.1.
-    </div>
+
+    
+
+    
   </body>
 </html>

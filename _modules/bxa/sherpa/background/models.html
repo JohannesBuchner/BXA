@@ -1,0 +1,641 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bxa.sherpa.background.models &#8212; BXA (Bayesian X-ray Analysis) 4.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/sherpa/background/models.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bxa.sherpa.background.models</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Background models for various telescopes and instruments</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">if</span> <span class="s1">&#39;MAKESPHINXDOC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">sherpa.astro.ui</span> <span class="k">as</span> <span class="nn">ui</span>
+	<span class="kn">from</span> <span class="nn">sherpa.stats</span> <span class="kn">import</span> <span class="n">Cash</span><span class="p">,</span> <span class="n">CStat</span>
+	<span class="kn">from</span> <span class="nn">sherpa.models.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
+	<span class="kn">from</span> <span class="nn">sherpa.models</span> <span class="kn">import</span> <span class="n">ArithmeticModel</span><span class="p">,</span> <span class="n">CompositeModel</span>
+	<span class="kn">from</span> <span class="nn">sherpa.astro.ui</span> <span class="kn">import</span> <span class="o">*</span>
+	<span class="kn">from</span> <span class="nn">sherpa.astro.instrument</span> <span class="kn">import</span> <span class="n">RSPModelNoPHA</span><span class="p">,</span> <span class="n">RMFModelNoPHA</span>
+<span class="k">else</span><span class="p">:</span>
+	<span class="n">CompositeModel</span><span class="p">,</span> <span class="n">ArithmeticModel</span> <span class="o">=</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">object</span>
+
+<span class="k">class</span> <span class="nc">BackgroundModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="k">pass</span>
+
+<span class="n">logbm</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;bxa.BackgroundModel&#39;</span><span class="p">)</span>
+<span class="n">logbm</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Background model for Chandra, as for the CDFS.</span>
+
+<span class="sd">Uses a flat continuum, two broad gaussians and 8 narrow instrumental lines.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChandraBackground"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground">[docs]</a><span class="k">class</span> <span class="nc">ChandraBackground</span><span class="p">(</span><span class="n">BackgroundModel</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">storage</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.486</span><span class="p">,</span> <span class="mf">1.739</span><span class="p">,</span> <span class="mf">2.142</span><span class="p">,</span> <span class="mf">7.478</span><span class="p">,</span> <span class="mf">8.012</span><span class="p">,</span> <span class="mf">8.265</span><span class="p">,</span> <span class="mf">8.4939</span><span class="p">,</span> <span class="mf">9.7133</span><span class="p">]</span>
+		<span class="n">continuum</span><span class="p">,</span> <span class="n">softsoftend</span><span class="p">,</span> <span class="n">softend</span> <span class="o">=</span> <span class="n">box1d</span><span class="p">(</span><span class="s1">&#39;continuum_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">),</span> <span class="n">gauss1d</span><span class="p">(</span><span class="s1">&#39;softsoftend_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">),</span> <span class="n">gauss1d</span><span class="p">(</span><span class="s1">&#39;softend_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">line1</span><span class="p">,</span> <span class="n">line2</span><span class="p">,</span> <span class="n">line3</span><span class="p">,</span> <span class="n">line4</span><span class="p">,</span> <span class="n">line5</span><span class="p">,</span> <span class="n">line6</span><span class="p">,</span> <span class="n">line7</span><span class="p">,</span> <span class="n">line8</span> <span class="o">=</span> <span class="p">[</span>
+			<span class="n">gauss1d</span><span class="p">(</span><span class="s1">&#39;line</span><span class="si">%d</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)]</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line1</span><span class="p">,</span> <span class="n">line2</span><span class="p">,</span> <span class="n">line3</span><span class="p">,</span> <span class="n">line4</span><span class="p">,</span> <span class="n">line5</span><span class="p">,</span> <span class="n">line6</span><span class="p">,</span> <span class="n">line7</span><span class="p">,</span> <span class="n">line8</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">abslines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line5</span><span class="p">,</span> <span class="n">line6</span><span class="p">,</span> <span class="n">line7</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">linelines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line1</span><span class="p">,</span> <span class="n">line2</span><span class="p">,</span> <span class="n">line3</span><span class="p">,</span> <span class="n">line4</span><span class="p">,</span> <span class="n">line8</span><span class="p">]</span>
+		<span class="c1">#lines = linelines + abslines</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">boxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">continuum</span><span class="p">]</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">softboxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">softend</span><span class="p">,</span> <span class="n">softsoftend</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">plboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">softboxes</span>
+		
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;creating Chandra background model&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">centers</span><span class="p">):</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">c</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">c</span> <span class="o">-</span> <span class="mf">0.1</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="mf">0.1</span>
+
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">ampl</span> <span class="o">=</span> <span class="mi">2000</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-8</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e12</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="mf">0.02</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.002</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">abslines</span><span class="p">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">0.4</span>
+
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">linelines</span><span class="p">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+		<span class="c1"># narrow soft end</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mf">0.3</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">0.6</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="mf">0.5</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.2</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">0.7</span>
+		<span class="n">softsoftend</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+
+		<span class="c1"># wide gaussian</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="mf">3.8</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">2</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">7</span>
+		<span class="n">softend</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plboxes</span><span class="p">:</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="n">changepoints</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">8.2</span><span class="p">,</span> <span class="mf">8.4</span><span class="p">,</span> <span class="mf">8.75</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span>
+		<span class="n">changepoints</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span>
+
+		<span class="k">for</span> <span class="n">b</span><span class="p">,</span><span class="n">clo</span><span class="p">,</span><span class="n">chi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="p">,</span> <span class="n">changepoints</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">changepoints</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">xlow</span> <span class="o">=</span> <span class="n">clo</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">xhi</span> <span class="o">=</span> <span class="n">chi</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">xlow</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">xhi</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-8</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e8</span>
+			<span class="n">b</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">1</span>
+		
+		<span class="n">contlevel</span> <span class="o">=</span> <span class="n">const1d</span><span class="p">(</span><span class="s2">&quot;contlevel_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">softlevel</span> <span class="o">=</span> <span class="n">const1d</span><span class="p">(</span><span class="s2">&quot;softlevel_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">softsoftlevel</span> <span class="o">=</span> <span class="n">const1d</span><span class="p">(</span><span class="s2">&quot;softsoftlevel_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">contlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-6</span>
+		<span class="n">softlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-4</span>
+		<span class="n">softsoftlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-4</span>
+		<span class="n">contlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e10</span>
+		<span class="n">softlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e10</span>
+		<span class="n">softsoftlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e10</span>
+		
+		<span class="c1"># init</span>
+		<span class="n">contlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">1e-3</span>
+		<span class="n">softlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">1e1</span>
+		<span class="n">softsoftlevel</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">1e1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stages</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;continuum&#39;</span><span class="p">,</span> <span class="s1">&#39;softfeatures&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;line</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linelines</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">abslines</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;full&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">contlevel</span> <span class="o">=</span> <span class="n">contlevel</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">softlevel</span> <span class="o">=</span> <span class="n">softlevel</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">softsoftlevel</span> <span class="o">=</span> <span class="n">softsoftlevel</span>
+		
+		
+<div class="viewcode-block" id="ChandraBackground.set_zero"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_zero">[docs]</a>	<span class="k">def</span> <span class="nf">set_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plboxes</span><span class="p">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">0</span></div>
+	
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	range over which this model is valid</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChandraBackground.set_filter"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_filter">[docs]</a>	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="mf">9.8</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">notice</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">9.8</span><span class="p">)</span></div>
+<div class="viewcode-block" id="ChandraBackground.set_model"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_model">[docs]</a>	<span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
+		<span class="n">withsoft</span> <span class="o">=</span> <span class="n">stage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;continuum&#39;</span><span class="p">)</span>
+		<span class="n">withlines</span> <span class="o">=</span> <span class="n">stage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;continuum&#39;</span><span class="p">,</span> <span class="s1">&#39;softfeatures&#39;</span><span class="p">)</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;stage &quot;</span><span class="si">%s</span><span class="s1">&quot; for </span><span class="si">%s</span><span class="s1"> ...&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+		<span class="n">continuum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">contlevel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contlevel</span>
+		<span class="n">softlevel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">softlevel</span>
+		<span class="n">softsoftlevel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">softsoftlevel</span>
+		<span class="n">softend</span><span class="p">,</span> <span class="n">softsoftend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">softboxes</span>
+		<span class="n">bg_model</span> <span class="o">=</span> <span class="n">continuum</span> <span class="o">*</span> <span class="n">contlevel</span>
+		<span class="n">bunitrsp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">bunitrsp</span>
+		<span class="n">set_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bg_model</span><span class="p">)</span>
+		<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bunitrsp</span><span class="p">(</span><span class="n">bg_model</span><span class="p">))</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;zooming to </span><span class="si">%.1f</span><span class="s1"> </span><span class="si">%.1f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">notice</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="p">[</span><span class="n">contlevel</span><span class="o">.</span><span class="n">c0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s1">&#39;continuum&#39;</span><span class="p">:</span> 
+			<span class="k">return</span>
+		
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;adding soft end...&#39;</span><span class="p">)</span>
+		<span class="n">bg_model</span> <span class="o">+=</span> <span class="p">(</span><span class="n">softend</span> <span class="o">*</span> <span class="n">softlevel</span> <span class="o">+</span> <span class="n">softsoftend</span> <span class="o">*</span> <span class="n">softsoftlevel</span><span class="p">)</span> <span class="o">*</span> <span class="n">contlevel</span>
+		<span class="n">delete_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="n">set_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bg_model</span><span class="p">)</span>
+		<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bunitrsp</span><span class="p">(</span><span class="n">bg_model</span><span class="p">))</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="mf">2.</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">notice</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;zooming to </span><span class="si">%.1f</span><span class="s1"> </span><span class="si">%.1f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">2.</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="p">[</span><span class="n">softsoftlevel</span><span class="o">.</span><span class="n">c0</span><span class="p">,</span> <span class="n">softlevel</span><span class="o">.</span><span class="n">c0</span><span class="p">,</span> <span class="n">softsoftlevel</span><span class="o">.</span><span class="n">c0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pars</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span>
+		<span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s1">&#39;softfeatures&#39;</span><span class="p">:</span> 
+			<span class="k">return</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;adding lines...&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linelines</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">abslines</span><span class="p">):</span>
+			<span class="n">bg_model</span> <span class="o">+=</span> <span class="n">l</span> <span class="o">*</span> <span class="n">contlevel</span>
+			<span class="n">set_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bg_model</span><span class="p">)</span>
+			<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bunitrsp</span><span class="p">(</span><span class="n">bg_model</span><span class="p">))</span>
+			<span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">frozen</span><span class="p">:</span> <span class="k">continue</span>
+			<span class="n">lo</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">val</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">l</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+			<span class="n">hi</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">val</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">l</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+			<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;zooming to </span><span class="si">%.1f</span><span class="s1"> </span><span class="si">%.1f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+			<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">lo</span><span class="p">)</span>
+			<span class="n">ignore</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+			<span class="n">notice</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pars</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span>
+			<span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s1">&#39;line</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">:</span> 
+				<span class="k">return</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">set_filter</span><span class="p">()</span>
+		<span class="c1"># finally, full fit</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pars</span></div></div>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Background model for XMM/PN, as for the XMM-XXL.</span>
+
+<span class="sd">Developed by Richard Sturm at MPE</span>
+<span class="sd">Written for Sherpa by Zhu Liu</span>
+<span class="sd">Adapted into this framework by Johannes Buchner</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">XMMPNBackground</span><span class="p">(</span><span class="n">BackgroundModel</span><span class="p">):</span>
+	<span class="n">pncenters</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.49165</span><span class="p">,</span> <span class="mf">1.49165</span><span class="p">,</span> <span class="mf">4.53177</span><span class="p">,</span> <span class="mf">5.42516</span><span class="p">,</span> <span class="mf">6.38155</span><span class="p">,</span> <span class="mf">7.48675</span><span class="p">,</span> <span class="mf">8.04087</span><span class="p">,</span> <span class="mf">8.04087</span><span class="p">,</span> <span class="mf">8.60924</span><span class="p">,</span> <span class="mf">8.89395</span><span class="p">,</span> <span class="mf">9.56160</span><span class="p">]</span>
+	<span class="n">pnlinewidth</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.73813E-02</span><span class="p">,</span> <span class="mf">3.63469E-02</span><span class="p">,</span> <span class="mf">6.10487E-02</span><span class="p">,</span> <span class="mf">7.08380E-02</span><span class="p">,</span> <span class="mf">9.59053E-02</span><span class="p">,</span> <span class="mf">6.52422E-02</span><span class="p">,</span> <span class="mf">9.48594E-02</span><span class="p">,</span> <span class="mf">6.26174E-05</span><span class="p">,</span> <span class="mf">0.120893</span><span class="p">,</span> <span class="mf">0.114254</span><span class="p">,</span> <span class="mf">0.108717</span><span class="p">]</span>
+	<span class="n">pnlinenorm</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.81356E-03</span><span class="p">,</span> <span class="mf">3.96601E-03</span><span class="p">,</span> <span class="mf">7.30727E-04</span><span class="p">,</span> <span class="mf">4.96413E-04</span><span class="p">,</span> <span class="mf">5.31295E-9</span><span class="p">,</span> <span class="mf">6.84796E-04</span><span class="p">,</span> <span class="mf">3.01564E-02</span><span class="p">,</span> <span class="mf">1.41847E-04</span><span class="p">,</span> <span class="mf">8.87887E-03</span><span class="p">,</span> <span class="mf">5.75592E-03</span><span class="p">,</span> <span class="mf">1.71367E-03</span><span class="p">]</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">,</span> <span class="n">galactic_NH</span> <span class="o">=</span> <span class="mf">1e20</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">storage</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnrsp</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbrsp</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">bkg_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnscale</span> <span class="o">=</span> <span class="n">get_bkg_scale</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="n">copy_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1000</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbunitrsp</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="mi">1000</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">bkg_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">delete_data</span><span class="p">(</span><span class="mi">1000</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgcons</span> <span class="o">=</span> <span class="n">xsconstant</span><span class="p">(</span><span class="s1">&#39;pncons_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span> <span class="o">=</span> <span class="n">xsspline</span><span class="p">(</span><span class="s1">&#39;pnspline1_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span> <span class="o">=</span> <span class="n">xsexpdec</span><span class="p">(</span><span class="s1">&#39;pnexpdec_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span> <span class="o">=</span> <span class="n">xssmedge</span><span class="p">(</span><span class="s1">&#39;pnsmedge1_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span> <span class="o">=</span> <span class="n">xsspline</span><span class="p">(</span><span class="s1">&#39;pnspline2_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span> <span class="o">=</span> <span class="n">xssmedge</span><span class="p">(</span><span class="s1">&#39;pnsmedge2_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span> <span class="o">=</span> <span class="n">xspowerlaw</span><span class="p">(</span><span class="s1">&#39;pnbkpl_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnlines</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+			<span class="n">comp</span> <span class="o">=</span> <span class="n">xsgaussian</span><span class="p">(</span><span class="s1">&#39;pngau</span><span class="si">%d</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pnlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+			<span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;pnbkgline</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span> <span class="o">=</span> <span class="n">xspowerlaw</span><span class="p">(</span><span class="s1">&#39;pnpnexpl_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span> <span class="o">=</span> <span class="n">xsapec</span><span class="p">(</span><span class="s1">&#39;pnapec_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span> <span class="o">=</span> <span class="n">xsapec</span><span class="p">(</span><span class="s1">&#39;pnlcapec_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">galabs</span> <span class="o">=</span> <span class="n">xsphabs</span><span class="p">(</span><span class="s1">&#39;absgal_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">galabs</span><span class="o">.</span><span class="n">nH</span> <span class="o">=</span> <span class="n">galactic_NH</span> <span class="o">/</span> <span class="mf">1e22</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">galabs</span><span class="o">.</span><span class="n">nH</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnfixwid</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline8</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline11</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnfree</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline7</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline9</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline10</span><span class="p">]</span>
+		
+		<span class="c1">#define PN background model</span>
+		<span class="c1">#pn_bkg = self.pnbunitrsp(self.pnbkgcons*(self.pnbkgspline1*self.pnbkgexpdec + self.pnbkgsmedge1*self.pnbkgsmedge2*(self.pnbkgspline2*self.pnbkginspl + </span>
+		<span class="c1">#	self.pnbkgline1 + self.pnbkgline2 + self.pnbkgline3 + self.pnbkgline4 + self.pnbkgline5 + self.pnbkgline6 + self.pnbkgline7 + self.pnbkgline8 + </span>
+		<span class="c1">#	self.pnbkgline9 + self.pnbkgline10 + self.pnbkgline11))) + self.pnbrsp(self.galabs*(self.pnbkgpl+self.pnbkgapec)+self.pnbkglcapec)</span>
+		
+		<span class="c1"># Define source model: galabs*(intgalabs*(srcpl+torus+pnsoftpl))</span>
+		<span class="c1">#set_model(i,galabs*(intgalabs*(xspowerlaw.srcpl)))</span>
+		<span class="c1">#set_full_model(i,(pnrsp(galabs*(intgalabs*(xspowerlaw.srcpl))) + pnscale*(pn_bkg)))</span>
+		
+		<span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnlines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pncenters</span><span class="p">):</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">LineE</span> <span class="o">=</span> <span class="n">c</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">LineE</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">c</span> <span class="o">-</span> <span class="mf">0.05</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">LineE</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="mf">0.05</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline2</span><span class="o">.</span><span class="n">LineE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline1</span><span class="o">.</span><span class="n">LineE</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline8</span><span class="o">.</span><span class="n">LineE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline7</span><span class="o">.</span><span class="n">LineE</span>
+		
+		<span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnlines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnlinewidth</span><span class="p">):</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">Sigma</span> <span class="o">=</span> <span class="n">s</span>
+
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnfree</span><span class="p">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">Sigma</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1E-5</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">Sigma</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">0.2</span>
+		
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnfixwid</span><span class="p">:</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">Sigma</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		
+		<span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnlines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnlinenorm</span><span class="p">):</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">n</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1E-10</span>
+			<span class="n">l</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1E10</span>
+			
+		<span class="c1"># Scaling constant</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgcons</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgcons</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		
+		<span class="c1"># thermal radiation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">0.286928</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.008</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">64</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">Abundanc</span> <span class="o">=</span> <span class="mf">1.0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">Abundanc</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">Redshift</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">Redshift</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">5.58410E-05</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-10</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e10</span>
+		
+		<span class="c1"># local thermal radiation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">0.1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">Abundanc</span> <span class="o">=</span> <span class="mf">1.0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">Abundanc</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">Redshift</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">Redshift</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">3.89164E-05</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-10</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e10</span>
+		
+		<span class="c1"># exponential decay</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="mf">44.3418</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">100</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">6830.89</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		
+		<span class="c1"># Smear function</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">edgeE</span> <span class="o">=</span> <span class="mf">0.538408</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">edgeE</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">MaxTau</span> <span class="o">=</span> <span class="mf">1.40238</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">MaxTau</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span> 
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">MaxTau</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">10</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.67000</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mf">0.313365</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.01</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">100</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">edgeE</span> <span class="o">=</span> <span class="mf">1.38826</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">edgeE</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">MaxTau</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span> 
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">MaxTau</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">10</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">MaxTau</span> <span class="o">=</span> <span class="mf">9.37167</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.67000</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mf">5.7642</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.01</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">100</span>
+		
+		<span class="c1"># Spline funtion</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Estart</span> <span class="o">=</span> <span class="mf">0.200000</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Estart</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Ystart</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.31506</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Ystart</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Ystart</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Yend</span> <span class="o">=</span> <span class="mf">1064.16</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Yend</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Yend</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">YPstart</span> <span class="o">=</span> <span class="o">-</span><span class="mf">106.183</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">YPstart</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">YPstart</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">YPend</span> <span class="o">=</span> <span class="o">-</span><span class="mf">366.092</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">YPend</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">YPend</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Eend</span> <span class="o">=</span> <span class="mf">1.74715</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Eend</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">.</span><span class="n">Eend</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">100</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Estart</span> <span class="o">=</span> <span class="mf">3.29056</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Ystart</span> <span class="o">=</span> <span class="mf">1.00643</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Ystart</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Ystart</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Yend</span> <span class="o">=</span> <span class="mf">0.887026</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Yend</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Yend</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">YPstart</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.278401</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">YPstart</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">YPstart</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">YPend</span> <span class="o">=</span> <span class="mf">4.84809E-03</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">YPend</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e+6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">YPend</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e6</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Eend</span> <span class="o">=</span> <span class="mf">7.32701</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Eend</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">.</span><span class="n">Eend</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">100</span>
+		
+		<span class="c1"># Background power law</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span><span class="o">.</span><span class="n">PhoIndex</span> <span class="o">=</span> <span class="mf">0.279</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span><span class="o">.</span><span class="n">PhoIndex</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span><span class="o">.</span><span class="n">PhoIndex</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">9</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">8.23614E-03</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1E-10</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1E6</span>
+		
+		<span class="c1"># Extragalactic background</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span><span class="o">.</span><span class="n">PhoIndex</span> <span class="o">=</span> <span class="mf">1.46</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span><span class="o">.</span><span class="n">PhoIndex</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">1.25288E-05</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-10</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">1e3</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">stages</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stage_models</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stage_models_full</span> <span class="o">=</span> <span class="p">{}</span>
+		
+		<span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkginspl</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;    XMMPNBackground: creating stages for </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline2</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline2</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline7</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline8</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline7</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline8</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline9</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline10</span><span class="p">)</span>
+		<span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline3</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline4</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline5</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline6</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline7</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline8</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline9</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline10</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgline11</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;6&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="n">lines</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;7&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="n">lines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">galabs</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="n">lines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">galabs</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">addStage</span><span class="p">(</span><span class="s1">&#39;9&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">+</span> <span class="n">lines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">galabs</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgapec</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgpl</span><span class="p">)</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkglcapec</span><span class="p">)</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;    XMMPNBackground: setup for </span><span class="si">%s</span><span class="s1"> completed&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">addStage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">instrument_bg</span><span class="p">,</span> <span class="n">external_bg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgcons</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">*</span><span class="p">(</span><span class="n">instrument_bg</span><span class="p">))</span>
+		<span class="n">full_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbunitrsp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgcons</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgspline1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgexpdec</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pnbkgsmedge2</span><span class="o">*</span><span class="p">(</span><span class="n">instrument_bg</span><span class="p">)))</span>
+		<span class="k">if</span> <span class="n">external_bg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">+</span> <span class="n">external_bg</span>
+			<span class="n">full_model</span> <span class="o">=</span> <span class="n">full_model</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pnrsp</span><span class="p">(</span><span class="n">external_bg</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stage_models</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stage_models_full</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_model</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+		
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	range over which this model is valid</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
+		<span class="n">notice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
+		
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;    XMMPNBackground: going to stage </span><span class="si">%s</span><span class="s1"> on </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+		<span class="n">bg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_models</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span>
+		<span class="n">bg_model_full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_models_full</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bg_model</span><span class="o">.</span><span class="n">pars</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span><span class="p">)</span>
+		
+		<span class="n">delete_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;    XMMPNBackground: setting model&#39;</span><span class="p">)</span>
+		<span class="n">set_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bg_model</span><span class="p">)</span>
+		<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bg_model_full</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">set_filter</span><span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Background model for Swift/XRT.</span>
+
+<span class="sd">Uses a flat continuum, two broad gaussians and 8 narrow instrumental lines.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SwiftXRTBackground"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground">[docs]</a><span class="k">class</span> <span class="nc">SwiftXRTBackground</span><span class="p">(</span><span class="n">BackgroundModel</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">storage</span>
+		
+		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s1">&#39;    SwiftXRTBackground: setting up for </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">dip</span> <span class="o">=</span> <span class="n">box1d</span><span class="p">(</span><span class="s1">&#39;dip_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">pbknpl</span> <span class="o">=</span> <span class="n">xsbknpower</span><span class="p">(</span><span class="s1">&#39;pbknpl_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">,</span> <span class="n">g4</span> <span class="o">=</span> <span class="p">[</span><span class="n">gauss1d</span><span class="p">(</span><span class="s1">&#39;gauss</span><span class="si">%d</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">BreakE</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.2</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">BreakE</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">5</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">BreakE</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">2</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">PhoIndx1</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">4</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">PhoIndx2</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">4</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">PhoIndx1</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.8</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">PhoIndx2</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.8</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">PhoIndx1</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">2</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">PhoIndx2</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">1.5</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-10</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="n">pbknpl</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.004</span>
+		
+		<span class="n">lines</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">2.15</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)]</span>
+		
+
+		<span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">,</span> <span class="n">g4</span><span class="p">],</span> <span class="n">lines</span><span class="p">):</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">mid</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">lo</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">hi</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.2</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">fwhm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">0.01</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.01</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-6</span>
+
+		<span class="n">dip</span><span class="o">.</span><span class="n">xlow</span> <span class="o">=</span> <span class="mi">2</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">xhi</span> <span class="o">=</span> <span class="mi">3</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">xlow</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1.75</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">xlow</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">2.25</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">xhi</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">2.75</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">xhi</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mf">3.25</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.5</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mf">1e-3</span>
+		<span class="n">dip</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-3</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">pbknpl</span><span class="p">,</span> <span class="n">dip</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">,</span> <span class="n">g4</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<div class="viewcode-block" id="SwiftXRTBackground.set_filter"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground.set_filter">[docs]</a>	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;SwiftXRTBackground: setting filter 0.3-5keV&#39;</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">notice</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SwiftXRTBackground.set_model"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground.set_model">[docs]</a>	<span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
+		<span class="p">[</span><span class="n">pbknpl</span><span class="p">,</span> <span class="n">dip</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">,</span> <span class="n">g4</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pars</span>
+		
+		<span class="n">logbm</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;stage &quot;</span><span class="si">%s</span><span class="s1">&quot; for ID=</span><span class="si">%s</span><span class="s1"> ...&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+		<span class="n">bunitrsp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">bunitrsp</span>
+		<span class="n">model</span> <span class="o">=</span> <span class="n">stage</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">=</span> <span class="n">pbknpl</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pbknpl</span><span class="o">.</span><span class="n">pars</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">model</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">+</span> <span class="n">g1</span> 
+			<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g1</span><span class="o">.</span><span class="n">pars</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">model</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">+</span> <span class="n">g2</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g2</span><span class="o">.</span><span class="n">pars</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">model</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">+</span> <span class="n">g3</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g3</span><span class="o">.</span><span class="n">pars</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">model</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dip</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dip</span><span class="o">.</span><span class="n">pars</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">model</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span> <span class="o">+</span> <span class="n">g4</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g4</span><span class="o">.</span><span class="n">pars</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span><span class="o">.</span><span class="n">pars</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">link</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">model</span> <span class="o">&gt;</span> <span class="mi">6</span><span class="p">:</span> <span class="c1"># finally, full fit</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pars</span>
+		<span class="n">set_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span><span class="p">)</span>
+		<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bunitrsp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">set_filter</span><span class="p">()</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;background model set for stage &quot;</span><span class="si">%s</span><span class="s1">&quot; for ID=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span></div></div>
+
+<div class="viewcode-block" id="SwiftXRTWTBackground"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTWTBackground">[docs]</a><span class="k">class</span> <span class="nc">SwiftXRTWTBackground</span><span class="p">(</span><span class="n">SwiftXRTBackground</span><span class="p">):</span>
+<div class="viewcode-block" id="SwiftXRTWTBackground.set_filter"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTWTBackground.set_filter">[docs]</a>	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;SwiftXRTBackground: setting filter 0.4-5keV&#39;</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+		<span class="n">ignore</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">notice</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span></div></div>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SwiftXRTBackground&#39;</span><span class="p">,</span> <span class="s1">&#39;SwiftXRTWTBackground&#39;</span><span class="p">,</span> <span class="s1">&#39;ChandraBackground&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pca-background-models.html">PCA-based background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../sherpa.html">bxa.sherpa</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
