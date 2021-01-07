@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from sherpa.astro.ui import *
+import numpy
 import bxa.sherpa as bxa
 bxa.default_logging()
 print('loading background fitting module...')
@@ -94,8 +95,8 @@ priors += [bxa.create_uniform_prior_for(srcnh)]
 priors += [limited_19_24] # galnh
 priorfunction = bxa.create_prior_function(priors = priors)
 print('running BXA ...')
-bxa.nested_run(id, prior=priorfunction, parameters = parameters, 
-	resume = True, verbose=True, 
+solver = bxa.BXASolver(id, prior=priorfunction, parameters = parameters, 
 	outputfiles_basename = 'superfit_')
+solver.run(resume=True)
 
 exit()
