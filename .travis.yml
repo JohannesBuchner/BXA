@@ -68,7 +68,9 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "compiling xspec";
-      pushd heasoft-*/BUILD_DIR;
+      ls
+      XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+      pushd $XSPEC_BUILD_DIR;
       ./configure --prefix=$HOME/Downloads/xspec-install/ --with-components="Xspec" && make && make install;
       popd;
     fi
