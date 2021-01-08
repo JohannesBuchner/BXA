@@ -2,7 +2,7 @@ Obscured Active Galactic Nuclei
 =======================================
 
 A script for fitting Active Galactic Nuclei is provided at
-`xagnfitter <https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py>`_.
+`xagnfitter.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py>`_.
 This is the method used in Buchner+14, Buchner+15, Simmonds+17.
 
 Features:
@@ -19,8 +19,8 @@ Features:
 * Optional: add an apec L<10^42erg/s contamination component (set WITHAPEC=1)
 * Can fit multiple observations simultaneously
 
-I strongly recommend using the `xagnfitter <https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py>`_.
- script instead of hardness ratios.
+I strongly recommend using the `xagnfitter <https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py>`_
+script instead of hardness ratios.
 
 It is included verbatim below:
 
