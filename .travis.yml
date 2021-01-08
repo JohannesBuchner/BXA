@@ -71,26 +71,25 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "unpacking heasoft";
-      rm -rf heasoft*/
-      tar -xzf heasoft-src.tar.gz;
-      ls heasoft*;
-      ls;
-    fi
-  - |
-    if [[ "$TOOL" == "xspec" ]]; then
-      echo "compiling xspec";
-      sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline8 libreadline-dev;
-      ls heasoft*;
-      XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
-      #XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
-      pushd $XSPEC_BUILD_DIR;
-      mkdir -p $MYCACHE/xspec-install/;
-      ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install;
-      ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
-      export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
-      #./configure;
-      #export HEADAS=`ls -d $MYCACHE/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
-      popd;
+      if ! ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/; then
+        rm -rf heasoft*/
+        tar -xzf heasoft-src.tar.gz;
+        ls heasoft*;
+        ls;
+        echo "compiling xspec";
+        sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline8 libreadline-dev;
+        ls heasoft*;
+        XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+        #XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
+        pushd $XSPEC_BUILD_DIR;
+        mkdir -p $MYCACHE/xspec-install/;
+        ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install;
+        ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
+        export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+        #./configure;
+        #export HEADAS=`ls -d $MYCACHE/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
+        popd;
+      fi
     fi
   - |
     if [[ "$TOOL" == "xspec" ]]; then
@@ -145,13 +144,13 @@ script:
       git clone https://github.com/JohannesBuchner/npyinterp.git;
       pushd npyinterp; make; popd;
       # run examples
-      PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
+      # PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
       popd;
     fi
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       pushd docker/testsrc;
-      PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
+      # PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
       popd;
     fi
   # upload coverage results
