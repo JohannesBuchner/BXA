@@ -94,10 +94,9 @@ install:
     fi
   - |
     if [[ "$TOOL" == "xspec" ]]; then
-      echo "loading xspec";
-      echo $HEADAS;
-      # source ${HEADAS}/headas-init.sh;
-      # python -c 'import xspec';
+      echo "loading xspec from " $HEADAS;
+      source ${HEADAS}/headas-init.sh;
+      python -c 'import xspec';
     fi
   - popd
   - mkdir -p $HOME/Downloads/models
@@ -120,18 +119,25 @@ script:
   - rm *.nh
   - coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - coverage run -p ../../gal.py combined_src.pi
-#  - coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi
-#  - coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi
+  - if [[ "$TOOL" == "sherpa" ]]; then
+       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi
+    fi
+  - if [[ "$TOOL" == "xspec" ]]; then
+       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi
+       coverage run -p ../../autobackgroundmodel/fitbkg.py --help
+       coverage run -p ../../gal.py --help
+       coverage run -p ../../fixkeywords.py --help
+    fi
   - git checkout .
   - popd
 
   # testing xspec examples
-#  - |
-#    if [[ "$TOOL" == "xspec" ]]; then
-#      pushd examples/xspec;
-#      PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
-#      popd;
-#    fi
+  - |
+    if [[ "$TOOL" == "xspec" ]]; then
+      pushd examples/xspec;
+      PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
+      popd;
+    fi
   # testing sherpa examples
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
@@ -143,12 +149,12 @@ script:
       # PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
       popd;
     fi
-#  - |
-#    if [[ "$TOOL" == "sherpa" ]]; then
-#      pushd docker/testsrc;
-#      PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
-#      popd;
-#    fi
+  - |
+    if [[ "$TOOL" == "sherpa" ]]; then
+      pushd docker/testsrc;
+      PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
+      popd;
+    fi
   # upload coverage results
   - coverage combine examples/sherpa examples/xspec docker/testsrc .
 
