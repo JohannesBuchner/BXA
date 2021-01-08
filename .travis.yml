@@ -48,6 +48,7 @@ install:
       if ! ls -d $HOME/Downloads/ciao-install/bin/ciao_setup.sh; then
         echo "running ciao installer";
         echo $MYCACHE > ciao-installer-input;
+        rm -rf $HOME/Downloads/ciao-install/;
         mkdir -vp $HOME/Downloads/ciao-install;
         echo $HOME/Downloads/ciao-install >> ciao-installer-input;
         echo n >> ciao-installer-input;
