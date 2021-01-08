@@ -85,7 +85,6 @@ install:
         mkdir -p $MYCACHE/xspec-install/;
         ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install;
         ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
-        export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
         #./configure;
         #export HEADAS=`ls -d $MYCACHE/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
         popd;
@@ -93,9 +92,14 @@ install:
     fi
   - |
     if [[ "$TOOL" == "xspec" ]]; then
+      export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+      ls $HEADAS;
       echo "loading xspec from " $HEADAS;
+      find $HEADAS;
       source ${HEADAS}/headas-init.sh;
-      python -c 'import xspec';
+      echo "PYTHONPATH: $PYTHONPATH";
+      echo "PATH: $PATH";
+      python -c 'import xspec' || true;
     fi
   - popd
   - mkdir -p $HOME/Downloads/models
