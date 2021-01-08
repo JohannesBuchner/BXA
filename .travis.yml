@@ -30,6 +30,8 @@ before_cache:
 
 install:
   - sudo apt-get install -y python3-numpy python-numpy python3-dev
+  - which python || true
+  - which python3 || true
   - export MYCACHE=$HOME/Downloads/$TOOL
   - mkdir -p $MYCACHE
   - STARTTIME=$(date +%s)
@@ -103,7 +105,7 @@ install:
         ls heasoft*;
         ls;
         echo "compiling xspec";
-        sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline8 libreadline-dev;
+        sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
         ls heasoft*;
         XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
         #XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
@@ -137,7 +139,7 @@ install:
 
   - pip install requests corner astropy h5py cython coveralls coverage scipy
   - pip install ultranest
-  - python setup.py install
+  - python setup.py install --user
   - ENDTIME=$(date +%s)
   - echo "setup took $((ENDTIME - STARTTIME))s"
 
