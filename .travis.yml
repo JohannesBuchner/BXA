@@ -3,9 +3,6 @@ language: python
 os:
   - linux
 
-# use Ubuntu 20.04 for xspec compat
-dist: focal
-
 virtualenv:
   system_site_packages: true
 
