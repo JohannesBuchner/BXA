@@ -3,6 +3,9 @@ language: python
 os:
   - linux
 
+# use Ubuntu 20.04 for xspec compat
+dist: focal
+
 python:
   - "3.6"
 #  - "2.7"
@@ -76,7 +79,7 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "compiling xspec";
-      #apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-dev libblas3 libblas-dev
+      apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-dev libblas3 libblas-dev libreadline libreadline-dev
       ls heasoft*;
       #XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
       XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
