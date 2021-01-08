@@ -121,8 +121,8 @@ script:
   - coverage run -p ../../gal.py combined_src.pi
   - if [[ "$TOOL" == "sherpa" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi; fi
-  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py; fi
-  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../gal.py --help; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py || true; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../gal.py || true; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../fixkeywords.py; fi
   - git checkout .
   - popd
