@@ -26,6 +26,7 @@ before_cache:
 # mode=download src_other_specify= arch=ubuntu_2004 general=heasptools general=heagen xanadu=xspec
 
 install:
+  - sudo apt-get install -y python3-numpy python-numpy python3-dev
   - export MYCACHE=$HOME/Downloads/$TOOL
   - mkdir -p $MYCACHE
   - STARTTIME=$(date +%s)
@@ -101,7 +102,6 @@ install:
       export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
       ls $HEADAS;
       echo "loading xspec from " $HEADAS;
-      find $HEADAS;
       source ${HEADAS}/headas-init.sh;
       echo "PYTHONPATH: $PYTHONPATH";
       echo "PATH: $PATH";
@@ -115,7 +115,6 @@ install:
   - popd
 
 
-  - sudo apt-get install -y python3-numpy python-numpy
   - pip install requests corner astropy h5py cython coveralls coverage scipy
   - pip install ultranest
   - python setup.py install
