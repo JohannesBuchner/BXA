@@ -44,15 +44,24 @@ This is the method used in Buchner+14, Buchner+15, Simmonds+17.</p>
 <p>Features:</p>
 <ul class="simple">
 <li><p>Maximum information extraction in the low count regime, by Bayesian inference and background models.</p></li>
-<li><p>Provides robust uncertainty estimation of all parameters, including the
-* obscuring column density NH
-* Photon index Gamma
-* rest-frame, intrinsic accretion luminosity
-* etc.</p></li>
+<li><p>Provides robust uncertainty estimation of all parameters, including the</p>
+<ul>
+<li><p>obscuring column density NH</p></li>
+<li><p>Photon index Gamma</p></li>
+<li><p>rest-frame, intrinsic accretion luminosity</p></li>
+<li><p>etc.</p></li>
+</ul>
+</li>
 <li><p>Redshift can be fixed, unknown or come from a probability distribution (photo-z)</p></li>
-<li><p>Realistic nuclear obscurer model (UXCLUMPY) that fits objects in the local Universe well.</p></li>
+<li><p>Realistic nuclear obscurer model (UXCLUMPY) that</p>
+<ul>
+<li><p>extends to the highest, Compton-thick column densities</p></li>
+<li><p>is clumpy; does not confuse the line-of-sight inclination and viewing angle parameters</p></li>
+<li><p>fits objects in the local Universe well</p></li>
+</ul>
+</li>
 <li><p>Corrects for galactic absorption</p></li>
-<li><p>Optional: add an apec L&lt;10^42erg/s contamination component (set WITHAPEC=1)</p></li>
+<li><p>Optional: add an apec <span class="math notranslate nohighlight">\(L&lt;10^{42}\)</span> erg/s contamination component (set WITHAPEC=1)</p></li>
 <li><p>Can fit multiple observations simultaneously</p></li>
 </ul>
 <p>I strongly recommend using the <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py">xagnfitter</a>
