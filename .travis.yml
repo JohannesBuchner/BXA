@@ -119,15 +119,11 @@ script:
   - rm *.nh
   - coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - coverage run -p ../../gal.py combined_src.pi
-  - if [[ "$TOOL" == "sherpa" ]]; then
-       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi;
-    fi
-  - if [[ "$TOOL" == "xspec" ]]; then
-       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi;
-       coverage run -p ../../autobackgroundmodel/fitbkg.py --help;
-       coverage run -p ../../gal.py --help;
-       coverage run -p ../../fixkeywords.py --help;
-    fi
+  - [[ "$TOOL" == "sherpa" ]] && coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi
+  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi
+  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../autobackgroundmodel/fitbkg.py
+  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../gal.py --help
+  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../fixkeywords.py
   - git checkout .
   - popd
 
@@ -142,12 +138,14 @@ script:
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       pushd examples/sherpa;
+      # install interpolation code first
       ls -d /usr/local/lib/python*;
       sudo ln -s /usr/local/lib/python2.7/dist-packages/numpy/core/include/numpy /usr/include/numpy;
       ls /usr/include/numpy/;
       git clone https://github.com/JohannesBuchner/npyinterp.git;
       pushd npyinterp; make; popd;
-      # PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
+      # run examples
+      PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
       popd;
     fi
   - |

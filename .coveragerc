@@ -9,6 +9,8 @@ include =
         examples/*
         autobackgroundmodel/*
 
+omit = 
+        /home/travis/bin/
 
 [report]
 exclude_lines =
