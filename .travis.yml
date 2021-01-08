@@ -1,4 +1,4 @@
-language: python
+language: generic
 
 os:
   - linux
@@ -28,8 +28,6 @@ before_cache:
   - rm -f $HOME/Downloads/sherpa/ciao-install-*
   - rm -rf $HOME/Downloads/xspec/heasoft*/
 
-# mode=download src_other_specify= arch=ubuntu_2004 general=heasptools general=heagen xanadu=xspec
-
 install:
   - sudo apt-get install -y python3-numpy python-numpy python3-dev
   - export MYCACHE=$HOME/Downloads/$TOOL
@@ -51,6 +49,7 @@ install:
       conda create -q -n ciaoenv python=$TRAVIS_PYTHON_VERSION ultranest ciao sherpa coverage coveralls scipy matplotlib h5py astropy requests cython;
       source activate ciaoenv;
     fi
+################ CIAO/Sherpa #####################
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       echo "getting latest ciao installer url"; 
@@ -88,7 +87,7 @@ install:
       source $CIAO_INSTALL_DIR/bin/ciao.sh;
       source $CIAO_INSTALL_DIR/bin/ciao_setup.sh;
     fi
-
+################ HEASOFT/Xspec #####################
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "getting latest heasoft bundle";
@@ -128,6 +127,7 @@ install:
       python -c 'import xspec' || true;
     fi
   - popd
+################ Spectral Models #####################
   - mkdir -p $HOME/Downloads/models
   - pushd $HOME/Downloads/models
   - wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits
