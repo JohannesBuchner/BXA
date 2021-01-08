@@ -106,7 +106,7 @@ install:
   - popd
 
 
-  - sudo apt-get install -y python3-numpy
+  - sudo apt-get install -y python3-numpy python-numpy
   - pip install requests corner astropy h5py cython coveralls coverage scipy
   - pip install ultranest
   - python setup.py install
@@ -143,7 +143,7 @@ script:
     if [[ "$TOOL" == "sherpa" ]]; then
       pushd examples/sherpa;
       ls -d /usr/local/lib/python*;
-      sudo ln -s /usr/local/lib/python*/dist-packages/numpy/core/include/numpy /usr/include/numpy;
+      sudo ln -s /usr/local/lib/python2.7/dist-packages/numpy/core/include/numpy /usr/include/numpy;
       ls /usr/include/numpy/;
       git clone https://github.com/JohannesBuchner/npyinterp.git;
       pushd npyinterp; make; popd;
