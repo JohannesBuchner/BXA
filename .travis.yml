@@ -86,9 +86,9 @@ install:
       pushd $XSPEC_BUILD_DIR;
       mkdir -p $MYCACHE/xspec-install/;
       ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install;
-      ls $MYCACHE/xspec-install/heasoft-*/x86_64-pc-linux-gnu-libc*/;
+      ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
       export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
-      ./configure;
+      #./configure;
       #export HEADAS=`ls -d $MYCACHE/heasoft-*/x86_64-pc-linux-gnu-libc*/`;
       popd;
     fi
