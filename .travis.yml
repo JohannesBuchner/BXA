@@ -28,6 +28,7 @@ before_cache:
 install:
   - export MYCACHE=$HOME/Downloads/$TOOL
   - mkdir -p $MYCACHE
+  - STARTTIME=$(date +%s)
   - pushd $MYCACHE
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
@@ -108,6 +109,8 @@ install:
   - pip install requests corner astropy h5py cython coveralls coverage scipy
   - pip install ultranest
   - python setup.py install
+  - ENDTIME=$(date +%s)
+  - echo "setup took $((ENDTIME - STARTTIME))s"
 
 script:
   # testing scripts
@@ -129,7 +132,12 @@ script:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       pushd examples/xspec;
-      # PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
+      if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
+      then
+        PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
+      else
+        echo "skipping tests, setup was slow"
+      fi
       popd;
     fi
   # testing sherpa examples
@@ -143,13 +151,23 @@ script:
       git clone https://github.com/JohannesBuchner/npyinterp.git;
       pushd npyinterp; make; popd;
       # run examples
-      # PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
+      if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
+      then
+        PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
+      else
+        echo "skipping tests, setup was slow"
+      fi
       popd;
     fi
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       pushd docker/testsrc;
-      # PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
+      if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
+      then
+        PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
+      else
+        echo "skipping tests, setup was slow"
+      fi
       popd;
     fi
   # upload coverage results
