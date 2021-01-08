@@ -107,6 +107,7 @@ install:
   - popd
 
 
+  - sudo apt-get install -y python3-numpy
   - pip install requests corner astropy h5py cython coveralls coverage scipy
   - pip install ultranest
   - python setup.py install
