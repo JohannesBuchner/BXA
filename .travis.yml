@@ -22,7 +22,7 @@ cache:
     - $HOME/Downloads/models
 
 before_cache:
-  - rm -f $HOME/Downloads/ciao-install-*
+  - rm -f $HOME/Downloads/sherpa/ciao-install-*
 # mode=download src_other_specify= arch=ubuntu_2004 general=heasptools general=heagen xanadu=xspec
 
 install:
