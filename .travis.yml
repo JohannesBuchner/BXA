@@ -48,7 +48,7 @@ install:
       conda config --add channels conda-forge;
       conda update -q conda;
       conda info -a;
-      travis_wait conda create -q -n ciaoenv python=$TRAVIS_PYTHON_VERSION ultranest ciao sherpa coverage coveralls scipy matplotlib h5py astropy requests cython;
+      travis_wait conda create -q -n ciaoenv ultranest ciao sherpa coverage coveralls scipy matplotlib h5py astropy requests cython;
       source activate ciaoenv;
     fi
 ################ CIAO/Sherpa #####################
