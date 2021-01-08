@@ -42,10 +42,11 @@ install:
       source "$CONDADIR/etc/profile.d/conda.sh";
       hash -r;
       conda config --set always_yes yes --set changeps1 no;
+      conda config --add channels conda-forge;
       conda update -q conda;
       conda info -a;
-      conda create -q -n ciaoenv python=$TRAVIS_PYTHON_VERSION -c conda-forge ultranest ciao sherpa coverage coveralls scipy matplotlib h5py astropy requests cython;
-      conda activate ciaoenv;
+      conda create -q -n ciaoenv python=$TRAVIS_PYTHON_VERSION ultranest ciao sherpa coverage coveralls scipy matplotlib h5py astropy requests cython;
+      source activate ciaoenv;
     fi
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
