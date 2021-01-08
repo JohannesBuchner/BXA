@@ -9,14 +9,21 @@ Features:
 
 * Maximum information extraction in the low count regime, by Bayesian inference and background models.
 * Provides robust uncertainty estimation of all parameters, including the
+
   * obscuring column density NH
   * Photon index Gamma
   * rest-frame, intrinsic accretion luminosity
   * etc.
+
 * Redshift can be fixed, unknown or come from a probability distribution (photo-z)
-* Realistic nuclear obscurer model (UXCLUMPY) that fits objects in the local Universe well.
+* Realistic nuclear obscurer model (UXCLUMPY) that 
+
+  * extends to the highest, Compton-thick column densities
+  * is clumpy; does not confuse the line-of-sight inclination and viewing angle parameters
+  * fits objects in the local Universe well
+
 * Corrects for galactic absorption
-* Optional: add an apec L<10^42erg/s contamination component (set WITHAPEC=1)
+* Optional: add an apec :math:`L<10^{42}` erg/s contamination component (set WITHAPEC=1)
 * Can fit multiple observations simultaneously
 
 I strongly recommend using the `xagnfitter <https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py>`_
