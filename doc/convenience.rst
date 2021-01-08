@@ -14,7 +14,8 @@ script adjusts the keywords::
 
 	fixkeywords.py src.pi bkg.pi rmf.rmf arf.arf
 
-
+This also fixes ARF/RMF that start the energy bounds at zero (which is invalid)
+instead of a small number.
 
 Galactic absorption
 ----------------------------
