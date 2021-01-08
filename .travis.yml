@@ -37,8 +37,9 @@ install:
   - |
     if [[ "$TOOL" == "sherpa-conda" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      bash miniconda.sh -b -p $MYCACHE;
-      source "$MYCACHE/etc/profile.d/conda.sh";
+      CONDADIR=$MYCACHE/miniconda;
+      bash miniconda.sh -b -p $CONDADIR;
+      source "$CONDADIR/etc/profile.d/conda.sh";
       hash -r;
       conda config --set always_yes yes --set changeps1 no;
       conda update -q conda;
@@ -73,6 +74,7 @@ install:
         cat ciao-installer-input;
         bash ciao-install < ciao-installer-input;
       fi
+      ls $HOME/Downloads/ciao-install/;
       CIAO_INSTALL_DIR=`ls -d $HOME/Downloads/ciao-install/ciao-*/`;
       echo "install dir is: $CIAO_INSTALL_DIR";
     fi
@@ -93,7 +95,7 @@ install:
     if [[ "$TOOL" == "xspec" ]]; then
       echo "unpacking heasoft";
       if ! ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/; then
-        rm -rf heasoft*/
+        rm -rf heasoft*/;
         tar -xzf heasoft-src.tar.gz;
         ls heasoft*;
         ls;
