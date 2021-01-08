@@ -1,4 +1,4 @@
-#language: python
+language: python
 
 os:
   - linux
@@ -6,8 +6,11 @@ os:
 # use Ubuntu 20.04 for xspec compat
 dist: focal
 
-#python:
-#  - "3.6"
+virtualenv:
+  system_site_packages: true
+
+python:
+  - "3.6"
 #  - "2.7"
 
 env:
