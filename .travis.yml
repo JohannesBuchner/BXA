@@ -119,11 +119,11 @@ script:
   - rm *.nh
   - coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - coverage run -p ../../gal.py combined_src.pi
-  - [[ "$TOOL" == "sherpa" ]] && coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi
-  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi
-  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../autobackgroundmodel/fitbkg.py
-  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../gal.py --help
-  - [[ "$TOOL" == "xspec" ]] && coverage run -p ../../fixkeywords.py
+  - if [[ "$TOOL" == "sherpa" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../gal.py --help; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../fixkeywords.py; fi
   - git checkout .
   - popd
 
