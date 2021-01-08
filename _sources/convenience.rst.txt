@@ -1,6 +1,8 @@
 Convenience features
 =======================================
 
+.. contents:: :local:
+
 Fixing FITS keywords
 ----------------------------
 
@@ -54,3 +56,20 @@ Xspec chain files
 BXA, when run from pyxspec, also provides chain fits file compatible with the
 mcmc feature in xspec/pyxspec. xspec error propagation tools can thus be used
 after a BXA fit.
+
+
+Parallelisation
+---------------------------
+
+BXA supports parallelisation with MPI (Message Passing Interface).
+This allows scaling the inference from laptops all the way to computing clusters.
+
+To use it, install mpi4py and run your python script with mpiexec.
+
+No modifications of your scripts are needed. However, you may want to 
+run plotting and other post-analysis only on rank 0.
+
+Analysis of many data sets, or of many models are trivial to parallelise.
+If your script accepts a command line argument, unix tools such as
+"make -j 10" and "xargs --max-args 1 --max-procs 10" 
+can help run your code in parallel.

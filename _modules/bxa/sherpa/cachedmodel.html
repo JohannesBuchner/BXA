@@ -55,7 +55,9 @@
 
 
 <div class="viewcode-block" id="VariableCachedModel"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.cachedmodel.VariableCachedModel">[docs]</a><span class="k">class</span> <span class="nc">VariableCachedModel</span><span class="p">(</span><span class="n">CompositeModel</span><span class="p">,</span> <span class="n">ArithmeticModel</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Wrapper that caches the most recent model call.&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">othermodel</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;*othermodel* can be any sherpa model&quot;&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">othermodel</span> <span class="o">=</span> <span class="n">othermodel</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">lastp</span> <span class="o">=</span> <span class="kc">None</span>
@@ -81,7 +83,9 @@
 		<span class="n">CompositeModel</span><span class="o">.</span><span class="n">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="CachedModel"><a class="viewcode-back" href="../../../convenience.html#bxa.sherpa.cachedmodel.CachedModel">[docs]</a><span class="k">class</span> <span class="nc">CachedModel</span><span class="p">(</span><span class="n">CompositeModel</span><span class="p">,</span> <span class="n">ArithmeticModel</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Wrapper that caches the first model call forever.&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">othermodel</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;*othermodel* can be any sherpa model&quot;&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">othermodel</span> <span class="o">=</span> <span class="n">othermodel</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="n">CompositeModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;cached(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">othermodel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="p">(</span><span class="n">othermodel</span><span class="p">,))</span>

@@ -38,8 +38,17 @@
             
   <div class="section" id="convenience-features">
 <h1>Convenience features<a class="headerlink" href="#convenience-features" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#fixing-fits-keywords" id="id1">Fixing FITS keywords</a></p></li>
+<li><p><a class="reference internal" href="#galactic-absorption" id="id2">Galactic absorption</a></p></li>
+<li><p><a class="reference internal" href="#accelerating-slow-models" id="id3">Accelerating slow models</a></p></li>
+<li><p><a class="reference internal" href="#xspec-chain-files" id="id4">Xspec chain files</a></p></li>
+<li><p><a class="reference internal" href="#parallelisation" id="id5">Parallelisation</a></p></li>
+</ul>
+</div>
 <div class="section" id="fixing-fits-keywords">
-<h2>Fixing FITS keywords<a class="headerlink" href="#fixing-fits-keywords" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">Fixing FITS keywords</a><a class="headerlink" href="#fixing-fits-keywords" title="Permalink to this headline">¶</a></h2>
 <p>Source, background, ARF and RMF files should reference each other
 by FITS header keywords.</p>
 <p>The <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/fixkeywords.py">fixkeywords.py</a>
@@ -49,7 +58,7 @@ script adjusts the keywords:</p>
 </div>
 </div>
 <div class="section" id="galactic-absorption">
-<h2>Galactic absorption<a class="headerlink" href="#galactic-absorption" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Galactic absorption</a><a class="headerlink" href="#galactic-absorption" title="Permalink to this headline">¶</a></h2>
 <p>The galactic column density in the direction of the source is often needed.
 <a class="reference external" href="https://www.swift.ac.uk/analysis/nhtot/donhtot.php">https://www.swift.ac.uk/analysis/nhtot/donhtot.php</a> provides a look-up service.</p>
 <p>The <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/gal.py">gal.py</a>
@@ -61,14 +70,16 @@ script fetches the value from there:</p>
 <p>You can also give this script multiple spectral files and it avoids duplicate requests.</p>
 </div>
 <div class="section" id="accelerating-slow-models">
-<h2>Accelerating slow models<a class="headerlink" href="#accelerating-slow-models" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Accelerating slow models</a><a class="headerlink" href="#accelerating-slow-models" title="Permalink to this headline">¶</a></h2>
 <p>Some models are very slow (such as convolutions).
 It is worthwhile to cache them or produce interpolation grids.</p>
 <p>For Sherpa, caching of arbitrary models is provided by CachedModel, which you can use as a wrapper:</p>
 <dl class="py class">
 <dt>
 <em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.cachedmodel.</code><code class="sig-name descname">CachedModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">othermodel</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
+<dd><p>Wrapper that caches the first model call forever.</p>
+<p><em>othermodel</em> can be any sherpa model</p>
+</dd></dl>
 
 <p>Automatic production of an interpolation model is possible with the RebinnedModel:</p>
 <dl class="py class">
@@ -78,10 +89,22 @@ It is worthwhile to cache them or produce interpolation grids.</p>
 
 </div>
 <div class="section" id="xspec-chain-files">
-<h2>Xspec chain files<a class="headerlink" href="#xspec-chain-files" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Xspec chain files</a><a class="headerlink" href="#xspec-chain-files" title="Permalink to this headline">¶</a></h2>
 <p>BXA, when run from pyxspec, also provides chain fits file compatible with the
 mcmc feature in xspec/pyxspec. xspec error propagation tools can thus be used
 after a BXA fit.</p>
+</div>
+<div class="section" id="parallelisation">
+<h2><a class="toc-backref" href="#id5">Parallelisation</a><a class="headerlink" href="#parallelisation" title="Permalink to this headline">¶</a></h2>
+<p>BXA supports parallelisation with MPI (Message Passing Interface).
+This allows scaling the inference from laptops all the way to computing clusters.</p>
+<p>To use it, install mpi4py and run your python script with mpiexec.</p>
+<p>No modifications of your scripts are needed. However, you may want to
+run plotting and other post-analysis only on rank 0.</p>
+<p>Analysis of many data sets, or of many models are trivial to parallelise.
+If your script accepts a command line argument, unix tools such as
+“make -j 10” and “xargs –max-args 1 –max-procs 10”
+can help run your code in parallel.</p>
 </div>
 </div>
 
@@ -111,6 +134,7 @@ after a BXA fit.</p>
 <li class="toctree-l2"><a class="reference internal" href="#galactic-absorption">Galactic absorption</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#accelerating-slow-models">Accelerating slow models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#xspec-chain-files">Xspec chain files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parallelisation">Parallelisation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
