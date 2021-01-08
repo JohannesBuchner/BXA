@@ -136,7 +136,8 @@ script:
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
       pushd examples/sherpa;
-      sudo ln -s  /usr/local/lib/python2.7/dist-packages/numpy/core/include/numpy /usr/include/numpy
+      ls -d /usr/local/lib/python*;
+      sudo ln -s /usr/local/lib/python*/dist-packages/numpy/core/include/numpy /usr/include/numpy
       git clone https://github.com/JohannesBuchner/npyinterp.git;
       pushd npyinterp; make; popd;
       # PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
