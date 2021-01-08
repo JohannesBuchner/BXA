@@ -14,10 +14,12 @@ env:
   - TOOL=xspec
 #  - TOOL=xspec-docker
   - TOOL=sherpa
+  - TOOL=sherpa-conda
 
 cache:
   directories:
     - $HOME/Downloads/sherpa
+    - $HOME/Downloads/sherpa-conda
     - $HOME/Downloads/xspec
     - $HOME/Downloads/models
     - $HOME/Downloads/ciao-install
@@ -33,6 +35,18 @@ install:
   - STARTTIME=$(date +%s)
   - pushd $MYCACHE
   - |
+    if [[ "$TOOL" == "sherpa-conda" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+      bash miniconda.sh -b -p $MYCACHE;
+      source "$MYCACHE/etc/profile.d/conda.sh";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      conda update -q conda;
+      conda info -a;
+      conda create -q -n ciaoenv python=$TRAVIS_PYTHON_VERSION -c conda-forge ultranest ciao sherpa coverage coveralls scipy matplotlib h5py astropy requests cython;
+      conda activate ciaoenv;
+    fi
+  - |
     if [[ "$TOOL" == "sherpa" ]]; then
       echo "getting latest ciao installer url"; 
       CIAO_INSTALL_URL=$(wget -q -O - https://cxc.cfa.harvard.edu/ciao/download/ciao_install.html|grep -o '[^"]*_install.cgi?standard=true');
@@ -45,7 +59,7 @@ install:
     fi
   - |
     if [[ "$TOOL" == "sherpa" ]]; then
-      if ! ls -d $HOME/Downloads/ciao-install/bin/ciao_setup.sh; then
+      if ! ls -d $HOME/Downloads/ciao-install/ciao-*/bin/ciao_setup.sh; then
         echo "running ciao installer";
         echo $MYCACHE > ciao-installer-input;
         rm -rf $HOME/Downloads/ciao-install/;
@@ -59,7 +73,7 @@ install:
         cat ciao-installer-input;
         bash ciao-install < ciao-installer-input;
       fi
-      CIAO_INSTALL_DIR=`ls -d $HOME/Downloads/ciao-install/bin/ciao*`;
+      CIAO_INSTALL_DIR=`ls -d $HOME/Downloads/ciao-install/ciao-*/`;
       echo "install dir is: $CIAO_INSTALL_DIR";
     fi
   - |
