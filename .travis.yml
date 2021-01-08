@@ -9,8 +9,8 @@ dist: focal
 virtualenv:
   system_site_packages: true
 
-python:
-  - "3.6"
+#python:
+#  - "3.6"
 #  - "2.7"
 
 env:
