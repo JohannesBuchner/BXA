@@ -46,11 +46,15 @@ install:
       if ! ls -d $MYCACHE/ciao-install/bin/ciao_setup.sh; then
         echo "running ciao installer";
         echo $MYCACHE > ciao-installer-input;
-        mkdir -p $MYCACHE/ciao-install/;
+        rm -vrf $MYCACHE/ciao-install/;
+        mkdir -vp $MYCACHE/ciao-install/;
         echo $MYCACHE/ciao-install/ >> ciao-installer-input;
         echo n >> ciao-installer-input;
         echo n >> ciao-installer-input;
         echo n >> ciao-installer-input;
+        echo n >> ciao-installer-input;
+        echo n >> ciao-installer-input;
+        cat ciao-installer-input;
         bash ciao-install < ciao-installer-input;
       fi
       CIAO_INSTALL_DIR=`ls -d $MYCACHE/ciao-install/bin/ciao*`;
