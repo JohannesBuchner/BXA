@@ -95,8 +95,8 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "loading xspec from " $HEADAS;
-      source ${HEADAS}/headas-init.sh;
-      python -c 'import xspec';
+      # source ${HEADAS}/headas-init.sh;
+      # python -c 'import xspec';
     fi
   - popd
   - mkdir -p $HOME/Downloads/models
@@ -135,7 +135,7 @@ script:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       pushd examples/xspec;
-      PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
+      # PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
       popd;
     fi
   # testing sherpa examples
