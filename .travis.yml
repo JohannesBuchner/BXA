@@ -40,15 +40,16 @@ install:
     if [[ "$TOOL" == "sherpa-conda" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
       CONDADIR=$MYCACHE/miniconda;
+      rm -rf $CONDADIR
       bash miniconda.sh -b -p $CONDADIR;
       source "$CONDADIR/etc/profile.d/conda.sh";
       hash -r;
       conda config --set always_yes yes --set changeps1 no;
-      conda config --add channels https://cxc.cfa.harvard.edu/conda/ciao
-      conda config --add channels conda-forge;
       conda update -q conda;
       conda info -a;
-      travis_wait conda create -q -n ciaoenv ultranest ciao sherpa coverage coveralls scipy matplotlib h5py astropy requests cython;
+      conda create -n ciaoenv -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa
+      conda config --add channels conda-forge;
+      conda install ultranest coverage coveralls scipy matplotlib h5py astropy requests cython;
       source activate ciaoenv;
     fi
 ################ CIAO/Sherpa #####################
