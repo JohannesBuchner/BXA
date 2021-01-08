@@ -13,7 +13,7 @@ virtualenv:
 env:
   - TOOL=xspec
 #  - TOOL=xspec-docker
-  - TOOL=sherpa
+#  - TOOL=sherpa
   - TOOL=sherpa-conda
 
 cache:
@@ -186,7 +186,7 @@ script:
     fi
   # testing sherpa examples
   - |
-    if [[ "$TOOL" == "sherpa" ]]; then
+    if [[ "$TOOL" == "sherpa" ]] || [[ "$TOOL" == "sherpa-conda" ]]; then
       pushd examples/sherpa;
       # install interpolation code first
       ls -d /usr/local/lib/python*;
@@ -204,7 +204,7 @@ script:
       popd;
     fi
   - |
-    if [[ "$TOOL" == "sherpa" ]]; then
+    if [[ "$TOOL" == "sherpa" ]] || [[ "$TOOL" == "sherpa-conda" ]]; then
       pushd docker/testsrc;
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
