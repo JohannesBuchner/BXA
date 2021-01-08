@@ -79,7 +79,7 @@ install:
   - |
     if [[ "$TOOL" == "xspec" ]]; then
       echo "compiling xspec";
-      sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-dev libblas3 libblas-dev libreadline libreadline-dev
+      sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-dev libblas3 libblas-dev libreadline libreadline-dev;
       ls heasoft*;
       XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
       #XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
@@ -120,13 +120,13 @@ script:
   - coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - coverage run -p ../../gal.py combined_src.pi
   - if [[ "$TOOL" == "sherpa" ]]; then
-       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi
+       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi;
     fi
   - if [[ "$TOOL" == "xspec" ]]; then
-       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi
-       coverage run -p ../../autobackgroundmodel/fitbkg.py --help
-       coverage run -p ../../gal.py --help
-       coverage run -p ../../fixkeywords.py --help
+       coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi;
+       coverage run -p ../../autobackgroundmodel/fitbkg.py --help;
+       coverage run -p ../../gal.py --help;
+       coverage run -p ../../fixkeywords.py --help;
     fi
   - git checkout .
   - popd
@@ -143,7 +143,7 @@ script:
     if [[ "$TOOL" == "sherpa" ]]; then
       pushd examples/sherpa;
       ls -d /usr/local/lib/python*;
-      sudo ln -s /usr/local/lib/python*/dist-packages/numpy/core/include/numpy /usr/include/numpy
+      sudo ln -s /usr/local/lib/python*/dist-packages/numpy/core/include/numpy /usr/include/numpy;
       git clone https://github.com/JohannesBuchner/npyinterp.git;
       pushd npyinterp; make; popd;
       # PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
