@@ -11,6 +11,9 @@ include =
 
 omit = 
         /home/travis/bin/
+        /home/travis/.local/
+        /home/travis/Downloads/
+        /usr/
 
 [report]
 exclude_lines =

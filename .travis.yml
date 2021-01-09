@@ -143,7 +143,6 @@ install:
 
   - pip3 install requests corner astropy h5py cython coveralls coverage scipy tqdm
   - pip3 install ultranest
-  - python3 setup.py install --user
   - ENDTIME=$(date +%s)
   - echo "setup took $((ENDTIME - STARTTIME))s"
 
@@ -168,7 +167,7 @@ script:
   - rm *.nh
   - coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - coverage run -p ../../gal.py combined_src.pi
-  - if [[ "$TOOL" == "sherpa" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py || true; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../gal.py || true; fi
@@ -219,6 +218,7 @@ script:
       popd;
     fi
   # upload coverage results
+  - coverage run -p setup.py install --user
   - coverage combine examples/sherpa examples/xspec docker/testsrc .
 
 after_success: coveralls
