@@ -4,16 +4,10 @@
 
 [run]
 branch = True
-include = 
-        bxa/*
-        examples/*
-        autobackgroundmodel/*
-
-omit = 
-        /home/travis/bin/
-        /home/travis/.local/
-        /home/travis/Downloads/
-        /usr/
+source = 
+    bxa
+    examples
+    autobackgroundmodel
 
 [report]
 exclude_lines =
