@@ -140,7 +140,7 @@ install:
   - popd
 ################ Spectral Models #####################
 
-  - pip3 install requests corner astropy h5py cython coveralls coverage scipy
+  - pip3 install requests corner astropy h5py cython coveralls coverage scipy tqdm
   - pip3 install ultranest
   - python3 setup.py install --user
   - ENDTIME=$(date +%s)
