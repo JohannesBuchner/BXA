@@ -29,7 +29,7 @@ before_cache:
   - rm -rf $HOME/Downloads/xspec/heasoft*/
 
 install:
-  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip
+  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools
   - sudo pip3 install --upgrade pip
   - which python || true
   - which python3 || true
