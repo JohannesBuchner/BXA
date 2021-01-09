@@ -219,7 +219,7 @@ script:
     fi
   # upload coverage results
   - python3 setup.py install --user
-  - wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover*
+  - wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
   - coverage combine examples/sherpa examples/xspec docker/testsrc .
 
 after_success: coveralls
