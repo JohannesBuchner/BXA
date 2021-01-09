@@ -161,6 +161,9 @@ install:
 
 script:
   # testing scripts
+  - cp .coveragerc docker/testsrc
+  - cp .coveragerc examples/sherpa
+  - cp .coveragerc examples/xspec
   - pushd docker/testsrc
   - 'echo "backend: Agg" > matplotlibrc'
   - ls 
