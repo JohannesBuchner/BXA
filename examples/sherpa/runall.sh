@@ -1,4 +1,4 @@
-export PYTHONPATH=../../:$PYTHONPATH:../../npyinterp/ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../npyinterp/ 
+# export PYTHONPATH=../../:$PYTHONPATH:../../npyinterp/ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../npyinterp/ 
 
 echo 1.680000e+20 > swift/interval0pc.pi.nh
 

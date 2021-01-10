@@ -141,8 +141,12 @@ install:
   - popd
 ################ Spectral Models #####################
 
-  - pip3 install requests corner astropy h5py cython coveralls coverage scipy tqdm
-  - pip3 install ultranest
+  - |
+    if [[ "$TOOL" != "sherpa-conda" ]]; then
+      sudo pip3 install requests corner astropy h5py cython coveralls coverage scipy tqdm
+      sudo pip3 install ultranest
+    fi
+  - which coveralls
   - ENDTIME=$(date +%s)
   - echo "setup took $((ENDTIME - STARTTIME))s"
 
@@ -224,5 +228,6 @@ script:
   - python3 setup.py install --user
   - wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
   - coverage combine examples/sherpa examples/xspec docker/testsrc .
+  - coverage report || true
 
 after_success: coveralls
