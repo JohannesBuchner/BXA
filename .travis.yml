@@ -230,4 +230,9 @@ script:
   - coverage combine examples/sherpa examples/xspec docker/testsrc .
   - coverage report || true
 
-after_success: coveralls
+after_success: 
+  - |
+    if [[ "$TOOL" == "sherpa-conda" ]]; then
+      conda activate ciaoenv;
+    fi
+  - coveralls
