@@ -33,6 +33,20 @@ BXA shines especially
 * when you don't want to babysit your fits
 * when you don't want to test MCMC chains for their convergence
 
+.. image:: https://img.shields.io/pypi/v/BXA.svg
+        :target: https://pypi.python.org/pypi/BXA
+
+.. image:: https://coveralls.io/repos/github/JohannesBuchner/BXA/badge.svg
+        :target: https://coveralls.io/github/JohannesBuchner/BXA
+
+.. image:: https://img.shields.io/badge/docs-published-ok.svg
+        :target: https://johannesbuchner.github.io/BXA/
+        :alt: Documentation Status
+
+.. image:: https://img.shields.io/badge/GitHub-JohannesBuchner%2FUltraNest-blue.svg?style=flat
+        :target: https://github.com/JohannesBuchner/UltraNest/
+        :alt: Github repository
+
 Who is using BXA?
 -------------------------------
 
@@ -56,7 +70,7 @@ Installation
 
 First, you need to have `Sherpa`_ or `Xspec`_ installed and its environment loaded.
 
-BXA itself can installed easily using pip::
+BXA itself can installed easily using pip or conda::
 
 	$ pip install bxa
 
