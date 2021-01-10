@@ -4,10 +4,10 @@
 
 [run]
 branch = True
-source = 
-    bxa
-    examples
-    autobackgroundmodel
+#source = 
+#    bxa
+#    examples
+#    autobackgroundmodel
 
 [report]
 exclude_lines =
