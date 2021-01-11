@@ -32,7 +32,6 @@ For example:
    :lines: 13-27
 
 See `examples/xspec/example_simplest.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py>`_ for a simple example. 
-`examples/xspec/example_simplest.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py>`_ 
 `examples/xspec/example_advanced_priors.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_advanced_priors.py>`_ introduces more complex and custom priors.
 
 .. _xspec-run:
