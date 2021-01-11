@@ -43,8 +43,8 @@ BXA shines especially
         :target: https://johannesbuchner.github.io/BXA/
         :alt: Documentation Status
 
-.. image:: https://img.shields.io/badge/GitHub-JohannesBuchner%2FUltraNest-blue.svg?style=flat
-        :target: https://github.com/JohannesBuchner/UltraNest/
+.. image:: https://img.shields.io/badge/GitHub-JohannesBuchner%2FBXA-blue.svg?style=flat
+        :target: https://github.com/JohannesBuchner/BXA/
         :alt: Github repository
 
 Who is using BXA?
