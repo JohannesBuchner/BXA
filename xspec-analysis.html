@@ -97,7 +97,6 @@ The Gaussian prior weights by a Gaussian in the parameter.</p>
 </pre></div>
 </div>
 <p>See <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py">examples/xspec/example_simplest.py</a> for a simple example.
-<a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py">examples/xspec/example_simplest.py</a>
 <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_advanced_priors.py">examples/xspec/example_advanced_priors.py</a> introduces more complex and custom priors.</p>
 </div>
 <div class="section" id="running-the-analysis">
@@ -170,12 +169,12 @@ see <a class="reference external" href="https://corner.readthedocs.io/en/latest/
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="figure align-default" id="id2">
+<div class="figure align-default" id="id1">
 <img alt="_images/absorbed-convolved_posterior.png" src="_images/absorbed-convolved_posterior.png" />
 <p class="caption"><span class="caption-text">Example of the convolved spectrum with data.
 For each posterior sample (solution), the parameters are taken and put
 through the model. All such lines are plotted. Where the region is darker,
-more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 <div class="legend">
 <p>The data points are adaptively binned to contain at least 20 counts.
 The error bars are created by asking: which model count rate can produce
@@ -217,12 +216,12 @@ and if it reaches below <span class="math notranslate nohighlight">\(10^{-6}\)</
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="figure align-default" id="id3">
+<div class="figure align-default" id="id2">
 <img alt="_images/absorbed-unconvolved_posterior.png" src="_images/absorbed-unconvolved_posterior.png" />
 <p class="caption"><span class="caption-text">Example of the unconvolved spectrum.
 For each posterior sample (solution), the parameters are taken and put
 through the model. All such lines are plotted. Where the region is darker,
-more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p>For plotting the model parameters found against the data, use these functions.</p>
 <dl class="py method">
