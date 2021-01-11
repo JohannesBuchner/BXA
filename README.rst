@@ -50,15 +50,17 @@ BXA shines especially
 Who is using BXA?
 -------------------------------
 
-* Dr. Antonis Georgakakis (NOA, Athens)
+* Dr. Antonis Georgakakis, Dr. Angel Ruiz (NOA, Athens)
 * Dr. Mike Anderson (MPA, Munich)
-* Dr. Franz Bauer, Charlotte Simmonds (PUC, Santiago)
-* Dr. Stéphane Paltani (ISDC, Geneva)
+* Dr. Franz Bauer, Charlotte Simmonds (PUC, Jonathan Quirola Vásquez, Santiago)
+* Dr. Stéphane Paltani, Dr. Carlo Ferrigno (ISDC, Geneva)
 * Dr. Zhu Liu (NAO, Beijing)
 * Dr. Georgios Vasilopoulos (Yale, New Haven)
 * Dr. Francesca Civano, Dr. Aneta Siemiginowska (CfA/SAO, Cambridge)
 * Dr. Teng Liu, Adam Malyali, Riccardo Arcodia, Sophia Waddell, ... (MPE, Garching)
-* and you?
+* Sibasish Laha, Dr. Alex Markowitz (UCSD, San Diego)
+* Dr. Arash Bahramian (MSU, East Lansing)
+* and `you <https://ui.adsabs.harvard.edu/search/q=citations(bibcode%3A2014A%26A...564A.125B)%20full%3A%22BXA%22&sort=date%20desc%2C%20bibcode%20desc&p_=0>`_?
 
 Documentation
 ----------------
