@@ -110,13 +110,13 @@ def get_identity_response(i):
 		return lambda model: IdentityResponse(n, model, arf=arf, rmf=rmf)
 	except:
 		return lambda model: IdentityRMF(n, model, rmf=rmf)
-	
+
 
 
 logf = logging.getLogger('bxa.Fitter')
 logf.setLevel(logging.INFO)
 
-# Model 
+# Model
 class PCAModel(ArithmeticModel):
 	def __init__(self, modelname, data):
 		self.U = data['U']
@@ -125,24 +125,24 @@ class PCAModel(ArithmeticModel):
 		self.s = data['values']
 		self.ilo = data['ilo']
 		self.ihi = data['ihi']
-		
+
 		p0 = Parameter(modelname=modelname, name='lognorm', val=1, min=-5, max=20,
 			hard_min=-100, hard_max=100)
 		pars = [p0]
 		for i in range(len(self.s)):
-			pi = Parameter(modelname=modelname, name='PC%d' % (i+1), 
+			pi = Parameter(modelname=modelname, name='PC%d' % (i+1),
 				val=0, min=-20, max=20,
 				hard_min=-1e300, hard_max=1e300)
 			pars.append(pi)
 		super(ArithmeticModel, self).__init__(modelname, pars=pars)
-	
+
 	def calc(self, p, left, right, *args, **kwargs):
 		try:
 			lognorm = p[0]
 			pars = numpy.array(p[1:])
 			y = numpy.array(pars * self.V.T + self.mean).flatten()
 			cts = (10**y - 1) * 10**lognorm
-			
+
 			out = left * 0.0
 			out[self.ilo:self.ihi] = cts.cumsum()
 			return out
@@ -188,18 +188,18 @@ class GaussModel(ArithmeticModel):
 class PCAFitter(object):
 	"""Fitter mixing PCA-based templates and gaussian lines """
 	def __init__(self, id=None):
-		""" 
+		"""
 		id: which data id to fit
-		
+
 		filename: prefix for where to store background information
-		
+
 		load: whether the background file should be loaded now
 		"""
 		self.id = id
 		logf.info('PCAFitter(for ID=%s)' % (id))
 		hdr = get_bkg(id).header
 		self.ndata = len(get_bkg(id).counts)
-		
+
 		telescope = hdr.get('TELESCOP','')
 		instrument = hdr.get('INSTRUME', '')
 		if telescope == '' and instrument == '':
@@ -214,14 +214,14 @@ class PCAFitter(object):
 				self.load(filename)
 				return
 		raise Exception('ERROR: Could not load PCA components for this detector (%s %s, %d channels). Try the SingleFitter instead.' % (telescope, instrument, self.ndata))
-	
+
 	def load(self, filename):
 		logf.info('loading PCA information from %s' % (filename))
 		data = json.load(open(filename))
 		self.pca = dict()
 		for k, v in data.items():
 			self.pca[k] = numpy.array(v)
-	
+
 	def decompose(self):
 		ilo = int(self.pca['ilo'])
 		ihi = int(self.pca['ihi'])
@@ -239,17 +239,17 @@ class PCAFitter(object):
 		assert z.shape == (1,len(s)), z.shape
 		z = z.tolist()[0]
 		return numpy.array([numpy.log10(ncts + 0.1)] + z)
-	
+
 	def calc_bkg_stat(self):
 		ss = [s for s in get_stat_info() if self.id in s.ids and s.bkg_ids is not None and len(s.bkg_ids) > 0]
 		if len(ss) != 1:
 			for s in get_stat_info():
 				if self.id in s.ids and len(s.bkg_ids) > 0:
 					print('get_stat_info returned: ids=%s bkg_ids=%s' % (s.ids, s.bkg_ids))
-		
+
 		assert len(ss) == 1
 		return ss[0].statval
-		
+
 	def fit(self):
 		# try a PCA decomposition of this spectrum
 		logf.info('fitting background of ID=%s using PCA method' % (self.id))
@@ -272,7 +272,7 @@ class PCAFitter(object):
 		logf.info('fit: parameters: %s' % (final))
 		initial_v = self.calc_bkg_stat()
 		logf.info('fit: stat: %s' % (initial_v))
-		
+
 		# lets try from zero
 		logf.info('fit: second full fit from zero')
 		for p in bkgmodel.pars:
@@ -281,7 +281,7 @@ class PCAFitter(object):
 		initial_v0 = self.calc_bkg_stat()
 		logf.info('fit: parameters: %s' % (final))
 		logf.info('fit: stat: %s' % (initial_v0))
-		
+
 		# pick the better starting point
 		if initial_v0 < initial_v:
 			logf.info('fit: using zero-fit')
@@ -291,7 +291,7 @@ class PCAFitter(object):
 			logf.info('fit: using decomposed-fit')
 			for p, v in zip(bkgmodel.pars, final):
 				p.val = v
-		
+
 		# start with the full fit and remove(freeze) parameters
 		print('%d parameters, stat=%.2f' % (len(initial), initial_v))
 		results = [(2 * len(final) + initial_v, final, len(final), initial_v)]
@@ -303,7 +303,7 @@ class PCAFitter(object):
 			v = self.calc_bkg_stat()
 			print('--> %d parameters, stat=%.2f' % (i, v))
 			results.insert(0, (v + 2*i, final, i, v))
-		
+
 		print()
 		print('Background PCA fitting AIC results:')
 		print('-----------------------------------')
@@ -316,7 +316,7 @@ class PCAFitter(object):
 			p.val = v
 		for i in range(nparams):
 			bkgmodel.pars[i].thaw()
-		
+
 		print()
 		print('Increasing parameters again...')
 		# now increase the number of parameters again
@@ -340,12 +340,12 @@ class PCAFitter(object):
 			# stop if we are 3 parameters ahead what we needed
 			if next_nparams >= last_nparams + 3:
 				break
-			
+
 		print('Final choice: %d parameters, aic=%.2f' % (last_nparams, last_aic))
 		# reset to the last good solution
 		for p, v in zip(bkgmodel.pars, last_final):
 			p.val = v
-		
+
 		last_model = convbkgmodel
 		for i in range(10):
 			print()
@@ -369,7 +369,7 @@ class PCAFitter(object):
 			#e = x[i]
 			power = diff_rate[i]
 			# lets try to inject a gaussian there
-		
+
 			g = xsgaussian('g_%d_%d' % (id, i))
 			print('placing gaussian at %.2fkeV, with power %s' % (e, power))
 			# we work in energy bins, not energy
@@ -404,7 +404,7 @@ class PCAFitter(object):
 				for p, v in zip(last_model.pars, last_final):
 					p.val = v
 				break
-	
+
 def auto_background(id):
 	"""Automatically fits background *id* based on PCA-based templates,
 	and additional gaussian lines as needed by AIC."""
@@ -419,6 +419,6 @@ def auto_background(id):
 	m = get_bkg_fit_plot(id)
 	numpy.savetxt('test_bkg.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
 	return get_bkg_model(id)
-	
 
-__all__ = ['PCAFitter', 'PCAModel', 'auto_background']
+
+__all__ = ['PCAFitter', 'PCAModel', 'auto_background', 'get_identity_response', 'get_unit_response']
