@@ -57,9 +57,10 @@ Who is using BXA?
 * Dr. Zhu Liu (NAO, Beijing)
 * Dr. Georgios Vasilopoulos (Yale, New Haven)
 * Dr. Francesca Civano, Dr. Aneta Siemiginowska (CfA/SAO, Cambridge)
-* Dr. Teng Liu, Adam Malyali, Riccardo Arcodia, Sophia Waddell, ... (MPE, Garching)
+* Dr. Teng Liu, Adam Malyali, Riccardo Arcodia, Sophia Waddell, Torben Simm, ... (MPE, Garching)
 * Dr. Sibasish Laha, Dr. Alex Markowitz (UCSD, San Diego)
-* Dr. Arash Bahramian (MSU, East Lansing)
+* Dr. Arash Bahramian (Curtin University, Perth)
+* Dr. Peter Boorman (U of Southampton, Southampton; ASU, Prague)
 * and `you <https://ui.adsabs.harvard.edu/search/q=citations(bibcode%3A2014A%26A...564A.125B)%20full%3A%22BXA%22&sort=date%20desc%2C%20bibcode%20desc&p_=0>`_?
 
 Documentation
