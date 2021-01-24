@@ -42,7 +42,7 @@ of many X-ray missions, which allow extracting more information from low-count d
 
 In X-ray spectroscopy, the instrument responses are often not trivial,
 which means that forward folding is required to test models against data.
-Judged realistic physical models, which can be degenerate, 
+Judging realistic physical models, which can be degenerate, 
 against data, which sometimes consist of few photon counts, is a challenge.
 Bayesian inference provides a good solution in this setting.
 
