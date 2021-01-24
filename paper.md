@@ -47,26 +47,29 @@ against data, which sometimes consist of few photon counts, is a challenge.
 Bayesian inference provides a good solution in this setting.
 
 For parameter estimation, Bayesian inference updates an initial state of information 
-using the data into a new state (posterior probability distribution).
+using the data and a model into a new state (posterior probability distribution).
 In practice, Bayesian inference algorithms perform an approximation using sampling.
-Before BXA, used in X-ray spectral analysis have been limited to Markov Chain Monte Carlo (MCMC).
-MCMC has limitations when models have multiple parameter peaks, which is
+Before BXA, Bayesian X-ray spectral analyses have been limited to 
+versions of Markov Chain Monte Carlo (MCMC)
+that were difficult to initialise and tune.
+MCMC also has limitations when models have multiple parameter peaks, which is
 common in the additive models typically considered in X-ray astronomy.
-Additionally, the previously implemented algorithms are difficult to initialise and tune.
-BXA uses nested sampling [@Skilling2004] to efficiently generate posterior samples,
-and can be substantially more efficient in low-dimensional settings ($d<10$).
 
+BXA uses nested sampling [@Skilling2004] to efficiently generate posterior samples.
 BXA does not require custom initialisation and proposal tuning,
 as nested sampling performs a global scan of the parameter space.
-This makes it easy to apply in large X-ray surveys with many objects,
+This makes it robust and easy to use in large X-ray surveys with many objects,
 and in cases where many models should be compared.
+BXA can also be substantially more efficient than MCMC
+in low-dimensional settings ($d<10$).
 With Bayesian inference and advanced sampling algorithms,
 low count data is also not a difficult special case anymore.
 
 Comparing astrophysical models is currently primarily performed either
 using likelihood ratio tests (F-test) or Monte Carlo simulations to evaluate
-goodness-of-fit measures. The former are often invalid, while the latter are
-computationally very expensive. Bayesian model comparison provides an
+goodness-of-fit measures. The former are often invalid [@Protassov2002], 
+while the latter are computationally very expensive. 
+Bayesian model comparison provides an 
 alternative approach, which is natural in Bayesian inference.
 BXA (via nested sampling) makes Bayesian model comparison computationally
 feasible.
