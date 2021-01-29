@@ -41,8 +41,8 @@ How to run this script:
 		0.6  0.8
 		0.7  1
 	
-	where the first column gives redshift, and the second column gives 
-	the cumulative probability distribution.
+	where the first column gives the cumulative probability distribution, and the second column gives 
+	the redshift.
 	
 	If you do not need to create this file, a flat redshift prior distribution is assumed.
 	This is the XZ method of Simmonds+18.
