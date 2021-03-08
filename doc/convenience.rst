@@ -26,7 +26,7 @@ https://www.swift.ac.uk/analysis/nhtot/donhtot.php provides a look-up service.
 The `gal.py <https://github.com/JohannesBuchner/BXA/blob/master/gal.py>`_
 script fetches the value from there::
 
-	fixkeywords.py src.pi
+	gal.py src.pi
 
 and stores it in src.pi.nh.
 
@@ -56,7 +56,9 @@ Xspec chain files
 
 BXA, when run from pyxspec, also provides chain fits file compatible with the
 mcmc feature in xspec/pyxspec. xspec error propagation tools can thus be used
-after a BXA fit.
+after a BXA fit. In xspec, one can load it with::
+
+	XSPEC12> chain load path/to/mychain.fits
 
 
 Parallelisation
@@ -65,7 +67,9 @@ Parallelisation
 BXA supports parallelisation with MPI (Message Passing Interface).
 This allows scaling the inference from laptops all the way to computing clusters.
 
-To use it, install mpi4py and run your python script with mpiexec.
+To use it, install mpi4py and run your python script with mpiexec::
+
+	$ mpiexec -np 4 python3 myscript.py
 
 No modifications of your scripts are needed. However, you may want to 
 run plotting and other post-analysis only on rank 0.

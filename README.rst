@@ -87,10 +87,14 @@ The following commands should not yield any error message::
 	$ python -c 'import xspec'
 	$ sherpa
 
-You may need to install required python packages through your package manager. For example::
+You may need to install python and some basic packages through your package manager. For example::
 
 	$ yum install ipython python-matplotlib scipy numpy matplotlib
 	$ apt-get install python-numpy python-scipy python-matplotlib ipython
+
+BXA requires the following python packages: cython tqdm h5py ultranest,
+which should be downloaded automatically. If they are not, install them
+also with pip/conda.
 
 The source code is available from https://github.com/JohannesBuchner/BXA,
 so alternatively you can download and install it::
