@@ -144,7 +144,7 @@ install:
   - |
     if [[ "$TOOL" != "sherpa-conda" ]]; then
       sudo pip3 install requests corner astropy h5py cython coveralls coverage scipy tqdm;
-      sudo pip3 install ultranest
+      sudo pip3 install ultranest;
     fi
   - which coveralls
   - ENDTIME=$(date +%s)
@@ -190,7 +190,7 @@ script:
       then
         PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
       else
-        echo "skipping tests, setup was slow"
+        echo "skipping tests, setup was slow";
       fi
       popd;
     fi
