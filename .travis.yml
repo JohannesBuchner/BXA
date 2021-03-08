@@ -3,11 +3,11 @@ language: generic
 os:
   - linux
 
-#virtualenv:
-#  system_site_packages: true
+virtualenv:
+  system_site_packages: true
 
-python:
-  - "3.6"
+#python:
+#  - "3.6"
 #  - "2.7"
 
 env:
@@ -31,7 +31,7 @@ before_cache:
 
 install:
   - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools
-  - sudo pip3 install --upgrade pip
+#  - sudo pip3 install --upgrade pip
   - which python || true
   - which python3 || true
   - export MYCACHE=$HOME/Downloads/$TOOL
