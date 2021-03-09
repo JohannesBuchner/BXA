@@ -78,3 +78,19 @@ Analysis of many data sets, or of many models are trivial to parallelise.
 If your script accepts a command line argument, unix tools such as
 "make -j 10" and "xargs --max-args 1 --max-procs 10" 
 can help run your code in parallel.
+
+
+Verbosity
+--------------------------
+
+If you want to make the fitting more quiet, set `verbose=False` when calling `run()`.
+
+You can find more instructions `how to reduce the output of the UltraNest
+fitting engine here<https://johannesbuchner.github.io/UltraNest/issues.html#how-do-i-suppress-the-output>`_.
+
+Code inside a XSilence container disables Xspec chatter::
+
+	from bxa.xspec.solver import XSilence
+	
+	with XSilence():
+		# do something here
