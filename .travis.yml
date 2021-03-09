@@ -30,7 +30,7 @@ before_cache:
   - rm -rf $HOME/Downloads/sherpa-conda/miniconda/envs
 
 install:
-  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools python3-h5py libhdf5-dev
+  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools
   - sudo pip3 install --upgrade pip==20.3.4
   - which python || true
   - which python3 || true
@@ -143,8 +143,8 @@ install:
 
   - |
     if [[ "$TOOL" != "sherpa-conda" ]]; then
-      sudo pip3 install requests astropy h5py cython coveralls coverage scipy tqdm;
-      sudo pip3 install ultranest corner;
+      sudo pip3 install requests corner<2.2 astropy h5py cython coveralls coverage scipy tqdm;
+      sudo pip3 install ultranest;
     fi
   - which coveralls
   - ENDTIME=$(date +%s)
