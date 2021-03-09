@@ -30,7 +30,7 @@ before_cache:
   - rm -rf $HOME/Downloads/sherpa-conda/miniconda/envs
 
 install:
-  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools
+  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools python3-h5py
   - sudo pip3 install --upgrade pip==20.3.4
   - which python || true
   - which python3 || true
