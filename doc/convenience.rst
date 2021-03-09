@@ -85,8 +85,8 @@ Verbosity
 
 If you want to make the fitting more quiet, set `verbose=False` when calling `run()`.
 
-You can find more instructions 
-`how to reduce the output of the UltraNest fitting engine here <https://johannesbuchner.github.io/UltraNest/issues.html#how-do-i-suppress-the-output>`_.
+You can find more instructions `how to reduce the output of the UltraNest
+fitting engine here<https://johannesbuchner.github.io/UltraNest/issues.html#how-do-i-suppress-the-output>`_.
 
 Code inside a XSilence container disables Xspec chatter::
 
