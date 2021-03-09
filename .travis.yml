@@ -143,8 +143,8 @@ install:
 
   - |
     if [[ "$TOOL" != "sherpa-conda" ]]; then
-      sudo pip3 install requests corner astropy h5py cython coveralls coverage scipy tqdm;
-      sudo pip3 install ultranest;
+      sudo pip3 install requests astropy h5py cython coveralls coverage scipy tqdm;
+      sudo pip3 install ultranest corner;
     fi
   - which coveralls
   - ENDTIME=$(date +%s)
