@@ -133,11 +133,14 @@ $ python -c &#39;import xspec&#39;
 $ sherpa
 </pre></div>
 </div>
-<p>You may need to install required python packages through your package manager. For example:</p>
+<p>You may need to install python and some basic packages through your package manager. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ yum install ipython python-matplotlib scipy numpy matplotlib
 $ apt-get install python-numpy python-scipy python-matplotlib ipython
 </pre></div>
 </div>
+<p>BXA requires the following python packages: requests corner astropy h5py cython scipy tqdm.
+They should be downloaded automatically. If they are not, install them
+also with pip/conda.</p>
 <p>The source code is available from <a class="reference external" href="https://github.com/JohannesBuchner/BXA">https://github.com/JohannesBuchner/BXA</a>,
 so alternatively you can download and install it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/JohannesBuchner/BXA
@@ -292,6 +295,7 @@ Maximum Likelihood analysis (fitting) and Bayesian analysis.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="convenience.html#accelerating-slow-models">Accelerating slow models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="convenience.html#xspec-chain-files">Xspec chain files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="convenience.html#parallelisation">Parallelisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convenience.html#verbosity">Verbosity</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a><ul>
