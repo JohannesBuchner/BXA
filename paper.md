@@ -91,4 +91,6 @@ BXA uses UltraNest [@ultranest], which is easier to install.
 I thank Antonis Georgakakis, Charlotte Simmonds, J. Michael Burgess and Kirpal Nandra
 for insightful conversations.
 
+Early versions of BXA for Sherpa were based on pyblocxs code [@pyblocxs].
+
 # References
