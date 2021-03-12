@@ -50,7 +50,7 @@ For parameter estimation, Bayesian inference updates an initial state of informa
 using the data and a model into a new state (posterior probability distribution).
 In practice, Bayesian inference algorithms perform an approximation using sampling.
 Before BXA, Bayesian X-ray spectral analyses have been limited to 
-versions of Markov Chain Monte Carlo (MCMC)
+versions of Markov Chain Monte Carlo (MCMC) [e.g., @Dyk2001]
 that were difficult to initialise and tune.
 MCMC also has limitations when models have multiple parameter peaks, which is
 common in the additive models typically considered in X-ray astronomy.
@@ -78,7 +78,7 @@ feasible.
 
 BXA connects the X-ray spectral analysis environments Xspec/Sherpa
 to the nested sampling algorithm UltraNest 
-for **Bayesian Parameter Estimation** and **Model comparison**.
+for Bayesian parameter estimation and model comparison.
 
 BXA provides the following features:
 
