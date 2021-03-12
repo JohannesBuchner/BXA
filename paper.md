@@ -74,11 +74,46 @@ alternative approach, which is natural in Bayesian inference.
 BXA (via nested sampling) makes Bayesian model comparison computationally
 feasible.
 
+# Features
+
+BXA connects the X-ray spectral analysis environments Xspec/Sherpa
+to the nested sampling algorithm UltraNest 
+for **Bayesian Parameter Estimation** and **Model comparison**.
+
+BXA provides the following features:
+
+* parameter estimation in arbitrary dimensions, which involves:
+   * finding the best fit
+   * computing error bars
+   * computing marginal probability distributions
+* plotting of spectral model vs. the data:
+   * for the best fit
+   * for each of the solutions (posterior samples)
+   * for each component
+* model selection:
+   * computing the evidence for the considered model, 
+     ready for use in Bayes factors
+   * unlike likelihood-ratios, not limited to nested and linear models 
+* model discovery:
+   * visualize deviations between model and data with binning-independent Quantile-Quantile (QQ) plots.
+* empirical background models
+   * for getting more information out of low-count spectra
+
+BXA shines especially
+
+* when systematically analysing a large data-set, or
+* when comparing multiple models, or
+* when analysing low counts data-set
+* for unsupervised, automated fitting
+
 # Methods
 
-The methods and limitations of BXA were presented in [@Buchner2014].
-Until v3.0, BXA used MultiNest [@Feroz2009]. Since v4.0,
-BXA uses UltraNest [@ultranest], which is easier to install.
+The methods and limitations of BXA were presented in more detail in
+ [@Buchner2014].
+Until v3.0, BXA employed the Fortran package MultiNest [@Feroz2009] to
+perform Bayesian inference. 
+Since v4.0, BXA uses the Python package UltraNest [@ultranest], 
+which is easier to install.
 
 # Documentation
 
