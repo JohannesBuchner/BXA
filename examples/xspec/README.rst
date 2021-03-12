@@ -824,15 +824,83 @@ Output files::
 
 The most important files are:
 
-* plots/corner.pdf: plot of the parameter constraints and uncertainties and their correlations
-* unconvolved_posterior.pdf : the model itself
-* convolved_posterior.pdf : the model and the data convolved through the response. Red means the data are poorly fitted by this model.
-* qq_model_deviations.pdf : Q-Q plot
+* unconvolved_posterior.pdf : 
+
+	.. image:: reference-output/unconvolved_posterior.png
+	
+	The model itself is a powerlaw, and the uncertainties are too narrow to see.
+
+	For further explanation of this plot, see https://johannesbuchner.github.io/BXA/xspec-analysis.html
+
+* convolved_posterior.pdf : 
+
+	.. image:: reference-output/convolved_posterior.png
+	
+	The model and the data convolved through the response. 
+	Red means the data are poorly fitted by this model.
+	The model is clearly off -- For example, the lower energy X-rays are overpredicted.
+
+	For further explanation of this plot, see https://johannesbuchner.github.io/BXA/xspec-analysis.html
+
+* plots/corner.pdf:
+
+	.. image:: reference-output/corner.png
+	
+	Plot of the parameter constraints and uncertainties and their correlations.
+	The photon index parameter is hitting the edge of the parameter space,
+	and its uncertainties are tiny. Another hint of a poor model.
+
+	For further explanation of this plot, see https://johannesbuchner.github.io/BXA/xspec-analysis.html
+
+* qq_model_deviations.pdf : 
+	
+	.. image:: reference-output/qq_model_deviations.png
+	
+	`Q-Q plot <https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot>`_:
+	The red curve is far from the 1:1 line. That it is on the bottom right
+	indicates the model produces many more counts than the data.
+	The tickmarks indicate that the problem is accumulating below 2keV.
+
+	For further explanation of this plot, see https://johannesbuchner.github.io/BXA/xspec-analysis.html
+
 * info/results.json: summary of all parameters, their uncertainties and estimated lnZ
 * info/post_summary.csv: summary of all parameters and their uncertainties as CSV
 * chains/equal_weighted_post.txt: contains posterior samples: each row is a model parameter vector. You can iterate through these, set up the model in pyxspec, and then do something with it (compute fluxes and luminosities, for example).
 
 Other examples
 ---------------
+
+* example_advanced_priors.py shows a absorbed powerlaw fit, which is better. It 
+  also demonstrates how to specify custom prior functions.
+
+  Run with::
+	
+	$ python3 example_advanced_priors.py example-file.fak absorbed/
+	
+  Here the spectral file and output folder are command line arguments,
+  which is convenient for analysing many sources.
+
+* example_custom_run.py finally adds a emission line. Run with::
+
+	$ python3 example_custom_run.py example-file.fak line/
+
+Compare the models with::
+
+	$ python3 model_compare.py absorbed simplest line
+
+	Model comparison
+	****************
+
+	model simplest  : log10(Z) = -1519.1  XXX ruled out
+	model absorbed  : log10(Z) =    -5.6  XXX ruled out
+	model line      : log10(Z) =     0.0    <-- GOOD
+
+	The last, most likely model was used as normalization.
+	Uniform model priors are assumed, with a cut of log10(30) to rule out models.
+
+Beware of the caveats of these log10(Z) differences (log-Bayes factors),
+and derive thresholds with simulations. 
+
+For the full documentation, see https://johannesbuchner.github.io/BXA/xspec-analysis.html
 
 Please explore this folder for other demo scripts.
