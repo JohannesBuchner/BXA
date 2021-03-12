@@ -1,5 +1,6 @@
 from __future__ import print_function
 try:
+	import os, numpy
 	from sherpa.astro.ui import *
 	import bxa.sherpa as bxa
 	bxa.default_logging()
