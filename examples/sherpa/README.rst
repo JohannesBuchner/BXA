@@ -15,6 +15,10 @@ As test data, this includes the spectral file example-file.fak
 representing a ATHENA observation of an absorbed AGN, and the corresponding 
 response.
 
+The spectrum looks something like this:
+
+.. image:: ../xspec/reference-output/data.gif
+
 Simple analysis
 -----------------
 
@@ -23,9 +27,6 @@ Have a look at the file example_simplest.py. It contains:
 * Loading data
 * setting up a model and its parameter ranges
 * running a BXA fit with specified priors
-* plotting the posterior predictions (convolved with the response)
-* plotting the model (posterior predictions, not convolved)
-* making a Q-Q plot
 
 See https://johannesbuchner.github.io/BXA/ to understand the code.
 See https://johannesbuchner.github.io/UltraNest/ to understand the output of the
@@ -656,12 +657,249 @@ Output files::
 
 The most important files are:
 
-* plots/corner.pdf: plot of the parameter constraints and uncertainties and their correlations
+* plots/corner.pdf:
+
+	.. image:: reference-output/corner.png
+	
+	Plot of the parameter constraints and uncertainties and their correlations.
+	The photon index parameter is hitting the edge of the parameter space,
+	and its uncertainties are tiny. This can be a hint that it is a poor model.
+
 * info/results.json: summary of all parameters, their uncertainties and estimated lnZ
 * info/post_summary.csv: summary of all parameters and their uncertainties as CSV
 * chains/equal_weighted_post.txt: contains posterior samples: each row is a model parameter vector. You can iterate through these, set up the model in pyxspec, and then do something with it (compute fluxes and luminosities, for example).
 
+You probably want to plot the fit as well (after setting to the best fit).
+
+Try modifying the model.
+
+For more information, see https://johannesbuchner.github.io/BXA/sherpa-analysis.html
+
 Other examples
 ---------------
 
+* Example of PCA background:
+
+  This uses the Swift data file swift/interval0pc.pi.
+
+  First, store the galactic NH value (1.68e+20)
+  into the text file swift/interval0pc.pi.nh.
+
+  Then run with::
+
+	$ python3 example_pcabackground.py
+	
+	....
+
+	loading nH from swift/interval0pc.pi.nh (expecting something like 1e21 in there)
+	setting galactic nH to 0.0168 [units of 1e22/cm²]
+	[bxa.Fitter INFO]: PCAFitter(for ID=2)
+	[bxa.Fitter INFO]: loading PCA information from /home/user/bin/ciao-4.13/ots/lib/python3.7/site-packages/bxa/sherpa/background/swift_xrt_1024.json
+	[bxa.Fitter INFO]: fitting background of ID=2 using PCA method
+	[bxa.Fitter INFO]: have 2751 background counts for deconvolution
+	[bxa.Fitter INFO]: fit: initial PCA decomposition: [ 3.43950638e+00 -2.18629410e-02  7.52750306e-03 -4.07883039e-03
+	 -3.49918117e-03 -3.20861431e-03  3.52942831e-03 -5.05089198e-03
+	 -9.34656625e-04 -4.86905140e-03  2.29800943e-03]
+	[bxa.Fitter INFO]: fit: first full fit done
+	[bxa.Fitter INFO]: fit: parameters: [-0.8139987117963805, 0.42489117817206506, 0.03088268390136437, 0.19696313135650556, 0.09137494506325541, -0.17493295963368954, -0.09507225292526847, 0.16435598097773643, -0.058544963240419884, 0.25546836854960586, 0.08241814841520864]
+	[bxa.Fitter INFO]: fit: stat: 551.3592848191211
+	[bxa.Fitter INFO]: fit: second full fit from zero
+	[bxa.Fitter INFO]: fit: parameters: [-0.8139987117963805, 0.42489117817206506, 0.03088268390136437, 0.19696313135650556, 0.09137494506325541, -0.17493295963368954, -0.09507225292526847, 0.16435598097773643, -0.058544963240419884, 0.25546836854960586, 0.08241814841520864]
+	[bxa.Fitter INFO]: fit: stat: 551.3592848191096
+	[bxa.Fitter INFO]: fit: using zero-fit
+	11 parameters, stat=551.36
+	--> 10 parameters, stat=552.44
+	--> 9 parameters, stat=582.41
+	--> 8 parameters, stat=583.58
+	--> 7 parameters, stat=682.99
+	--> 6 parameters, stat=696.18
+	--> 5 parameters, stat=698.64
+	--> 4 parameters, stat=707.46
+	--> 3 parameters, stat=716.11
+	--> 2 parameters, stat=716.63
+	--> 1 parameters, stat=1145.24
+
+	Background PCA fitting AIC results:
+	-----------------------------------
+
+	stat Ncomp AIC
+	1145.2  1 1147.2
+	716.6  2 720.6
+	716.1  3 722.1
+	707.5  4 715.5
+	698.6  5 708.6
+	696.2  6 708.2
+	683.0  7 697.0
+	583.6  8 599.6
+	582.4  9 600.4
+	552.4 10 572.4
+	551.4 11 573.4
+
+	Increasing parameters again...
+	11 parameters, aic=573.36
+	Final choice: 10 parameters, aic=572.44
+
+	Adding Gaussian#1
+	largest remaining discrepancy at 1.855keV[185], need 5959 counts
+	placing gaussian at 1.86keV, with power 0.6227582993302021
+	with Gaussian: 579.3593637901457 ; change: 6.9 (negative is good)
+	not significant, rejecting
+	creating prior functions...
+	running BXA ...
+	[ultranest] Sampling 400 live points from prior ...
+	[ultranest INFO]: Sampling 400 live points from prior ...
+
+
+	Mono-modal Volume: ~exp(-2.94) * Expected Volume: exp(0.00) Quality: ok
+
+	src.level   :      -8.0|*************************************************** ******************************************|     +2.0
+	src.PhoIndex:      +1.0|      *                *   * *********************************                               *|     +3.0
+	src.nh      :     +19.0|**********************************************************************************************|    +24.0
+	src.redshift:      +0.0|                +0.2  * ********************************* *  +0.4                             |     +0.7
+	pca2.lognorm:      -5.0|******************************************************************************************** *|    +20.0
+
+	Z=-1e+18(0.00%) | Like=-1.3e+18..-7.9e+02 [-1.142e+23..-1100] | it/evals=88/505 eff=83.8095% N=400 
+
+	....
+
+	logZ = -356.466 +- 0.259
+	  single instance: logZ = -356.466 +- 0.183
+	  bootstrapped   : logZ = -356.488 +- 0.259
+	  tail           : logZ = +- 0.011
+
+		src.level           -2.404 +- 0.037
+		src.PhoIndex        2.029 +- 0.045
+		src.nh              19.75 +- 0.46
+		src.redshift        0.302 +- 0.050
+		pca2.lognorm        -0.769 +- 0.031
+
+
+
+* Example of empirical background model (and different priors). Redshift is a free parameter here:
+  
+  Run with::
+
+    $ python3 example_automatic_background_model.py
+
+	calling singlefitter...
+	[bxa.Fitter INFO]: SingleFitter(for ID=2, storing to "swift/interval0pc")
+	[bxa.Fitter INFO]: prepare_stage 2 of ID=2
+	[bxa.Fitter INFO]: prepare_stage 2 of ID=2 done
+	[bxa.Fitter INFO]: prepare_stage 2 of ID=2
+	[bxa.Fitter INFO]: prepare_stage 2 of ID=2 done
+	[bxa.Fitter INFO]: fit_stage 2 of ID=2
+	[bxa.Fitter INFO]: fit_stage 2 of ID=2.  fine fit ...
+	[bxa.Fitter INFO]: fit_stage 2 of ID=2.  fitted
+	[bxa.Fitter INFO]: fit_stage 2 of ID=2.  stage done
+	[bxa.Fitter INFO]: prepare_stage 3 of ID=2
+	[bxa.Fitter INFO]: prepare_stage 3 of ID=2 done
+	[bxa.Fitter INFO]: fit_stage 3 of ID=2
+	[bxa.Fitter INFO]: fit_stage 3 of ID=2.  fine fit ...
+	[bxa.Fitter INFO]: fit_stage 3 of ID=2.  fitted
+	[bxa.Fitter INFO]: fit_stage 3 of ID=2.  stage done
+	[bxa.Fitter INFO]: prepare_stage 4 of ID=2
+	[bxa.Fitter INFO]: prepare_stage 4 of ID=2 done
+	[bxa.Fitter INFO]: fit_stage 4 of ID=2
+	[bxa.Fitter INFO]: fit_stage 4 of ID=2.  fine fit ...
+	[bxa.Fitter INFO]: fit_stage 4 of ID=2.  fitted
+	[bxa.Fitter INFO]: fit_stage 4 of ID=2.  stage done
+	[bxa.Fitter INFO]: prepare_stage 5 of ID=2
+	[bxa.Fitter INFO]: prepare_stage 5 of ID=2 done
+	[bxa.Fitter INFO]: fit_stage 5 of ID=2
+	[bxa.Fitter INFO]: fit_stage 5 of ID=2.  fine fit ...
+	[bxa.Fitter INFO]: fit_stage 5 of ID=2.  fitted
+	[bxa.Fitter INFO]: fit_stage 5 of ID=2.  stage done
+	[bxa.Fitter INFO]: prepare_stage 6 of ID=2
+	[bxa.Fitter INFO]: prepare_stage 6 of ID=2 done
+	[bxa.Fitter INFO]: fit_stage 6 of ID=2
+	[bxa.Fitter INFO]: fit_stage 6 of ID=2.  fine fit ...
+	[bxa.Fitter INFO]: fit_stage 6 of ID=2.  fitted
+	[bxa.Fitter INFO]: fit_stage 6 of ID=2.  stage done
+	[bxa.Fitter INFO]: prepare_stage 7 of ID=2
+	[bxa.Fitter INFO]: prepare_stage 7 of ID=2 done
+	[bxa.Fitter INFO]: fit_stage 7 of ID=2
+	[bxa.Fitter INFO]: fit_stage 7 of ID=2.  fine fit ...
+	[bxa.Fitter INFO]: fit_stage 7 of ID=2.  fitted
+	[bxa.Fitter INFO]: fit_stage 7 of ID=2.  stage done
+	[bxa.Fitter INFO]: Background fit complete.
+
+	freezing background params
+	loading nH from swift/interval0pc.pi.nh (expecting something like 1e21 in there)
+	setting galactic nH to 0.0168 [units of 1e22/cm²]
+	apply_rmf(apply_arf((9504.67 * (((xszpowerlw.src * xszwabs.abso) * xswabs.galabso) + (0.05553358353932973 * (((1.0 - box1d.dip_2) * (((xsbknpower.pbknpl_2 + gauss1d.gauss1_2) + gauss1d.gauss2_2) + gauss1d.gauss3_2)) + gauss1d.gauss4_2))))))
+	   Param        Type          Value          Min          Max      Units
+	   -----        ----          -----          ---          ---      -----
+	   src.PhoIndex thawed            1           -2            9           
+	   src.redshift frozen            0       -0.999           10           
+	   src.norm     thawed            1            0        1e+24           
+	   abso.nH      thawed            1            0       100000 10^22 atoms / cm^2
+	   abso.redshift frozen            0       -0.999           10           
+	   galabso.nH   thawed            1            0       100000 10^22 atoms / cm^2
+	   dip_2.xlow   frozen      1.76028         1.75         2.25           
+	   dip_2.xhi    frozen      3.21915         2.75         3.25           
+	   dip_2.ampl   frozen     0.937426        0.001        0.999           
+	   pbknpl_2.PhoIndx1 frozen      1.53607          0.8            4           
+	   pbknpl_2.BreakE frozen      4.10858          0.2            5        keV
+	   pbknpl_2.PhoIndx2 frozen      2.71323          0.8            4           
+	   pbknpl_2.norm frozen    0.0140262        1e-10            1           
+	   gauss1_2.fwhm frozen     0.817724         0.01            1           
+	   gauss1_2.pos frozen     0.607138          0.1          1.1           
+	   gauss1_2.ampl frozen      0.01218        1e-06            1           
+	   gauss2_2.fwhm frozen    0.0199524         0.01            1           
+	   gauss2_2.pos frozen      2.19733            2          2.5           
+	   gauss2_2.ampl frozen   0.00376109        1e-06            1           
+	   gauss3_2.fwhm frozen    0.0303601         0.01            1           
+	   gauss3_2.pos frozen      1.37532            1          1.4           
+	   gauss3_2.ampl frozen   0.00415471        1e-06            1           
+	   gauss4_2.fwhm frozen      0.93892         0.01            1           
+	   gauss4_2.pos frozen        0.125            0          0.5           
+	   gauss4_2.ampl frozen  0.000819252        1e-06            1           
+	creating prior functions...
+	running BXA ...
+	[ultranest] Sampling 400 live points from prior ...
+	[ultranest INFO]: Sampling 400 live points from prior ...
+
+
+	Mono-modal Volume: ~exp(-3.96) * Expected Volume: exp(0.00) Quality: ok
+
+	src.level   :      -8.0|*************************** **** ***** *************** **************************************** *************************************** |     -1.0
+	src.PhoIndex:      +1.0|***** *************************** **************************************** ** ******* ********  ********** ************************* ***|     +3.0
+	src.nh      :     +19.0|**************************************************** **************************** **** *********************************************** *|    +24.0
+	gal.nh      :     +20.8|                                        +21.6  ************************************** * ***  +22.4                                      |    +23.2
+
+	Z=-10118.6(0.00%) | Like=-10114.95..-778.63 [-34687.3038..-1560.0087] | it/evals=80/491 eff=87.9121% N=400 
+	...
+
+	logZ = -362.501 +- 0.288
+	  single instance: logZ = -362.501 +- 0.221
+	  bootstrapped   : logZ = -362.528 +- 0.288
+	  tail           : logZ = +- 0.010
+
+		src.level           -2.394 +- 0.016
+		src.PhoIndex        2.200 +- 0.046
+		src.nh              19.51 +- 0.35
+		gal.nh              20.807 +- 0.035
+
+
+Compare the models with::
+
+	$ python3 model_compare.py superfit/ wabs_noz/
+
+	Model comparison
+	****************
+
+	model superfit/ : log10(Z) =    -2.6  XXX ruled out
+	model wabs_noz/ : log10(Z) =     0.0    <-- GOOD
+
+	The last, most likely model was used as normalization.
+	Uniform model priors are assumed, with a cut of log10(30) to rule out models.
+
+
+Beware of the caveats of these log10(Z) differences (log-Bayes factors),
+and derive thresholds with simulated data.
+
+For the full documentation, see https://johannesbuchner.github.io/BXA/sherpa-analysis.html
+
 Please explore this folder for other demo scripts.
+
+For example, go into the chandra folder, and run the `xagnfitter.py <https://johannesbuchner.github.io/BXA/xagnfitter.html>`_ in this folder against it.

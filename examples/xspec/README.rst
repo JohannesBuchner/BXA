@@ -17,97 +17,11 @@ representing a ATHENA observation of an absorbed AGN.
 
 Expected output::
 
-	$ cat gen.xspec | {  while read line; do echo "$line"; sleep 0.1; done; sleep 10; } | xspec
+	$ < gen.xspec xspec
 
-			XSPEC version: 12.11.1
-		Build Date/Time: Wed Oct 28 13:37:51 2020
+The spectrum looks something like this:
 
-	XSPEC12># generate data for analysis with the example programs
-	XSPEC12>
-	XSPEC12>rm -f example-file.fak
-	/bin/rm
-	XSPEC12>
-	XSPEC12>cpd /xw
-	XSPEC12>model wabs*pow + gauss
-
-	Input parameter value, delta, min, bot, top, and max values for ...
-				  1      0.001(      0.01)          0          0     100000      1e+06
-	1:wabs:nH>10
-				  1       0.01(      0.01)         -3         -2          9         10
-	2:powerlaw:PhoIndex>1.9
-				  1       0.01(      0.01)          0          0      1e+20      1e+24
-	3:powerlaw:norm>0.01
-				6.5       0.05(     0.065)          0          0      1e+06      1e+06
-	4:gaussian:LineE>6.4
-				0.1       0.05(     0.001)          0          0         10         20
-	5:gaussian:Sigma>0.04
-				  1       0.01(      0.01)          0          0      1e+20      1e+24
-	6:gaussian:norm>0.0001
-
-	**************************************************************
-	The wabs model is obsolete and is only included for comparison
-	with historical results. The tbabs model should be used for
-	the ISM or phabs for general photoelectric absorption.
-	**************************************************************
-
-	========================================================================
-	Model wabs<1>*powerlaw<2> + gaussian<3> Source No.: 1   Active/Off
-	Model Model Component  Parameter  Unit     Value
-	 par  comp
-	   1    1   wabs       nH         10^22    10.0000      +/-  0.0          
-	   2    2   powerlaw   PhoIndex            1.90000      +/-  0.0          
-	   3    2   powerlaw   norm                1.00000E-02  +/-  0.0          
-	   4    3   gaussian   LineE      keV      6.40000      +/-  0.0          
-	   5    3   gaussian   Sigma      keV      4.00000E-02  +/-  0.0          
-	   6    3   gaussian   norm                1.00000E-04  +/-  0.0          
-	________________________________________________________________________
-
-	XSPEC12>
-	XSPEC12>
-	XSPEC12>
-	XSPEC12>plot model
-	XSPEC12>
-	XSPEC12>#dummyrsp 0.1 10 100 linear
-	XSPEC12>energies 0.1 15 10000
-
-	Models will now use energy array created from:
-	   0.1 - 15   10000 linear bins
-
-	XSPEC12>fakeit none
-	For fake spectrum #1 response file is needed: athenapp_ir_b4c_wfi_withfilter_fov40.0arcmin_avg.rsp
-	   ...and ancillary file: 
-	 Use counting statistics in creating fake data? (y): y
-	 Input optional fake file prefix: example-file
-	 Fake data file name (example-fileathenapp_ir_b4c_wfi_withfilter_fov40.0arcmin_avg.fak): example-file.fak
-	500 1.0 1.0ime, correction norm, bkg exposure time (1.00000, 1.00000, 1.00000):  
-
-	No background will be applied to fake spectrum #1
-
-	No ARF will be applied to fake spectrum #1 source #1
-
-	1 spectrum  in use
-	 
-
-	Fit statistic  : Chi-Squared                  883.19     using 4096 bins.
-
-	***Warning: Chi-square may not be valid due to bins with zero variance
-				in spectrum number: 1
-
-	Test statistic : Chi-Squared                  883.19     using 4096 bins.
-
-	***Warning: Chi-square may not be valid due to bins with zero variance
-				in spectrum number(s): 1 
-
-	 Null hypothesis probability of 1.00e+00 with 4090 degrees of freedom
-	 Current data and model not fit yet.
-	XSPEC12>
-	XSPEC12>plot data model
-	***Warning: Fit is not current.
-	XSPEC12>
-	XSPEC12>
-
-	 XSPEC: quit
-
+.. image:: reference-output/data.gif
 
 Simple analysis
 -----------------
@@ -899,7 +813,7 @@ Compare the models with::
 	Uniform model priors are assumed, with a cut of log10(30) to rule out models.
 
 Beware of the caveats of these log10(Z) differences (log-Bayes factors),
-and derive thresholds with simulations. 
+and derive thresholds with simulated data. 
 
 For the full documentation, see https://johannesbuchner.github.io/BXA/xspec-analysis.html
 

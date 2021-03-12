@@ -1,7 +1,7 @@
 """
-Example of doing BXA in X-spec
+Example of doing BXA in sherpa
 
-Run with "sherpa example_simplest.py"
+Run with "sherpa example_simplest.py" or "python3 example_simplest.py"
 """
 from sherpa.astro.ui import *
 import bxa.sherpa as bxa
@@ -15,7 +15,7 @@ notice(0.2, 8.0)
 
 # where to store intermediate and final results? 
 # this is the prefix used
-outputfiles_basename = 'simplest-'
+outputfiles_basename = 'simplest'
 
 set_model(xspowerlaw.mypow)
 
