@@ -656,9 +656,9 @@ Output files::
 
 The most important files are:
 
-* simplest/plots/corner.pdf: plot of the parameter constraints and uncertainties and their correlations
-* simplest/info/results.json: summary of all parameters, their uncertainties and estimated lnZ
-* simplest/info/post_summary.csv: summary of all parameters and their uncertainties as CSV
+* plots/corner.pdf: plot of the parameter constraints and uncertainties and their correlations
+* info/results.json: summary of all parameters, their uncertainties and estimated lnZ
+* info/post_summary.csv: summary of all parameters and their uncertainties as CSV
 * chains/equal_weighted_post.txt: contains posterior samples: each row is a model parameter vector. You can iterate through these, set up the model in pyxspec, and then do something with it (compute fluxes and luminosities, for example).
 
 Other examples
