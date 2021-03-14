@@ -17,22 +17,22 @@ notice(0.2, 8.0)
 # this is the prefix used
 outputfiles_basename = 'simplest'
 
-set_model(xspowerlaw.mypow)
+set_model(powlaw1d.mypow)
 
 # set model parameters ranges
-mypow.norm.min = 1e-10
-mypow.norm.max = 10
-mypow.PhoIndex.min = 1
-mypow.PhoIndex.max = 3
+mypow.ampl.min = 1e-10
+mypow.ampl.max = 10
+mypow.gamma.min = 1
+mypow.gamma.max = 3
 
 # define prior
-parameters = [mypow.PhoIndex, mypow.norm]
+parameters = [mypow.gamma, mypow.ampl]
 priors = [
 	# uniform prior for Photon Index (see other example for 
 	# something more advanced)
-	bxa.create_uniform_prior_for(mypow.PhoIndex),
+	bxa.create_uniform_prior_for(mypow.gamma),
 	# jeffreys prior for scale variable
-	bxa.create_jeffreys_prior_for(mypow.norm),
+	bxa.create_jeffreys_prior_for(mypow.ampl),
 	# and possibly many more parameters here
 ]
 prior = bxa.create_prior_function(priors=priors)
