@@ -87,15 +87,8 @@ def create_prior_function(transformations):
 	"""
 
 	def prior(cube, ndim, nparams):
-		try:
-			for i, t in enumerate(transformations):
-				transform = t['transform']
-				cube[i] = transform(cube[i])
-		except Exception as e:
-			print('ERROR: Exception in prior function. Faulty transformations specified!')
-			print('ERROR:', e)
-			print(i, transformations[i])
-			import sys
-			sys.exit(-126)
+		for i, t in enumerate(transformations):
+			transform = t['transform']
+			cube[i] = transform(cube[i])
 
 	return prior

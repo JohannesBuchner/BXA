@@ -37,7 +37,8 @@ class XSilence(object):
 
 def create_prior_function(transformations):
 	"""
-	Creates a single prior transformation function from parameter transformations
+	Create a single prior transformation function from a list of
+	transformations for each parameter. This assumes the priors factorize.
 	"""
 
 	def prior(cube):
@@ -96,14 +97,19 @@ def set_parameters(transformations, values):
 
 class BXASolver(object):
 	"""
-	Run the Bayesian analysis with specified parameters+transformations.
+	Run the Bayesian analysis.
+
+	The nested sampling package `UltraNest <https://johannesbuchner.github.io/UltraNest/>`_ is used under the hood.
 
 	If prior is None, uniform priors are used on the passed parameters.
 	If parameters is also None, all thawed parameters are used.
 
-	:param transformations: Parameter transformation definitions
+	:param transformations: List of parameter transformation definitions
 	:param prior_function: set only if you want to specify a custom, non-separable prior
 	:param outputfiles_basename: prefix for output filenames.
+
+	More information on the concept of prior information is available at
+	https://johannesbuchner.github.io/UltraNest/priors.html
 	"""
 
 	allowed_stats = ['cstat', 'cash', 'pstat']
