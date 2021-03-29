@@ -74,7 +74,8 @@
 
 <div class="viewcode-block" id="create_prior_function"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.create_prior_function">[docs]</a><span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Creates a single prior transformation function from parameter transformations</span>
+<span class="sd">	Create a single prior transformation function from a list of</span>
+<span class="sd">	transformations for each parameter. This assumes the priors factorize.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">prior</span><span class="p">(</span><span class="n">cube</span><span class="p">):</span>
@@ -133,14 +134,19 @@
 
 <div class="viewcode-block" id="BXASolver"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver">[docs]</a><span class="k">class</span> <span class="nc">BXASolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Run the Bayesian analysis with specified parameters+transformations.</span>
+<span class="sd">	Run the Bayesian analysis.</span>
+
+<span class="sd">	The nested sampling package `UltraNest &lt;https://johannesbuchner.github.io/UltraNest/&gt;`_ is used under the hood.</span>
 
 <span class="sd">	If prior is None, uniform priors are used on the passed parameters.</span>
 <span class="sd">	If parameters is also None, all thawed parameters are used.</span>
 
-<span class="sd">	:param transformations: Parameter transformation definitions</span>
+<span class="sd">	:param transformations: List of parameter transformation definitions</span>
 <span class="sd">	:param prior_function: set only if you want to specify a custom, non-separable prior</span>
 <span class="sd">	:param outputfiles_basename: prefix for output filenames.</span>
+
+<span class="sd">	More information on the concept of prior information is available at</span>
+<span class="sd">	https://johannesbuchner.github.io/UltraNest/priors.html</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">allowed_stats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cstat&#39;</span><span class="p">,</span> <span class="s1">&#39;cash&#39;</span><span class="p">,</span> <span class="s1">&#39;pstat&#39;</span><span class="p">]</span>

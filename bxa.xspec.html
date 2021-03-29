@@ -231,7 +231,8 @@ ready to be passed to matplotlib.pyplot.fill_between</p></li>
 <dl class="py function">
 <dt id="bxa.xspec.solver.create_prior_function">
 <code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">create_prior_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#create_prior_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.create_prior_function" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a single prior transformation function from parameter transformations</p>
+<dd><p>Create a single prior transformation function from a list of
+transformations for each parameter. This assumes the priors factorize.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -250,18 +251,21 @@ ready to be passed to matplotlib.pyplot.fill_between</p></li>
 <dt id="bxa.xspec.solver.BXASolver">
 <em class="property">class </em><code class="sig-prename descclassname">bxa.xspec.solver.</code><code class="sig-name descname">BXASolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">prior_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Run the Bayesian analysis with specified parameters+transformations.</p>
+<p>Run the Bayesian analysis.</p>
+<p>The nested sampling package <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/">UltraNest</a> is used under the hood.</p>
 <p>If prior is None, uniform priors are used on the passed parameters.
 If parameters is also None, all thawed parameters are used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>transformations</strong> – Parameter transformation definitions</p></li>
+<li><p><strong>transformations</strong> – List of parameter transformation definitions</p></li>
 <li><p><strong>prior_function</strong> – set only if you want to specify a custom, non-separable prior</p></li>
 <li><p><strong>outputfiles_basename</strong> – prefix for output filenames.</p></li>
 </ul>
 </dd>
 </dl>
+<p>More information on the concept of prior information is available at
+<a class="reference external" href="https://johannesbuchner.github.io/UltraNest/priors.html">https://johannesbuchner.github.io/UltraNest/priors.html</a></p>
 <dl class="py attribute">
 <dt id="bxa.xspec.solver.BXASolver.allowed_stats">
 <code class="sig-name descname">allowed_stats</code><em class="property"> = ['cstat', 'cash', 'pstat']</em><a class="headerlink" href="#bxa.xspec.solver.BXASolver.allowed_stats" title="Permalink to this definition">¶</a></dt>
