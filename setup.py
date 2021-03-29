@@ -50,3 +50,6 @@ setup(name='bxa',
     scripts=['gal.py', 'fixkeywords.py'],
     include_package_data=True,
 )
+
+if not sherpa_available and not xspec_available:
+    warnings.warn("BXA is a plugin for xspec/sherpa, but neither xspec nor sherpa are installed in the current environment!")
