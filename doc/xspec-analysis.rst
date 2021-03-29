@@ -71,6 +71,8 @@ see https://corner.readthedocs.io/en/latest/.
 Model checking
 -----------------------
 
+For this functionality, you also need scipy installed.
+
 The following code creates a plot of the convolved posterior model:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py

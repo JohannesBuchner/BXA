@@ -81,6 +81,8 @@ class BXASolver(object):
 		self.outputfiles_basename = outputfiles_basename
 		self.set_paramnames()
 		self.allowed_stats = (Cash, CStat)
+		self.fit = ui._session._get_fit(self.id, self.otherids)[1]
+		self.ndims = len(parameters)
 	
 	def set_paramnames(self, paramnames=None):
 		if paramnames is None:
@@ -89,8 +91,26 @@ class BXASolver(object):
 			self.paramnames = paramnames
 
 	def get_fit(self):
-		return ui._session._get_fit(self.id, self.otherids)[1]
+		return self.fit
 	
+	def prior_transform(self, cube):
+		params = cube.copy()
+		self.prior(params, self.ndims, self.ndims)
+		return params
+
+	def log_likelihood(self, cube):
+		try:
+			for i, p in enumerate(self.parameters):
+				assert not isnan(cube[i]), 'ERROR: parameter %d (%s) to be set to %f' % (i, p.fullname, cube[i])
+				p.val = cube[i]
+				# print "%s: %f" % (p.fullname,p.val),
+			return -0.5 * self.fit.calc_stat()
+		except Exception as e:
+			print('Exception in log_likelihood function: ', e)
+			for i, p in enumerate(self.parameters):
+				print('    Parameter %10s: %f --> %f [%f..%f]' % (p.fullname, p.val, cube[i], p.min, p.max))
+			raise e
+
 	def run(
 		self, evidence_tolerance=0.5, n_live_points=400,
 		wrapped_params=None, **kwargs
@@ -111,34 +131,15 @@ class BXASolver(object):
 		These are ultranest parameters (see ultranest.solve documentation!)
 		"""
 
-		fit = self.get_fit()
+		fit = self.fit
 		if False and not isinstance(fit.stat, self.allowed_stats):
 			raise RuntimeError("Fit statistic must be cash or cstat, not %s" % fit.stat.name)
 
-		def prior_transform(cube):
-			params = cube.copy()
-			self.prior(params, n_dims, n_dims)
-			return params
-		
-		def log_likelihood(cube):
-			try:
-				for i, p in enumerate(self.parameters):
-					assert not isnan(cube[i]), 'ERROR: parameter %d (%s) to be set to %f' % (i, p.fullname, cube[i])
-					p.val = cube[i]
-					# print "%s: %f" % (p.fullname,p.val),
-				return -0.5 * fit.calc_stat()
-			except Exception as e:
-				print('Exception in log_likelihood function: ', e)
-				for i, p in enumerate(self.parameters):
-					print('    Parameter %10s: %f --> %f [%f..%f]' % (p.fullname, p.val, cube[i], p.min, p.max))
-				raise e
-		
-		n_dims = len(self.parameters)
 		resume = kwargs.pop('resume', False)
 		Lepsilon = kwargs.pop('Lepsilon', 0.1)
 
 		self.results = solve(
-			log_likelihood, prior_transform, n_dims,
+			self.log_likelihood, self.prior_transform, self.ndims,
 			paramnames=self.paramnames,
 			outputfiles_basename=self.outputfiles_basename,
 			resume=resume, Lepsilon=Lepsilon,

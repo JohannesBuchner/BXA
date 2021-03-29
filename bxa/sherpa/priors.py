@@ -94,7 +94,9 @@ def prior_from_file(filename, parameter):
 
 def create_prior_function(priors = [], parameters = None):
 	"""
-	Combine the prior transformations into a single function for pymultinest.
+	Combine the prior transformations into a single function.
+
+	This assumes factorized (independent) priors.
 
 	:param priors: individual prior transforms to combine into one function.
 		If priors is empty, uniform priors are used on all passed parameters
