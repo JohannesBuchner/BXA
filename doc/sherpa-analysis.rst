@@ -27,6 +27,9 @@ Then define the priors over the free parameters, for example::
       bxa.create_gaussian_prior_for(param3, 1.95, 0.15),
       # and more priors
    ]
+   
+   # make a single function:
+   priorfunction = bxa.create_prior_function(priors)
 
 Make sure you set the parameter minimum and maximum values to appropriate (a priori reasonable) values.
 The limits are used to define the uniform and loguniform priors.
@@ -36,10 +39,19 @@ As a hint, you can find all thawed parameters of a model with::
 
    parameters = [for p in get_model().pars if not p.frozen and p.link is None]
 
+API information:
+
 .. autofunction:: bxa.sherpa.create_jeffreys_prior_for
 .. autofunction:: bxa.sherpa.create_uniform_prior_for
 .. autofunction:: bxa.sherpa.create_gaussian_prior_for
 .. autofunction:: bxa.sherpa.create_prior_function
+
+
+You can also define your own prior function, which accepts
+transforms unit variables unto the values needed for each parameter.
+See the `UltraNest documentation on priors <https://johannesbuchner.github.io/UltraNest/priors.html>`_ 
+for more details.
+
 
 .. _sherpa-run:
 
@@ -51,12 +63,14 @@ You need to specify a prefix, called *outputfiles_basename* where the files are 
 ::
 
    # see the pymultinest documentation for all options
-   priorfunction = bxa.create_prior_function(parameters)
    solver = bxa.BXASolver(prior=priorfunction, parameters=parameters,
 		outputfiles_basename = "myoutputs/")
    results = solver.run(resume=True)
 
+API information:
+
 .. autoclass:: bxa.sherpa.BXASolver
+   :members: run
 
 .. _sherpa-analyse:
 
@@ -96,6 +110,8 @@ the correct luminosity distribution.
 
      dist = solver.get_distribution_with_fluxes(lo=2, hi=10)
      numpy.savetxt(out + prefix + "dist.txt", dist)
+
+API information:
 
 .. automethod:: bxa.sherpa.BXASolver.get_distribution_with_fluxes
 
