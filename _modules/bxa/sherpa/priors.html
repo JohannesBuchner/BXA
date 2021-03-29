@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.sherpa.priors &#8212; BXA (Bayesian X-ray Analysis) 4.0.2 documentation</title>
+    <title>bxa.sherpa.priors &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -131,7 +131,9 @@
 
 <div class="viewcode-block" id="create_prior_function"><a class="viewcode-back" href="../../../sherpa-analysis.html#bxa.sherpa.priors.create_prior_function">[docs]</a><span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">priors</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Combine the prior transformations into a single function for pymultinest.</span>
+<span class="sd">	Combine the prior transformations into a single function.</span>
+
+<span class="sd">	This assumes factorized (independent) priors.</span>
 
 <span class="sd">	:param priors: individual prior transforms to combine into one function.</span>
 <span class="sd">		If priors is empty, uniform priors are used on all passed parameters</span>

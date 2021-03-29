@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Xspec with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.0.2 documentation</title>
+    <title>Xspec with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -48,8 +48,30 @@
 with <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/">PyXSpec</a>.</p>
 <div class="section" id="defining-priors">
 <span id="xspec-priors"></span><h2>Defining priors<a class="headerlink" href="#defining-priors" title="Permalink to this headline">¶</a></h2>
-<p>Create a list of prior transformations like in the example above, one line for each variable.
-These functions will help you with that.</p>
+<p>Define your background model and source model as usual in xspec.
+Then define the priors over the free parameters, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">literalinclude</span><span class="p">::</span> <span class="o">../</span><span class="n">examples</span><span class="o">/</span><span class="n">xspec</span><span class="o">/</span><span class="n">example_simplest</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">lines</dt>
+<dd class="field-odd"><p>13-27</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The above is taken from
+<a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py">examples/xspec/example_simplest.py</a>.</p>
+<p>Make sure you set the parameter minimum and maximum values to appropriate (a priori reasonable) values.
+The limits are used to define the uniform and loguniform priors.</p>
+<p>You can freeze the parameters you do not want to investigate, but BXA only modifies the parameters specified.</p>
+<p>You can also define your own prior function, which accepts
+transforms unit variables unto the values needed for each parameter.
+See the <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/priors.html">UltraNest documentation on priors</a>
+for more details.
+The script <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_advanced_priors.py">examples/xspec/example_advanced_priors.py</a>
+gives an example of such a custom prior function.</p>
+<p>API information:</p>
 <dl class="py function">
 <dt id="bxa.xspec.create_uniform_prior_for">
 <code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">create_uniform_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_uniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
@@ -78,26 +100,6 @@ The Gaussian prior weights by a Gaussian in the parameter.</p>
 <dd><p>Pass your own prior weighting transformation</p>
 </dd></dl>
 
-<p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># set model and parameters ranges</span>
-<span class="c1">#                         val, delta, min, bottom, top, max</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s2">&quot;pow&quot;</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="s2">&quot;,,1e-10,1e-10,1e1,1e1&quot;</span> <span class="c1"># 10^-10 .. 10</span>
-<span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">PhoIndex</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="s2">&quot;,,1,1,3,3&quot;</span>         <span class="c1">#     1 .. 3</span>
-
-<span class="c1"># define prior</span>
-<span class="n">transformations</span> <span class="o">=</span> <span class="p">[</span>
-	<span class="c1"># uniform prior for Photon Index (see other example for </span>
-	<span class="c1"># something more advanced)</span>
-	<span class="n">bxa</span><span class="o">.</span><span class="n">create_uniform_prior_for</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">PhoIndex</span><span class="p">),</span>
-	<span class="c1"># jeffreys prior for scale variable</span>
-	<span class="n">bxa</span><span class="o">.</span><span class="n">create_jeffreys_prior_for</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">norm</span><span class="p">),</span>
-	<span class="c1"># and possibly many more parameters here</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-<p>See <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_simplest.py">examples/xspec/example_simplest.py</a> for a simple example.
-<a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_advanced_priors.py">examples/xspec/example_advanced_priors.py</a> introduces more complex and custom priors.</p>
 </div>
 <div class="section" id="running-the-analysis">
 <span id="xspec-run"></span><h2>Running the analysis<a class="headerlink" href="#running-the-analysis" title="Permalink to this headline">¶</a></h2>
@@ -142,6 +144,7 @@ see <a class="reference external" href="https://corner.readthedocs.io/en/latest/
 </div>
 <div class="section" id="model-checking">
 <h2>Model checking<a class="headerlink" href="#model-checking" title="Permalink to this headline">¶</a></h2>
+<p>For this functionality, you also need scipy installed.</p>
 <p>The following code creates a plot of the convolved posterior model:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating plot of posterior predictions against data ...&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -226,7 +229,7 @@ more lines ended up, and thus it is more likely.</span><a class="headerlink" hre
 <p>For plotting the model parameters found against the data, use these functions.</p>
 <dl class="py method">
 <dt id="bxa.xspec.BXASolver.posterior_predictions_unconvolved">
-<code class="sig-prename descclassname">BXASolver.</code><code class="sig-name descname">posterior_predictions_unconvolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_unconvolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.BXASolver.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BXASolver.</code><code class="sig-name descname">posterior_predictions_unconvolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">plottype</span><span class="o">=</span><span class="default_value">'model'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_unconvolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.BXASolver.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot unconvolved model posterior predictions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

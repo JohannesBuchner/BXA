@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec.solver &#8212; BXA (Bayesian X-ray Analysis) 4.0.2 documentation</title>
+    <title>bxa.xspec.solver &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -178,6 +178,15 @@
 		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
 		<span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="BXASolver.log_likelihood"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.log_likelihood">[docs]</a>	<span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+		<span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+		<span class="n">like</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statistic</span>
+		<span class="c1"># print(&quot;like = %.1f&quot; % like)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">like</span><span class="p">):</span>
+			<span class="k">return</span> <span class="o">-</span><span class="mf">1e100</span>
+		<span class="k">return</span> <span class="n">like</span></div>
+
 <div class="viewcode-block" id="BXASolver.run"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.run">[docs]</a>	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
 		<span class="bp">self</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">n_live_points</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
 		<span class="n">wrapped_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
@@ -198,15 +207,7 @@
 <span class="sd">		These are ultranest parameters (see ultranest.solve documentation!)</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
-		<span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-			<span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
-			<span class="n">like</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statistic</span>
-			<span class="c1"># print(&quot;like = %.1f&quot; % like)</span>
-			<span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">like</span><span class="p">):</span>
-				<span class="k">return</span> <span class="o">-</span><span class="mf">1e100</span>
-			<span class="k">return</span> <span class="n">like</span>
-
-		<span class="c1"># run multinest</span>
+		<span class="c1"># run nested sampling</span>
 		<span class="k">if</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statMethod</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BXASolver</span><span class="o">.</span><span class="n">allowed_stats</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;ERROR: not using cash (Poisson likelihood) for Poisson data! set Fit.statMethod to cash before analysing (currently: </span><span class="si">%s</span><span class="s1">)!&#39;</span> <span class="o">%</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statMethod</span><span class="p">)</span>
 
@@ -216,7 +217,7 @@
 
 		<span class="k">with</span> <span class="n">XSilence</span><span class="p">():</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span>
-				<span class="n">log_likelihood</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_function</span><span class="p">,</span> <span class="n">n_dims</span><span class="p">,</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_function</span><span class="p">,</span> <span class="n">n_dims</span><span class="p">,</span>
 				<span class="n">paramnames</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paramnames</span><span class="p">,</span>
 				<span class="n">outputfiles_basename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputfiles_basename</span><span class="p">,</span>
 				<span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">,</span> <span class="n">Lepsilon</span><span class="o">=</span><span class="n">Lepsilon</span><span class="p">,</span>
@@ -332,7 +333,8 @@
 		<span class="k">return</span> <span class="n">results</span></div>
 
 <div class="viewcode-block" id="BXASolver.posterior_predictions_unconvolved"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_unconvolved</span><span class="p">(</span>
-		<span class="bp">self</span><span class="p">,</span> <span class="n">component_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">400</span>
+		<span class="bp">self</span><span class="p">,</span> <span class="n">component_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+		<span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span>
 	<span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Plot unconvolved model posterior predictions.</span>
@@ -369,7 +371,7 @@
 					<span class="n">bands</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">posterior_predictions_plot</span><span class="p">(</span>
-			<span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span>
+			<span class="n">plottype</span><span class="o">=</span><span class="n">plottype</span><span class="p">,</span>
 			<span class="n">callback</span><span class="o">=</span><span class="n">plot_unconvolved_components</span><span class="p">,</span>
 			<span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">band</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">component_names</span><span class="p">):</span>
@@ -445,7 +447,7 @@
 <span class="sd">	Copy them to your scripts and adapt them to your needs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="c1">#   run multinest</span>
+	<span class="c1">#   run nested sampling</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;running analysis ...&#39;</span><span class="p">)</span>
 	<span class="n">solver</span> <span class="o">=</span> <span class="n">BXASolver</span><span class="p">(</span>
 		<span class="n">transformations</span><span class="o">=</span><span class="n">transformations</span><span class="p">,</span>

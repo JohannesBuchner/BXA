@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.sherpa package &#8212; BXA (Bayesian X-ray Analysis) 4.0.2 documentation</title>
+    <title>bxa.sherpa package &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -202,7 +202,8 @@ along with two empty lists.</p>
 <dl class="py function">
 <dt id="bxa.sherpa.priors.create_prior_function">
 <code class="sig-prename descclassname">bxa.sherpa.priors.</code><code class="sig-name descname">create_prior_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">priors</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_prior_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.priors.create_prior_function" title="Permalink to this definition">¶</a></dt>
-<dd><p>Combine the prior transformations into a single function for pymultinest.</p>
+<dd><p>Combine the prior transformations into a single function.</p>
+<p>This assumes factorized (independent) priors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -335,6 +336,16 @@ If parameters is also None, all thawed parameters are used.</p>
 <dl class="py method">
 <dt id="bxa.sherpa.solver.BXASolver.get_fit">
 <code class="sig-name descname">get_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.get_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.get_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="bxa.sherpa.solver.BXASolver.prior_transform">
+<code class="sig-name descname">prior_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cube</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.prior_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.prior_transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="bxa.sherpa.solver.BXASolver.log_likelihood">
+<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cube</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.log_likelihood" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sherpa with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.0.2 documentation</title>
+    <title>Sherpa with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -60,6 +60,9 @@ Then define the priors over the free parameters, for example:</p>
    <span class="n">bxa</span><span class="o">.</span><span class="n">create_gaussian_prior_for</span><span class="p">(</span><span class="n">param3</span><span class="p">,</span> <span class="mf">1.95</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">),</span>
    <span class="c1"># and more priors</span>
 <span class="p">]</span>
+
+<span class="c1"># make a single function:</span>
+<span class="n">priorfunction</span> <span class="o">=</span> <span class="n">bxa</span><span class="o">.</span><span class="n">create_prior_function</span><span class="p">(</span><span class="n">priors</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Make sure you set the parameter minimum and maximum values to appropriate (a priori reasonable) values.
@@ -69,6 +72,7 @@ As a hint, you can find all thawed parameters of a model with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">get_model</span><span class="p">()</span><span class="o">.</span><span class="n">pars</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">frozen</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">link</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
 </pre></div>
 </div>
+<p>API information:</p>
 <dl class="py function">
 <dt id="bxa.sherpa.create_jeffreys_prior_for">
 <code class="sig-prename descclassname">bxa.sherpa.</code><code class="sig-name descname">create_jeffreys_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_jeffreys_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.create_jeffreys_prior_for" title="Permalink to this definition">¶</a></dt>
@@ -104,7 +108,8 @@ a Gaussian, create a ancillary parameter (see create_jeffreys_prior_for).</p>
 <dl class="py function">
 <dt id="bxa.sherpa.create_prior_function">
 <code class="sig-prename descclassname">bxa.sherpa.</code><code class="sig-name descname">create_prior_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">priors</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_prior_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.create_prior_function" title="Permalink to this definition">¶</a></dt>
-<dd><p>Combine the prior transformations into a single function for pymultinest.</p>
+<dd><p>Combine the prior transformations into a single function.</p>
+<p>This assumes factorized (independent) priors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -117,17 +122,21 @@ Uniform priors will be created for them.</p></li>
 </dl>
 </dd></dl>
 
+<p>You can also define your own prior function, which accepts
+transforms unit variables unto the values needed for each parameter.
+See the <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/priors.html">UltraNest documentation on priors</a>
+for more details.</p>
 </div>
 <div class="section" id="running-the-analysis">
 <span id="sherpa-run"></span><h2>Running the analysis<a class="headerlink" href="#running-the-analysis" title="Permalink to this headline">¶</a></h2>
 <p>You need to specify a prefix, called <em>outputfiles_basename</em> where the files are stored.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># see the pymultinest documentation for all options</span>
-<span class="n">priorfunction</span> <span class="o">=</span> <span class="n">bxa</span><span class="o">.</span><span class="n">create_prior_function</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 <span class="n">solver</span> <span class="o">=</span> <span class="n">bxa</span><span class="o">.</span><span class="n">BXASolver</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">priorfunction</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
              <span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="s2">&quot;myoutputs/&quot;</span><span class="p">)</span>
 <span class="n">results</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">resume</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>API information:</p>
 <dl class="py class">
 <dt id="bxa.sherpa.BXASolver">
 <em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.</code><code class="sig-name descname">BXASolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">otherids</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">prior</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.BXASolver" title="Permalink to this definition">¶</a></dt>
@@ -145,6 +154,28 @@ Uniform priors will be created for them.</p></li>
 </dl>
 <p>If prior is None, uniform priors are used on the passed parameters.
 If parameters is also None, all thawed parameters are used.</p>
+<dl class="py method">
+<dt id="bxa.sherpa.BXASolver.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">evidence_tolerance</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">n_live_points</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">wrapped_params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.BXASolver.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run nested sampling with ultranest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_live_points</strong> – number of live points (400 to 1000 is recommended).</p></li>
+<li><p><strong>evidence_tolerance</strong> – uncertainty on the evidence to achieve</p></li>
+<li><p><strong>resume</strong> – uncertainty on the evidence to achieve</p></li>
+<li><p><strong>Lepsilon</strong> – numerical model inaccuracies in the statistic (default: 0.1).
+Increase if run is not finishing because it is trying too hard to resolve
+unimportant details caused e.g., by atable interpolations.</p></li>
+<li><p><strong>frac_remain</strong> – fraction of the integration remainder allowed in the live points.
+Setting to 0.5 in mono-modal problems can be acceptable and faster.
+The default is 0.01 (safer).</p></li>
+</ul>
+</dd>
+</dl>
+<p>These are ultranest parameters (see ultranest.solve documentation!)</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -178,6 +209,7 @@ the correct luminosity distribution.</p>
 <span class="n">numpy</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">out</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;dist.txt&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>API information:</p>
 <dl class="py method">
 <dt id="bxa.sherpa.BXASolver.get_distribution_with_fluxes">
 <code class="sig-prename descclassname">BXASolver.</code><code class="sig-name descname">get_distribution_with_fluxes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elo</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ehi</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.get_distribution_with_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.BXASolver.get_distribution_with_fluxes" title="Permalink to this definition">¶</a></dt>

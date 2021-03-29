@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec package &#8212; BXA (Bayesian X-ray Analysis) 4.0.2 documentation</title>
+    <title>bxa.xspec package &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -279,6 +279,11 @@ If parameters is also None, all thawed parameters are used.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="bxa.xspec.solver.BXASolver.log_likelihood">
+<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.log_likelihood" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="bxa.xspec.solver.BXASolver.run">
 <code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">evidence_tolerance</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">n_live_points</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">wrapped_params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run nested sampling with ultranest.</p>
@@ -322,7 +327,7 @@ plot_args: matplotlib.pyplot.plot arguments for each component</p>
 
 <dl class="py method">
 <dt id="bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved">
-<code class="sig-name descname">posterior_predictions_unconvolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_unconvolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">posterior_predictions_unconvolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">plottype</span><span class="o">=</span><span class="default_value">'model'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_unconvolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot unconvolved model posterior predictions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
