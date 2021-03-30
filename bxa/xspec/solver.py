@@ -108,7 +108,7 @@ class BXASolver(object):
 	:param prior_function: set only if you want to specify a custom, non-separable prior
 	:param outputfiles_basename: prefix for output filenames.
 
-	More information on the concept of prior information is available at
+	More information on the concept of prior transformations is available at
 	https://johannesbuchner.github.io/UltraNest/priors.html
 	"""
 
