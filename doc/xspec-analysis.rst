@@ -19,7 +19,7 @@ Defining priors
 ---------------------
 
 Define your background model and source model as usual in xspec.
-Then define the priors over the free parameters, for example::
+Then define the priors over the free parameters, for example:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
    :lines: 13-27
