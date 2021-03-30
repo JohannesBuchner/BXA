@@ -43,6 +43,8 @@ You can also define your own prior functions, which transform
 unit variables unto the values needed for each parameter.
 See the `UltraNest documentation on priors <https://johannesbuchner.github.io/UltraNest/priors.html>`_ 
 for more details about this concept.
+The script `examples/sherpa/example_automatic_background_model.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/example_automatic_background_model.py>`_ 
+gives an example of such a custom prior function (`limited_19_24`).
 
 API information:
 
