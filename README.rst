@@ -28,10 +28,15 @@ BXA provides the following features:
 BXA shines especially
 
 * when systematically analysing a large data-set, or
-* when comparing multiple models, or
-* when analysing low counts data-set
-* when you don't want to babysit your fits
-* when you don't want to test MCMC chains for their convergence
+* when comparing multiple models
+* when analysing low counts data-set with realistic models
+
+because its robust and unsupervised fitting algorithm explores
+even complicated parameter spaces in an automated fashion.
+Unlike existing approaches, the user does not need
+to apply problem-specific algorithm parameter tuning, 
+initialise to good starting points 
+and check for convergence, allowing building automated analysis pipelines.
 
 .. image:: https://img.shields.io/pypi/v/BXA.svg
         :target: https://pypi.python.org/pypi/BXA
@@ -130,7 +135,8 @@ For *Xspec*, start python or ipython::
 	
 	In [3]:	bxa.BXASolver?
 
-Now you can use BXA.
+Now you can use BXA. See the documentation pages for how
+to perform analyses. Several examples are included.
 
 .. _ultranest: http://johannesbuchner.github.io/UltraNest/
 
