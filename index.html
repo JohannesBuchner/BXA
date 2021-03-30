@@ -85,11 +85,15 @@ may again be tested with model selection</p></li>
 <p>BXA shines especially</p>
 <ul class="simple">
 <li><p>when systematically analysing a large data-set, or</p></li>
-<li><p>when comparing multiple models, or</p></li>
-<li><p>when analysing low counts data-set</p></li>
-<li><p>when you don’t want to babysit your fits</p></li>
-<li><p>when you don’t want to test MCMC chains for their convergence</p></li>
+<li><p>when comparing multiple models</p></li>
+<li><p>when analysing low counts data-set with realistic models</p></li>
 </ul>
+<p>because its robust and unsupervised fitting algorithm explores
+even complicated parameter spaces in an automated fashion.
+Unlike existing approaches, the user does not need
+to apply problem-specific algorithm parameter tuning,
+initialise to good starting points
+and check for convergence, allowing building automated analysis pipelines.</p>
 <a class="reference external image-reference" href="https://pypi.python.org/pypi/BXA"><img alt="https://img.shields.io/pypi/v/BXA.svg" src="https://img.shields.io/pypi/v/BXA.svg" /></a>
 <a class="reference external image-reference" href="https://coveralls.io/github/JohannesBuchner/BXA"><img alt="https://coveralls.io/repos/github/JohannesBuchner/BXA/badge.svg" src="https://coveralls.io/repos/github/JohannesBuchner/BXA/badge.svg" /></a>
 <a class="reference external image-reference" href="https://johannesbuchner.github.io/BXA/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-published-ok.svg" /></a>
@@ -175,7 +179,8 @@ In [2]: import bxa.xspec as bxa
 In [3]: bxa.BXASolver?
 </pre></div>
 </div>
-<p>Now you can use BXA.</p>
+<p>Now you can use BXA. See the documentation pages for how
+to perform analyses. Several examples are included.</p>
 </div>
 <div class="section" id="code">
 <h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
