@@ -54,8 +54,8 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 clean-doc:
-	rm -rf docs/build
-	nbstripout docs/*.ipynb
+	rm -rf doc/build
+	nbstripout doc/*.ipynb
 
 lint: ## check style with flake8
 	flake8 bxa tests
@@ -76,8 +76,8 @@ coverage: ## check code coverage quickly with the default Python
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/bxa{,.sherpa,.xspec,.sherpa.background}.rst
-	rm -f docs/modules.rst
+	rm -f doc/bxa{,.sherpa,.xspec,.sherpa.background}.rst
+	rm -f doc/modules.rst
 	sphinx-apidoc -H API -o doc/ bxa
 	$(MAKE) -C doc clean
 	PYTHONPATH=${PWD}:${PWD}/npyinterp:${PYTHONPATH} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}/npyinterp $(MAKE) MAKESPHINXDOC=1 -C doc html
