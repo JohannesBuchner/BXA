@@ -32,10 +32,10 @@ The limits are used to define the uniform and loguniform priors.
 
 You can freeze the parameters you do not want to investigate, but BXA only modifies the parameters specified.
 
-You can also define your own prior function, which accepts
-transforms unit variables unto the values needed for each parameter.
+You can also define your own prior functions, which transform 
+unit variables unto the values needed for each parameter.
 See the `UltraNest documentation on priors <https://johannesbuchner.github.io/UltraNest/priors.html>`_ 
-for more details.
+for more details about this concept.
 The script `examples/xspec/example_advanced_priors.py <https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_advanced_priors.py>`_ 
 gives an example of such a custom prior function.
 

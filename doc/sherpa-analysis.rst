@@ -39,18 +39,17 @@ As a hint, you can find all thawed parameters of a model with::
 
    parameters = [for p in get_model().pars if not p.frozen and p.link is None]
 
+You can also define your own prior functions, which transform 
+unit variables unto the values needed for each parameter.
+See the `UltraNest documentation on priors <https://johannesbuchner.github.io/UltraNest/priors.html>`_ 
+for more details about this concept.
+
 API information:
 
 .. autofunction:: bxa.sherpa.create_jeffreys_prior_for
 .. autofunction:: bxa.sherpa.create_uniform_prior_for
 .. autofunction:: bxa.sherpa.create_gaussian_prior_for
 .. autofunction:: bxa.sherpa.create_prior_function
-
-
-You can also define your own prior function, which accepts
-transforms unit variables unto the values needed for each parameter.
-See the `UltraNest documentation on priors <https://johannesbuchner.github.io/UltraNest/priors.html>`_ 
-for more details.
 
 
 .. _sherpa-run:
