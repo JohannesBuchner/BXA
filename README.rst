@@ -76,7 +76,7 @@ BXA's `documentation <http://johannesbuchner.github.io/BXA/>`_ is hosted at http
 Installation
 -------------
 
-First, you need to have `Sherpa`_ or `Xspec`_ installed and its environment loaded.
+First, you need to have either `Sherpa`_ or `Xspec`_ installed and its environment loaded.
 
 BXA itself can installed easily using pip or conda::
 
@@ -111,6 +111,14 @@ so alternatively you can download and install it::
 Or if you only want to install it for the current user::
 
 	$ python setup.py install --user
+
+**Supported operating systems**: 
+BXA runs on all operating systems supported by 
+`ciao/sherpa <https://cxc.cfa.harvard.edu/ciao/watchout.html#install>`_ or 
+`heasoft/xspec <https://heasarc.gsfc.nasa.gov/lheasoft/issues.html>`_.
+The support is systematically tested for every BXA release by 
+`Travis CI <https://travis-ci.com/github/JohannesBuchner/BXA>`_, but only for Ubuntu Linux.
+
 
 Running
 --------------
