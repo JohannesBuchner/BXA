@@ -49,6 +49,7 @@ for <strong>Bayesian Parameter Estimation</strong> and <strong>Model comparison<
 <li><p>finding the best fit</p></li>
 <li><p>computing error bars</p></li>
 <li><p>computing marginal probability distributions</p></li>
+<li><p>parallelisation with MPI</p></li>
 </ul>
 </dd>
 </dl>
@@ -90,10 +91,9 @@ may again be tested with model selection</p></li>
 </ul>
 <p>because its robust and unsupervised fitting algorithm explores
 even complicated parameter spaces in an automated fashion.
-Unlike existing approaches, the user does not need
-to apply problem-specific algorithm parameter tuning,
-initialise to good starting points
-and check for convergence, allowing building automated analysis pipelines.</p>
+The user does not need to initialise to good starting points.
+The <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/method.html">algorithm</a> automatically runs until convergence, and slows down to sample
+carefully if complicated parameter spaces are encountered. This allows building automated analysis pipelines.</p>
 <a class="reference external image-reference" href="https://pypi.python.org/pypi/BXA"><img alt="https://img.shields.io/pypi/v/BXA.svg" src="https://img.shields.io/pypi/v/BXA.svg" /></a>
 <a class="reference external image-reference" href="https://coveralls.io/github/JohannesBuchner/BXA"><img alt="https://coveralls.io/repos/github/JohannesBuchner/BXA/badge.svg" src="https://coveralls.io/repos/github/JohannesBuchner/BXA/badge.svg" /></a>
 <a class="reference external image-reference" href="https://johannesbuchner.github.io/BXA/"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-published-ok.svg" /></a>
@@ -122,7 +122,7 @@ and check for convergence, allowing building automated analysis pipelines.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>First, you need to have <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> or <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/">Xspec</a> installed and its environment loaded.</p>
+<p>First, you need to have either <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> or <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/">Xspec</a> installed and its environment loaded.</p>
 <p>BXA itself can installed easily using pip or conda:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install bxa
 </pre></div>
@@ -156,6 +156,12 @@ $ python setup.py install
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python setup.py install --user
 </pre></div>
 </div>
+<p><strong>Supported operating systems</strong>:
+BXA runs on all operating systems supported by
+<a class="reference external" href="https://cxc.cfa.harvard.edu/ciao/watchout.html#install">ciao/sherpa</a> or
+<a class="reference external" href="https://heasarc.gsfc.nasa.gov/lheasoft/issues.html">heasoft/xspec</a>.
+The support is systematically tested for every BXA release by
+<a class="reference external" href="https://travis-ci.com/github/JohannesBuchner/BXA">Travis CI</a>, but only for Ubuntu Linux.</p>
 </div>
 <div class="section" id="running">
 <h2>Running<a class="headerlink" href="#running" title="Permalink to this headline">¶</a></h2>
