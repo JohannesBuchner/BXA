@@ -11,6 +11,7 @@ BXA provides the following features:
    * finding the best fit
    * computing error bars
    * computing marginal probability distributions
+   * parallelisation with MPI
 * plotting of spectral model vs. the data:
    * for the best fit
    * for each of the solutions (posterior samples)
@@ -33,10 +34,9 @@ BXA shines especially
 
 because its robust and unsupervised fitting algorithm explores
 even complicated parameter spaces in an automated fashion.
-Unlike existing approaches, the user does not need
-to apply problem-specific algorithm parameter tuning, 
-initialise to good starting points 
-and check for convergence, allowing building automated analysis pipelines.
+The user does not need to initialise to good starting points.
+The `algorithm <https://johannesbuchner.github.io/UltraNest/method.html>`_ automatically runs until convergence, and slows down to sample
+carefully if complicated parameter spaces are encountered. This allows building automated analysis pipelines.
 
 .. image:: https://img.shields.io/pypi/v/BXA.svg
         :target: https://pypi.python.org/pypi/BXA
