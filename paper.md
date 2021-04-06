@@ -14,7 +14,7 @@ authors:
 affiliations:
  - name: Max Planck Institute for Extraterrestrial Physics, Giessenbachstrasse, 85741 Garching, Germany.
    index: 1
- - name: Millenium Institute of Astrophysics, Vicuña MacKenna 4860, 7820436 Macul, Santiago, Chile . . .
+ - name: Millenium Institute of Astrophysics, Vicuña MacKenna 4860, 7820436 Macul, Santiago, Chile
    index: 2
  - name: Pontificia Universidad Católica de Chile, Instituto de Astrofísica, Casilla 306, Santiago 22, Chile.
    index: 3
@@ -53,23 +53,23 @@ Before BXA, Bayesian X-ray spectral analyses have been implemented with
 Markov Chain Monte Carlo (MCMC).
 The variants include Metropolis random walks [e.g., @Dyk2001] and
 affine-invariant ensembles [@GoodmanWeare].
-These are difficult to initialise and/or tune, and require complicated
-checks of the chain convergence.
+These can be difficult to initialise and/or tune, and require complicated
+checks of the chain convergence to determine when to terminate the computation,
+and how to select good posterior samples from the chain.
 MCMC tends to be computationally costly, and difficult to parallelise.
-MCMC has limitations when models have multiple posterior peaks, which is
-common in the additive models typically considered in X-ray astronomy.
+MCMC has limitations when models have multiple posterior peaks. These are
+common in the additive models typically considered in X-ray astronomy
+when combined with data sets of low spectral quality.
 For these reasons, Bayesian X-ray analyses, as implemented in existing
-popular packages, is unsatisfying.
+popular packages, can be unsatisfying.
 
 BXA uses nested sampling [@Skilling2004] to efficiently generate posterior samples.
-BXA does not require custom initialisation and proposal tuning,
-as nested sampling performs a global scan of the parameter space.
+Nested sampling performs a global scan of the parameter space,
+without requiring a user-defined starting point.
 This makes it robust and easy to use in large X-ray surveys with many objects,
-and in cases where many models should be compared.
-BXA can also be substantially more efficient than MCMC
-in low-dimensional settings ($d<10$).
-With Bayesian inference and advanced sampling algorithms,
-low count data are also no longer a difficult special case.
+and in situations where many models should be compared.
+Nested sampling can be substantially more efficient than MCMC
+in low-dimensional settings ($d<10$) [@Speagle2020].
 
 Comparing astrophysical models is currently primarily performed either
 using likelihood ratio tests (F-test) or Monte Carlo simulations to evaluate
@@ -92,6 +92,7 @@ BXA provides the following features:
    * finding the best fit
    * computing error bars
    * computing marginal probability distributions
+   * parallelisation with MPI
 * plotting of spectral model vs. the data:
    * for the best fit
    * for each of the solutions (posterior samples)
@@ -113,9 +114,10 @@ BXA shines especially
 
 because its robust and unsupervised fitting algorithm explores
 even complicated parameter spaces in an automated fashion.
-Unlike existing approaches (see Statement of Need above), the user does not need
-to find good starting points, apply problem-specific tuning,
-or check for convergence. This enables automated analysis pipelines.
+The user does not need to initialise to good starting points.
+The algorithm automatically runs until convergence, and slows down to sample
+carefully if complicated parameter spaces are encountered.
+This allows building automated analysis pipelines.
 
 
 # Methods
