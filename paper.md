@@ -128,6 +128,14 @@ perform Bayesian inference.
 Since v4.0, BXA uses the Python package UltraNest [@ultranest],
 which is easier to install.
 
+For diagnosing the quality of BXA outputs, verifying the stability
+over two or more runs is recommended, in particular of
+the marginal posterior distributions and excess scatter of logZ [@Higson2019].
+
+To determine reliable model selection thresholds, parametric bootstrap is recommended.
+This involves simulating many data sets under one model and deriving Bayes factor distributions
+with BXA runs [e.g., Appendix of @Buchner2014].
+
 # Documentation
 
 [Extensive documentation](https://johannesbuchner.github.io/BXA/) is available.
