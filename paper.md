@@ -56,8 +56,7 @@ affine-invariant ensembles [@GoodmanWeare].
 These can be difficult to initialise and/or tune, and require complicated
 checks of the chain convergence to determine when to terminate the computation,
 and how to select good posterior samples from the chain.
-MCMC tends to be computationally costly, and difficult to parallelise.
-MCMC has limitations when models have multiple posterior peaks. These are
+The MCMC variants have limitations when models have multiple posterior peaks. These are
 common in the additive models typically considered in X-ray astronomy
 when combined with data sets of low spectral quality.
 For these reasons, Bayesian X-ray analyses, as implemented in existing
