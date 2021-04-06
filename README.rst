@@ -11,6 +11,7 @@ BXA provides the following features:
    * finding the best fit
    * computing error bars
    * computing marginal probability distributions
+   * parallelisation with MPI
 * plotting of spectral model vs. the data:
    * for the best fit
    * for each of the solutions (posterior samples)
@@ -33,10 +34,9 @@ BXA shines especially
 
 because its robust and unsupervised fitting algorithm explores
 even complicated parameter spaces in an automated fashion.
-Unlike existing approaches, the user does not need
-to apply problem-specific algorithm parameter tuning, 
-initialise to good starting points 
-and check for convergence, allowing building automated analysis pipelines.
+The user does not need to initialise to good starting points.
+The `algorithm <https://johannesbuchner.github.io/UltraNest/method.html>`_ automatically runs until convergence, and slows down to sample
+carefully if complicated parameter spaces are encountered. This allows building automated analysis pipelines.
 
 .. image:: https://img.shields.io/pypi/v/BXA.svg
         :target: https://pypi.python.org/pypi/BXA
@@ -76,7 +76,7 @@ BXA's `documentation <http://johannesbuchner.github.io/BXA/>`_ is hosted at http
 Installation
 -------------
 
-First, you need to have `Sherpa`_ or `Xspec`_ installed and its environment loaded.
+First, you need to have either `Sherpa`_ or `Xspec`_ installed and its environment loaded.
 
 BXA itself can installed easily using pip or conda::
 
@@ -111,6 +111,14 @@ so alternatively you can download and install it::
 Or if you only want to install it for the current user::
 
 	$ python setup.py install --user
+
+**Supported operating systems**: 
+BXA runs on all operating systems supported by 
+`ciao/sherpa <https://cxc.cfa.harvard.edu/ciao/watchout.html#install>`_ or 
+`heasoft/xspec <https://heasarc.gsfc.nasa.gov/lheasoft/issues.html>`_.
+The support is systematically tested for every BXA release by 
+`Travis CI <https://travis-ci.com/github/JohannesBuchner/BXA>`_, but only for Ubuntu Linux.
+
 
 Running
 --------------
