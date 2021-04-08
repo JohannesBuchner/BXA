@@ -70,9 +70,9 @@ class BXASolver(object):
 		self.id = id
 		self.otherids = otherids
 
-		fit = self.get_fit()
+		self.fit = ui._session._get_fit(self.id, self.otherids)[1]
 		if parameters is None:
-			parameters = fit.model.thawedpars
+			parameters = self.fit.model.thawedpars
 		if prior is None:
 			prior = create_prior_function(id=id, otherids=otherids, parameters=parameters)
 		
@@ -81,7 +81,6 @@ class BXASolver(object):
 		self.outputfiles_basename = outputfiles_basename
 		self.set_paramnames()
 		self.allowed_stats = (Cash, CStat)
-		self.fit = ui._session._get_fit(self.id, self.otherids)[1]
 		self.ndims = len(parameters)
 	
 	def set_paramnames(self, paramnames=None):

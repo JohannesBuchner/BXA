@@ -144,7 +144,7 @@ class PCAModel(ArithmeticModel):
 			cts = (10**y - 1) * 10**lognorm
 
 			out = left * 0.0
-			out[self.ilo:self.ihi] = cts.cumsum()
+			out[self.ilo:self.ihi] = cts
 			return out
 		except Exception as e:
 			print("Exception in PCA model:", e, p)
