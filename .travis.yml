@@ -189,7 +189,7 @@ script:
       pushd examples/xspec;
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
-        PYTHONPATH=../../:$PYTHONPATH bash runall.sh || exit 1;
+        PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
         ls;
       else
         echo "skipping tests, setup was slow";
@@ -209,7 +209,7 @@ script:
       # run examples
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
-        PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh || exit 1;
+        PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash -v runall.sh || exit 1;
         ls;
       else
         echo "skipping tests, setup was slow";
