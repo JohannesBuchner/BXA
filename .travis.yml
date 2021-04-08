@@ -174,8 +174,9 @@ script:
   - rm *.nh
   - coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
   - coverage run -p ../../gal.py combined_src.pi
-  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi; fi
-  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi; fi
+  - ls combined_src.pi.nh
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1; fi
+  - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../autobackgroundmodel/fitbkg.py || true; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../gal.py || true; fi
   - if [[ "$TOOL" == "xspec" ]]; then coverage run -p ../../fixkeywords.py || true; fi
@@ -189,6 +190,7 @@ script:
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
         PYTHONPATH=../../:$PYTHONPATH bash runall.sh || exit 1;
+        ls;
       else
         echo "skipping tests, setup was slow";
       fi
@@ -208,6 +210,7 @@ script:
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
         PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh || exit 1;
+        ls;
       else
         echo "skipping tests, setup was slow";
       fi
@@ -219,6 +222,7 @@ script:
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
         PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py || exit 1;
+        ls;
       else
         echo "skipping tests, setup was slow";
       fi

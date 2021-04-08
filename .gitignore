@@ -1,3 +1,9 @@
 *~
 *.pyc
 build/
+*.coverage*
+*.pdf
+*.out
+*.log
+dist/
+doc/_build
