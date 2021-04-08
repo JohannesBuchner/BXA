@@ -188,7 +188,7 @@ script:
       pushd examples/xspec;
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
-        PYTHONPATH=../../:$PYTHONPATH bash runall.sh;
+        PYTHONPATH=../../:$PYTHONPATH bash runall.sh || exit 1;
       else
         echo "skipping tests, setup was slow";
       fi
@@ -207,7 +207,7 @@ script:
       # run examples
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
-        PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh;
+        PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash runall.sh || exit 1;
       else
         echo "skipping tests, setup was slow";
       fi
@@ -218,7 +218,7 @@ script:
       pushd docker/testsrc;
       if [[ $((ENDTIME - STARTTIME)) -lt 1200 ]]
       then
-        PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py;
+        PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py || exit 1;
       else
         echo "skipping tests, setup was slow";
       fi
