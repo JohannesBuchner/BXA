@@ -30,7 +30,7 @@ before_cache:
   - rm -rf $HOME/Downloads/sherpa-conda/miniconda/envs
 
 install:
-  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools
+  - sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools ghostscript
   - sudo pip3 install --upgrade pip==20.3.4
   # allow convert to read PDF files:
   - sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
