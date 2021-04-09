@@ -11,7 +11,7 @@ coverage run -p example_rebinning.py || exit 4
 ls testmodel.npz || exit 5
 coverage run -p example_rebinning.py || exit 6
 
-coverage run -p model_compare.py superfit/ tbabs_noz/
+coverage run -p model_compare.py superfit/ wabs_noz/
 
 mkdir -p reference-output
 convert simplest/plots/corner.pdf reference-output/corner.png
