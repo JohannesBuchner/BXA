@@ -52,7 +52,7 @@ install:
         conda info -a;
         conda create -n ciaoenv -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa;
         conda activate ciaoenv;
-        conda install -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython;
+        conda install -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm;
       fi
     fi
 ################ CIAO/Sherpa #####################
