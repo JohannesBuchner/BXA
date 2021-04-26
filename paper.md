@@ -9,14 +9,14 @@ tags:
   - Bayes factors
 authors:
   - name: Johannes Buchner
-    orcid: 0000-0003-0872-7098
+    orcid: 0000-0003-0426-6634
     affiliation: "1, 2, 3, 4"
 affiliations:
- - name: Max Planck Institute for Extraterrestrial Physics, Giessenbachstrasse, 85741 Garching, Germany.
+ - name: Max Planck Institute for Extraterrestrial Physics, Giessenbachstrasse, 85741 Garching, Germany
    index: 1
  - name: Millenium Institute of Astrophysics, Vicuña MacKenna 4860, 7820436 Macul, Santiago, Chile
    index: 2
- - name: Pontificia Universidad Católica de Chile, Instituto de Astrofísica, Casilla 306, Santiago 22, Chile.
+ - name: Pontificia Universidad Católica de Chile, Instituto de Astrofísica, Casilla 306, Santiago 22, Chile
    index: 3
  - name: Excellence Cluster Universe, Boltzmannstr. 2, D-85748, Garching, Germany
    index: 4
