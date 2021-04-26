@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.sherpa.solver &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
+    <title>bxa.sherpa.solver &#8212; BXA (Bayesian X-ray Analysis) 4.0.5 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -107,9 +107,9 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">otherids</span> <span class="o">=</span> <span class="n">otherids</span>
 
-		<span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fit</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">_get_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">otherids</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 		<span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-			<span class="n">parameters</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">thawedpars</span>
+			<span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">thawedpars</span>
 		<span class="k">if</span> <span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="n">prior</span> <span class="o">=</span> <span class="n">create_prior_function</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="n">otherids</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">)</span>
 		
@@ -118,7 +118,6 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">set_paramnames</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">allowed_stats</span> <span class="o">=</span> <span class="p">(</span><span class="n">Cash</span><span class="p">,</span> <span class="n">CStat</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">_get_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">otherids</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">ndims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 	
 <div class="viewcode-block" id="BXASolver.set_paramnames"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.solver.BXASolver.set_paramnames">[docs]</a>	<span class="k">def</span> <span class="nf">set_paramnames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

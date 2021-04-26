@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.sherpa.background.pca &#8212; BXA (Bayesian X-ray Analysis) 4.0.4 documentation</title>
+    <title>bxa.sherpa.background.pca &#8212; BXA (Bayesian X-ray Analysis) 4.0.5 documentation</title>
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -181,7 +181,7 @@
 			<span class="n">cts</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="n">lognorm</span>
 
 			<span class="n">out</span> <span class="o">=</span> <span class="n">left</span> <span class="o">*</span> <span class="mf">0.0</span>
-			<span class="n">out</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ilo</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">ihi</span><span class="p">]</span> <span class="o">=</span> <span class="n">cts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+			<span class="n">out</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ilo</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">ihi</span><span class="p">]</span> <span class="o">=</span> <span class="n">cts</span>
 			<span class="k">return</span> <span class="n">out</span>
 		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception in PCA model:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
