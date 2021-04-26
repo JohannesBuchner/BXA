@@ -150,7 +150,6 @@ set_xsabund('wilm')
 set_xsxsect('vern')
 
 
-id = ids[0]
 galabso = bxa.auto_galactic_absorption(id)
 galabso.nH.freeze()
 
@@ -158,7 +157,7 @@ galabso.nH.freeze()
 load_table_model("torus", os.environ['MODELDIR'] + '/uxclumpy-cutoff.fits')
 load_table_model("scat", os.environ['MODELDIR'] + '/uxclumpy-cutoff-omni.fits')
 # the limits correspond to fluxes between Sco X-1 and CDFS7Ms faintest fluxes
-srclevel = Parameter('src', 'level', 0, -8, 3, -20, 20) 
+srclevel = Parameter('src', 'level', -8, -8, 3, -20, 20) 
 print('combining components')
 model = torus + scat
 print('linking parameters')
@@ -174,6 +173,8 @@ torus.redshift.max = 10
 scat.redshift = redshift
 scat.redshift.max = 10
 scat.phoindex = torus.phoindex
+torus.theta_inc.val = 60
+
 
 scat.ecut = torus.ecut
 scat.theta_inc = torus.theta_inc
@@ -241,14 +242,22 @@ for id in ids:
 	set_model(id, model * galabso)
 	convmodel = get_model(id)
 	bkg_model = auto_background(id)
-	set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
 
+	set_full_model(id, get_response(id)(model * galabso) + bkg_model * get_bkg_scale(id))
+
+	b = get_bkg_fit_plot(id)
+	numpy.savetxt(prefix + 'bkg_'+str(id)+'.txt.gz', numpy.transpose([b.dataplot.x, b.dataplot.y, b.modelplot.x, b.modelplot.y]))
+	m = get_fit_plot(id)
+	numpy.savetxt(prefix + 'nosrc_'+str(id)+'.txt.gz', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
+	
 	## we allow the background normalisation to be a free fitting parameter
 	p = bkg_model.pars[0]
 	p.max = p.val + 2
 	p.min = p.val - 2
 	parameters.append(p)
 	priors += [bxa.create_uniform_prior_for(p)]
+
+	print(get_model(id))
 
 #################
 # BXA run
@@ -258,7 +267,9 @@ print('running BXA ...')
 solver = bxa.BXASolver(id = ids[0], otherids = tuple(ids[1:]),
 	prior = priorfunction, parameters = parameters, 
 	outputfiles_basename = prefix)
-results = solver.run(resume=True, n_live_points = os.environ.get('NLIVEPOINTS', 400))
+results = solver.run(
+	resume=True, n_live_points = os.environ.get('NLIVEPOINTS', 400),
+	frac_remain=0.5)
 
 try:
 	from mpi4py import MPI
