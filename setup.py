@@ -47,7 +47,7 @@ setup(name='bxa',
     long_description=long_description,
     packages=['bxa.xspec', 'bxa.sherpa', 'bxa.sherpa.background', 'bxa'],
     install_requires=['ultranest','numpy', 'tqdm', 'corner', 'h5py', 'matplotlib', 'astropy'],
-    scripts=['gal.py', 'fixkeywords.py'],
+    scripts=['gal.py', 'fixkeywords.py', 'addspec.py'],
     include_package_data=True,
 )
 
