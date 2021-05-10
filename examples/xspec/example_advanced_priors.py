@@ -102,7 +102,7 @@ if Plot.xAxis == 'keV':
 	plt.xlabel('Energy [keV]')
 elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
-plt.ylabel('Counts/s/cm$^2$')
+plt.ylabel('Energy flux density [erg/s/cm$^2$/keV]')
 print('saving plot...')
 plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
 plt.close()
