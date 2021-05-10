@@ -145,7 +145,7 @@ These are also reported on the screen for you.</p>
 (1d and 2d) of the marginal parameter distributions are plotted
 in ‘myoutputs/plots/corner.pdf’ for you.</p>
 <div class="figure align-default">
-<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 380.0px; height: 380.0px;" /></a>
+<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 356.5px; height: 368.5px;" /></a>
 </div>
 <p>You can also plot them yourself using corner, triangle and getdist, by
 passing <cite>results[‘samples’]</cite> to them.</p>
@@ -223,7 +223,7 @@ and if it reaches below <span class="math notranslate nohighlight">\(10^{-6}\)</
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">)</span>
 <span class="k">elif</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;channel&#39;</span><span class="p">:</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Channel&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Counts/s/cm$^2$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy flux density [erg/s/cm$^2$/keV]&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;unconvolved_posterior.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
