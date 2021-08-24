@@ -53,6 +53,26 @@ API information:
 .. autofunction:: bxa.sherpa.create_gaussian_prior_for
 .. autofunction:: bxa.sherpa.create_prior_function
 
+.. _sherpa-prior-predictive-checks:
+
+Prior Predictive Checks
+------------------------
+
+To check that your priors and model is okay and working,
+create a flipbook of prior samples.
+
+1) Pick a random sample from the prior::
+
+   for parameter, prior_function in zip(parameters, priors):
+       parameter.val = prior_function(numpy.random.uniform())
+
+2) make a plot (plot_model, plot_source, etc.)
+
+Repeat this 20 times and look at the plots.
+
+Do the shapes and number of counts expected
+look like a reasonable representation of your prior expectation?
+
 
 .. _sherpa-run:
 
