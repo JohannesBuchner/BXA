@@ -113,6 +113,9 @@ import numpy
 import bxa.sherpa as bxa
 from bxa.sherpa.background.pca import auto_background
 from sherpa.models.parameter import Parameter
+from bxa.sherpa.background.models import ChandraBackground, SwiftXRTBackground, SwiftXRTWTBackground
+from bxa.sherpa.background.fitters import SingleFitter
+from bxa.sherpa.cachedmodel import CachedModel
 
 import logging
 logging.basicConfig(filename='bxa.log',level=logging.DEBUG)
@@ -131,17 +134,7 @@ if not os.path.exists('filenames.txt'):
 	print(__doc__)
 
 ids = []
-
-prefix = 'multiple_out_'
-for id, line in enumerate(open('filenames.txt'), start=1):
-	filename, elo, ehi = line.strip().split()
-	elo, ehi = float(elo), float(ehi)
-	load_pha(id, filename)
-	ignore_id(id, None, None)
-	notice_id(id, elo,  ehi)
-	ids.append(id)
-
-	set_analysis(id, 'ener', 'counts')
+galabso = None
 
 set_xlog()
 set_ylog()
@@ -149,9 +142,55 @@ set_stat('cstat')
 set_xsabund('wilm')
 set_xsxsect('vern')
 
+for id, line in enumerate(open('filenames.txt'), start=1):
+	filename, elo, ehi = line.strip().split()
+	elo, ehi = float(elo), float(ehi)
+	print('loading spectral file "%s" as id=%s ...' % (filename, id))
+	load_pha(id, filename)
+	ignore_id(id, None, None)
+	notice_id(id, elo,  ehi)
+	if galabso is None:
+		galabso = bxa.auto_galactic_absorption(id)
+		galabso.nH.freeze()
 
-galabso = bxa.auto_galactic_absorption(id)
-galabso.nH.freeze()
+	instrument = get_data(id).header.get('INSTRUME') + get_data(id).header.get('DATAMODE', '')
+	background_model = dict(
+		ACIS=ChandraBackground,
+		XRTPHOTON=SwiftXRTBackground,
+		XRTWINDOWED=SwiftXRTWTBackground,
+	).get(instrument, None)
+
+	if background_model is not None:
+		print('applying parametric background model %s...' % background_model)
+		fitter = SingleFitter(id, filename, background_model)
+		try:
+			fitter.tryload()
+		except IOError:
+			fitter.fit(plot=False)
+	elif instrument in ('EMOS2', 'EMOS1'):
+		print('applying parametric background model XMM/MOS...')
+		mosbkgmodel = bxa.sherpa.background.xmm.get_mos_bkg_model(id, galabso, fit=True)
+		print('freezing MOS background parameters...')
+		for p in get_bkg_model(i).pars:
+			p.freeze()
+	elif instrument == 'EPN':
+		print('applying parametric background model XMM/PN...')
+		pnbkgmodel = bxa.sherpa.background.xmm.get_pn_bkg_model(i, galabso, fit=True)
+		print('freezing PN background parameters...')
+		for p in get_bkg_model(i).pars:
+			p.freeze()
+	else:
+		print('no parametric background model for INSTRUME=%s. Will apply PCA background after model is set.' % (instrument, id))
+	
+	ignore_id(id, None, None)
+	notice_id(id, elo, ehi)
+	set_analysis(id, 'ener', 'counts')
+	ids.append(id)
+
+if len(ids) == 1:
+	prefix = filename + '_out_'
+else:
+	prefix = 'multiple_out_'
 
 # Models available at https://doi.org/10.5281/zenodo.602282
 load_table_model("torus", os.environ['MODELDIR'] + '/uxclumpy-cutoff.fits')
@@ -180,7 +219,7 @@ scat.ecut = torus.ecut
 scat.theta_inc = torus.theta_inc
 scat.torsigma = torus.torsigma
 scat.ctkcover = torus.ctkcover
-softscatnorm = Parameter('src', 'softscatnorm', -2, -7, -1, -7, -1)
+softscatnorm = Parameter('src', 'softscatnorm', -7, -7, -1, -7, -1)
 scat.norm = 10**(srclevel + softscatnorm)
 
 
@@ -210,7 +249,7 @@ if os.environ.get('WITHAPEC', '1') == '1':
 	apec.kT.max = 8
 	apec.kT.min = 0.2
 	# normalised so that its luminosity does not go above 1e42 erg/s
-	apecnorm = Parameter('src', 'apecnorm', -2, -10, 0, -10, 0)
+	apecnorm = Parameter('src', 'apecnorm', -10, -10, 0, -10, 0)
 	apec.norm = 10**apecnorm * 0.5e-6 / apec.redshift**2
 	prefix += 'withapec_'
 	parameters += [apecnorm, apec.kT]
@@ -237,31 +276,45 @@ assert len(priors) == len(parameters), 'priors: %d parameters: %d' % (len(priors
 # set model
 #    find background automatically using PCA method
 
-print('setting source and background model ...')
+print('setting source model ...')
 for id in ids:
 	set_model(id, model * galabso)
 	convmodel = get_model(id)
-	bkg_model = auto_background(id)
+	try:
+		# scale the background model
+		bkg_model = CachedModel(get_bkg_model(id))
+		set_bkg_full_model(id, bkg_model)
+		set_full_model(id, bkg_model * get_bkg_scale(id) + get_response(id)(model * galabso))
+	except:
+		# no background model set, so use PCA background
+		print('fitting PCA background model for id=%s ...' % id)
+		bkg_model = auto_background(id)
+		## we allow the background normalisation to be a free fitting parameter
+		p = bkg_model.pars[0]
+		p.max = p.val + 2
+		p.min = p.val - 2
+		parameters.append(p)
+		priors += [bxa.create_uniform_prior_for(p)]
 
-	set_full_model(id, get_response(id)(model * galabso) + bkg_model * get_bkg_scale(id))
+		set_full_model(id, bkg_model * get_bkg_scale(id) + convmodel)
 
 	b = get_bkg_fit_plot(id)
 	numpy.savetxt(prefix + 'bkg_'+str(id)+'.txt.gz', numpy.transpose([b.dataplot.x, b.dataplot.y, b.modelplot.x, b.modelplot.y]))
+	print("background fit deviation: %d counts" % (numpy.abs(numpy.cumsum(b.dataplot.y) - numpy.cumsum(b.modelplot.y)).max()))
 	m = get_fit_plot(id)
 	numpy.savetxt(prefix + 'nosrc_'+str(id)+'.txt.gz', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
+	print("nosource fit deviation: %d counts" % (numpy.abs(numpy.cumsum(m.dataplot.y) - numpy.cumsum(m.modelplot.y)).max()))
+	if (numpy.abs(numpy.cumsum(m.dataplot.y) - numpy.cumsum(m.modelplot.y)).max()) > 10000:
+		print("WARNING WARNING WARNING: BAD BACKGROUND FIT!")
 	
-	## we allow the background normalisation to be a free fitting parameter
-	p = bkg_model.pars[0]
-	p.max = p.val + 2
-	p.min = p.val - 2
-	parameters.append(p)
-	priors += [bxa.create_uniform_prior_for(p)]
-
 	print(get_model(id))
 
 #################
 # BXA run
 priorfunction = bxa.create_prior_function(priors = priors)
+
+print("Priors:", priors)
+print("Params:", parameters)
 print('running BXA ...')
 
 solver = bxa.BXASolver(id = ids[0], otherids = tuple(ids[1:]),
@@ -278,7 +331,6 @@ try:
 except Exception as e:
 	pass
 
-outputfiles_basename = prefix
 rows = results['samples']
 
 for id in ids:
@@ -306,8 +358,7 @@ for id in ids:
 # compute 2-10keV intrinsic luminosities?
 print("calculating intrinsic fluxes and distribution of model spectra")
 # calculate restframe intrinsic flux
-id = ids[0]
-set_model(id, torus)
+set_model(id, model * galabso)
 
 r = []
 for i, row in enumerate(rows):
@@ -319,9 +370,9 @@ for i, row in enumerate(rows):
 			z = v
 		p.val = v
 
-	absflux = calc_energy_flux(id=id, lo=2, hi=8)
+	absflux = calc_energy_flux(id=id, lo=2, hi=8, model=model * galabso)
 	srcnh.val = 20
-	unabsflux = calc_energy_flux(id=id, lo=2/(1+z), hi=10/(1+z))
+	unabsflux = calc_energy_flux(id=id, lo=2/(1+z), hi=10/(1+z), model=torus)
 	r.append([z, unabsflux, absflux] + list(row))
 
 print("saving distribution plot data")
@@ -332,5 +383,5 @@ numpy.savetxt(prefix + "intrinsic_photonflux.dist.gz", r)
 set_full_model(id, get_response(id)(model) + bkg_model * get_bkg_scale(id))
 solver.set_best_fit()
 
-import sys; sys.exit()
-exit()
+#import sys; sys.exit()
+#exit()
