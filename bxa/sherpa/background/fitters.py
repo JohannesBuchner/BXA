@@ -242,6 +242,8 @@ class SingleFitter(object):
 		self.bm = backgroundmodel(b)
 	def store(self):
 		i = self.id
+		# reset filter for equal comparison
+		self.bm.set_filter()
 		newstats = my_bkg_stat(i)
 		self.bm.storage.store_bkg_model(newstats, stage=self.stage)
 	def tryload(self):
