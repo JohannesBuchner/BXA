@@ -12,9 +12,11 @@ import os
 
 if 'MAKESPHINXDOC' not in os.environ:
 	from sherpa.models import ArithmeticModel, CompositeModel
+	from sherpa.models.parameter import Parameter
 else:
 	ArithmeticModel = object
 	CompositeModel = list
+	Parameter = None
 
 
 class VariableCachedModel(CompositeModel, ArithmeticModel):
@@ -51,13 +53,14 @@ class CachedModel(CompositeModel, ArithmeticModel):
 		"""*othermodel* can be any sherpa model"""
 		self.othermodel = othermodel
 		self.cache = None
+		self.relnorm = Parameter('cache', 'relnorm', 1, 0, 1e10, 0, 1e10)
 		CompositeModel.__init__(self, name='cached(%s)' % othermodel.name, parts=(othermodel,))
 	
 	def calc(self, *args, **kwargs):
 		if self.cache is None:
 			print('   computing cached model ... ')
 			self.cache = self.othermodel.calc(*args, **kwargs)
-		return self.cache
+		return self.cache * self.relnorm.val
 
 	def startup(self):
 		self.othermodel.startup()
