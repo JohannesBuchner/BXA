@@ -13,7 +13,17 @@ and then fitting each stage
 
 """
 
-from sherpa.astro.ui import *
+import os
+if 'MAKESPHINXDOC' not in os.environ:
+	import sherpa.astro.ui as ui
+	from sherpa.stats import Cash, CStat
+	from sherpa.models.parameter import Parameter
+	from sherpa.models import ArithmeticModel, CompositeModel
+	from sherpa.astro.ui import *
+	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
+else:
+	CompositeModel, ArithmeticModel = object, object
+	load_user_stat = lambda _1, _2, _3: None
 import numpy
 import json
 import logging
@@ -232,6 +242,8 @@ class SingleFitter(object):
 		self.bm = backgroundmodel(b)
 	def store(self):
 		i = self.id
+		# reset filter for equal comparison
+		self.bm.set_filter()
 		newstats = my_bkg_stat(i)
 		self.bm.storage.store_bkg_model(newstats, stage=self.stage)
 	def tryload(self):
@@ -470,5 +482,4 @@ class MultiFitter(object):
 			self.fitters[i].store()
 		logmf.debug('fit_jointly_stage %s: stage done' % (stage))
 
-__dir__ = [SingleFitter, MultiFitter, BackgroundStorage, robust_opt, my_bkg_stat]
-
+__all__ = ['SingleFitter', 'MultiFitter', 'BackgroundStorage', 'robust_opt', 'my_bkg_stat']

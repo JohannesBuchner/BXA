@@ -3,74 +3,6 @@
 
 QQ plots and goodness of fit
 
-import bkg2
-i = 179
-i = 318
-load_pha('%d.pi' % i)
-
-def apply_filter():
-	ignore(None, 0.5)
-	ignore(10, None)
-	notice(0.5, 10)
-
-def save(dataoutfilename, p):
-	if hasattr(p, 'xlo'):
-		numpy.savetxt(dataoutfilename, numpy.vstack([p.xlo, p.xhi, p.y]).transpose())
-	#elif hasattr(p, 'yerr'):
-	#	numpy.savetxt(dataoutfilename, numpy.vstack([p.x, p.y]).transpose())
-	else:
-		numpy.savetxt(dataoutfilename, numpy.vstack([p.x, p.y, p.xerr, p.yerr]).transpose())
-
-bunitrsp = bkg2.load_rsp(i=None)
-bkg2.set_my_model(i=None, j=i)
-bkg2.load_bkg_model(i=None, j=i)
-set_stat('chi2gehrels')
-set_analysis('ener', 'counts')
-
-from pyblocxs import qq
-load_pha('bg', 'cdfs4Ms_%d_bkg.pi' % i)
-set_full_model('bg', get_bkg_model())
-
-apply_filter()
-qq.qq_export('bg', outfile='%d_bg_qq' % i, elow=0.2, ehigh=10)
-save('%d_bg_data' % i, get_data_plot('bg'))
-save('%d_bg_model' % i, get_model_plot('bg'))
-save('%d_bg_resid' % i, get_resid_plot('bg'))
-group_adapt('bg', 20)
-save('%d_bg_data20' % i, get_data_plot('bg'))
-save('%d_bg_model20' % i, get_model_plot('bg'))
-save('%d_bg_resid20' % i, get_resid_plot('bg'))
-ungroup('bg')
-apply_filter()
-
-line5.ampl.val = line5.ampl.min
-line6.ampl.val = line6.ampl.min
-line7.ampl.val = line7.ampl.min
-qq.qq_export('bg', outfile='%d_bg3_qq' % i, elow=0.2, ehigh=10)
-save('%d_bg3_data' % i, get_data_plot('bg'))
-save('%d_bg3_model' % i, get_model_plot('bg'))
-save('%d_bg3_resid' % i, get_resid_plot('bg'))
-group_adapt('bg', 20)
-save('%d_bg3_data20' % i, get_data_plot('bg'))
-save('%d_bg3_model20' % i, get_model_plot('bg'))
-save('%d_bg3_resid20' % i, get_resid_plot('bg'))
-ungroup('bg')
-apply_filter()
-
-line3.ampl.val = line3.ampl.min
-qq.qq_export('bg', outfile='%d_bg2_qq' % i, elow=0.2, ehigh=10)
-save('%d_bg2_data' % i, get_data_plot('bg'))
-save('%d_bg2_model' % i, get_model_plot('bg'))
-save('%d_bg2_resid' % i, get_resid_plot('bg'))
-group_adapt('bg', 20)
-save('%d_bg2_data20' % i, get_data_plot('bg'))
-save('%d_bg2_model20' % i, get_model_plot('bg'))
-save('%d_bg2_resid20' % i, get_resid_plot('bg'))
-ungroup('bg')
-apply_filter()
-
-
-
 """
 import os
 if 'MAKESPHINXDOC' not in os.environ:
@@ -126,6 +58,7 @@ def qq_export(id=None, bkg=False, outfile='qq.txt', elow=None, ehigh=None):
 	Example::
 
 		qq.qq_export('bg', outfile='my_bg_qq', elow=0.2, ehigh=10)
+
 	"""
 	# data
 	d = ui.get_bkg_plot(id=id) if bkg else ui.get_data_plot(id=id)
@@ -161,4 +94,3 @@ if 'MAKESPHINXDOC' not in os.environ:
 	ui.load_user_stat("ksstat", KSstat, fake_staterr_func)
 	ui.load_user_stat("cvmstat", CvMstat, fake_staterr_func)
 	ui.load_user_stat("adstat", ADstat, fake_staterr_func)
-

@@ -9,7 +9,6 @@ Copyright: Johannes Buchner (C) 2013-2019
 """
 
 import os
-from math import log10, isnan, isinf
 if 'MAKESPHINXDOC' not in os.environ:
 	import sherpa.astro.ui as ui
 	from sherpa.stats import Cash, CStat
@@ -31,5 +30,3 @@ def auto_galactic_absorption(id=None):
 	print('returning cached galaxy absorption model')
 	return cgalabso
 	#ui._session.set_model(id, galabsmodel)
-
-

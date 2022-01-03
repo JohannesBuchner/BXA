@@ -2,11 +2,21 @@
 Background models for various telescopes and instruments
 """
 
-from sherpa.astro.ui import *
 import numpy
 import json
 import logging
 import warnings
+import os
+
+if 'MAKESPHINXDOC' not in os.environ:
+	import sherpa.astro.ui as ui
+	from sherpa.stats import Cash, CStat
+	from sherpa.models.parameter import Parameter
+	from sherpa.models import ArithmeticModel, CompositeModel
+	from sherpa.astro.ui import *
+	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
+else:
+	CompositeModel, ArithmeticModel = object, object
 
 class BackgroundModel(object):
 	pass
@@ -48,7 +58,7 @@ class ChandraBackground(BackgroundModel):
 			l.ampl.min = 1e-8
 			l.ampl.max = 1e12
 			l.fwhm = 0.02
-			l.fwhm.min = 0.002
+			l.fwhm.min = 0.02
 			l.pos.freeze()
 
 		for l in self.abslines:
@@ -93,8 +103,11 @@ class ChandraBackground(BackgroundModel):
 			b.ampl.val = 1
 		
 		contlevel = const1d("contlevel_%s" % i)
+		contlevel.integrate = False
 		softlevel = const1d("softlevel_%s" % i)
+		softlevel.integrate = False
 		softsoftlevel = const1d("softsoftlevel_%s" % i)
+		softsoftlevel.integrate = False
 		contlevel.c0.min = 1e-6
 		softlevel.c0.min = 1e-4
 		softsoftlevel.c0.min = 1e-4
@@ -173,7 +186,7 @@ class ChandraBackground(BackgroundModel):
 			ignore(hi, None)
 			notice(lo, hi)
 			self.stagepars = [l.ampl]
-			self.pars += self.stagepars
+			self.pars += self.stagepars + [l.fwhm]
 			if stage == 'line%d' % j: 
 				return
 			self.set_filter()
@@ -513,5 +526,4 @@ class SwiftXRTWTBackground(SwiftXRTBackground):
 		ignore(5, None)
 		notice(0.4, 5)
 
-__dir__ = [SwiftXRTBackground, SwiftXRTWTBackground, ChandraBackground]
-
+__all__ = ['SwiftXRTBackground', 'SwiftXRTWTBackground', 'ChandraBackground']

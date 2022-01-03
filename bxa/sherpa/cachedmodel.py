@@ -9,21 +9,20 @@ Copyright: Johannes Buchner (C) 2013-2016
 """
 
 import os
-import numpy
-from math import log10, isnan, isinf
-
 
 if 'MAKESPHINXDOC' not in os.environ:
-	import sherpa.astro.ui as ui
-	from sherpa.stats import Cash, CStat
 	from sherpa.models import ArithmeticModel, CompositeModel
+	from sherpa.models.parameter import Parameter
 else:
 	ArithmeticModel = object
 	CompositeModel = list
+	Parameter = None
 
 
 class VariableCachedModel(CompositeModel, ArithmeticModel):
+	"""Wrapper that caches the most recent model call."""
 	def __init__(self, othermodel):
+		"""*othermodel* can be any sherpa model"""
 		self.othermodel = othermodel
 		self.cache = None
 		self.lastp = None
@@ -49,16 +48,19 @@ class VariableCachedModel(CompositeModel, ArithmeticModel):
 		CompositeModel.guess(self, dep, *args, **kwargs)
 
 class CachedModel(CompositeModel, ArithmeticModel):
+	"""Wrapper that caches the first model call forever."""
 	def __init__(self, othermodel):
+		"""*othermodel* can be any sherpa model"""
 		self.othermodel = othermodel
 		self.cache = None
+		self.relnorm = Parameter('cache', 'relnorm', 1, 0, 1e10, 0, 1e10)
 		CompositeModel.__init__(self, name='cached(%s)' % othermodel.name, parts=(othermodel,))
 	
 	def calc(self, *args, **kwargs):
 		if self.cache is None:
 			print('   computing cached model ... ')
 			self.cache = self.othermodel.calc(*args, **kwargs)
-		return self.cache
+		return self.cache * self.relnorm.val
 
 	def startup(self):
 		self.othermodel.startup()
@@ -71,4 +73,3 @@ class CachedModel(CompositeModel, ArithmeticModel):
 	def guess(self, dep, *args, **kwargs):
 		self.othermodel.guess(dep, *args, **kwargs)
 		CompositeModel.guess(self, dep, *args, **kwargs)
-

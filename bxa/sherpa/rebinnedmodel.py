@@ -5,9 +5,15 @@ Precomputes a interpolated grid model from a complex model.
 That model can then be used for fast access.
 """
 
-from sherpa.astro.ui import *
-from sherpa.models.parameter import Parameter
-from sherpa.models import ArithmeticModel
+import os
+
+if 'MAKESPHINXDOC' not in os.environ:
+	from sherpa.astro.ui import *
+	from sherpa.models.parameter import Parameter
+	from sherpa.models import ArithmeticModel
+else:
+	ArithmeticModel = object
+
 import itertools
 import numpy
 from tqdm import tqdm
@@ -77,7 +83,7 @@ class RebinnedModel(ArithmeticModel):
 				print('        ', bin)
 		
 			data = numpy.zeros((ntot, len(ebins)-1))
-			for j, element in enumerate(tqdm(itertools.product(*bins), disable=None)):
+			for j, element in enumerate(tqdm(list(itertools.product(*bins)), disable=None)):
 				for i, p in enumerate(params):
 					if p.val != element[i]:
 						p.val = element[i]
@@ -129,7 +135,7 @@ class RebinnedModel(ArithmeticModel):
 		#print 'accessing', j
 		return self.data[j]
 	def calc(self, p, left, right, *args, **kwargs):
-		#print '  calc', p
+		# print('  calc', p, left, right, args, kwargs)
 		coords = p[:-2]
 		norm = p[-2]
 		redshift = p[-1]
@@ -158,31 +164,3 @@ class RebinnedModel(ArithmeticModel):
 		assert numpy.isfinite(r).all(), r
 		#print r[len(r)/2], yw[len(yw)/2], norm
 		return r * norm
-
-
-
-"""
-def rebinnedmodel(inputmodel, ebins, nparambins = 100):
-	import astropy.io.fits as pyfits
-	
-	hdu = pyfits.PrimaryHDU(n)
-	hdulist = pyfits.HDUList([hdu])
-	hdulist.writeto('my.rmf')
-	
-	def arr(n, i):
-		a = numpy.zeros(n)
-		a[i] = 1
-		return a
-	
-	elo = ebins[:-1]
-	ehi = ebins[1:]
-	n = len(ebins) - 1
-	rmf_data = numpy.array([(eloi, ehii, 1, 0, n, arr(n, i)) for eloi, ehii in enumerate(zip(elo, ehi))],
-		dtype = [('ENERG_LO', '>f4'),
-			('ENERG_HI', '>f4'),
-			('N_GRP', '>i2'),
-			('F_CHAN', '>i2'),
-			('N_CHAN', '>i2'),
-		])
-"""
-

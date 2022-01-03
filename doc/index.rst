@@ -1,32 +1,7 @@
 Welcome to BXA's documentation!
 =======================================
 
-About Bayesian X-ray Analysis (BXA)
-------------------------------------
-
-BXA connects the nested sampling algorithm MultiNest to the 
-X-ray spectral analysis environments Xspec/Sherpa 
-for **Bayesian Parameter Estimation** and **Model comparison**.
-
-BXA provides the following features:
-
-  * parameter estimation in arbitrary dimensions, which involves:
-     * finding the best fit
-     * computing error bars
-     * computing marginal probability distributions
-  * plotting of spectral model vs. the data:
-     * for the best fit
-     * for each of the solutions (posterior samples)
-     * for each component
-  * model selection:
-     * computing the evidence for the considered model, 
-       ready for use in computing Bayes factors
-     * unlike likelihood-ratios, not limited to nested models 
-  * model discovery:
-     * visualize deviations between model and data with Quantile-Quantile (QQ) plots.
-       QQ-plots do not require binning and are more comprehensive than residuals.
-       This will give you ideas on when to introduce more complex models, which 
-       may again be tested with model selection
+.. include:: ../README.rst
 
 Usage
 --------
@@ -55,129 +30,22 @@ The usage is similar in Sherpa and Xspec conceptionally:
 	* :ref:`In Sherpa <sherpa-qq>`
 	* :ref:`In Xspec <xspec-qq>`
 
-Get BXA
--------------------------------
-
-See the `code repository page <https://github.com/JohannesBuchner/BXA>`_ 
-
-.. _cite:
-
-Citing BXA correctly
----------------------
-
-Refer to the `accompaning paper Buchner et al. (2014) <http://www.aanda.org/articles/aa/abs/2014/04/aa22971-13/aa22971-13.html>`_ which gives introduction and 
-detailed discussion on the methodology and its statistical footing.
-
-We suggest giving credit to the developers of Sherpa/Xspec, MultiNest and of this software.
-As an example::
-
-	For analysing X-ray spectra, we use the analysis software BXA (\ref{Buchner2014}),
-	which connects the nested sampling algorithm MultiNest (\ref{FerozHobson2010})
-	with the fitting environment CIAO/Sherpa (\ref{Fruscione2006}).
-
-Where the BibTex entries are:
-
-* for BXA, PyMultiNest software, and the contributions to X-ray spectral analysis methodology (model comparison, model discovery, Experiment design, Model discovery through QQ-plots):
-
-	- Buchner et al. (2014) A&A
-	- The paper is available at `arXiv:1402.0004 <http://arxiv.org/abs/arXiv:1402.0004>`_
-
-* for MultiNest: see `MultiNest <http://ccpforge.cse.rl.ac.uk/gf/project/multinest/>`_
-* for Sherpa: see `Sherpa`_
-* for Xspec: see `Xspec`_
-
-
-Installation
--------------
-
-However, you need to have `pymultinest`_ and `MultiNest <https://github.com/JohannesBuchner/MultiNest>`_ 
-installed and working.
-
-* `Installation for those two packages only <http://johannesbuchner.github.io/pymultinest-tutorial/install.html#on-your-own-computer>`_
-* `Extensive PyMultiNest, PyAPEMoST, PyCuba installation instructions <http://johannesbuchner.github.io/PyMultiNest/install.html>`_
-
-You need to have `Sherpa`_ or `Xspec`_ installed and its environment loaded.
-
-The following commands should not yield any error message::
-
-	$ python -c 'import pymultinest'
-	$ python -c 'import xspec'
-	$ sherpa
-
-Install the required python packages, through your package manager, through pip or easy_install. For example::
-
-	$ yum install ipython python-matplotlib scipy numpy matplotlib
-	$ apt-get install python-numpy python-scipy python-matplotlib ipython
-
-	$ pip install tqdm corner --user
-
-BXA itself can installed directly from PyPI using pip or easy_install::
-
-	$ pip install bxa # --user if you want to install locally
-
-The source code is available from https://github.com/JohannesBuchner/BXA,
-so alternatively you can download and install it::
-
-	$ python setup.py install
-
-Or if you only want to install it for the current user::
-
-	$ python setup.py install --user
-
-Running
---------------
-
-In *Sherpa*, load the package::
-
-	jbuchner@ds42 ~ $ sherpa
-	-----------------------------------------------------
-	Welcome to Sherpa: CXC's Modeling and Fitting Package
-	-----------------------------------------------------
-	CIAO 4.4 Sherpa version 2 Tuesday, June 5, 2012
-
-	sherpa-1> import bxa.sherpa as bxa
-	sherpa-2> bxa.run_model?
-
-For *Xspec*, start python or ipython::
-	
-	jbuchner@ds42 ~ $ ipython
-	In [1]: import xspec
-	
-	In [2]: import bxa.xspec as bxa
-	
-	In [3]:	bxa.standard_analysis?
-
-Now you can use bxa.
-
-.. _pymultinest: http://johannesbuchner.github.io/PyMultiNest/
-
-.. _Sherpa: http://cxc.harvard.edu/sherpa/
-
-.. _Xspec: http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/
-
-
-Documentation:
--------------------------------
-
 .. toctree::
+   :maxdepth: 2
+   :caption: Contents
+
    sherpa-analysis
    xspec-analysis
-   :maxdepth: -1
-
-Who is using BXA?
--------------------------------
-
-* Dr. Antonis Georgakakis (MPE, Munich)
-* Dr. Mike Anderson (MPA, Munich)
-* Dr. Franz Bauer (PUC, Santiago)
-* Dr. Stéphane Paltani (ISDC, Geneva)
-* Zhu Liu (NAO, Beijing)
-* 
+   convenience
+   background-models
+   pca-background-models
+   xagnfitter
+   contributing
+   history
+   modules
 
 Indices and tables
--------------------------------
-
+==================
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

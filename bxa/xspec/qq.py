@@ -6,10 +6,10 @@ Statistics and Plotting for quantile-quantile analysis for model discovery
 """
 
 import numpy
-from numpy import exp, log
 import matplotlib.pyplot as plt
-import sys, os
+import os
 from xspec import Plot
+
 
 def KSstat(data, model):
 	"""
@@ -115,7 +115,7 @@ def xspecfilenamenormalise(path):
 		return '/'.join(parts)
 	return path.replace('.', '_')
 
-def qq(analyzer, markers = 5, annotate = True):
+def qq(prefix, markers=5, annotate=True):
 	"""
 	Create a quantile-quantile plot for model discovery (deviations in data from model).
 
@@ -129,7 +129,6 @@ def qq(analyzer, markers = 5, annotate = True):
 	"""
 	
 	olddevice = Plot.device
-	prefix = analyzer.outputfiles_basename
 	Plot.device = '/null'
 	tmpfilename = '%swdatatmp.qdp' % xspecfilenamenormalise(prefix)
 	if os.path.exists(tmpfilename):
@@ -162,6 +161,3 @@ def qq(analyzer, markers = 5, annotate = True):
 		markers = markers, annotate = annotate, unit=Plot.xAxis)
 	
 	Plot.device = olddevice
-
-
-

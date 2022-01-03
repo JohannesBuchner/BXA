@@ -1,16 +1,6 @@
 from __future__ import print_function
 """
-Lets try something simpler.
-
-Background model has stages
-SingleFitter goes through stages and fits each with chi^2, then cstat
-
-MultiFitter fits first one with SingleFitter,
-then goes through all the others
-by setting the parameter values to those of the previous id
-and then fitting each stage
-
-
+PCA-based background model.
 """
 import numpy
 import json
@@ -25,7 +15,12 @@ if 'MAKESPHINXDOC' not in os.environ:
 	from sherpa.models import ArithmeticModel, CompositeModel
 	from sherpa.astro.ui import *
 	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
-
+else:
+	# mock objects when sherpa doc is built
+	ArithmeticModel = object
+	class CompositeModel(object):
+		pass
+	RSPModelNoPHA, RMFModelNoPHA = object, object
 
 def pca(M):
 	mean = M.mean(axis=0)
@@ -70,58 +65,6 @@ def get_unit_response(i):
 	delete_data("temp_unitrsp")
 	return bunitrsp
 
-def __get_identity_response(i):
-	n = get_bkg(i).counts.size
-	copy_data(i,"temp_unitrsp")
-	unit_rmf = get_bkg_rmf("temp_unitrsp")
-	unit_arf = get_bkg_arf("temp_unitrsp")
-	r = unit_rmf.matrix.reshape((-1,n))
-	m = len(r)
-	r *= 0
-	r[list(zip(list(range(n)), list(range(n))))] = 1
-	unit_rmf.matrix = unit_rmf.matrix * 0 + r.flatten()
-	unit_arf.specresp = 0. * unit_arf.specresp + 1.0
-	unit_rmf.energ_lo = numpy.arange(m)
-	unit_rmf.energ_hi = numpy.arange(m) + 1
-	unit_arf.energ_lo = numpy.arange(m)
-	unit_arf.energ_hi = numpy.arange(m) + 1
-	bunitrsp = get_response("temp_unitrsp", bkg_id=1)
-	delete_data("temp_unitrsp")
-	return bunitrsp
-
-class IdentityResponse(CompositeModel, ArithmeticModel):
-	def __init__(self, n, model, arf, rmf):
-		self.n = n
-		self.elo = numpy.arange(n)
-		self.ehi = numpy.arange(n)
-		self.lo = numpy.arange(n)
-		self.hi = numpy.arange(n)
-		self.xlo = numpy.arange(n)
-		self.xhi = numpy.arange(n)
-		self.pars = model.pars
-		self.rmf = rmf
-		self.arf = arf
-		self.model = model
-		CompositeModel.__init__(self, 'unitrsp(%s)' % model.name,
-                                (model,))
-	def startup(self):
-		self.model.startup()
-		CompositeModel.startup(self)
-	
-	def teardown(self):
-		self.model.teardown()
-		CompositeModel.teardown(self)
-	
-	def __call__(self, model):
-		self.model = model
-		return model
-	def apply_rmf(src):
-		return src
-	def calc(self, p, x, xhi=None, *args, **kwargs):
-		src = self.model.calc(p, self.xlo, self.xhi)
-		assert numpy.isfinite(src).all(), src
-		return src
-
 
 class IdentityResponse(RSPModelNoPHA):
 	def __init__(self, n, model, arf, rmf):
@@ -140,35 +83,6 @@ class IdentityResponse(RSPModelNoPHA):
 		assert numpy.isfinite(src).all(), src
 		return src
 
-"""
-class DualIdentityResponse(RSPModelNoPHA):
-	def __init__(self, n, model, arf, rmf, model2):
-		self.n = n
-		self.model2 = model2
-		RSPModelNoPHA.__init__(self, arf=arf, rmf=rmf, model=model)
-		self.elo = numpy.arange(n)
-		self.ehi = numpy.arange(n)
-		self.lo = numpy.arange(n)
-		self.hi = numpy.arange(n)
-		self.xlo = numpy.arange(n)
-		self.xhi = numpy.arange(n)
-	def apply_rmf(self, src):
-		print 'calling apply_rmf', self.model2, src
-		print self.model2.apply_rmf(src)
-		print 'calling to model2 done'
-		return src
-	def calc(self, p, x, xhi=None, *args, **kwargs):
-		print 'calling', self.model, p
-		src = self.model.calc(p, self.xlo, self.xhi)
-		assert numpy.isfinite(src).all(), src
-		print 'calling', self.model2, self.model2.thawedpars
-		src2 = self.model2.calc(self.model2.thawedpars, x, xhi=None, *args, **kwargs)
-		print src2
-		return src
-
-set_full_model(id, DualIdentityResponse(bkg_model.n, bkg_model.model, arf=bkg_model.arf, rmf=bkg_model.rmf, model2=convmodel))
-calc_stat()
-"""
 
 class IdentityRMF(RMFModelNoPHA):
 	def __init__(self, n, model, rmf):
@@ -187,6 +101,7 @@ class IdentityRMF(RMFModelNoPHA):
 		assert numpy.isfinite(src).all(), src
 		return src
 
+
 def get_identity_response(i):
 	n = get_bkg(i).counts.size
 	rmf = get_rmf(i)
@@ -195,27 +110,13 @@ def get_identity_response(i):
 		return lambda model: IdentityResponse(n, model, arf=arf, rmf=rmf)
 	except:
 		return lambda model: IdentityRMF(n, model, rmf=rmf)
-	
 
 
-"""
-Find background model.
 
-I analysed the background for many instruments, and stored mean and
- principle components. The data file tells us which instrument we deal with,
- so we load the correct file.
-First guess: 
- 1) PCA decomposition.
- 2) Mean scaled, other components zero
-The one with the better cstat is kept.
-Then start with 0 components and add 1, 2 components until no improvement
-in AIC/cstat.
-
-"""
 logf = logging.getLogger('bxa.Fitter')
 logf.setLevel(logging.INFO)
 
-# Model 
+# Model
 class PCAModel(ArithmeticModel):
 	def __init__(self, modelname, data):
 		self.U = data['U']
@@ -224,37 +125,38 @@ class PCAModel(ArithmeticModel):
 		self.s = data['values']
 		self.ilo = data['ilo']
 		self.ihi = data['ihi']
-		
+
 		p0 = Parameter(modelname=modelname, name='lognorm', val=1, min=-5, max=20,
 			hard_min=-100, hard_max=100)
 		pars = [p0]
 		for i in range(len(self.s)):
-			pi = Parameter(modelname=modelname, name='PC%d' % (i+1), 
+			pi = Parameter(modelname=modelname, name='PC%d' % (i+1),
 				val=0, min=-20, max=20,
 				hard_min=-1e300, hard_max=1e300)
 			pars.append(pi)
 		super(ArithmeticModel, self).__init__(modelname, pars=pars)
-	
+
 	def calc(self, p, left, right, *args, **kwargs):
 		try:
 			lognorm = p[0]
 			pars = numpy.array(p[1:])
 			y = numpy.array(pars * self.V.T + self.mean).flatten()
 			cts = (10**y - 1) * 10**lognorm
-			
+
 			out = left * 0.0
-			out[self.ilo:self.ihi] = cts.cumsum()
+			out[self.ilo:self.ihi] = cts
 			return out
 		except Exception as e:
 			print("Exception in PCA model:", e, p)
 			raise e
 
-	def startup(self):
+	def startup(self, *args):
 		pass
-	def teardown(self):
+	def teardown(self, *args):
 		pass
 	def guess(self, dep, *args, **kwargs):
 		self._load_params()
+
 
 class GaussModel(ArithmeticModel):
 	def __init__(self, modelname):
@@ -282,40 +184,44 @@ class GaussModel(ArithmeticModel):
 	def guess(self, dep, *args, **kwargs):
 		self._load_params()
 
+
 class PCAFitter(object):
+	"""Fitter mixing PCA-based templates and gaussian lines """
 	def __init__(self, id=None):
-		""" 
+		"""
 		id: which data id to fit
-		
+
 		filename: prefix for where to store background information
-		
+
 		load: whether the background file should be loaded now
 		"""
 		self.id = id
 		logf.info('PCAFitter(for ID=%s)' % (id))
 		hdr = get_bkg(id).header
-		
+		self.ndata = len(get_bkg(id).counts)
+
 		telescope = hdr.get('TELESCOP','')
 		instrument = hdr.get('INSTRUME', '')
 		if telescope == '' and instrument == '':
 			raise Exception('ERROR: The TELESCOP/INSTRUME headers are not set in the data file.')
-		filename = os.path.join(os.path.dirname(__file__), ('%s_%s.json' % (telescope, instrument)).lower())
-		if os.path.exists(filename):
-			self.load(filename)
-			return
-		filename = os.path.join(os.path.dirname(__file__), ('%s.json' % telescope).lower())
-		if os.path.exists(filename):
-			self.load(filename)
-			return
-		raise Exception('ERROR: Could not load PCA components for this detector (%s %s). Try the SingleFitter instead.' % (telescope, instrument))
-	
+		for folder in os.environ.get('BKGMODELDIR', '.'), os.path.dirname(__file__):
+			filename = os.path.join(folder, ('%s_%s_%d.json' % (telescope, instrument, self.ndata)).lower())
+			if os.path.exists(filename):
+				self.load(filename)
+				return
+			filename = os.path.join(folder, ('%s_%d.json' % (telescope, self.ndata)).lower())
+			if os.path.exists(filename):
+				self.load(filename)
+				return
+		raise Exception('ERROR: Could not load PCA components for this detector (%s %s, %d channels). Try the SingleFitter instead.' % (telescope, instrument, self.ndata))
+
 	def load(self, filename):
 		logf.info('loading PCA information from %s' % (filename))
 		data = json.load(open(filename))
 		self.pca = dict()
 		for k, v in data.items():
 			self.pca[k] = numpy.array(v)
-	
+
 	def decompose(self):
 		ilo = int(self.pca['ilo'])
 		ihi = int(self.pca['ihi'])
@@ -333,17 +239,17 @@ class PCAFitter(object):
 		assert z.shape == (1,len(s)), z.shape
 		z = z.tolist()[0]
 		return numpy.array([numpy.log10(ncts + 0.1)] + z)
-	
+
 	def calc_bkg_stat(self):
 		ss = [s for s in get_stat_info() if self.id in s.ids and s.bkg_ids is not None and len(s.bkg_ids) > 0]
 		if len(ss) != 1:
 			for s in get_stat_info():
 				if self.id in s.ids and len(s.bkg_ids) > 0:
 					print('get_stat_info returned: ids=%s bkg_ids=%s' % (s.ids, s.bkg_ids))
-		
+
 		assert len(ss) == 1
 		return ss[0].statval
-		
+
 	def fit(self):
 		# try a PCA decomposition of this spectrum
 		logf.info('fitting background of ID=%s using PCA method' % (self.id))
@@ -366,7 +272,7 @@ class PCAFitter(object):
 		logf.info('fit: parameters: %s' % (final))
 		initial_v = self.calc_bkg_stat()
 		logf.info('fit: stat: %s' % (initial_v))
-		
+
 		# lets try from zero
 		logf.info('fit: second full fit from zero')
 		for p in bkgmodel.pars:
@@ -375,7 +281,7 @@ class PCAFitter(object):
 		initial_v0 = self.calc_bkg_stat()
 		logf.info('fit: parameters: %s' % (final))
 		logf.info('fit: stat: %s' % (initial_v0))
-		
+
 		# pick the better starting point
 		if initial_v0 < initial_v:
 			logf.info('fit: using zero-fit')
@@ -385,7 +291,7 @@ class PCAFitter(object):
 			logf.info('fit: using decomposed-fit')
 			for p, v in zip(bkgmodel.pars, final):
 				p.val = v
-		
+
 		# start with the full fit and remove(freeze) parameters
 		print('%d parameters, stat=%.2f' % (len(initial), initial_v))
 		results = [(2 * len(final) + initial_v, final, len(final), initial_v)]
@@ -397,7 +303,7 @@ class PCAFitter(object):
 			v = self.calc_bkg_stat()
 			print('--> %d parameters, stat=%.2f' % (i, v))
 			results.insert(0, (v + 2*i, final, i, v))
-		
+
 		print()
 		print('Background PCA fitting AIC results:')
 		print('-----------------------------------')
@@ -410,7 +316,7 @@ class PCAFitter(object):
 			p.val = v
 		for i in range(nparams):
 			bkgmodel.pars[i].thaw()
-		
+
 		print()
 		print('Increasing parameters again...')
 		# now increase the number of parameters again
@@ -434,12 +340,12 @@ class PCAFitter(object):
 			# stop if we are 3 parameters ahead what we needed
 			if next_nparams >= last_nparams + 3:
 				break
-			
+
 		print('Final choice: %d parameters, aic=%.2f' % (last_nparams, last_aic))
 		# reset to the last good solution
 		for p, v in zip(bkgmodel.pars, last_final):
 			p.val = v
-		
+
 		last_model = convbkgmodel
 		for i in range(10):
 			print()
@@ -463,7 +369,7 @@ class PCAFitter(object):
 			#e = x[i]
 			power = diff_rate[i]
 			# lets try to inject a gaussian there
-		
+
 			g = xsgaussian('g_%d_%d' % (id, i))
 			print('placing gaussian at %.2fkeV, with power %s' % (e, power))
 			# we work in energy bins, not energy
@@ -498,11 +404,10 @@ class PCAFitter(object):
 				for p, v in zip(last_model.pars, last_final):
 					p.val = v
 				break
-			
-		
-		
-	
+
 def auto_background(id):
+	"""Automatically fits background *id* based on PCA-based templates,
+	and additional gaussian lines as needed by AIC."""
 	bkgmodel = PCAFitter(id)
 	log_sherpa = logging.getLogger('sherpa.astro.ui.utils')
 	prev_level = log_sherpa.level
@@ -514,7 +419,6 @@ def auto_background(id):
 	m = get_bkg_fit_plot(id)
 	numpy.savetxt('test_bkg.txt', numpy.transpose([m.dataplot.x, m.dataplot.y, m.modelplot.x, m.modelplot.y]))
 	return get_bkg_model(id)
-	
 
-__dir__ = [PCAFitter, PCAModel]
 
+__all__ = ['PCAFitter', 'PCAModel', 'auto_background', 'get_identity_response', 'get_unit_response']

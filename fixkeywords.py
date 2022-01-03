@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from __future__ import print_function, division
 import numpy
 import sys
@@ -88,5 +89,3 @@ if f['SPECRESP'].data[0]['ENERG_LO'] < SMALL:
 	print('  -> energy bounds corrected')
 else:
 	print('  -> file is ok')
-
-

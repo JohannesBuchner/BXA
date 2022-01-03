@@ -53,7 +53,6 @@ def run(cmd, filename):
 		i, = numpy.where(lo != hi)
 		ilo = i.min() + 1
 		ihi = i.max() - 1
-		ilo,ihi = 0,1024
 		selected = data.sum(axis=1)>mincts
 		cts = data[selected,ilo:ihi]
 		ncts = cts.sum(axis=1).reshape((-1,1))
@@ -177,4 +176,3 @@ if __name__ == '__main__':
 	filename = sys.argv[2]
 	cmd = sys.argv[1]
 	run(cmd=cmd, filename=filename)
-

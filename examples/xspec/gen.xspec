@@ -2,7 +2,6 @@
 
 rm -f example-file.fak
 
-cpd /xw
 model wabs*pow + gauss
 10
 1.9
@@ -25,5 +24,14 @@ example-file
 example-file.fak
 500 1.0 1.0
 
-plot data model
+setplot ener
+setplot rebin 5 40
+ignore *:**-1.0 10.0-**
 
+cpd /NULL
+cpd example-file.gif/GIF
+plot data
+cpd /NULL
+
+cpd /xw
+plot data model

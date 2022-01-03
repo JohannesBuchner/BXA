@@ -97,9 +97,10 @@ def simplify(v):
 	except:
 		return v
 
-def export(filename, target):
+def export(outfilename, filename):
 	f = h5py.File(filename, 'r')
-	with open(target.lower() + '.json', 'w') as fout:
+	#nbins = f['spectra'].shape[1]
+	with open(outfilename, 'w') as fout:
 		#print("  - getting keys:")
 		#for k in list(f.keys()):
 		#	print(target, k, f[k].shape)
@@ -138,6 +139,7 @@ Johannes Buchner (C) 2017-2019
 		telescope = telescope
 
 	newdata = numpy.concatenate(tuple([data for data, _, _ in datasets]))
+	nbins = newdata.shape[1]
 	del datasets
 	attrs = {'INSTRUMENT': instrument, 'TELESCOPE': telescope}
 
@@ -163,6 +165,5 @@ Johannes Buchner (C) 2017-2019
 		pass
 
 	print('exporting to "%s.json" ...' % telescope.lower())
-	export(componentfile, telescope)
+	export(telescope.lower() + '_%d.json' % nbins, componentfile)
 	print('exporting to "%s.json" ... done' % telescope.lower())
-

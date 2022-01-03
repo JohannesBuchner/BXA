@@ -17,7 +17,7 @@ Beyond these already accepted practices, we recommend:
    Instead of a local optimization, the benefit is that a global search can deal with multiples solutions.
    Error propagation is easy too when using the posterior samples (similar to a Markov chain),
    and it preserves the structure of the error (dependence between parameters, etc.)
-   
+
 5. Comparing models using the computed evidence (this software)
    instead of Likelihood ratio tests (which are invalid for non-nested models)
    
@@ -25,5 +25,3 @@ Beyond these already accepted practices, we recommend:
    of current methods, and is easy to do with this software.
 
 See the :ref:`accompaning paper <cite>` for a detailed discussion and comparison! 
-
-

@@ -4,7 +4,7 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2019
+Copyright: Johannes Buchner (C) 2013-2020
 
 Priors
 """
@@ -31,6 +31,11 @@ def create_uniform_prior_for(model, par):
 
 
 def create_jeffreys_prior_for(model, par):
+	"""deprecated, use create_loguniform_prior_for instead. """
+	return create_loguniform_prior_for(model, par)
+
+
+def create_loguniform_prior_for(model, par):
 	"""
 	Use for scale variables (order of magnitude)
 	The Jeffreys prior gives equal weight to each order of magnitude between the
@@ -82,16 +87,8 @@ def create_prior_function(transformations):
 	"""
 
 	def prior(cube, ndim, nparams):
-		try:
-			for i, t in enumerate(transformations):
-				transform = t['transform']
-				cube[i] = transform(cube[i])
-		except Exception as e:
-			print('ERROR: Exception in prior function. Faulty transformations specified!')
-			print('ERROR:', e)
-			print(i, transformations[i])
-			import sys
-			sys.exit(-126)
+		for i, t in enumerate(transformations):
+			transform = t['transform']
+			cube[i] = transform(cube[i])
 
 	return prior
-
