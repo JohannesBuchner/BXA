@@ -33,7 +33,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install numpy tk pip ghostscript coveralls
+          conda install -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm ghostscript
           [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
           pushd $MYCACHE
       - name: Download heasoft (if necessary)
