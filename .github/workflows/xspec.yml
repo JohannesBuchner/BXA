@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -y -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm
+          conda install -y -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
           [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
           mkdir -p $MYCACHE
           pushd $MYCACHE
@@ -58,6 +58,7 @@ jobs:
       - name: Load heasoft
         run: |
             export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+            echo "HEADAS=$HEADAS" >> $GITHUB_ENV
             ls $HEADAS;
             echo "loading xspec from " $HEADAS;
             source ${HEADAS}/headas-init.sh;
@@ -99,6 +100,7 @@ jobs:
       - name: Test examples
         run: |
             pushd examples/xspec;
+            source ${HEADAS}/headas-init.sh
             PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
             ls;
             popd;

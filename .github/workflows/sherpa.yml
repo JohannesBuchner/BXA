@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -y -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm
+          conda install -y -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
           [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
           mkdir -p $MYCACHE
           pushd $MYCACHE
@@ -60,6 +60,7 @@ jobs:
             ls $HOME/Downloads/ciao-install/;
             export CIAO_INSTALL_DIR=`ls -d $HOME/Downloads/ciao-install/ciao-*/`;
             echo "install dir is: $CIAO_INSTALL_DIR";
+            echo "CIAO_INSTALL_DIR=$CIAO_INSTALL_DIR" >> $GITHUB_ENV
 
       - name: Load Sherpa
         run: |
@@ -100,6 +101,8 @@ jobs:
       - name: Test examples
         run: |
             pushd examples/sherpa;
+            source $CIAO_INSTALL_DIR/bin/ciao.sh;
+            source $CIAO_INSTALL_DIR/bin/ciao_setup.sh;
             # install interpolation code first
             ls -d /usr/local/lib/python*;
             sudo ln -s /usr/local/lib/python2.7/dist-packages/numpy/core/include/numpy /usr/include/numpy;
@@ -113,6 +116,8 @@ jobs:
       - name: Run XAGNFitter
         run: |
             pushd docker/testsrc;
+            source $CIAO_INSTALL_DIR/bin/ciao.sh;
+            source $CIAO_INSTALL_DIR/bin/ciao_setup.sh;
             PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py || exit 1;
             ls;
             popd;
