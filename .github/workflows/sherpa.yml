@@ -1,4 +1,4 @@
-name: Test XSpec
+name: Test Sherpa
 on: [push]
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm ghostscript
+          conda install -y -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm
           [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
           mkdir -p $MYCACHE
           pushd $MYCACHE
@@ -44,7 +44,6 @@ jobs:
               echo "getting latest ciao installer";
               CIAO_INSTALL_URL=$(wget -q -O - https://cxc.cfa.harvard.edu/ciao/download/ciao_install.html|grep -o '[^"]*_install.cgi?standard=true');
               wget -O ./ciao-install https://cxc.cfa.harvard.edu/$CIAO_INSTALL_URL;
-              wget -O - 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&src_other_specify=&arch=ubuntu_2004&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' | tar -xzf -
               echo "running ciao installer";
               echo $MYCACHE > ciao-installer-input;
               rm -rf $HOME/Downloads/ciao-install/;
