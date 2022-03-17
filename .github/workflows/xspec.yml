@@ -16,8 +16,8 @@ jobs:
 
       - name: Set directory names
         run: |
-          MYCACHE=$HOME/Downloads/xspec >> $GITHUB_ENV
-          MODELDIR=$HOME/Downloads/models >> $GITHUB_ENV
+          echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
+          echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
 
       - name: Cache heasoft modules
         uses: actions/cache@v2
