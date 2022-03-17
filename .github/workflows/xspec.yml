@@ -79,7 +79,7 @@ jobs:
           cp .coveragerc examples/sherpa
           cp .coveragerc examples/xspec
           pushd docker/testsrc
-          'echo "backend: Agg" > matplotlibrc'
+          echo "backend: Agg" > matplotlibrc
           ls 
           rm *.nh
 
