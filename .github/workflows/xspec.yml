@@ -1,9 +1,5 @@
-name: Test
+name: Test XSpec
 on: [push]
-
-env: 
-  MYCACHE: ${{ env.HOME }}/Downloads/xspec
-  MODELDIR: ${{ env.HOME }}/Downloads/models
 
 jobs:
   Test:
@@ -17,6 +13,11 @@ jobs:
         with:
           python-version: 3.8
           # python-version: ${{ matrix.python-version }}
+
+      - name: Set directory names
+        run: |
+          MYCACHE=$HOME/Downloads/xspec >> $GITHUB_ENV
+          MODELDIR=$HOME/Downloads/models >> $GITHUB_ENV
 
       - name: Cache heasoft modules
         uses: actions/cache@v2
