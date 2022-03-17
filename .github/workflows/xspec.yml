@@ -35,6 +35,7 @@ jobs:
         run: |
           conda install -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm ghostscript
           [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
+          mkdir -p $MYCACHE
           pushd $MYCACHE
       - name: Download heasoft (if necessary)
         run: |
@@ -69,10 +70,9 @@ jobs:
 
       - name: Download models (if necessary)
         run: |
-             mkdir -p $HOME/Downloads/models
-             pushd $HOME/Downloads/models
+             mkdir -p $MODELDIR
+             pushd $MODELDIR
              wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
-             export MODELDIR=$PWD;
              popd
 
       - name: Prepare testing
