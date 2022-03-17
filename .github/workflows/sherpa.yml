@@ -16,7 +16,7 @@ jobs:
 
       - name: Set directory names
         run: |
-          echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
+          echo "MYCACHE=$HOME/Downloads/sherpa" >> $GITHUB_ENV
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
 
       - name: Cache heasoft modules
@@ -38,33 +38,34 @@ jobs:
           [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
           mkdir -p $MYCACHE
           pushd $MYCACHE
-      - name: Download and Install heasoft (if necessary)
+      - name: Download and Install Sherpa (if necessary)
         run: |
-            if ! ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/; then
-              rm -rf heasoft*/;
+            if ! ls -d $HOME/Downloads/ciao-install/ciao-*/bin/ciao_setup.sh; then
+              echo "getting latest ciao installer";
+              CIAO_INSTALL_URL=$(wget -q -O - https://cxc.cfa.harvard.edu/ciao/download/ciao_install.html|grep -o '[^"]*_install.cgi?standard=true');
+              wget -O ./ciao-install https://cxc.cfa.harvard.edu/$CIAO_INSTALL_URL;
               wget -O - 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&src_other_specify=&arch=ubuntu_2004&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' | tar -xzf -
-              ls heasoft*;
-              ls;
-              echo "compiling xspec";
-              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
-              ls heasoft*;
-              XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
-              #XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
-              pushd $XSPEC_BUILD_DIR;
-              mkdir -p $MYCACHE/xspec-install/;
-              ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
-              ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
-              popd;
+              echo "running ciao installer";
+              echo $MYCACHE > ciao-installer-input;
+              rm -rf $HOME/Downloads/ciao-install/;
+              mkdir -vp $HOME/Downloads/ciao-install;
+              echo $HOME/Downloads/ciao-install >> ciao-installer-input;
+              echo n >> ciao-installer-input;
+              echo n >> ciao-installer-input;
+              echo n >> ciao-installer-input;
+              echo n >> ciao-installer-input;
+              echo n >> ciao-installer-input;
+              cat ciao-installer-input;
+              bash ciao-install < ciao-installer-input;
             fi
-      - name: Load heasoft
+            ls $HOME/Downloads/ciao-install/;
+            CIAO_INSTALL_DIR=`ls -d $HOME/Downloads/ciao-install/ciao-*/`;
+            echo "install dir is: $CIAO_INSTALL_DIR";
+
+      - name: Load Sherpa
         run: |
-            export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
-            ls $HEADAS;
-            echo "loading xspec from " $HEADAS;
-            source ${HEADAS}/headas-init.sh;
-            echo "PYTHONPATH: $PYTHONPATH";
-            echo "PATH: $PATH";
-            python -c 'import xspec' || true;
+            source $CIAO_INSTALL_DIR/bin/ciao.sh;
+            source $CIAO_INSTALL_DIR/bin/ciao_setup.sh;
 
       - name: Download models (if necessary)
         if: steps.cache-downloads.outputs.cache-hit != 'true'
@@ -99,8 +100,21 @@ jobs:
 
       - name: Test examples
         run: |
-            pushd examples/xspec;
-            PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
+            pushd examples/sherpa;
+            # install interpolation code first
+            ls -d /usr/local/lib/python*;
+            sudo ln -s /usr/local/lib/python2.7/dist-packages/numpy/core/include/numpy /usr/include/numpy;
+            ls /usr/include/numpy/;
+            git clone https://github.com/JohannesBuchner/npyinterp.git;
+            pushd npyinterp; make; popd;
+            # run examples
+            PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash -v runall.sh || exit 1;
+            popd;
+
+      - name: Run XAGNFitter
+        run: |
+            pushd docker/testsrc;
+            PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py || exit 1;
             ls;
             popd;
 
