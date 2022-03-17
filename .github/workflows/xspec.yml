@@ -48,8 +48,7 @@ jobs:
               echo "compiling xspec";
               sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
               ls heasoft*;
-              XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
-              #XSPEC_BUILD_DIR=`ls -d heasoft-*/x86_64-pc-linux-gnu-libc*/BUILD_DIR`;
+              export XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
               pushd $XSPEC_BUILD_DIR;
               mkdir -p $MYCACHE/xspec-install/;
               ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;

@@ -58,7 +58,7 @@ jobs:
               bash ciao-install < ciao-installer-input;
             fi
             ls $HOME/Downloads/ciao-install/;
-            CIAO_INSTALL_DIR=`ls -d $HOME/Downloads/ciao-install/ciao-*/`;
+            export CIAO_INSTALL_DIR=`ls -d $HOME/Downloads/ciao-install/ciao-*/`;
             echo "install dir is: $CIAO_INSTALL_DIR";
 
       - name: Load Sherpa
