@@ -50,15 +50,16 @@ jobs:
         uses: pat-s/always-upload-cache@v2.1.5
         id: cache-conda
         env:
-          cache-name: cache-conda
+          cache-name: cache-conda-2
         with:
           path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-1
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
           restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
 
       - name: Install dependencies
         run: |
-          conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage sherpa
+          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao ciao-contrib sherpa ds9 marx caldb_main
+          conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
 
       - name: Conda info
         run: conda info
