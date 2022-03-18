@@ -15,7 +15,7 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-update-conda: true
+          auto-update-conda: false
           channels: conda-forge, sherpa
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
@@ -51,6 +51,7 @@ jobs:
         shell: pwsh
         run: conda list
       - name: Conda paths
+        shell: bash -l {0}
         run: |
           echo $PATH
           ls $CONDA/bin/
@@ -75,6 +76,7 @@ jobs:
           rm *.nh
 
       - name: Test helper scripts
+        shell: bash -l {0}
         run: |
           pushd docker/testsrc
           coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
@@ -89,6 +91,7 @@ jobs:
           popd
 
       - name: Test examples
+        shell: bash -l {0}
         run: |
             pushd examples/sherpa;
             # install interpolation code first
@@ -102,6 +105,7 @@ jobs:
             popd;
 
       - name: Run XAGNFitter
+        shell: bash -l {0}
         run: |
             pushd docker/testsrc;
             PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py || exit 1;
@@ -109,13 +113,14 @@ jobs:
             popd;
 
       - name: Install
+        shell: bash -l {0}
         run: |
-          python3 setup.py install --user
+          pip install . --user
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
+        shell: bash -l {0}
         run: |
-          conda activate base
           coverage combine examples/sherpa examples/xspec docker/testsrc .
           coverage report
 
