@@ -32,12 +32,9 @@ jobs:
       - name: Cache models
         uses: pat-s/always-upload-cache@v2.1.5
         id: cache-downloads
-        env:
-          cache-name: cache-downloads
         with:
           path: ${{ env.MODELDIR }}
-          key: ${{ env.cache-name }}
-          restore-keys: ${{ env.cache-name }}
+          key: cache-downloads
 
       - name: Download models (if necessary)
         run: |
@@ -50,16 +47,20 @@ jobs:
         uses: pat-s/always-upload-cache@v2.1.5
         id: cache-conda
         env:
-          cache-name: cache-conda-2
+          cache-name: cache-conda
+          cache-version: 2
         with:
           path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
-          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
+            ${{ runner.os }}-build-${{ env.cache-name }}
 
       - name: Install dependencies
         run: |
-          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao ciao-contrib sherpa ds9 marx caldb_main
+          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa caldb_main
           conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
+          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Conda info
         run: conda info
