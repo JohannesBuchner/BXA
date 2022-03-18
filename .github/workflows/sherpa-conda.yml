@@ -29,20 +29,32 @@ jobs:
         run: |
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
 
-      - name: Cache
+      - name: Cache models
         uses: pat-s/always-upload-cache@v2.1.5
         id: cache-downloads
         env:
           cache-name: cache-downloads
         with:
-          path: |
-             ${{ env.HOME }}/Downloads/ 
-              ~/conda_pkgs_dir
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          path: ${{ env.MODELDIR }}
+          key: ${{ env.cache-name }}
+          restore-keys: ${{ env.cache-name }}
+
+      - name: Download models (if necessary)
+        run: |
+             mkdir -p $MODELDIR
+             pushd $MODELDIR
+             wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
+             popd
+
+      - name: Cache conda
+        uses: pat-s/always-upload-cache@v2.1.5
+        id: cache-conda
+        env:
+          cache-name: cache-conda
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-1
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
 
       - name: Install dependencies
         run: |
@@ -58,13 +70,6 @@ jobs:
           echo $PATH
           ls $CONDA/bin/
           which coverage
-
-      - name: Download models (if necessary)
-        run: |
-             mkdir -p $MODELDIR
-             pushd $MODELDIR
-             wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
-             popd
 
       - name: Prepare testing
         run: |
