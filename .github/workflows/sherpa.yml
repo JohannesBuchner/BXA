@@ -5,21 +5,34 @@ jobs:
   Test:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8]
+
     steps:
       - uses: actions/checkout@v2
- 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-          # python-version: ${{ matrix.python-version }}
 
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          channels: conda-forge
+          python-version: ${{ matrix.python-version }}
+          use-only-tar-bz2: true
+          mamba-version: "*"
+      - name: Conda info
+        shell: bash -l {0}
+        run: conda info
+      - name: Conda list
+        shell: pwsh
+        run: conda list
+ 
       - name: Set directory names
         run: |
           echo "MYCACHE=$HOME/Downloads/sherpa" >> $GITHUB_ENV
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
 
-      - name: Cache heasoft modules
+      - name: Cache
         uses: actions/cache@v2
         id: cache-downloads
         env:
@@ -34,7 +47,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -y -c conda-forge ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
+          conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
           [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
           mkdir -p $MYCACHE
           pushd $MYCACHE
@@ -129,6 +142,7 @@ jobs:
 
       - name: Coverage report
         run: |
+          conda activate base
           coverage combine examples/sherpa examples/xspec docker/testsrc .
           coverage report
 

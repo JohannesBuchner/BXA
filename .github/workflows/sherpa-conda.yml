@@ -1,4 +1,4 @@
-name: Test XSpec
+name: Test Sherpa
 on: [push]
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
-          channels: conda-forge
+          channels: conda-forge, sherpa
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
           mamba-version: "*"
@@ -29,7 +29,6 @@ jobs:
  
       - name: Set directory names
         run: |
-          echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
 
       - name: Cache
@@ -47,38 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
-          [ -f conda-requirements.txt ] && pip install -r conda-requirements.txt
-          mkdir -p $MYCACHE
-          pushd $MYCACHE
-      - name: Download and Install heasoft (if necessary)
-        run: |
-            if ! ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/; then
-              rm -rf heasoft*/;
-              wget -O - 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga | tar -xzf -
-              ls heasoft*;
-              ls;
-              echo "compiling xspec";
-              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
-              ls heasoft*;
-              export XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
-              pushd $XSPEC_BUILD_DIR;
-              mkdir -p $MYCACHE/xspec-install/;
-              ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
-              ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
-              popd;
-            fi
-      - name: Load heasoft
-        run: |
-            export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
-            echo "HEADAS=$HEADAS" >> $GITHUB_ENV
-            ls $HEADAS;
-            echo "loading xspec from " $HEADAS;
-            source ${HEADAS}/headas-init.sh;
-            echo "PYTHONPATH: $PYTHONPATH";
-            echo "PATH: $PATH";
-            python -c 'import xspec' || true;
-
+          conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage sherpa
       - name: Download models (if necessary)
         if: steps.cache-downloads.outputs.cache-hit != 'true'
         run: |
@@ -112,9 +80,21 @@ jobs:
 
       - name: Test examples
         run: |
-            pushd examples/xspec;
-            source ${HEADAS}/headas-init.sh
-            PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
+            pushd examples/sherpa;
+            # install interpolation code first
+            ls -d /usr/local/lib/python*;
+            sudo ln -s /usr/local/lib/python2.7/dist-packages/numpy/core/include/numpy /usr/include/numpy;
+            ls /usr/include/numpy/;
+            git clone https://github.com/JohannesBuchner/npyinterp.git;
+            pushd npyinterp; make; popd;
+            # run examples
+            PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash -v runall.sh || exit 1;
+            popd;
+
+      - name: Run XAGNFitter
+        run: |
+            pushd docker/testsrc;
+            PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py || exit 1;
             ls;
             popd;
 
@@ -125,6 +105,7 @@ jobs:
 
       - name: Coverage report
         run: |
+          conda activate base
           coverage combine examples/sherpa examples/xspec docker/testsrc .
           coverage report
 
