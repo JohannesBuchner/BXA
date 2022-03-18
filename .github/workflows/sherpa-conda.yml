@@ -41,6 +41,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install dependencies
+        shell: bash -l {0}
         run: |
           conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage sherpa
 
@@ -55,7 +56,7 @@ jobs:
         run: |
           echo $PATH
           ls $CONDA/bin/
-          which coverage
+          ls /usr/share/miniconda/envs/test/bin
 
       - name: Download models (if necessary)
         if: steps.cache-downloads.outputs.cache-hit != 'true'
