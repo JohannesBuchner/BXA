@@ -1,6 +1,8 @@
-name: Test Sherpa
-on: [push]
-
+name: Test conda-based Sherpa
+on:
+  push:
+    branches-ignore:
+      - '**'
 jobs:
   Test:
     runs-on: ubuntu-latest
@@ -8,24 +10,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8]
+        python-version: [latest]
 
     steps:
       - uses: actions/checkout@v2
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
+          activate-environment: "test"
           auto-update-conda: true
           channels: conda-forge, sherpa
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
           mamba-version: "*"
-      - name: Conda info
-        shell: bash -l {0}
-        run: conda info
-      - name: Conda list
-        shell: pwsh
-        run: conda list
  
       - name: Set directory names
         run: |
@@ -37,7 +34,9 @@ jobs:
         env:
           cache-name: cache-downloads
         with:
-          path: ${{ env.HOME }}/Downloads/
+          path: |
+             ${{ env.HOME }}/Downloads/ 
+              ~/conda_pkgs_dir
           key: ${{ runner.os }}-build-${{ env.cache-name }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
@@ -47,6 +46,19 @@ jobs:
       - name: Install dependencies
         run: |
           conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage sherpa
+
+      - name: Conda info
+        shell: bash -l {0}
+        run: conda info
+      - name: Conda list
+        shell: pwsh
+        run: conda list
+      - name: Conda paths
+        run: |
+          echo $PATH
+          ls $CONDA/bin/
+          which coverage
+
       - name: Download models (if necessary)
         if: steps.cache-downloads.outputs.cache-hit != 'true'
         run: |
