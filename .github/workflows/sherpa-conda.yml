@@ -99,6 +99,10 @@ jobs:
         run: |
             pushd examples/sherpa;
             # install interpolation code first
+            echo $CONDA_PREFIX/lib/python* 
+            ls /usr/include/numpy/ || true
+            sudo ln -s $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/numpy/core/include/numpy /usr/include/numpy
+            ls /usr/include/numpy/;
             git clone https://github.com/JohannesBuchner/npyinterp.git;
             pushd npyinterp; make; popd;
             # run examples
