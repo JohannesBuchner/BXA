@@ -76,6 +76,7 @@ jobs:
 
       - name: Test helper scripts
         run: |
+          pushd docker/testsrc
           coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           coverage run -p ../../gal.py combined_src.pi
           ls combined_src.pi.nh
