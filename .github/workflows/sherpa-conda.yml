@@ -4,6 +4,9 @@ on: [push]
 jobs:
   Test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
 
     strategy:
       fail-fast: false
@@ -15,7 +18,6 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          activate-environment: "base"
           auto-update-conda: true
           channels: conda-forge, sherpa
           python-version: ${{ matrix.python-version }}
@@ -25,7 +27,6 @@ jobs:
       - name: Set directory names
         run: |
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
-          echo "PATH=$PATH:$CONDA/bin/" >> $GITHUB_ENV
 
       - name: Cache
         uses: actions/cache@v2
