@@ -1,8 +1,6 @@
 name: Test conda-based Sherpa
-on:
-  push:
-    branches-ignore:
-      - '**'
+on: [push]
+
 jobs:
   Test:
     runs-on: ubuntu-latest
