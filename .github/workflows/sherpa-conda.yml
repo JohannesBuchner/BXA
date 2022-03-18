@@ -99,12 +99,6 @@ jobs:
         run: |
             pushd examples/sherpa;
             # install interpolation code first
-            ls /usr/include/numpy/ || true
-            for d in /usr/local/lib/python*; do
-                  sudo ln -s $d/dist-packages/numpy/core/include/numpy /usr/include/numpy || true
-                  break
-            done
-            ls /usr/include/numpy/;
             git clone https://github.com/JohannesBuchner/npyinterp.git;
             pushd npyinterp; make; popd;
             # run examples
