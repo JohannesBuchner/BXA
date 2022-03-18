@@ -180,7 +180,7 @@ for id, line in enumerate(open('filenames.txt'), start=1):
 		for p in get_bkg_model(i).pars:
 			p.freeze()
 	else:
-		print('no parametric background model for INSTRUME=%s. Will apply PCA background after model is set.' % (instrument, id))
+		print('no parametric background model for INSTRUME=%s. Will apply PCA background after model is set.' % instrument)
 	
 	ignore_id(id, None, None)
 	notice_id(id, elo, ehi)
