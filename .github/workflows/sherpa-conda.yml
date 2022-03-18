@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
 
     defaults:
       run:
@@ -58,8 +58,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 caldb_main
-          conda install -y ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
+          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
+          conda install -y ultranest coverage coveralls scipy "matplotlib>=3.3.0" h5py astropy requests cython tqdm coverage
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Conda info
