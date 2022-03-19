@@ -123,7 +123,7 @@ jobs:
 
       - name: Run XAGNFitter
         run: |
-            pushd docker/testsrc;
+            pushd examples/sherpa/chandra;
             PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../../examples/sherpa/xagnfitter.py || exit 1;
             ls;
             popd;
