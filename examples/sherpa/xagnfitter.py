@@ -206,11 +206,11 @@ torus.nh = 10**(srcnh - 22)
 scat.nh = torus.nh
 scat.nh = torus.nh
 print('setting redshift')
-redshift = Parameter('src', 'z', 1, 0, 5, 0, 5) 
+redshift = Parameter('src', 'z', 1, 0, 10, 0, 10) 
+torus.redshift.max = 10
 torus.redshift = redshift
-torus.redshift.max = 5
+scat.redshift.max = 10
 scat.redshift = redshift
-scat.redshift.max = 5
 scat.phoindex = torus.phoindex
 torus.theta_inc.val = 60
 
