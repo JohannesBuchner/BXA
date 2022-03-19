@@ -51,7 +51,6 @@ jobs:
           cache-version: 3
         with:
           path: ~/conda_pkgs_dir
-          upload-chunk-size: 5000000000
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
