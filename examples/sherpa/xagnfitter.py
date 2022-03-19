@@ -207,8 +207,10 @@ scat.nh = torus.nh
 scat.nh = torus.nh
 print('setting redshift')
 redshift = Parameter('src', 'z', 1, 0, 10, 0, 10) 
+torus.redshift.hardmax = 10
 torus.redshift.max = 10
 torus.redshift = redshift
+scat.redshift.hardmax = 10
 scat.redshift.max = 10
 scat.redshift = redshift
 scat.phoindex = torus.phoindex
