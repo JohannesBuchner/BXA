@@ -47,6 +47,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install cython
           pip install ultranest coverage coveralls scipy matplotlib h5py astropy requests cython tqdm coverage
           [ -f pip-requirements.txt ] && pip install -r pip-requirements.txt
       - name: Download and Install heasoft (if necessary)
