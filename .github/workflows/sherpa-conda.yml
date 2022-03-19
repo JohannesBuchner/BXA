@@ -51,7 +51,7 @@ jobs:
           cache-version: 4
         with:
           path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
