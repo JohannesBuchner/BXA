@@ -48,8 +48,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools ghostscript cython3 python3-matplotlib python3-h5py python3-requests python3-coverage python3-tqdm python3-astropy
-          pip install ultranest coveralls
-          [ -f pip-requirements.txt ] && pip install -r pip-requirements.txt
+          pip3 install ultranest coveralls
       - name: Download and Install heasoft (if necessary)
         run: |
             mkdir -p $MYCACHE
