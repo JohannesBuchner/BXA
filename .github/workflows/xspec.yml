@@ -35,7 +35,7 @@ jobs:
         uses: pat-s/always-upload-cache@v2.1.5
         id: cache-xspec
         env:
-          cache-name: cache-conda
+          cache-name: cache-xspec-install
           cache-version: 1
         with:
           path: ${{ env.MODELDIR }}/xspec-install
@@ -92,14 +92,14 @@ jobs:
       - name: Test helper scripts
         run: |
           pushd docker/testsrc
-          coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
-          coverage run -p ../../gal.py combined_src.pi
+          coverage3 run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
+          coverage3 run -p ../../gal.py combined_src.pi
           ls combined_src.pi.nh
-          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
-          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
-          coverage run -p ../../autobackgroundmodel/fitbkg.py || true
-          coverage run -p ../../gal.py || true
-          coverage run -p ../../fixkeywords.py || true
+          coverage3 run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
+          coverage3 run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
+          coverage3 run -p ../../autobackgroundmodel/fitbkg.py || true
+          coverage3 run -p ../../gal.py || true
+          coverage3 run -p ../../fixkeywords.py || true
           git checkout .
           popd
 
@@ -118,8 +118,8 @@ jobs:
 
       - name: Coverage report
         run: |
-          coverage combine examples/sherpa examples/xspec docker/testsrc .
-          coverage report
+          coverage3 combine examples/sherpa examples/xspec docker/testsrc .
+          coverage3 report
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
