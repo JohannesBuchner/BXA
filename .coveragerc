@@ -4,7 +4,6 @@
 
 [run]
 branch = True
-relative_files = True
 omit = 
         /home/travis/bin/*
         /home/travis/.local/*
