@@ -16,6 +16,7 @@ jobs:
         run: |
           echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
+          echo "PATH=$PATH:$HOME/.local/bin/" >> $GITHUB_ENV
 
       - name: Cache models
         uses: pat-s/always-upload-cache@v2.1.5
@@ -122,6 +123,6 @@ jobs:
           coverage report
 
       - name: Coveralls
-        uses: coverallsapp/github-action@master
+        uses: AndreMiras/coveralls-python-action@v20201129
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

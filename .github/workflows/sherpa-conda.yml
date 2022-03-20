@@ -124,7 +124,8 @@ jobs:
       - name: Run XAGNFitter
         run: |
             pushd examples/sherpa/chandra;
-            PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ..//xagnfitter.py || exit 1;
+            echo "179.pi  0.5 8" > filenames.txt 
+            PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../xagnfitter.py || exit 1;
             ls;
             popd;
 
@@ -139,6 +140,6 @@ jobs:
           coverage report
 
       - name: Coveralls
-        uses: coverallsapp/github-action@master
+        uses: AndreMiras/coveralls-python-action@v20201129
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
