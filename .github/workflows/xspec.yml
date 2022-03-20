@@ -37,7 +37,7 @@ jobs:
         id: cache-xspec
         env:
           cache-name: cache-xspec-install
-          cache-version: 2
+          cache-version: 3
         with:
           path: ${{ env.MYCACHE }}/xspec-install
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
