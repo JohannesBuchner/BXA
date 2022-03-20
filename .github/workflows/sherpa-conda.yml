@@ -61,6 +61,7 @@ jobs:
           sudo apt-get install -y ghostscript
           conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
           conda install -y ultranest coverage coveralls scipy "matplotlib>=3.3.0" h5py astropy requests cython tqdm coverage
+          pip install coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Conda info
@@ -138,8 +139,12 @@ jobs:
         run: |
           coverage combine examples/sherpa examples/xspec docker/testsrc .
           coverage report
+          coverage-lcov
+          # make paths relative
+          sed -i s,$PWD,,g lcov.info
 
       - name: Coveralls
-        uses: AndreMiras/coveralls-python-action@v20201129
+        uses: coverallsapp/github-action@master
         with:
+          path-to-lcov: lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}
