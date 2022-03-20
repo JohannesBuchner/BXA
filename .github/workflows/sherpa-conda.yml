@@ -124,7 +124,7 @@ jobs:
       - name: Run XAGNFitter
         run: |
             pushd examples/sherpa/chandra;
-            PYTHONPATH=../../:$PYTHONPATH WITHAPEC=0 coverage run -p ..//xagnfitter.py || exit 1;
+            PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ..//xagnfitter.py || exit 1;
             ls;
             popd;
 
