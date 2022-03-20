@@ -39,7 +39,7 @@ jobs:
           cache-name: cache-xspec-install
           cache-version: 2
         with:
-          path: ${{ env.MODELDIR }}/xspec-install
+          path: ${{ env.MYCACHE }}/xspec-install
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
