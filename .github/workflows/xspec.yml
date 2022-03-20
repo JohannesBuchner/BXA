@@ -47,8 +47,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools ghostscript cython3 python3-matplotlib python3-h5py python3-requests python3-coverage python3-tqdm python3-astropy
-          pip3 install ultranest coveralls
+          sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools ghostscript cython3 python3-matplotlib python3-h5py python3-requests python3-tqdm python3-astropy
+          pip3 install ultranest coveralls coverage
       - name: Download and Install heasoft (if necessary)
         run: |
             mkdir -p $MYCACHE
@@ -92,14 +92,14 @@ jobs:
       - name: Test helper scripts
         run: |
           pushd docker/testsrc
-          coverage3 run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
-          coverage3 run -p ../../gal.py combined_src.pi
+          coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
+          coverage run -p ../../gal.py combined_src.pi
           ls combined_src.pi.nh
-          coverage3 run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
-          coverage3 run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
-          coverage3 run -p ../../autobackgroundmodel/fitbkg.py || true
-          coverage3 run -p ../../gal.py || true
-          coverage3 run -p ../../fixkeywords.py || true
+          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
+          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
+          coverage run -p ../../autobackgroundmodel/fitbkg.py || true
+          coverage run -p ../../gal.py || true
+          coverage run -p ../../fixkeywords.py || true
           git checkout .
           popd
 
@@ -118,8 +118,8 @@ jobs:
 
       - name: Coverage report
         run: |
-          coverage3 combine examples/sherpa examples/xspec docker/testsrc .
-          coverage3 report
+          coverage combine examples/sherpa examples/xspec docker/testsrc .
+          coverage report
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
