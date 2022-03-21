@@ -12,7 +12,6 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -217,26 +216,59 @@ file names (if load=True) or storage prefixes</p>
 <dl class="py class">
 <dt id="bxa.sherpa.background.pca.PCAModel">
 <em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.pca.</code><code class="sig-name descname">PCAModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modelname</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sherpa.models.model.ArithmeticModel</span></code></p>
 <dl class="py method">
 <dt id="bxa.sherpa.background.pca.PCAModel.calc">
 <code class="sig-name descname">calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">left</span></em>, <em class="sig-param"><span class="n">right</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.calc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Evaluate the model on a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>sequence of numbers</em>) – The parameter values to use. The order matches the
+<code class="docutils literal notranslate"><span class="pre">pars</span></code> field.</p></li>
+<li><p><strong>*args</strong> – The model grid. The values can be scalar or arrays,
+and the number depends on the dimensionality of the
+model and whether it is being evaluated over an
+integrated grid or at a point (or points).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="bxa.sherpa.background.pca.PCAModel.startup">
 <code class="sig-name descname">startup</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.startup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called before a model may be evaluated multiple times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should a cache be used when evaluating the models.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#bxa.sherpa.background.pca.PCAModel.teardown" title="bxa.sherpa.background.pca.PCAModel.teardown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">teardown</span></code></a></p>
+</div>
+</dd></dl>
 
 <dl class="py method">
 <dt id="bxa.sherpa.background.pca.PCAModel.teardown">
 <code class="sig-name descname">teardown</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.teardown" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called after a model may be evaluated multiple times.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></p>
+</div>
+</dd></dl>
 
 <dl class="py method">
 <dt id="bxa.sherpa.background.pca.PCAModel.guess">
 <code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dep</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.guess" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Set an initial guess for the parameter values.</p>
+<p>Attempt to set the parameter values, and ranges, for
+the model to match the data values. This is intended
+as a rough guess, so it is expected that the model
+is only evaluated a small number of times, if at all.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -366,7 +398,7 @@ and additional gaussian lines as needed by AIC.</p>
       &copy;2013-2020, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
