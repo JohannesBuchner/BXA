@@ -76,6 +76,7 @@ jobs:
           which coverage
 
       - name: Conda download clean-up
+        continue-on-error: true
         # we must keep below 5GB, otherwise caching fails
         # prefer keeping large files (ciao)
         run: |
