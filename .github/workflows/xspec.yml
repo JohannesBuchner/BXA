@@ -123,7 +123,7 @@ jobs:
           coverage report
           coverage-lcov
           # make paths relative
-          sed -i s,$PWD,,g lcov.info
+          sed -i s,$PWD/,,g lcov.info
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
