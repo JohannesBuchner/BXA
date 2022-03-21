@@ -12,6 +12,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -78,6 +79,34 @@ for more details about this concept.
 The script <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/xspec/example_advanced_priors.py">examples/xspec/example_advanced_priors.py</a>
 gives an example of such a custom prior function (<cite>my_custom_prior</cite>).</p>
 <p>API information:</p>
+<dl class="py function">
+<dt id="bxa.xspec.create_uniform_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">create_uniform_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_uniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for location variables (position)
+The uniform prior gives equal weight in non-logarithmic scale.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.create_loguniform_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">create_loguniform_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_loguniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_loguniform_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for scale variables (order of magnitude)
+The Jeffreys prior gives equal weight to each order of magnitude between the
+minimum and maximum value. Flat in logarithmic scale</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.create_gaussian_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">create_gaussian_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">par</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">std</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_gaussian_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_gaussian_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for informed variables.
+The Gaussian prior weights by a Gaussian in the parameter.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="bxa.xspec.create_custom_prior_for">
+<code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">create_custom_prior_for</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">par</em>, <em class="sig-param">transform</em>, <em class="sig-param">aftertransform=&lt;function &lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/priors.html#create_custom_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.create_custom_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass your own prior weighting transformation</p>
+</dd></dl>
+
 </div>
 <div class="section" id="prior-predictive-checks">
 <h2>Prior Predictive Checks<a class="headerlink" href="#prior-predictive-checks" title="Permalink to this headline">¶</a></h2>
@@ -106,6 +135,26 @@ look like a reasonable representation of your prior expectation?</p>
 <span class="n">results</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">resume</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="py class">
+<dt>
+<em class="property">class </em><code class="sig-prename descclassname">bxa.xspec.</code><code class="sig-name descname">BXASolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformations</span></em>, <em class="sig-param"><span class="n">prior_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Run the Bayesian analysis.</p>
+<p>The nested sampling package <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/">UltraNest</a> is used under the hood.</p>
+<p>If prior is None, uniform priors are used on the passed parameters.
+If parameters is also None, all thawed parameters are used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transformations</strong> – List of parameter transformation definitions</p></li>
+<li><p><strong>prior_function</strong> – set only if you want to specify a custom, non-separable prior</p></li>
+<li><p><strong>outputfiles_basename</strong> – prefix for output filenames.</p></li>
+</ul>
+</dd>
+</dl>
+<p>More information on the concept of prior transformations is available at
+<a class="reference external" href="https://johannesbuchner.github.io/UltraNest/priors.html">https://johannesbuchner.github.io/UltraNest/priors.html</a></p>
+</dd></dl>
+
 <p>The returned results contain posterior samples and the Bayesian evidence.
 These are also reported on the screen for you.</p>
 </div>
@@ -207,6 +256,48 @@ through the model. All such lines are plotted. Where the region is darker,
 more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p>For plotting the model parameters found against the data, use these functions.</p>
+<dl class="py method">
+<dt id="bxa.xspec.BXASolver.posterior_predictions_unconvolved">
+<code class="sig-prename descclassname">BXASolver.</code><code class="sig-name descname">posterior_predictions_unconvolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">plottype</span><span class="o">=</span><span class="default_value">'model'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_unconvolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.BXASolver.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot unconvolved model posterior predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>component_names</strong> – labels to use. Set to ‘ignore’ to skip plotting a component</p></li>
+<li><p><strong>plot_args</strong> – matplotlib.pyplot.plot arguments for each component</p></li>
+<li><p><strong>nsamples</strong> – number of posterior samples to use</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bxa.xspec.BXASolver.posterior_predictions_convolved">
+<code class="sig-prename descclassname">BXASolver.</code><code class="sig-name descname">posterior_predictions_convolved</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">400</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_convolved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.BXASolver.posterior_predictions_convolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot convolved model posterior predictions.
+Also returns data points for plotting.</p>
+<p>component_names: labels to use. Set to ‘ignore’ to skip plotting a component
+plot_args: matplotlib.pyplot.plot arguments for each component</p>
+</dd></dl>
+
+<dl class="py method">
+<dt>
+<code class="sig-prename descclassname">sinning.</code><code class="sig-name descname">binning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bins</span></em>, <em class="sig-param"><span class="n">widths</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">models</span></em><span class="sig-paren">)</span></dt>
+<dd><p>Bins the data for plotting.
+Using the gof module, computes a Poisson goodness-of-fit range,
+i.e. ranges where the model must lie. This is done for multiple
+binning sizes simultaneously.</p>
+<p>Returns:</p>
+<ul class="simple">
+<li><p>marked_binned: data points binned to contain 10 counts
+a sequence ready to be passed to matplotlib.pyplot.errorbar</p></li>
+<li><p>modelrange: range allowed by the data
+ready to be passed to matplotlib.pyplot.fill_between</p></li>
+<li><p>and statistics (GoF measure)</p></li>
+</ul>
+<p>outputfiles_basename is not used.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="error-propagation">
 <h2>Error propagation<a class="headerlink" href="#error-propagation" title="Permalink to this headline">¶</a></h2>
@@ -334,6 +425,19 @@ This indicates that the data has more counts than the model there.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
+<dl class="py function">
+<dt id="bxa.xspec.qq.qq">
+<code class="sig-prename descclassname">bxa.xspec.qq.</code><code class="sig-name descname">qq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em>, <em class="sig-param"><span class="n">markers</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">annotate</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/qq.html#qq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.xspec.qq.qq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a quantile-quantile plot for model discovery (deviations in data from model).</p>
+<p>The current data and model is used, so call <em>set_best_fit(analyzer, transformations)</em>
+before, to get the qq plot at the best fit.</p>
+<ul class="simple">
+<li><p>markers: list of energies/channels (whichever the current plotting xaxis unit)
+or number of equally spaced markers between minimum+maximum.</p></li>
+<li><p>annotate: add information to the plot</p></li>
+</ul>
+</dd></dl>
+
 <p>Refer to the <a class="reference internal" href="index.html#cite"><span class="std std-ref">accompaning paper</span></a>, which gives an introduction and
 detailed discussion on the methodology.</p>
 </div>
@@ -415,7 +519,7 @@ detailed discussion on the methodology.</p>
       &copy;2013-2020, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

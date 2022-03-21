@@ -12,6 +12,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -76,13 +77,6 @@ script fetches the value from there:</p>
 <p>Some models are very slow (such as convolutions).
 It is worthwhile to cache them or produce interpolation grids.</p>
 <p>For Sherpa, caching of arbitrary models is provided by CachedModel, which you can use as a wrapper:</p>
-<dl class="py class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.cachedmodel.</code><code class="sig-name descname">CachedModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">othermodel</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Wrapper that caches the first model call forever.</p>
-<p><em>othermodel</em> can be any sherpa model</p>
-</dd></dl>
-
 <p>Automatic production of an interpolation model is possible with the RebinnedModel:</p>
 </div>
 <div class="section" id="xspec-chain-files">
@@ -197,7 +191,7 @@ can help run your code in parallel.</p>
       &copy;2013-2020, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,0 +1,597 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bxa.xspec.solver &#8212; BXA (Bayesian X-ray Analysis) 4.0.5 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/xspec/solver.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bxa.xspec.solver</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">BXA (Bayesian X-ray Analysis) for Xspec</span>
+
+<span class="sd">Copyright: Johannes Buchner (C) 2013-2020</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">ultranest.solvecompat</span> <span class="kn">import</span> <span class="n">pymultinest_solve_compat</span> <span class="k">as</span> <span class="n">solve</span>
+<span class="kn">from</span> <span class="nn">ultranest.plot</span> <span class="kn">import</span> <span class="n">PredictionBand</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">qq</span>
+<span class="kn">from</span> <span class="nn">.sinning</span> <span class="kn">import</span> <span class="n">binning</span>
+
+<span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="n">Xset</span><span class="p">,</span> <span class="n">AllModels</span><span class="p">,</span> <span class="n">Fit</span><span class="p">,</span> <span class="n">Plot</span>
+<span class="kn">import</span> <span class="nn">xspec</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>  <span class="c1"># if this fails --&gt; pip install tqdm</span>
+<span class="kn">from</span> <span class="nn">.priors</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="XSilence"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.XSilence">[docs]</a><span class="k">class</span> <span class="nc">XSilence</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Context for temporarily making xspec quiet.&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">oldchatter</span> <span class="o">=</span> <span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span>
+		<span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+	<span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+		<span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oldchatter</span></div>
+
+
+<div class="viewcode-block" id="create_prior_function"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.create_prior_function">[docs]</a><span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Create a single prior transformation function from a list of</span>
+<span class="sd">	transformations for each parameter. This assumes the priors factorize.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">prior</span><span class="p">(</span><span class="n">cube</span><span class="p">):</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
+			<span class="n">transform</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">]</span>
+			<span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">params</span>
+
+	<span class="k">return</span> <span class="n">prior</span></div>
+
+
+<div class="viewcode-block" id="store_chain"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.store_chain">[docs]</a><span class="k">def</span> <span class="nf">store_chain</span><span class="p">(</span><span class="n">chainfilename</span><span class="p">,</span> <span class="n">transformations</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="n">fit_statistic</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Writes a MCMC chain file in the same format as the Xspec chain command</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">pyfits</span>
+
+	<span class="n">group_index</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">old_model</span> <span class="o">=</span> <span class="n">transformations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
+	<span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transformations</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">old_model</span><span class="p">:</span>
+			<span class="n">group_index</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">old_model</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
+		<span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">__</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">group_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">old_model</span><span class="o">.</span><span class="n">nParameters</span><span class="p">))</span>
+
+	<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyfits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+		<span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;aftertransform&#39;</span><span class="p">](</span><span class="n">posterior</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]))</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">)]</span>
+	<span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyfits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;FIT_STATISTIC&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">fit_statistic</span><span class="p">))</span>
+	<span class="n">table</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">ColDefs</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+	<span class="n">header</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
+	<span class="n">header</span><span class="o">.</span><span class="n">add_comment</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Created by BXA (Bayesian X-ray spectal Analysis) for Xspec&quot;&quot;&quot;</span><span class="p">)</span>
+	<span class="n">header</span><span class="o">.</span><span class="n">add_comment</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;refer to https://github.com/JohannesBuchner/&quot;&quot;&quot;</span><span class="p">)</span>
+	<span class="n">header</span><span class="p">[</span><span class="s1">&#39;TEMPR001&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+	<span class="n">header</span><span class="p">[</span><span class="s1">&#39;STROW001&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">header</span><span class="p">[</span><span class="s1">&#39;EXTNAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CHAIN&#39;</span>
+	<span class="n">tbhdu</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">BinTableHDU</span><span class="o">.</span><span class="n">from_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+	<span class="n">tbhdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">chainfilename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_parameters"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.set_parameters">[docs]</a><span class="k">def</span> <span class="nf">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Set current parameters.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformations</span><span class="p">)</span>
+	<span class="n">pars</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
+		<span class="n">v</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;aftertransform&#39;</span><span class="p">](</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+		<span class="k">assert</span> <span class="ow">not</span> <span class="n">isnan</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">isinf</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="s1">&#39;ERROR: parameter </span><span class="si">%d</span><span class="s1"> (index </span><span class="si">%d</span><span class="s1">, </span><span class="si">%s</span><span class="s1">) to be set to </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+			<span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span>
+		<span class="n">pars</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">],</span> <span class="p">{</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]:</span><span class="n">v</span><span class="p">}]</span>
+	<span class="n">AllModels</span><span class="o">.</span><span class="n">setPars</span><span class="p">(</span><span class="o">*</span><span class="n">pars</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BXASolver"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver">[docs]</a><span class="k">class</span> <span class="nc">BXASolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Run the Bayesian analysis.</span>
+
+<span class="sd">	The nested sampling package `UltraNest &lt;https://johannesbuchner.github.io/UltraNest/&gt;`_ is used under the hood.</span>
+
+<span class="sd">	If prior is None, uniform priors are used on the passed parameters.</span>
+<span class="sd">	If parameters is also None, all thawed parameters are used.</span>
+
+<span class="sd">	:param transformations: List of parameter transformation definitions</span>
+<span class="sd">	:param prior_function: set only if you want to specify a custom, non-separable prior</span>
+<span class="sd">	:param outputfiles_basename: prefix for output filenames.</span>
+
+<span class="sd">	More information on the concept of prior transformations is available at</span>
+<span class="sd">	https://johannesbuchner.github.io/UltraNest/priors.html</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">allowed_stats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cstat&#39;</span><span class="p">,</span> <span class="s1">&#39;cash&#39;</span><span class="p">,</span> <span class="s1">&#39;pstat&#39;</span><span class="p">]</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+		<span class="bp">self</span><span class="p">,</span> <span class="n">transformations</span><span class="p">,</span> <span class="n">prior_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outputfiles_basename</span><span class="o">=</span><span class="s1">&#39;chains/&#39;</span>
+	<span class="p">):</span>
+		<span class="k">if</span> <span class="n">prior_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">prior_function</span> <span class="o">=</span> <span class="n">create_prior_function</span><span class="p">(</span><span class="n">transformations</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">prior_function</span> <span class="o">=</span> <span class="n">prior_function</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transformations</span> <span class="o">=</span> <span class="n">transformations</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">set_paramnames</span><span class="p">()</span>
+
+		<span class="c1"># for convenience. Has to be a directory anyway for ultranest</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">outputfiles_basename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+			<span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">):</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">outputfiles_basename</span> <span class="o">=</span> <span class="n">outputfiles_basename</span>
+
+<div class="viewcode-block" id="BXASolver.set_paramnames"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.set_paramnames">[docs]</a>	<span class="k">def</span> <span class="nf">set_paramnames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">paramnames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">paramnames</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">paramnames</span> <span class="o">=</span> <span class="n">paramnames</span></div>
+
+<div class="viewcode-block" id="BXASolver.set_best_fit"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.set_best_fit">[docs]</a>	<span class="k">def</span> <span class="nf">set_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sets model to the best fit values.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;logl&#39;</span><span class="p">])</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+		<span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BXASolver.log_likelihood"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.log_likelihood">[docs]</a>	<span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+		<span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+		<span class="n">like</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statistic</span>
+		<span class="c1"># print(&quot;like = %.1f&quot; % like)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">like</span><span class="p">):</span>
+			<span class="k">return</span> <span class="o">-</span><span class="mf">1e100</span>
+		<span class="k">return</span> <span class="n">like</span></div>
+
+<div class="viewcode-block" id="BXASolver.run"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.run">[docs]</a>	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+		<span class="bp">self</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">n_live_points</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+		<span class="n">wrapped_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+	<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Run nested sampling with ultranest.</span>
+
+<span class="sd">		:param n_live_points: number of live points (400 to 1000 is recommended).</span>
+<span class="sd">		:param evidence_tolerance: uncertainty on the evidence to achieve</span>
+<span class="sd">		:param resume: uncertainty on the evidence to achieve</span>
+<span class="sd">		:param Lepsilon: numerical model inaccuracies in the statistic (default: 0.1).</span>
+<span class="sd">			Increase if run is not finishing because it is trying too hard to resolve</span>
+<span class="sd">			unimportant details caused e.g., by atable interpolations.</span>
+<span class="sd">		:param frac_remain: fraction of the integration remainder allowed in the live points.</span>
+<span class="sd">			Setting to 0.5 in mono-modal problems can be acceptable and faster.</span>
+<span class="sd">			The default is 0.01 (safer).</span>
+
+<span class="sd">		These are ultranest parameters (see ultranest.solve documentation!)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># run nested sampling</span>
+		<span class="k">if</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statMethod</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BXASolver</span><span class="o">.</span><span class="n">allowed_stats</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;ERROR: not using cash (Poisson likelihood) for Poisson data! set Fit.statMethod to cash before analysing (currently: </span><span class="si">%s</span><span class="s1">)!&#39;</span> <span class="o">%</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statMethod</span><span class="p">)</span>
+
+		<span class="n">n_dims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramnames</span><span class="p">)</span>
+		<span class="n">resume</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;resume&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+		<span class="n">Lepsilon</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Lepsilon&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+
+		<span class="k">with</span> <span class="n">XSilence</span><span class="p">():</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_function</span><span class="p">,</span> <span class="n">n_dims</span><span class="p">,</span>
+				<span class="n">paramnames</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paramnames</span><span class="p">,</span>
+				<span class="n">outputfiles_basename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputfiles_basename</span><span class="p">,</span>
+				<span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">,</span> <span class="n">Lepsilon</span><span class="o">=</span><span class="n">Lepsilon</span><span class="p">,</span>
+				<span class="n">n_live_points</span><span class="o">=</span><span class="n">n_live_points</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="n">evidence_tolerance</span><span class="p">,</span>
+				<span class="n">seed</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wrapped_params</span><span class="o">=</span><span class="n">wrapped_params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+			<span class="p">)</span>
+			<span class="n">logls</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;logl&#39;</span><span class="p">][</span>
+				<span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sample</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+				<span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]</span>
+
+			<span class="n">chainfilename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">chain.fits&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputfiles_basename</span>
+			<span class="n">store_chain</span><span class="p">(</span><span class="n">chainfilename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">posterior</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">logls</span><span class="p">)</span>
+			<span class="n">xspec</span><span class="o">.</span><span class="n">AllChains</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+			<span class="n">xspec</span><span class="o">.</span><span class="n">AllChains</span> <span class="o">+=</span> <span class="n">chainfilename</span>
+
+			<span class="c1"># set current parameters to best fit</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">set_best_fit</span><span class="p">()</span>
+
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span></div>
+
+<div class="viewcode-block" id="BXASolver.create_flux_chain"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.create_flux_chain">[docs]</a>	<span class="k">def</span> <span class="nf">create_flux_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">erange</span><span class="o">=</span><span class="s2">&quot;2.0 10.0&quot;</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		For each posterior sample, computes the flux in the given energy range.</span>
+
+<span class="sd">		The so-created chain can be combined with redshift information to propagate</span>
+<span class="sd">		the uncertainty. This is especially important if redshift is a variable</span>
+<span class="sd">		parameter in the fit (with some prior).</span>
+
+<span class="sd">		Returns erg/cm^2 energy flux (first column) and photon flux (second column)</span>
+<span class="sd">		for each posterior sample.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># prefix = analyzer.outputfiles_basename</span>
+		<span class="c1"># modelnames = set([t[&#39;model&#39;].name for t in transformations])</span>
+
+		<span class="k">with</span> <span class="n">XSilence</span><span class="p">():</span>
+			<span class="c1"># plot models</span>
+			<span class="n">flux</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior</span><span class="p">[:</span><span class="n">nsamples</span><span class="p">],</span> <span class="n">disable</span><span class="o">=</span><span class="kc">None</span><span class="p">)):</span>
+				<span class="n">set_parameters</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">)</span>
+				<span class="n">AllModels</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">(</span><span class="n">erange</span><span class="p">)</span>
+				<span class="n">f</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">flux</span>
+				<span class="c1"># compute flux in current energies</span>
+				<span class="n">flux</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]])</span>
+
+			<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BXASolver.posterior_predictions_convolved"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.posterior_predictions_convolved">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_convolved</span><span class="p">(</span>
+		<span class="bp">self</span><span class="p">,</span> <span class="n">component_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">400</span>
+	<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Plot convolved model posterior predictions.</span>
+<span class="sd">		Also returns data points for plotting.</span>
+
+<span class="sd">		component_names: labels to use. Set to &#39;ignore&#39; to skip plotting a component</span>
+<span class="sd">		plot_args: matplotlib.pyplot.plot arguments for each component</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># get data, binned to 10 counts</span>
+		<span class="c1"># overplot models</span>
+		<span class="c1"># can we do this component-wise?</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>  <span class="c1"># bin, bin width, data and data error</span>
+		<span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>    <span class="c1">#</span>
+		<span class="k">if</span> <span class="n">component_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">component_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+		<span class="k">if</span> <span class="n">plot_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">plot_args</span> <span class="o">=</span> <span class="p">[{}]</span> <span class="o">*</span> <span class="mi">100</span>
+		<span class="n">bands</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">Plot</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="kc">True</span>
+
+		<span class="k">def</span> <span class="nf">plot_convolved_components</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+			<span class="n">xmid</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+			<span class="n">ndata_columns</span> <span class="o">=</span> <span class="mi">6</span> <span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">background</span> <span class="k">else</span> <span class="mi">4</span>
+			<span class="n">ncomponents</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ndata_columns</span>
+			<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">ndata_columns</span><span class="p">]</span>
+			<span class="n">model_contributions</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncomponents</span><span class="p">):</span>
+				<span class="n">y</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="n">ndata_columns</span> <span class="o">+</span> <span class="n">component</span><span class="p">]</span>
+				<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+				<span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_args</span><span class="p">[</span><span class="n">component</span><span class="p">])</span>
+
+				<span class="n">label</span> <span class="o">=</span> <span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span>
+				<span class="c1"># we only label the first time we enter here</span>
+				<span class="c1"># otherwise we get lots of entries in the legend</span>
+				<span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+				<span class="k">if</span> <span class="n">component</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">):</span>
+					<span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PredictionBand</span><span class="p">(</span>
+						<span class="n">xmid</span><span class="p">,</span>
+						<span class="n">shadeargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]),</span>
+						<span class="n">lineargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">])))</span>
+				<span class="k">if</span> <span class="n">label</span> <span class="o">!=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">:</span>
+					<span class="c1"># plt.plot(xmid, y, label=label, **kwargs)</span>
+					<span class="n">bands</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+				<span class="n">model_contributions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+			<span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_contributions</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">posterior_predictions_plot</span><span class="p">(</span>
+			<span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">,</span>
+			<span class="n">callback</span><span class="o">=</span><span class="n">plot_convolved_components</span><span class="p">,</span>
+			<span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">band</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">component_names</span><span class="p">):</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
+			<span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="s1">&#39;bins,width,data,error,background,backgrounderr&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">())))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="s1">&#39;bins,width,data,error&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">())))</span>
+		<span class="n">results</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="BXASolver.posterior_predictions_unconvolved"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_unconvolved</span><span class="p">(</span>
+		<span class="bp">self</span><span class="p">,</span> <span class="n">component_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+		<span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span>
+	<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Plot unconvolved model posterior predictions.</span>
+
+<span class="sd">		:param component_names: labels to use. Set to &#39;ignore&#39; to skip plotting a component</span>
+<span class="sd">		:param plot_args: matplotlib.pyplot.plot arguments for each component</span>
+<span class="sd">		:param nsamples: number of posterior samples to use</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">component_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">component_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+		<span class="k">if</span> <span class="n">plot_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">plot_args</span> <span class="o">=</span> <span class="p">[{}]</span> <span class="o">*</span> <span class="mi">100</span>
+		<span class="n">bands</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="k">def</span> <span class="nf">plot_unconvolved_components</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+			<span class="n">xmid</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+			<span class="n">ncomponents</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span>
+			<span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncomponents</span><span class="p">):</span>
+				<span class="n">y</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">component</span><span class="p">]</span>
+				<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+				<span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_args</span><span class="p">[</span><span class="n">component</span><span class="p">])</span>
+
+				<span class="n">label</span> <span class="o">=</span> <span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span>
+				<span class="c1"># we only label the first time we enter here</span>
+				<span class="c1"># otherwise we get lots of entries in the legend</span>
+				<span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+				<span class="k">if</span> <span class="n">component</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">):</span>
+					<span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PredictionBand</span><span class="p">(</span>
+						<span class="n">xmid</span><span class="p">,</span>
+						<span class="n">shadeargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]),</span>
+						<span class="n">lineargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">])))</span>
+				<span class="k">if</span> <span class="n">label</span> <span class="o">!=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">:</span>
+					<span class="c1"># plt.plot(xmid, y, label=label, **kwargs)</span>
+					<span class="n">bands</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">posterior_predictions_plot</span><span class="p">(</span>
+			<span class="n">plottype</span><span class="o">=</span><span class="n">plottype</span><span class="p">,</span>
+			<span class="n">callback</span><span class="o">=</span><span class="n">plot_unconvolved_components</span><span class="p">,</span>
+			<span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">band</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">component_names</span><span class="p">):</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BXASolver.posterior_predictions_plot"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.posterior_predictions_plot">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plottype</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posterior</span>
+		<span class="c1"># for plotting, we don&#39;t need so many points, and especially the</span>
+		<span class="c1"># points that barely made it into the analysis are not that interesting.</span>
+		<span class="c1"># so pick a random subset of at least nsamples points</span>
+		<span class="k">if</span> <span class="n">nsamples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">nsamples</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="p">,</span> <span class="s1">&#39;choice&#39;</span><span class="p">):</span>
+				<span class="n">chosen</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+					<span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">)),</span>
+					<span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">chosen</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
+					<span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">nsamples</span><span class="p">)))[:</span><span class="n">nsamples</span><span class="p">]</span>
+			<span class="n">posterior</span> <span class="o">=</span> <span class="n">posterior</span><span class="p">[</span><span class="n">chosen</span><span class="p">,</span> <span class="p">:]</span>
+			<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span> <span class="o">==</span> <span class="n">nsamples</span>
+		<span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputfiles_basename</span>
+		<span class="n">tmpfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-wdatatmp.qdp&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
+
+		<span class="k">with</span> <span class="n">XSilence</span><span class="p">():</span>
+			<span class="n">olddevice</span> <span class="o">=</span> <span class="n">Plot</span><span class="o">.</span><span class="n">device</span>
+			<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;/null&#39;</span>
+			<span class="c1"># modelnames = set([t[&#39;model&#39;].name for t in transformations])</span>
+
+			<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">Plot</span><span class="o">.</span><span class="n">delCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+			<span class="n">Plot</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s1">&#39;wdata &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">tmpfilename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.qdp&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+			<span class="c1"># plot models</span>
+			<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="kc">None</span><span class="p">)):</span>
+				<span class="n">set_parameters</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
+					<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
+				<span class="n">xspec</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="n">plottype</span><span class="p">)</span>
+				<span class="n">content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+				<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
+				<span class="n">callback</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+			<span class="n">xspec</span><span class="o">.</span><span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span>
+			<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">Plot</span><span class="o">.</span><span class="n">delCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
+				<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="standard_analysis"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.standard_analysis">[docs]</a><span class="k">def</span> <span class="nf">standard_analysis</span><span class="p">(</span>
+	<span class="n">transformations</span><span class="p">,</span> <span class="n">outputfiles_basename</span><span class="p">,</span>
+	<span class="n">skipsteps</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Default analysis which produces nice plots:</span>
+
+<span class="sd">	* runs nested sampling analysis, creates MCMC chain file</span>
+<span class="sd">	* marginal probabilities (1d and 2d)</span>
+<span class="sd">	* model posterior predictions + data overplotted, convolved</span>
+<span class="sd">	* model posterior predictions unconvolved</span>
+<span class="sd">	* quantile-quantile plot with statistics</span>
+<span class="sd">	* prints out summary of parameters</span>
+<span class="sd">	* prints out model evidence</span>
+
+<span class="sd">	Look at the source of this function to figure out how to do</span>
+<span class="sd">	the individual parts.</span>
+<span class="sd">	Copy them to your scripts and adapt them to your needs.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#   run nested sampling</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;running analysis ...&#39;</span><span class="p">)</span>
+	<span class="n">solver</span> <span class="o">=</span> <span class="n">BXASolver</span><span class="p">(</span>
+		<span class="n">transformations</span><span class="o">=</span><span class="n">transformations</span><span class="p">,</span>
+		<span class="n">outputfiles_basename</span><span class="o">=</span><span class="n">outputfiles_basename</span><span class="p">)</span>
+	<span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;running analysis ... done&#39;</span><span class="p">)</span>
+
+	<span class="c1"># analyse results</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;analysing results...&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="s1">&#39;unconvolved&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skipsteps</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating plot of posterior predictions ...&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+		<span class="n">solver</span><span class="o">.</span><span class="n">posterior_predictions_unconvolved</span><span class="p">(</span><span class="n">nsamples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+		<span class="n">ylim</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
+		<span class="c1"># 3 orders of magnitude at most</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;keV&#39;</span><span class="p">:</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;channel&#39;</span><span class="p">:</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Channel&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Counts/s/cm$^2$&#39;</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;unconvolved_posterior.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="s1">&#39;convolved&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skipsteps</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating plot of posterior predictions against data ...&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">posterior_predictions_convolved</span><span class="p">(</span><span class="n">nsamples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+		<span class="c1"># plot data</span>
+		<span class="c1"># plt.errorbar(x=data[&#39;bins&#39;], xerr=data[&#39;width&#39;], y=data[&#39;data&#39;], yerr=data[&#39;error&#39;],</span>
+		<span class="c1"># 	label=&#39;data&#39;, marker=&#39;o&#39;, color=&#39;green&#39;)</span>
+		<span class="c1"># bin data for plotting</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;binning for plot...&#39;</span><span class="p">)</span>
+		<span class="n">binned</span> <span class="o">=</span> <span class="n">binning</span><span class="p">(</span>
+			<span class="n">outputfiles_basename</span><span class="o">=</span><span class="n">outputfiles_basename</span><span class="p">,</span>
+			<span class="n">bins</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">],</span> <span class="n">widths</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">],</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">models</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">])</span>
+		<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">binned</span><span class="p">[</span><span class="s1">&#39;marked_binned&#39;</span><span class="p">]:</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">point</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">binned</span><span class="p">[</span><span class="s1">&#39;xlim&#39;</span><span class="p">])</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">binned</span><span class="p">[</span><span class="s1">&#39;ylim&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">binned</span><span class="p">[</span><span class="s1">&#39;ylim&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;keV&#39;</span><span class="p">:</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;channel&#39;</span><span class="p">:</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Channel&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Counts/s/cm$^2$&#39;</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;convolved_posterior.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="s1">&#39;qq&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skipsteps</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating quantile-quantile plot ...&#39;</span><span class="p">)</span>
+		<span class="n">solver</span><span class="o">.</span><span class="n">set_best_fit</span><span class="p">()</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+		<span class="n">qq</span><span class="o">.</span><span class="n">qq</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;qq_model_deviations.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="n">solver</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pca-background-models.html">PCA-based background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../xspec.html">bxa.xspec</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2020, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
