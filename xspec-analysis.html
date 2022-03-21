@@ -108,6 +108,25 @@ The Gaussian prior weights by a Gaussian in the parameter.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="prior-predictive-checks">
+<h2>Prior Predictive Checks<a class="headerlink" href="#prior-predictive-checks" title="Permalink to this headline">¶</a></h2>
+<p>To check that your priors and model is okay and working,
+create a flipbook of prior sample predictions.</p>
+<ol class="arabic">
+<li><p>Pick a random sample from the prior:</p>
+<p>import numpy
+from bxa.xspec.solver import set_parameters</p>
+<p>prior_function = bxa.create_prior_function(transformations)
+values = prior_function(numpy.random.uniform(size=len(transformations)))
+set_parameters(transformations, values)
+print(“set to parameters:”, values)</p>
+</li>
+<li><p>make a plot</p></li>
+</ol>
+<p>Repeat this 20 times and look at the plots.</p>
+<p>Do the shapes and number of counts expected
+look like a reasonable representation of your prior expectation?</p>
+</div>
 <div class="section" id="running-the-analysis">
 <span id="xspec-run"></span><h2>Running the analysis<a class="headerlink" href="#running-the-analysis" title="Permalink to this headline">¶</a></h2>
 <p>This runs the fit and stores the result in the specified output folder:</p>
@@ -446,6 +465,7 @@ detailed discussion on the methodology.</p>
 <li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Xspec with BXA</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#defining-priors">Defining priors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prior-predictive-checks">Prior Predictive Checks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#running-the-analysis">Running the analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parameter-posterior-plots">Parameter posterior plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model-checking">Model checking</a></li>

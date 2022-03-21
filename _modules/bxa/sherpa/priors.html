@@ -46,7 +46,7 @@
 
 <span class="sd">Priors</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">erf</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">invgauss</span>
 
@@ -81,6 +81,7 @@
 <span class="sd">		powerlaw.norm = 10**lognorm</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">parameter</span><span class="o">.</span><span class="n">max</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;The limits of &quot;</span><span class="si">%s</span><span class="s1">&quot; (min and max) are not positive.&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="o">.</span><span class="n">fullname</span><span class="p">)</span>
 	<span class="n">low</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
 	<span class="n">spread</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">max</span><span class="p">)</span> <span class="o">-</span> <span class="n">log10</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
 	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">spread</span> <span class="o">+</span> <span class="n">low</span><span class="p">)</span></div>
@@ -94,12 +95,22 @@
 <span class="sd">	a Gaussian, create a ancillary parameter (see create_jeffreys_prior_for).</span>
 <span class="sd">	</span>
 <span class="sd">	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</span>
+<span class="sd">	:param mean: Mean of the Gaussian</span>
+<span class="sd">	:param std: Standard deviation of the Gaussian</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
+	<span class="kn">import</span> <span class="nn">scipy.stats</span>
 	<span class="n">lo</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">min</span>
 	<span class="n">hi</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">max</span>
-	<span class="n">f</span> <span class="o">=</span> <span class="n">invgauss</span><span class="o">.</span><span class="n">get_invgauss_func</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
-	<span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span></div>
+
+	<span class="n">rv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
+	<span class="n">xlo</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">lo</span><span class="p">)</span>
+	<span class="n">xhi</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span>
+	<span class="k">def</span> <span class="nf">gauss_transform</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">rv</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">xhi</span> <span class="o">-</span> <span class="n">xlo</span><span class="p">)</span> <span class="o">+</span> <span class="n">xlo</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">gauss_transform</span></div>
+
 
 <div class="viewcode-block" id="prior_from_file"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.priors.prior_from_file">[docs]</a><span class="k">def</span> <span class="nf">prior_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

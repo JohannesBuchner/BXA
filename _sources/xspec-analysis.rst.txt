@@ -46,6 +46,31 @@ API information:
 .. autofunction:: bxa.xspec.create_gaussian_prior_for
 .. autofunction:: bxa.xspec.create_custom_prior_for
 
+
+Prior Predictive Checks
+------------------------
+
+To check that your priors and model is okay and working,
+create a flipbook of prior sample predictions.
+
+1) Pick a random sample from the prior::
+
+   import numpy
+   from bxa.xspec.solver import set_parameters
+
+   prior_function = bxa.create_prior_function(transformations)
+   values = prior_function(numpy.random.uniform(size=len(transformations)))
+   set_parameters(transformations, values)
+   print("set to parameters:", values)
+
+2) make a plot
+
+Repeat this 20 times and look at the plots.
+
+Do the shapes and number of counts expected
+look like a reasonable representation of your prior expectation?
+
+
 .. _xspec-run:
 
 Running the analysis

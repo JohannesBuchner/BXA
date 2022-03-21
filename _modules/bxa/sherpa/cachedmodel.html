@@ -49,9 +49,11 @@
 
 <span class="k">if</span> <span class="s1">&#39;MAKESPHINXDOC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
 	<span class="kn">from</span> <span class="nn">sherpa.models</span> <span class="kn">import</span> <span class="n">ArithmeticModel</span><span class="p">,</span> <span class="n">CompositeModel</span>
+	<span class="kn">from</span> <span class="nn">sherpa.models.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
 <span class="k">else</span><span class="p">:</span>
 	<span class="n">ArithmeticModel</span> <span class="o">=</span> <span class="nb">object</span>
 	<span class="n">CompositeModel</span> <span class="o">=</span> <span class="nb">list</span>
+	<span class="n">Parameter</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="VariableCachedModel"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.cachedmodel.VariableCachedModel">[docs]</a><span class="k">class</span> <span class="nc">VariableCachedModel</span><span class="p">(</span><span class="n">CompositeModel</span><span class="p">,</span> <span class="n">ArithmeticModel</span><span class="p">):</span>
@@ -88,13 +90,14 @@
 		<span class="sd">&quot;&quot;&quot;*othermodel* can be any sherpa model&quot;&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">othermodel</span> <span class="o">=</span> <span class="n">othermodel</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">relnorm</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="s1">&#39;relnorm&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">)</span>
 		<span class="n">CompositeModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;cached(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">othermodel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="p">(</span><span class="n">othermodel</span><span class="p">,))</span>
 	
 <div class="viewcode-block" id="CachedModel.calc"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.cachedmodel.CachedModel.calc">[docs]</a>	<span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   computing cached model ... &#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">othermodel</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span></div>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">relnorm</span><span class="o">.</span><span class="n">val</span></div>
 
 <div class="viewcode-block" id="CachedModel.startup"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.cachedmodel.CachedModel.startup">[docs]</a>	<span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">othermodel</span><span class="o">.</span><span class="n">startup</span><span class="p">()</span>
