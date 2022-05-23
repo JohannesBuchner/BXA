@@ -92,3 +92,22 @@ def create_prior_function(transformations):
 			cube[i] = transform(cube[i])
 
 	return prior
+
+def create_custom_prior_from_filename_for(model, par, filename, aftertransform = lambda x: x):
+        """
+        Pass your own prior weighting transformation
+        """
+        dist = numpy.loadtxt(filename)[:-1]
+        span = numpy.array(list(dist[:,0]))
+        distz = numpy.array(list(dist[:, 1]) + [dist[-1,1]]*2)
+        n = len(dist)
+        def custom_prior(x):
+                assert x >= 0
+                assert x <= 1
+                i = int(numpy.floor(x*n))
+                r = distz[i] + (distz[i + 1] - distz[i]) * (x * n - i)
+                return r
+
+        print('  custom prior for %s' % (par.name))
+        return dict(model=model, index=par._Parameter__index, name=par.name, 
+                transform=custom_prior, aftertransform=aftertransform)
