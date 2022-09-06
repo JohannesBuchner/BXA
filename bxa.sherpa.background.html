@@ -1,19 +1,19 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.sherpa.background package &#8212; BXA (Bayesian X-ray Analysis) 4.0.5 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>bxa.sherpa.background package &#8212; BXA (Bayesian X-ray Analysis) 4.0.6 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="bxa.xspec package" href="bxa.xspec.html" />
@@ -36,294 +36,27 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="bxa-sherpa-background-package">
-<h1>bxa.sherpa.background package<a class="headerlink" href="#bxa-sherpa-background-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-bxa.sherpa.background.fitters">
-<span id="bxa-sherpa-background-fitters-module"></span><h2>bxa.sherpa.background.fitters module<a class="headerlink" href="#module-bxa.sherpa.background.fitters" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="bxa.sherpa.background.fitters.SingleFitter">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.fitters.</code><code class="sig-name descname">SingleFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">backgroundmodel</span></em>, <em class="sig-param"><span class="n">load</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#SingleFitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.SingleFitter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>id: which data id to fit</p>
-<p>filename: prefix for where to store background information</p>
-<p>backgroundmodel: A background model, such as ChandraBackground</p>
-<p>load: whether the background file should be loaded now</p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.SingleFitter.store">
-<code class="sig-name descname">store</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#SingleFitter.store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.SingleFitter.store" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.SingleFitter.tryload">
-<code class="sig-name descname">tryload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#SingleFitter.tryload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.SingleFitter.tryload" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.SingleFitter.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">reinit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#SingleFitter.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.SingleFitter.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.SingleFitter.prepare_stage">
-<code class="sig-name descname">prepare_stage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span></em>, <em class="sig-param"><span class="n">prev</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">link</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#SingleFitter.prepare_stage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.SingleFitter.prepare_stage" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.SingleFitter.fit_stage">
-<code class="sig-name descname">fit_stage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#SingleFitter.fit_stage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.SingleFitter.fit_stage" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="bxa.sherpa.background.fitters.MultiFitter">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.fitters.</code><code class="sig-name descname">MultiFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">backgroundmodel</span></em>, <em class="sig-param"><span class="n">load</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#MultiFitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.MultiFitter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>filename should be a text file, containing all the
-file names (if load=True) or storage prefixes</p>
-<p>backgroundmodel: background model to use (e.g. ChandraBackground)</p>
-<p>load: whether the background file should be loaded now</p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.MultiFitter.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#MultiFitter.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.MultiFitter.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.MultiFitter.fit_jointly_stage">
-<code class="sig-name descname">fit_jointly_stage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span></em>, <em class="sig-param"><span class="n">ids</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#MultiFitter.fit_jointly_stage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.MultiFitter.fit_jointly_stage" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="bxa.sherpa.background.fitters.BackgroundStorage">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.fitters.</code><code class="sig-name descname">BackgroundStorage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backgroundfilename</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">load</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#BackgroundStorage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.BackgroundStorage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.BackgroundStorage.load_rsp">
-<code class="sig-name descname">load_rsp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#BackgroundStorage.load_rsp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.BackgroundStorage.load_rsp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.BackgroundStorage.load_bkg_model">
-<code class="sig-name descname">load_bkg_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#BackgroundStorage.load_bkg_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.BackgroundStorage.load_bkg_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.fitters.BackgroundStorage.store_bkg_model">
-<code class="sig-name descname">store_bkg_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stats</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#BackgroundStorage.store_bkg_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.BackgroundStorage.store_bkg_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.fitters.robust_opt">
-<code class="sig-prename descclassname">bxa.sherpa.background.fitters.</code><code class="sig-name descname">robust_opt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#robust_opt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.robust_opt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.fitters.my_bkg_stat">
-<code class="sig-prename descclassname">bxa.sherpa.background.fitters.</code><code class="sig-name descname">my_bkg_stat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/fitters.html#my_bkg_stat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.fitters.my_bkg_stat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.background.models">
-<span id="bxa-sherpa-background-models-module"></span><h2>bxa.sherpa.background.models module<a class="headerlink" href="#module-bxa.sherpa.background.models" title="Permalink to this headline">¶</a></h2>
-<p>Background models for various telescopes and instruments</p>
-<dl class="py class">
-<dt id="bxa.sherpa.background.models.SwiftXRTBackground">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.models.</code><code class="sig-name descname">SwiftXRTBackground</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storage</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#SwiftXRTBackground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.SwiftXRTBackground" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">bxa.sherpa.background.models.BackgroundModel</span></code></p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.models.SwiftXRTBackground.set_filter">
-<code class="sig-name descname">set_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#SwiftXRTBackground.set_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.SwiftXRTBackground.set_filter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.models.SwiftXRTBackground.set_model">
-<code class="sig-name descname">set_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#SwiftXRTBackground.set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.SwiftXRTBackground.set_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="bxa.sherpa.background.models.SwiftXRTWTBackground">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.models.</code><code class="sig-name descname">SwiftXRTWTBackground</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storage</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#SwiftXRTWTBackground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.SwiftXRTWTBackground" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bxa.sherpa.background.models.SwiftXRTBackground" title="bxa.sherpa.background.models.SwiftXRTBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">bxa.sherpa.background.models.SwiftXRTBackground</span></code></a></p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.models.SwiftXRTWTBackground.set_filter">
-<code class="sig-name descname">set_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#SwiftXRTWTBackground.set_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.SwiftXRTWTBackground.set_filter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="bxa.sherpa.background.models.ChandraBackground">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.models.</code><code class="sig-name descname">ChandraBackground</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storage</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#ChandraBackground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.ChandraBackground" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">bxa.sherpa.background.models.BackgroundModel</span></code></p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.models.ChandraBackground.set_zero">
-<code class="sig-name descname">set_zero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#ChandraBackground.set_zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.ChandraBackground.set_zero" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.models.ChandraBackground.set_filter">
-<code class="sig-name descname">set_filter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#ChandraBackground.set_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.ChandraBackground.set_filter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.models.ChandraBackground.set_model">
-<code class="sig-name descname">set_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/models.html#ChandraBackground.set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.models.ChandraBackground.set_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.background.pca">
-<span id="bxa-sherpa-background-pca-module"></span><h2>bxa.sherpa.background.pca module<a class="headerlink" href="#module-bxa.sherpa.background.pca" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="bxa.sherpa.background.pca.PCAFitter">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.pca.</code><code class="sig-name descname">PCAFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAFitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAFitter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Fitter mixing PCA-based templates and gaussian lines</p>
-<p>id: which data id to fit</p>
-<p>filename: prefix for where to store background information</p>
-<p>load: whether the background file should be loaded now</p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAFitter.load">
-<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAFitter.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAFitter.load" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAFitter.decompose">
-<code class="sig-name descname">decompose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAFitter.decompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAFitter.decompose" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAFitter.calc_bkg_stat">
-<code class="sig-name descname">calc_bkg_stat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAFitter.calc_bkg_stat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAFitter.calc_bkg_stat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAFitter.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAFitter.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAFitter.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="bxa.sherpa.background.pca.PCAModel">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.background.pca.</code><code class="sig-name descname">PCAModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modelname</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sherpa.models.model.ArithmeticModel</span></code></p>
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAModel.calc">
-<code class="sig-name descname">calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">left</span></em>, <em class="sig-param"><span class="n">right</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.calc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the model on a grid.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<em>sequence of numbers</em>) – The parameter values to use. The order matches the
-<code class="docutils literal notranslate"><span class="pre">pars</span></code> field.</p></li>
-<li><p><strong>*args</strong> – The model grid. The values can be scalar or arrays,
-and the number depends on the dimensionality of the
-model and whether it is being evaluated over an
-integrated grid or at a point (or points).</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAModel.startup">
-<code class="sig-name descname">startup</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.startup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a model may be evaluated multiple times.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should a cache be used when evaluating the models.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#bxa.sherpa.background.pca.PCAModel.teardown" title="bxa.sherpa.background.pca.PCAModel.teardown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">teardown</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAModel.teardown">
-<code class="sig-name descname">teardown</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.teardown" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after a model may be evaluated multiple times.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.background.pca.PCAModel.guess">
-<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dep</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAModel.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAModel.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set an initial guess for the parameter values.</p>
-<p>Attempt to set the parameter values, and ranges, for
-the model to match the data values. This is intended
-as a rough guess, so it is expected that the model
-is only evaluated a small number of times, if at all.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.pca.auto_background">
-<code class="sig-prename descclassname">bxa.sherpa.background.pca.</code><code class="sig-name descname">auto_background</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#auto_background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.auto_background" title="Permalink to this definition">¶</a></dt>
-<dd><p>Automatically fits background <em>id</em> based on PCA-based templates,
-and additional gaussian lines as needed by AIC.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.pca.get_identity_response">
-<code class="sig-prename descclassname">bxa.sherpa.background.pca.</code><code class="sig-name descname">get_identity_response</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#get_identity_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.get_identity_response" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.pca.get_unit_response">
-<code class="sig-prename descclassname">bxa.sherpa.background.pca.</code><code class="sig-name descname">get_unit_response</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#get_unit_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.pca.get_unit_response" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.background.xmm">
-<span id="bxa-sherpa-background-xmm-module"></span><h2>bxa.sherpa.background.xmm module<a class="headerlink" href="#module-bxa.sherpa.background.xmm" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="bxa.sherpa.background.xmm.get_embedded_file">
-<code class="sig-prename descclassname">bxa.sherpa.background.xmm.</code><code class="sig-name descname">get_embedded_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/xmm.html#get_embedded_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.xmm.get_embedded_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the path of a file in the same folder as this script</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.xmm.get_pn_bkg_model">
-<code class="sig-prename descclassname">bxa.sherpa.background.xmm.</code><code class="sig-name descname">get_pn_bkg_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">galabs</span></em>, <em class="sig-param"><span class="n">fit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/xmm.html#get_pn_bkg_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.xmm.get_pn_bkg_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.xmm.get_mos_bkg_model">
-<code class="sig-prename descclassname">bxa.sherpa.background.xmm.</code><code class="sig-name descname">get_mos_bkg_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">galabs</span></em>, <em class="sig-param"><span class="n">fit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/xmm.html#get_mos_bkg_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.xmm.get_mos_bkg_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.xmm.get_mos_bkg_model_cached">
-<code class="sig-prename descclassname">bxa.sherpa.background.xmm.</code><code class="sig-name descname">get_mos_bkg_model_cached</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">galabs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/xmm.html#get_mos_bkg_model_cached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.xmm.get_mos_bkg_model_cached" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.background.xmm.get_pn_bkg_model_cached">
-<code class="sig-prename descclassname">bxa.sherpa.background.xmm.</code><code class="sig-name descname">get_pn_bkg_model_cached</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">galabs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/xmm.html#get_pn_bkg_model_cached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.background.xmm.get_pn_bkg_model_cached" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.background">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bxa.sherpa.background" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+  <section id="bxa-sherpa-background-package">
+<h1>bxa.sherpa.background package<a class="headerlink" href="#bxa-sherpa-background-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-background-fitters-module">
+<h2>bxa.sherpa.background.fitters module<a class="headerlink" href="#bxa-sherpa-background-fitters-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-background-models-module">
+<h2>bxa.sherpa.background.models module<a class="headerlink" href="#bxa-sherpa-background-models-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-background-pca-module">
+<h2>bxa.sherpa.background.pca module<a class="headerlink" href="#bxa-sherpa-background-pca-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-background-xmm-module">
+<h2>bxa.sherpa.background.xmm module<a class="headerlink" href="#bxa-sherpa-background-xmm-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
 
 
           </div>
@@ -342,7 +75,7 @@ and additional gaussian lines as needed by AIC.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
@@ -377,12 +110,12 @@ and additional gaussian lines as needed by AIC.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -399,7 +132,7 @@ and additional gaussian lines as needed by AIC.</p>
       &copy;2013-2020, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
