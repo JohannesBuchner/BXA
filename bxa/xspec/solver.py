@@ -9,10 +9,12 @@ Copyright: Johannes Buchner (C) 2013-2020
 """
 
 from __future__ import print_function
-from ultranest.solvecompat import pymultinest_solve_compat as solve
+from ultranest.integrator import ReactiveNestedSampler, resume_from_similar_file
 from ultranest.plot import PredictionBand
+import ultranest.stepsampler
 import os
 from math import isnan, isinf
+import warnings
 import numpy
 
 from . import qq
@@ -107,6 +109,7 @@ class BXASolver(object):
 	:param transformations: List of parameter transformation definitions
 	:param prior_function: set only if you want to specify a custom, non-separable prior
 	:param outputfiles_basename: prefix for output filenames.
+	:param resume_from: prefix for output filenames of a previous run with similar posterior from which to resume
 
 	More information on the concept of prior transformations is available at
 	https://johannesbuchner.github.io/UltraNest/priors.html
@@ -115,7 +118,8 @@ class BXASolver(object):
 	allowed_stats = ['cstat', 'cash', 'pstat']
 
 	def __init__(
-		self, transformations, prior_function=None, outputfiles_basename='chains/'
+		self, transformations, prior_function=None, outputfiles_basename='chains/',
+		resume_from=None
 	):
 		if prior_function is None:
 			prior_function = create_prior_function(transformations)
@@ -123,6 +127,7 @@ class BXASolver(object):
 		self.prior_function = prior_function
 		self.transformations = transformations
 		self.set_paramnames()
+		self.vectorized = False
 
 		# for convenience. Has to be a directory anyway for ultranest
 		if not outputfiles_basename.endswith('/'):
@@ -132,6 +137,14 @@ class BXASolver(object):
 			os.mkdir(outputfiles_basename)
 
 		self.outputfiles_basename = outputfiles_basename
+		
+		if resume_from is not None:
+			self.paramnames, self.log_likelihood, self.prior_function, self.vectorized = resume_from_similar_file(
+				os.path.join(resume_from, 'chains', 'weighted_post_untransformed.txt'),
+				self.paramnames, loglike=self.log_likelihood, transform=self.prior_function,
+				vectorized=False,
+			)
+			
 
 	def set_paramnames(self, paramnames=None):
 		if paramnames is None:
@@ -157,42 +170,77 @@ class BXASolver(object):
 		return like
 
 	def run(
-		self, evidence_tolerance=0.5, n_live_points=400,
-		wrapped_params=None, **kwargs
+		self, sampler_kwargs={'resume':'overwrite'}, run_kwargs={'Lepsilon':0.1},
+		speed="safe", resume=None, n_live_points=None,
+        frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
 	):
 		"""
 		Run nested sampling with ultranest.
 
-		:param n_live_points: number of live points (400 to 1000 is recommended).
-		:param evidence_tolerance: uncertainty on the evidence to achieve
-		:param resume: uncertainty on the evidence to achieve
-		:param Lepsilon: numerical model inaccuracies in the statistic (default: 0.1).
-			Increase if run is not finishing because it is trying too hard to resolve
-			unimportant details caused e.g., by atable interpolations.
-		:param frac_remain: fraction of the integration remainder allowed in the live points.
-			Setting to 0.5 in mono-modal problems can be acceptable and faster.
-			The default is 0.01 (safer).
+		:sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)
+		:run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)
 
-		These are ultranest parameters (see ultranest.solve documentation!)
+		The following arguments are also available directly for backward compatibility:
+
+		:param resume: sets sampler_kwargs['resume']='resume' if True, otherwise 'overwrite'
+		:param n_live_points: sets run_kwargs['min_num_live_points']
+		:param evidence_tolerance: sets run_kwargs['dlogz']
+		:param Lepsilon: sets run_kwargs['Lepsilon']
+		:param frac_remain: sets run_kwargs['frac_remain']
 		"""
 
 		# run nested sampling
 		if Fit.statMethod.lower() not in BXASolver.allowed_stats:
 			raise RuntimeError('ERROR: not using cash (Poisson likelihood) for Poisson data! set Fit.statMethod to cash before analysing (currently: %s)!' % Fit.statMethod)
 
-		n_dims = len(self.paramnames)
-		resume = kwargs.pop('resume', False)
-		Lepsilon = kwargs.pop('Lepsilon', 0.1)
+		if resume is not None:
+			sampler_kwargs['resume'] = 'resume' if resume else 'overwrite'
+		run_kwargs['Lepsilon'] = run_kwargs.pop('Lepsilon', Lepsilon)
+		del Lepsilon
+		if evidence_tolerance is not None:
+			run_kwargs['evidence_tolerance'] = run_kwargs.pop('dlogz', evidence_tolerance)
+		del evidence_tolerance
+		if frac_remain is not None:
+			run_kwargs['frac_remain'] = run_kwargs.pop('frac_remain', frac_remain)
+		del frac_remain
+		if n_live_points is not None:
+			run_kwargs['min_num_live_points'] = run_kwargs.pop('min_num_live_points', n_live_points)
+		del n_live_points
+
 
 		with XSilence():
-			self.results = solve(
-				self.log_likelihood, self.prior_function, n_dims,
-				paramnames=self.paramnames,
-				outputfiles_basename=self.outputfiles_basename,
-				resume=resume, Lepsilon=Lepsilon,
-				n_live_points=n_live_points, evidence_tolerance=evidence_tolerance,
-				seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
-			)
+			self.sampler = ReactiveNestedSampler(
+				self.paramnames, self.log_likelihood, transform=self.prior_function,
+				log_dir=self.outputfiles_basename,
+				vectorized=self.vectorized, **sampler_kwargs)
+
+			if speed == "safe":
+				pass
+			elif speed == "auto":
+				region_filter = run_kwargs.pop('region_filter', True)
+				self.sampler.run(max_ncalls=40000, **run_kwargs)
+
+				self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
+					nsteps=1000,
+					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					adaptive_nsteps='move-distance', region_filter=region_filter
+				)
+			else:
+				self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
+					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					nsteps=speed,
+					adaptive_nsteps=False,
+					region_filter=False)
+
+			self.sampler.run(**run_kwargs)
+			self.sampler.print_results()
+			self.results = self.sampler.results
+			try:
+				self.sampler.plot()
+			except Exception as e:
+				warnings.warn("plotting failed because:", e)
+				pass
+
 			logls = [self.results['weighted_samples']['logl'][
 				numpy.where(self.results['weighted_samples']['points'] == sample)[0][0]]
 				for sample in self.results['samples']]

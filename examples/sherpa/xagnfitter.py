@@ -126,7 +126,9 @@ consoleHandler.setLevel(logging.INFO)
 logging.getLogger().addHandler(consoleHandler)
 import warnings
 logging.getLogger('sherpa.plot').setLevel(logging.ERROR)
-warnings.filterwarnings("ignore", message='displayed errorbars')
+warnings.filterwarnings("ignore", message='.*displayed errorbars.*')
+warnings.filterwarnings("ignore", message='.*Clearing background convolved model.*', append=True)
+warnings.filterwarnings("ignore", message='.*apply_rmf[(]apply_arf.*', append=True)
 
 if not os.path.exists('filenames.txt'):
 	print("ERROR: No filenames.txt found.")
@@ -319,8 +321,9 @@ solver = bxa.BXASolver(id = ids[0], otherids = tuple(ids[1:]),
 	prior = priorfunction, parameters = parameters, 
 	outputfiles_basename = prefix)
 results = solver.run(
-	resume=True, n_live_points = os.environ.get('NLIVEPOINTS', 400),
-	frac_remain=0.5)
+	resume=True, n_live_points = int(os.environ.get('NLIVEPOINTS', 400)),
+	frac_remain=0.5,
+)
 
 try:
 	from mpi4py import MPI
