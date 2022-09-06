@@ -87,10 +87,8 @@ servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 release: dist ## package and upload a release
-	rm -rf logs/features-*
-	echo testfeatures/runsettings-*-iterated.json | xargs --max-args=1 mpiexec -np 3 coverage run --parallel-mode examples/testfeatures.py
-	bash -c 'echo $$RANDOM' | xargs mpiexec -np 5 coverage run --parallel-mode examples/testfeatures.py --random --seed
-	twine upload -s dist/*.tar.gz
+	twine check dist/*
+	twine upload -s dist/*
 
 dist: clean ## builds source and wheel package
 	$(PYTHON) setup.py sdist
