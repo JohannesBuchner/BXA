@@ -55,7 +55,6 @@ clean-test: ## remove test and coverage artifacts
 
 clean-doc:
 	rm -rf doc/build
-	nbstripout doc/*.ipynb
 
 lint: ## check style with flake8
 	flake8 bxa tests
