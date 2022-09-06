@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
@@ -66,7 +66,7 @@ class BXASolver(object):
 		:param parameters: List of parameters to analyse.
 		:param outputfiles_basename: prefix for output filenames.
 		:param resume_from: prefix for output filenames of a previous run with similar posterior from which to resume
-		
+
 		If prior is None, uniform priors are used on the passed parameters.
 		If parameters is also None, all thawed parameters are used.
 		"""
@@ -79,7 +79,7 @@ class BXASolver(object):
 			parameters = self.fit.model.thawedpars
 		if prior is None:
 			prior = create_prior_function(id=id, otherids=otherids, parameters=parameters)
-		
+
 		self.prior = prior
 		self.parameters = parameters
 		self.outputfiles_basename = outputfiles_basename
@@ -87,15 +87,14 @@ class BXASolver(object):
 		self.allowed_stats = (Cash, CStat)
 		self.ndims = len(parameters)
 		self.vectorized = False
-		
+
 		if resume_from is not None:
 			self.paramnames, self.log_likelihood, self.prior_transform, self.vectorized = resume_from_similar_file(
 				os.path.join(resume_from, 'chains', 'weighted_post_untransformed.txt'),
 				self.paramnames, loglike=self.log_likelihood, transform=self.prior_transform,
 				vectorized=False,
 			)
-			
-	
+
 	def set_paramnames(self, paramnames=None):
 		if paramnames is None:
 			self.paramnames = [p.fullname for p in self.parameters]
@@ -104,13 +103,18 @@ class BXASolver(object):
 
 	def get_fit(self):
 		return self.fit
-	
+
 	def prior_transform(self, cube):
+		"""unit cube transformation.
+
+		see https://johannesbuchner.github.io/UltraNest/priors.html#Dependent-priors
+		"""
 		params = cube.copy()
 		self.prior(params, self.ndims, self.ndims)
 		return params
 
 	def log_likelihood(self, cube):
+		""" returns -0.5 of the fit statistic."""
 		try:
 			for i, p in enumerate(self.parameters):
 				assert not isnan(cube[i]), 'ERROR: parameter %d (%s) to be set to %f' % (i, p.fullname, cube[i])
@@ -124,12 +128,11 @@ class BXASolver(object):
 			raise e
 
 	def run(
-		self, sampler_kwargs={'resume':'overwrite'}, run_kwargs={'Lepsilon':0.1},
+		self, sampler_kwargs={'resume': 'overwrite'}, run_kwargs={'Lepsilon': 0.1},
 		speed="safe", resume=None, n_live_points=None,
-        frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
+		frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
 	):
-		"""
-		Run nested sampling with ultranest.
+		"""Run nested sampling with ultranest.
 
 		:sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)
 		:run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)
@@ -197,17 +200,16 @@ class BXASolver(object):
 		return self.results
 
 	def set_best_fit(self):
-		"""
-		Sets model to the best fit values.
-		"""
+		"""Sets model to the best fit values."""
 		i = numpy.argmax(self.results['weighted_samples']['logl'])
 		for p, v in zip(self.parameters, self.results['weighted_samples']['points'][i, :]):
 			p.val = v
 
 	def get_distribution_with_fluxes(self, elo=None, ehi=None):
-		"""
-		Returns an array of equally weighted posterior samples (parameter values) with two 
-		additional columns: the photon fluxes and the energy fluxes. 
+		"""Computes flux posterior samples.
+
+		Returns an array of equally weighted posterior samples (parameter values) with two
+		additional columns: the photon fluxes and the energy fluxes.
 
 		The values will be correctly distributed according to the
 		analysis run before.
@@ -219,6 +221,6 @@ class BXASolver(object):
 				p.val = v
 			r.append(
 				list(row) + [
-					ui._session.calc_photon_flux(lo=elo, hi=ehi, id=self.id), 
+					ui._session.calc_photon_flux(lo=elo, hi=ehi, id=self.id),
 					ui._session.calc_energy_flux(lo=elo, hi=ehi, id=self.id)])
 		return numpy.array(r)

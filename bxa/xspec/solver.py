@@ -29,6 +29,7 @@ from .priors import *
 
 class XSilence(object):
 	"""Context for temporarily making xspec quiet."""
+
 	def __enter__(self):
 		self.oldchatter = Xset.chatter, Xset.logChatter
 		Xset.chatter, Xset.logChatter = 0, 0
@@ -54,9 +55,7 @@ def create_prior_function(transformations):
 
 
 def store_chain(chainfilename, transformations, posterior, fit_statistic):
-	"""
-	Writes a MCMC chain file in the same format as the Xspec chain command
-	"""
+	"""Writes a MCMC chain file in the same format as the Xspec chain command."""
 	import astropy.io.fits as pyfits
 
 	group_index = 1
@@ -84,9 +83,7 @@ def store_chain(chainfilename, transformations, posterior, fit_statistic):
 
 
 def set_parameters(transformations, values):
-	"""
-	Set current parameters.
-	"""
+	"""Set current parameters."""
 	assert len(values) == len(transformations)
 	pars = []
 	for i, t in enumerate(transformations):
@@ -137,14 +134,13 @@ class BXASolver(object):
 			os.mkdir(outputfiles_basename)
 
 		self.outputfiles_basename = outputfiles_basename
-		
+
 		if resume_from is not None:
 			self.paramnames, self.log_likelihood, self.prior_function, self.vectorized = resume_from_similar_file(
 				os.path.join(resume_from, 'chains', 'weighted_post_untransformed.txt'),
 				self.paramnames, loglike=self.log_likelihood, transform=self.prior_function,
 				vectorized=False,
 			)
-			
 
 	def set_paramnames(self, paramnames=None):
 		if paramnames is None:
@@ -153,15 +149,13 @@ class BXASolver(object):
 			self.paramnames = paramnames
 
 	def set_best_fit(self):
-		"""
-		Sets model to the best fit values.
-		"""
+		"""Sets model to the best fit values."""
 		i = numpy.argmax(self.results['weighted_samples']['logl'])
 		params = self.results['weighted_samples']['points'][i, :]
 		set_parameters(transformations=self.transformations, values=params)
 
-
 	def log_likelihood(self, params):
+		""" returns -0.5 of the fit statistic."""
 		set_parameters(transformations=self.transformations, values=params)
 		like = -0.5 * Fit.statistic
 		# print("like = %.1f" % like)
@@ -170,12 +164,11 @@ class BXASolver(object):
 		return like
 
 	def run(
-		self, sampler_kwargs={'resume':'overwrite'}, run_kwargs={'Lepsilon':0.1},
+		self, sampler_kwargs={'resume': 'overwrite'}, run_kwargs={'Lepsilon': 0.1},
 		speed="safe", resume=None, n_live_points=None,
-        frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
+		frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
 	):
-		"""
-		Run nested sampling with ultranest.
+		"""Run nested sampling with ultranest.
 
 		:sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)
 		:run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)
@@ -206,7 +199,6 @@ class BXASolver(object):
 		if n_live_points is not None:
 			run_kwargs['min_num_live_points'] = run_kwargs.pop('min_num_live_points', n_live_points)
 		del n_live_points
-
 
 		with XSilence():
 			self.sampler = ReactiveNestedSampler(
@@ -285,12 +277,13 @@ class BXASolver(object):
 	def posterior_predictions_convolved(
 		self, component_names=None, plot_args=None, nsamples=400
 	):
-		"""
-		Plot convolved model posterior predictions.
+		"""Plot convolved model posterior predictions.
+
 		Also returns data points for plotting.
 
-		component_names: labels to use. Set to 'ignore' to skip plotting a component
-		plot_args: matplotlib.pyplot.plot arguments for each component
+		:param component_names: labels to use. Set to 'ignore' to skip plotting a component
+		:param plot_args: matplotlib.pyplot.plot arguments for each component
+		:param nsamples: number of posterior samples to use (lower is faster)
 		"""
 		# get data, binned to 10 counts
 		# overplot models
@@ -358,7 +351,7 @@ class BXASolver(object):
 
 		:param component_names: labels to use. Set to 'ignore' to skip plotting a component
 		:param plot_args: matplotlib.pyplot.plot arguments for each component
-		:param nsamples: number of posterior samples to use
+		:param nsamples: number of posterior samples to use (lower is faster)
 		"""
 		if component_names is None:
 			component_names = [''] * 100
@@ -449,7 +442,10 @@ def standard_analysis(
 	skipsteps=[], **kwargs
 ):
 	"""
-	Default analysis which produces nice plots:
+	Run a default analysis which produces nice plots.
+
+	Deprecated; copy the code of this function into
+	your script and adjust to your needs.
 
 	* runs nested sampling analysis, creates MCMC chain file
 	* marginal probabilities (1d and 2d)
@@ -463,7 +459,6 @@ def standard_analysis(
 	the individual parts.
 	Copy them to your scripts and adapt them to your needs.
 	"""
-
 	#   run nested sampling
 	print('running analysis ...')
 	solver = BXASolver(
