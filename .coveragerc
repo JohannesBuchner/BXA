@@ -4,11 +4,11 @@
 
 [run]
 branch = True
-
 omit = 
         /home/travis/bin/*
         /home/travis/.local/*
         /home/travis/Downloads/*
+        /home/runner/Downloads/*
         /usr/*
 
 [report]

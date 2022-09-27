@@ -1,0 +1,297 @@
+name: Test
+on: [push]
+
+jobs:
+  Sherpa:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    defaults:
+      run:
+        # this is needed, because otherwise conda env is not available
+        shell: bash -l {0}
+        
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: false
+          channels: conda-forge, sherpa
+          python-version: ${{ matrix.python-version }}
+          use-only-tar-bz2: true
+          mamba-version: "*"
+ 
+      - name: Set directory names
+        run: |
+          echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
+
+      - name: Cache models
+        uses: pat-s/always-upload-cache@v2.1.5
+        id: cache-downloads
+        with:
+          path: ${{ env.MODELDIR }}
+          key: cache-downloads
+
+      - name: Download models (if necessary)
+        run: |
+             mkdir -p $MODELDIR
+             pushd $MODELDIR
+             wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
+             popd
+
+      - name: Cache conda
+        uses: pat-s/always-upload-cache@v2.1.5
+        id: cache-conda
+        env:
+          cache-name: cache-conda
+          cache-version: 5
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y ghostscript
+          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
+          conda install -y ultranest coverage coveralls scipy "matplotlib>=3.3.0" h5py astropy requests cython tqdm coverage toml
+          pip install coverage-lcov
+          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
+
+      - name: Conda info
+        run: conda info
+      - name: Conda list
+        run: conda list
+      - name: Conda paths
+        run: |
+          pwd
+          echo $PATH
+          ls $CONDA/bin/
+          which coverage
+
+      - name: Conda download clean-up
+        continue-on-error: true
+        # we must keep below 5GB, otherwise caching fails
+        # prefer keeping large files (ciao)
+        run: |
+            rm -rf ~/conda_pkgs_dir/*/
+            find ~/conda_pkgs_dir -type f -printf '%s\t%p\n' | sort -nr -k1,1 |
+            { S=0; while read s l; do 
+                ((S+=s)); [[ $S -gt 6000000000 ]] && rm -v "$l"; 
+              done; }
+
+      - name: Prepare testing
+        run: |
+          cp .coveragerc docker/testsrc
+          cp .coveragerc examples/sherpa
+          cp .coveragerc examples/xspec
+          pushd docker/testsrc
+          echo "backend: Agg" > matplotlibrc
+          ls 
+          rm *.nh
+
+      - name: Test helper scripts
+        run: |
+          pushd docker/testsrc
+          coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
+          coverage run -p ../../gal.py combined_src.pi
+          ls combined_src.pi.nh
+          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
+          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
+          coverage run -p ../../autobackgroundmodel/fitbkg.py || true
+          coverage run -p ../../gal.py || true
+          coverage run -p ../../fixkeywords.py || true
+          git checkout .
+          popd
+
+      - name: Test examples
+        run: |
+            pushd examples/sherpa;
+            # install interpolation code first
+            echo $CONDA_PREFIX/lib/python* 
+            ls /usr/include/numpy/ || true
+            sudo ln -s $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/numpy/core/include/numpy /usr/include/numpy
+            ls /usr/include/numpy/;
+            git clone https://github.com/JohannesBuchner/npyinterp.git;
+            pushd npyinterp; make; popd;
+            # run examples
+            PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash -v runall.sh || exit 1;
+            popd;
+
+      - name: Run XAGNFitter
+        run: |
+            pushd examples/sherpa/chandra;
+            echo "179.pi  0.5 8" > filenames.txt 
+            PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../xagnfitter.py || exit 1;
+            ls;
+            popd;
+
+      - name: Install
+        run: |
+          pip install . --user
+          wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
+
+      - name: Coverage report
+        run: |
+          coverage combine examples/sherpa examples/xspec docker/testsrc .
+          coverage report
+          coverage-lcov
+          # make paths relative
+          sed -i s,$PWD/,,g lcov.info
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          path-to-lcov: lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: sherpa-${{ matrix.test_number }}
+          parallel: true
+          
+  Xspec:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+ 
+      - name: Set directory names
+        run: |
+          echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
+          echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
+          echo "PATH=$PATH:$HOME/.local/bin/" >> $GITHUB_ENV
+
+      - name: Cache models
+        uses: pat-s/always-upload-cache@v2.1.5
+        id: cache-downloads
+        with:
+          path: ${{ env.MODELDIR }}
+          key: cache-downloads
+
+      - name: Download models (if necessary)
+        run: |
+             mkdir -p $MODELDIR
+             pushd $MODELDIR
+             wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
+             popd
+
+      - name: Cache xspec install
+        uses: pat-s/always-upload-cache@v2.1.5
+        id: cache-xspec
+        env:
+          cache-name: cache-xspec-install
+          cache-version: 3
+        with:
+          path: ${{ env.MYCACHE }}/xspec-install
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
+            ${{ runner.os }}-build-${{ env.cache-name }}
+
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y python3-numpy python-numpy python3-dev python-tk python3-pip python3-setuptools ghostscript cython3 python3-matplotlib python3-h5py python3-requests python3-tqdm python3-astropy
+          pip3 install ultranest coveralls coverage coverage-lcov toml
+      - name: Download and Install heasoft (if necessary)
+        run: |
+            mkdir -p $MYCACHE
+            pushd $MYCACHE
+            if ! ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/; then
+              rm -rf heasoft*/;
+              wget -O - 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga | tar -xzf -
+              ls heasoft*;
+              ls;
+              echo "compiling xspec";
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              ls heasoft*;
+              export XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+              pushd $XSPEC_BUILD_DIR;
+              mkdir -p $MYCACHE/xspec-install/;
+              ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
+              ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
+              popd;
+            fi
+      - name: Load heasoft
+        run: |
+            export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+            echo "HEADAS=$HEADAS" >> $GITHUB_ENV
+            ls $HEADAS;
+            echo "loading xspec from " $HEADAS;
+            source ${HEADAS}/headas-init.sh;
+            echo "PYTHONPATH: $PYTHONPATH";
+            echo "PATH: $PATH";
+            python -c 'import xspec' || true;
+
+      - name: Prepare testing
+        run: |
+          cp .coveragerc docker/testsrc
+          cp .coveragerc examples/sherpa
+          cp .coveragerc examples/xspec
+          pushd docker/testsrc
+          echo "backend: Agg" > matplotlibrc
+          ls 
+          rm *.nh
+
+      - name: Test helper scripts
+        run: |
+          pushd docker/testsrc
+          coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
+          coverage run -p ../../gal.py combined_src.pi
+          ls combined_src.pi.nh
+          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
+          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
+          coverage run -p ../../autobackgroundmodel/fitbkg.py || true
+          coverage run -p ../../gal.py || true
+          coverage run -p ../../fixkeywords.py || true
+          git checkout .
+          popd
+
+      - name: Test examples
+        run: |
+            pushd examples/xspec;
+            source ${HEADAS}/headas-init.sh
+            PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
+            ls;
+            popd;
+
+      - name: Install
+        run: |
+          python3 setup.py install --user
+          wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
+
+      - name: Coverage report
+        run: |
+          coverage combine examples/sherpa examples/xspec docker/testsrc .
+          coverage report
+          coverage-lcov
+          # make paths relative
+          sed -i s,$PWD/,,g lcov.info
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          path-to-lcov: lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: xspec-${{ matrix.test_number }}
+          parallel: true
+
+
+
+  finish:
+    needs: [Sherpa, Xspec]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true

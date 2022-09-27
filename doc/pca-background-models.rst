@@ -33,6 +33,9 @@ After setting your source model (with set_model), use::
 
 .. autofunction:: bxa.sherpa.background.pca.auto_background
 
+Beware that you need to set your energy limits and plot preferences
+after using `auto_background` (it switches count / count rate units).
+
 A full example for fitting obscured Active Galactic Nuclei is available:
 https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py
 
