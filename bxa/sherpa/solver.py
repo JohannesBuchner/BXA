@@ -193,8 +193,9 @@ class BXASolver(object):
 		try:
 			self.sampler.plot()
 		except Exception as e:
-			warnings.warn("plotting failed because:", e)
-			pass
+			import traceback
+			traceback.print_exc()
+			warnings.warn("plotting failed.")
 
 		self.set_best_fit()
 		return self.results

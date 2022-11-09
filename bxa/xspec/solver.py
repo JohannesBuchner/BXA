@@ -230,8 +230,9 @@ class BXASolver(object):
 			try:
 				self.sampler.plot()
 			except Exception as e:
-				warnings.warn("plotting failed because:", e)
-				pass
+				import traceback
+				traceback.print_exc()
+				warnings.warn("plotting failed.")
 
 			logls = [self.results['weighted_samples']['logl'][
 				numpy.where(self.results['weighted_samples']['points'] == sample)[0][0]]
