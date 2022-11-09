@@ -191,7 +191,7 @@ class BXASolver(object):
 		run_kwargs['Lepsilon'] = run_kwargs.pop('Lepsilon', Lepsilon)
 		del Lepsilon
 		if evidence_tolerance is not None:
-			run_kwargs['evidence_tolerance'] = run_kwargs.pop('dlogz', evidence_tolerance)
+			run_kwargs['dlogz'] = run_kwargs.pop('dlogz', evidence_tolerance)
 		del evidence_tolerance
 		if frac_remain is not None:
 			run_kwargs['frac_remain'] = run_kwargs.pop('frac_remain', frac_remain)
