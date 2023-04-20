@@ -30,7 +30,7 @@ jobs:
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
 
       - name: Cache models
-        uses: pat-s/always-upload-cache@v2.1.5
+        uses: pat-s/always-upload-cache@v3.0.11
         id: cache-downloads
         with:
           path: ${{ env.MODELDIR }}
@@ -44,7 +44,7 @@ jobs:
              popd
 
       - name: Cache conda
-        uses: pat-s/always-upload-cache@v2.1.5
+        uses: pat-s/always-upload-cache@v3.0.11
         id: cache-conda
         env:
           cache-name: cache-conda
@@ -170,7 +170,7 @@ jobs:
           echo "PATH=$PATH:$HOME/.local/bin/" >> $GITHUB_ENV
 
       - name: Cache models
-        uses: pat-s/always-upload-cache@v2.1.5
+        uses: pat-s/always-upload-cache@v3.0.11
         id: cache-downloads
         with:
           path: ${{ env.MODELDIR }}
@@ -184,7 +184,7 @@ jobs:
              popd
 
       - name: Cache xspec install
-        uses: pat-s/always-upload-cache@v2.1.5
+        uses: pat-s/always-upload-cache@v3.0.11
         id: cache-xspec
         env:
           cache-name: cache-xspec-install
