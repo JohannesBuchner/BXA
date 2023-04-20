@@ -47,6 +47,7 @@ The usage is similar in Sherpa and Xspec conceptionally:
    visualisations
    engine
    tutorials
+   examples
    convenience
    background-models
    pca-background-models
