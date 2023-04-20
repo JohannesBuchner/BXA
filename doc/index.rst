@@ -39,6 +39,9 @@ The usage is similar in Sherpa and Xspec conceptionally:
    convenience
    background-models
    pca-background-models
+   engine
+   visualisations
+   tutorials
    xagnfitter
    contributing
    history
