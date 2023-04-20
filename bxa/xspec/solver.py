@@ -399,17 +399,13 @@ class BXASolver(object):
 		# points that barely made it into the analysis are not that interesting.
 		# so pick a random subset of at least nsamples points
 		if nsamples is not None and len(posterior) > nsamples:
-			if hasattr(numpy.random, 'choice'):
-				chosen = numpy.random.choice(
-					numpy.arange(len(posterior)),
-					replace=False, size=nsamples)
-			else:
-				chosen = list(set(numpy.random.randint(
-					0, len(posterior), size=10 * nsamples)))[:nsamples]
+			chosen = numpy.random.choice(
+				len(posterior), replace=True, size=nsamples)
 			posterior = posterior[chosen, :]
 			assert len(posterior) == nsamples
 		prefix = self.outputfiles_basename
 		tmpfilename = os.path.join(os.path.dirname(prefix), os.path.basename(prefix).replace('.', '_') + '-wdatatmp.qdp')
+		assert len(tmpfilename) < 76, 'xspec cannot handle file paths this long ("%s"), and would truncate them!' % (tmpfilename)
 		if os.path.exists(tmpfilename):
 			os.remove(tmpfilename)
 
