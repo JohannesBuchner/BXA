@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Recommendations for X-ray spectral analysis &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
+    <title>Example scripts &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -16,11 +16,13 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Obscured Active Galactic Nuclei" href="xagnfitter.html" />
+    <link rel="prev" title="PCA-based background models" href="pca-background-models.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   
-    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/best-practise.html"/>
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/examples.html"/>
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -34,31 +36,13 @@
 
           <div class="body" role="main">
             
-  <section id="recommendations-for-x-ray-spectral-analysis">
-<h1>Recommendations for X-ray spectral analysis<a class="headerlink" href="#recommendations-for-x-ray-spectral-analysis" title="Permalink to this heading">¶</a></h1>
-<p>For good and valid results, experienced users of XSpec or Sherpa already do these:</p>
-<ol class="arabic simple">
-<li><p>Using a continuous background model (parameteric, albeit not necessarily physical),
-instead of “subtracting” or using bin-wise backgrounds (XSpec default).
-Commonly, a extraction region near the source is used to estimate the background.</p></li>
-<li><p>Use C-Stat/Cash (poisson likelihood) instead of Chi^2 (gaussian likelihood)</p></li>
-<li><p>Use unbinned spectra (except perhaps for visualization, albeit you can use QQ-plots there without loss of resolution)</p></li>
-</ol>
-<p>Beyond these already accepted practices, we recommend:</p>
-<ol class="arabic" start="4">
-<li><p>Estimating the values with uncertainties using Bayesian inference (this software, or MCMC methods)
-instead of Contour-search, Fisher matrix, stepping, or other approximations</p>
-<p>Instead of a local optimization, the benefit is that a global search can deal with multiples solutions.
-Error propagation is easy too when using the posterior samples (similar to a Markov chain),
-and it preserves the structure of the error (dependence between parameters, etc.)</p>
-</li>
-<li><p>Comparing models using the computed evidence (this software)
-instead of Likelihood ratio tests (which are invalid for non-nested models)</p>
-<p>Bayesian model selection based on the “evidence” Z resolves a number of limitations
-of current methods, and is easy to do with this software.</p>
-</li>
-</ol>
-<p>See the <a class="reference internal" href="index.html#cite"><span class="std std-ref">accompaning paper</span></a> for a detailed discussion and comparison!</p>
+  <section id="example-scripts">
+<h1>Example scripts<a class="headerlink" href="#example-scripts" title="Permalink to this heading">¶</a></h1>
+<p>You can find some example scripts in the examples/ folder of the github repository:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/JohannesBuchner/BXA/tree/master/examples">https://github.com/JohannesBuchner/BXA/tree/master/examples</a></p>
+</div></blockquote>
+<p>See also the <span class="xref std std-ref">Tutorials</span> page.</p>
 </section>
 
 
@@ -96,8 +80,8 @@ of current methods, and is easy to do with this software.</p>
 <li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
 </ul>
 
@@ -105,6 +89,8 @@ of current methods, and is easy to do with this software.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="pca-background-models.html" title="previous chapter">PCA-based background models</a></li>
+      <li>Next: <a href="xagnfitter.html" title="next chapter">Obscured Active Galactic Nuclei</a></li>
   </ul></li>
 </ul>
 </div>
@@ -138,7 +124,7 @@ of current methods, and is easy to do with this software.</p>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/best-practise.rst.txt"
+      <a href="_sources/examples.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

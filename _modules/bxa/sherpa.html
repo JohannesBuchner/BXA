@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
+    <title>bxa.sherpa &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
   
-    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/xspec.html"/>
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/sherpa.html"/>
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -33,39 +33,43 @@
 
           <div class="body" role="main">
             
-  <h1>Source code for bxa.xspec</h1><div class="highlight"><pre>
+  <h1>Source code for bxa.sherpa</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
-<span class="c1"># -*- coding: utf-8 -*- </span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">BXA (Bayesian X-ray Analysis) for Xspec</span>
+<span class="sd">BXA (Bayesian X-ray Analysis) for Sherpa</span>
 
-<span class="sd">Copyright: Johannes Buchner (C) 2013-2020</span>
+<span class="sd">Copyright: Johannes Buchner (C) 2013-2019</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span>
+<span class="k">if</span> <span class="s1">&#39;MAKESPHINXDOC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">sherpa.astro.ui</span> <span class="k">as</span> <span class="nn">ui</span>
+	<span class="kn">from</span> <span class="nn">sherpa.stats</span> <span class="kn">import</span> <span class="n">Cash</span><span class="p">,</span> <span class="n">CStat</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">qq</span>
-<span class="kn">from</span> <span class="nn">.sinning</span> <span class="kn">import</span> <span class="n">binning</span>
-
-<span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="n">Plot</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">.priors</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.solver</span> <span class="kn">import</span> <span class="n">BXASolver</span><span class="p">,</span> <span class="n">XSilence</span><span class="p">,</span> <span class="n">create_prior_function</span>
+<span class="kn">from</span> <span class="nn">.galabs</span> <span class="kn">import</span> <span class="n">auto_galactic_absorption</span>
+<span class="kn">from</span> <span class="nn">.solver</span> <span class="kn">import</span> <span class="n">BXASolver</span><span class="p">,</span> <span class="n">default_logging</span>
 
 
-<div class="viewcode-block" id="nested_run"><a class="viewcode-back" href="../../bxa.xspec.html#bxa.xspec.nested_run">[docs]</a><span class="k">def</span> <span class="nf">nested_run</span><span class="p">(</span>
-	<span class="n">transformations</span><span class="p">,</span> <span class="n">prior_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-	<span class="n">n_live_points</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-	<span class="n">outputfiles_basename</span><span class="o">=</span><span class="s1">&#39;chains/&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<div class="viewcode-block" id="nested_run"><a class="viewcode-back" href="../../bxa.sherpa.html#bxa.sherpa.nested_run">[docs]</a><span class="k">def</span> <span class="nf">nested_run</span><span class="p">(</span>
+	<span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+	<span class="n">sampling_efficiency</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+	<span class="n">n_live_points</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">outputfiles_basename</span><span class="o">=</span><span class="s1">&#39;chains/&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	deprecated. Use BXASolver instead.</span>
+<span class="sd">	deprecated, use BXASolver instead.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">solver</span> <span class="o">=</span> <span class="n">BXASolver</span><span class="p">(</span>
-		<span class="n">transformations</span><span class="o">=</span><span class="n">transformations</span><span class="p">,</span> <span class="n">prior_function</span><span class="o">=</span><span class="n">prior_function</span><span class="p">,</span> 
+		<span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="n">otherids</span><span class="p">,</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
 		<span class="n">outputfiles_basename</span><span class="o">=</span><span class="n">outputfiles_basename</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_live_points</span><span class="o">=</span><span class="n">n_live_points</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="n">evidence_tolerance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+	<span class="k">return</span> <span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+		<span class="n">evidence_tolerance</span><span class="o">=</span><span class="n">evidence_tolerance</span><span class="p">,</span>
+		<span class="n">n_live_points</span><span class="o">=</span><span class="n">n_live_points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
