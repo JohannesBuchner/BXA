@@ -29,7 +29,7 @@ def group_adapt(xdata, ydata, xlo, xhi, nmin = 20):
 		i = j + 1
 
 
-def binning(outputfiles_basename, bins, widths, data, models):
+def binning(outputfiles_basename, bins, widths, data, models, nmin=20):
 	"""
 	Bins the data for plotting.
 	Using the gof module, computes a Poisson goodness-of-fit range,
@@ -58,7 +58,7 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	best_gof_stats = None
 	data = None
 	
-	grouped_data = list(group_adapt(xdata, ydata, xlo, xhi))
+	grouped_data = list(group_adapt(xdata, ydata, xlo, xhi, nmin=nmin))
 	data = numpy.array([ydata[numpy.logical_and(xdata >= i, xdata < j)].sum() for i, j in zip(xlo, xhi)])
 	
 	for icomponent in range(models.shape[1]):

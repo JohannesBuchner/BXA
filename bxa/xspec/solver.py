@@ -229,7 +229,7 @@ class BXASolver(object):
 			self.results = self.sampler.results
 			try:
 				self.sampler.plot()
-			except Exception as e:
+			except Exception:
 				import traceback
 				traceback.print_exc()
 				warnings.warn("plotting failed.")
@@ -259,6 +259,10 @@ class BXASolver(object):
 
 		Returns erg/cm^2 energy flux (first column) and photon flux (second column)
 		for each posterior sample.
+		
+		:param spectrum: spectrum to use for spectrum.flux
+		:param erange: argument to AllModels.calcFlux, energy range
+		:param nsamples: number of samples to consider (the default, None, means all)
 		"""
 		# prefix = analyzer.outputfiles_basename
 		# modelnames = set([t['model'].name for t in transformations])
@@ -297,8 +301,9 @@ class BXASolver(object):
 			plot_args = [{}] * 100
 		bands = []
 		Plot.background = True
+		Plot.add = True
 
-		def plot_convolved_components(content):
+		for content in self.posterior_predictions_plot(plottype='counts', nsamples=nsamples):
 			xmid = content[:, 0]
 			ndata_columns = 6 if Plot.background else 4
 			ncomponents = content.shape[1] - ndata_columns
@@ -325,11 +330,6 @@ class BXASolver(object):
 
 				model_contributions.append(y)
 			models.append(model_contributions)
-
-		self.posterior_predictions_plot(
-			plottype='counts',
-			callback=plot_convolved_components,
-			nsamples=nsamples)
 
 		for band, label in zip(bands, component_names):
 			band.shade(alpha=0.5, label=label)
@@ -358,9 +358,10 @@ class BXASolver(object):
 			component_names = [''] * 100
 		if plot_args is None:
 			plot_args = [{}] * 100
+		Plot.add = True
 		bands = []
 
-		def plot_unconvolved_components(content):
+		for content in self.posterior_predictions_plot(plottype=plottype, nsamples=nsamples):
 			xmid = content[:, 0]
 			ncomponents = content.shape[1] - 2
 			for component in range(ncomponents):
@@ -381,57 +382,54 @@ class BXASolver(object):
 					# plt.plot(xmid, y, label=label, **kwargs)
 					bands[component].add(y)
 
-		self.posterior_predictions_plot(
-			plottype=plottype,
-			callback=plot_unconvolved_components,
-			nsamples=nsamples)
 		for band, label in zip(bands, component_names):
 			band.shade(alpha=0.5, label=label)
 			band.shade(q=0.495, alpha=0.1)
 			band.line()
 
-	def posterior_predictions_plot(self, plottype, callback, nsamples=None):
+	def posterior_predictions_plot(self, plottype, nsamples=None):
 		"""
 		Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved
 		"""
-		posterior = self.posterior
 		# for plotting, we don't need so many points, and especially the
 		# points that barely made it into the analysis are not that interesting.
 		# so pick a random subset of at least nsamples points
-		if nsamples is not None and len(posterior) > nsamples:
-			chosen = numpy.random.choice(
-				len(posterior), replace=True, size=nsamples)
-			posterior = posterior[chosen, :]
-			assert len(posterior) == nsamples
-		prefix = self.outputfiles_basename
-		tmpfilename = os.path.join(os.path.dirname(prefix), os.path.basename(prefix).replace('.', '_') + '-wdatatmp.qdp')
-		assert len(tmpfilename) < 76, 'xspec cannot handle file paths this long ("%s"), and would truncate them!' % (tmpfilename)
-		if os.path.exists(tmpfilename):
-			os.remove(tmpfilename)
+		posterior = self.posterior[:nsamples]
 
 		with XSilence():
 			olddevice = Plot.device
 			Plot.device = '/null'
-			# modelnames = set([t['model'].name for t in transformations])
-
-			while len(Plot.commands) > 0:
-				Plot.delCommand(1)
-			Plot.addCommand('wdata "%s"' % tmpfilename.replace('.qdp', ''))
 
 			# plot models
+			maxncomp = 100 if Plot.add else 0
 			for k, row in enumerate(tqdm(posterior, disable=None)):
 				set_parameters(values=row, transformations=self.transformations)
-				if os.path.exists(tmpfilename):
-					os.remove(tmpfilename)
-				xspec.Plot(plottype)
-				content = numpy.genfromtxt(tmpfilename, skip_header=3)
-				os.remove(tmpfilename)
-				callback(content)
-			xspec.Plot.device = olddevice
-			while len(Plot.commands) > 0:
-				Plot.delCommand(1)
-			if os.path.exists(tmpfilename):
-				os.remove(tmpfilename)
+				Plot(plottype)
+				# get plot data
+				if plottype == 'model':
+					base_content = numpy.transpose([
+						Plot.x(), Plot.xErr(), Plot.model()])
+				elif Plot.background:
+					base_content = numpy.transpose([
+						Plot.x(), Plot.xErr(), Plot.y(), Plot.yErr(),
+						Plot.backgroundVals(), numpy.zeros_like(Plot.backgroundVals()),
+						Plot.model()])
+				else:
+					base_content = numpy.transpose([
+						Plot.x(), Plot.xErr(), Plot.y(), Plot.yErr(),
+						Plot.model()])
+				# get additive components, if there are any
+				comp = []
+				for i in range(1, maxncomp):
+					try:
+						comp.append(Plot.addComp(i))
+					except Exception:
+						print('The error "***XSPEC Error: Requested array does not exist for this plot." can be ignored.')
+						maxncomp = i
+						break	
+				content = numpy.hstack((base_content, numpy.transpose(comp).reshape((len(base_content), -1))))
+				yield content
+			Plot.device = olddevice
 
 
 def standard_analysis(
@@ -457,6 +455,7 @@ def standard_analysis(
 	Copy them to your scripts and adapt them to your needs.
 	"""
 	#   run nested sampling
+	warnings.warn("standard_analysis() is deprecated and will be removed in future BXA releases.")
 	print('running analysis ...')
 	solver = BXASolver(
 		transformations=transformations,
