@@ -4,15 +4,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>bxa.sherpa package &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="bxa.sherpa.background package" href="bxa.sherpa.background.html" />
@@ -35,428 +36,52 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="bxa-sherpa-package">
-<h1>bxa.sherpa package<a class="headerlink" href="#bxa-sherpa-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+  <section id="bxa-sherpa-package">
+<h1>bxa.sherpa package<a class="headerlink" href="#bxa-sherpa-package" title="Permalink to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="bxa.sherpa.background.html">bxa.sherpa.background package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#module-bxa.sherpa.background.fitters">bxa.sherpa.background.fitters module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#module-bxa.sherpa.background.models">bxa.sherpa.background.models module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#module-bxa.sherpa.background.pca">bxa.sherpa.background.pca module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#module-bxa.sherpa.background.xmm">bxa.sherpa.background.xmm module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#module-bxa.sherpa.background">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#bxa-sherpa-background-fitters-module">bxa.sherpa.background.fitters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#bxa-sherpa-background-models-module">bxa.sherpa.background.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#bxa-sherpa-background-pca-module">bxa.sherpa.background.pca module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#bxa-sherpa-background-xmm-module">bxa.sherpa.background.xmm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bxa.sherpa.background.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-bxa.sherpa.cachedmodel">
-<span id="bxa-sherpa-cachedmodel-module"></span><h2>bxa.sherpa.cachedmodel module<a class="headerlink" href="#module-bxa.sherpa.cachedmodel" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="bxa.sherpa.cachedmodel.VariableCachedModel">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.cachedmodel.</code><code class="sig-name descname">VariableCachedModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">othermodel</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#VariableCachedModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.VariableCachedModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sherpa.models.model.CompositeModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sherpa.models.model.ArithmeticModel</span></code></p>
-<p>Wrapper that caches the most recent model call.</p>
-<p><em>othermodel</em> can be any sherpa model</p>
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.VariableCachedModel.calc">
-<code class="sig-name descname">calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">left</span></em>, <em class="sig-param"><span class="n">right</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#VariableCachedModel.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.VariableCachedModel.calc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the model on a grid.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<em>sequence of numbers</em>) – The parameter values to use. The order matches the
-<code class="docutils literal notranslate"><span class="pre">pars</span></code> field.</p></li>
-<li><p><strong>*args</strong> – The model grid. The values can be scalar or arrays,
-and the number depends on the dimensionality of the
-model and whether it is being evaluated over an
-integrated grid or at a point (or points).</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.VariableCachedModel.startup">
-<code class="sig-name descname">startup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#VariableCachedModel.startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.VariableCachedModel.startup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a model may be evaluated multiple times.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should a cache be used when evaluating the models.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#bxa.sherpa.cachedmodel.VariableCachedModel.teardown" title="bxa.sherpa.cachedmodel.VariableCachedModel.teardown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">teardown</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.VariableCachedModel.teardown">
-<code class="sig-name descname">teardown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#VariableCachedModel.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.VariableCachedModel.teardown" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after a model may be evaluated multiple times.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.VariableCachedModel.guess">
-<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dep</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#VariableCachedModel.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.VariableCachedModel.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set an initial guess for the parameter values.</p>
-<p>Attempt to set the parameter values, and ranges, for
-the model to match the data values. This is intended
-as a rough guess, so it is expected that the model
-is only evaluated a small number of times, if at all.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="bxa.sherpa.cachedmodel.CachedModel">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.cachedmodel.</code><code class="sig-name descname">CachedModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">othermodel</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.CachedModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sherpa.models.model.CompositeModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sherpa.models.model.ArithmeticModel</span></code></p>
-<p>Wrapper that caches the first model call forever.</p>
-<p><em>othermodel</em> can be any sherpa model</p>
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.CachedModel.calc">
-<code class="sig-name descname">calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.CachedModel.calc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the model on a grid.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<em>sequence of numbers</em>) – The parameter values to use. The order matches the
-<code class="docutils literal notranslate"><span class="pre">pars</span></code> field.</p></li>
-<li><p><strong>*args</strong> – The model grid. The values can be scalar or arrays,
-and the number depends on the dimensionality of the
-model and whether it is being evaluated over an
-integrated grid or at a point (or points).</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.CachedModel.startup">
-<code class="sig-name descname">startup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel.startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.CachedModel.startup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a model may be evaluated multiple times.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should a cache be used when evaluating the models.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#bxa.sherpa.cachedmodel.CachedModel.teardown" title="bxa.sherpa.cachedmodel.CachedModel.teardown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">teardown</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.CachedModel.teardown">
-<code class="sig-name descname">teardown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel.teardown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.CachedModel.teardown" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after a model may be evaluated multiple times.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.cachedmodel.CachedModel.guess">
-<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dep</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.cachedmodel.CachedModel.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set an initial guess for the parameter values.</p>
-<p>Attempt to set the parameter values, and ranges, for
-the model to match the data values. This is intended
-as a rough guess, so it is expected that the model
-is only evaluated a small number of times, if at all.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.galabs">
-<span id="bxa-sherpa-galabs-module"></span><h2>bxa.sherpa.galabs module<a class="headerlink" href="#module-bxa.sherpa.galabs" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="bxa.sherpa.galabs.auto_galactic_absorption">
-<code class="sig-prename descclassname">bxa.sherpa.galabs.</code><code class="sig-name descname">auto_galactic_absorption</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/galabs.html#auto_galactic_absorption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.galabs.auto_galactic_absorption" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.invgauss">
-<span id="bxa-sherpa-invgauss-module"></span><h2>bxa.sherpa.invgauss module<a class="headerlink" href="#module-bxa.sherpa.invgauss" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="bxa.sherpa.invgauss.get_invgauss_func">
-<code class="sig-prename descclassname">bxa.sherpa.invgauss.</code><code class="sig-name descname">get_invgauss_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mu</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/invgauss.html#get_invgauss_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.invgauss.get_invgauss_func" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.priors">
-<span id="bxa-sherpa-priors-module"></span><h2>bxa.sherpa.priors module<a class="headerlink" href="#module-bxa.sherpa.priors" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="bxa.sherpa.priors.create_uniform_prior_for">
-<code class="sig-prename descclassname">bxa.sherpa.priors.</code><code class="sig-name descname">create_uniform_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_uniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.priors.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use for location variables (position)
-The uniform prior gives equal weight in non-logarithmic scale.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parameter</strong> – Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.priors.create_jeffreys_prior_for">
-<code class="sig-prename descclassname">bxa.sherpa.priors.</code><code class="sig-name descname">create_jeffreys_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_jeffreys_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.priors.create_jeffreys_prior_for" title="Permalink to this definition">¶</a></dt>
-<dd><p>deprecated name for create_loguniform_prior_for</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.priors.create_loguniform_prior_for">
-<code class="sig-prename descclassname">bxa.sherpa.priors.</code><code class="sig-name descname">create_loguniform_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_loguniform_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.priors.create_loguniform_prior_for" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use for scale variables (order of magnitude)
-The Jeffreys prior gives equal weight to each order of magnitude between the
-minimum and maximum value. Flat in logarithmic scale.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parameter</strong> – Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.norm</p>
-</dd>
-</dl>
-<p>It is usually easier to create an ancillary parameter, and link the
-actual parameter, like so:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sherpa.models.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="n">lognorm</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="s1">&#39;mycomponent&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;lognorm&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mi">4</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">powerlaw</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">lognorm</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.priors.create_gaussian_prior_for">
-<code class="sig-prename descclassname">bxa.sherpa.priors.</code><code class="sig-name descname">create_gaussian_prior_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter</span></em>, <em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">std</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_gaussian_prior_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.priors.create_gaussian_prior_for" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use for informed variables.
-The Gaussian prior weights by a Gaussian in the parameter. If you
-would like the logarithm of the parameter to be weighted by
-a Gaussian, create a ancillary parameter (see create_jeffreys_prior_for).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>parameter</strong> – Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</p></li>
-<li><p><strong>mean</strong> – Mean of the Gaussian</p></li>
-<li><p><strong>std</strong> – Standard deviation of the Gaussian</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.priors.prior_from_file">
-<code class="sig-prename descclassname">bxa.sherpa.priors.</code><code class="sig-name descname">prior_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">parameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#prior_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.priors.prior_from_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a custom prior distribution from a file.
-The file should have two columns: cumulative probability
-and value, in ascii format. The cumulative probability
-has to be equally spaced and should exclude 0 and 1.</p>
-<p>Returns a sherpa parameter, a list with that parameter inside,
-and the prior function.</p>
-<p>If the file only constains a single value, that value is returned
-along with two empty lists.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.priors.create_prior_function">
-<code class="sig-prename descclassname">bxa.sherpa.priors.</code><code class="sig-name descname">create_prior_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">priors</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_prior_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.priors.create_prior_function" title="Permalink to this definition">¶</a></dt>
-<dd><p>Combine the prior transformations into a single function.</p>
-<p>This assumes factorized (independent) priors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>priors</strong> – individual prior transforms to combine into one function.
-If priors is empty, uniform priors are used on all passed parameters</p></li>
-<li><p><strong>parameters</strong> – If priors is empty, specify the list of parameters.
-Uniform priors will be created for them.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa.qq">
-<span id="bxa-sherpa-qq-module"></span><h2>bxa.sherpa.qq module<a class="headerlink" href="#module-bxa.sherpa.qq" title="Permalink to this headline">¶</a></h2>
-<p>QQ plots and goodness of fit</p>
-<dl class="py function">
-<dt id="bxa.sherpa.qq.KSstat">
-<code class="sig-prename descclassname">bxa.sherpa.qq.</code><code class="sig-name descname">KSstat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">staterror</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">syserror</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">weight</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/qq.html#KSstat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.qq.KSstat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.qq.CvMstat">
-<code class="sig-prename descclassname">bxa.sherpa.qq.</code><code class="sig-name descname">CvMstat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">staterror</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">syserror</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">weight</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/qq.html#CvMstat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.qq.CvMstat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.qq.ADstat">
-<code class="sig-prename descclassname">bxa.sherpa.qq.</code><code class="sig-name descname">ADstat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">staterror</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">syserror</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">weight</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/qq.html#ADstat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.qq.ADstat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.qq.fake_staterr_func">
-<code class="sig-prename descclassname">bxa.sherpa.qq.</code><code class="sig-name descname">fake_staterr_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/qq.html#fake_staterr_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.qq.fake_staterr_func" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.qq.qq_export">
-<code class="sig-prename descclassname">bxa.sherpa.qq.</code><code class="sig-name descname">qq_export</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bkg</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">'qq.txt'</span></em>, <em class="sig-param"><span class="n">elow</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ehigh</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/qq.html#qq_export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.qq.qq_export" title="Permalink to this definition">¶</a></dt>
-<dd><p>Export Q-Q plot into a file for plotting.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> – spectrum id to use (see get_bkg_plot/get_data_plot)</p></li>
-<li><p><strong>bkg</strong> – whether to use get_bkg_plot or get_data_plot</p></li>
-<li><p><strong>outfile</strong> – filename to write results into</p></li>
-<li><p><strong>elow</strong> – low energy limit</p></li>
-<li><p><strong>ehigh</strong> – low energy limit</p></li>
-</ul>
-</dd>
-</dl>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qq</span><span class="o">.</span><span class="n">qq_export</span><span class="p">(</span><span class="s1">&#39;bg&#39;</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;my_bg_qq&#39;</span><span class="p">,</span> <span class="n">elow</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">ehigh</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</div>
-<div class="section" id="bxa-sherpa-rebinnedmodel-module">
-<h2>bxa.sherpa.rebinnedmodel module<a class="headerlink" href="#bxa-sherpa-rebinnedmodel-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-bxa.sherpa.solver">
-<span id="bxa-sherpa-solver-module"></span><h2>bxa.sherpa.solver module<a class="headerlink" href="#module-bxa.sherpa.solver" title="Permalink to this headline">¶</a></h2>
-<p>BXA (Bayesian X-ray Analysis) for Sherpa</p>
-<p>Copyright: Johannes Buchner (C) 2013-2020</p>
-<dl class="py function">
-<dt id="bxa.sherpa.solver.default_logging">
-<code class="sig-prename descclassname">bxa.sherpa.solver.</code><code class="sig-name descname">default_logging</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#default_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.default_logging" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.solver.distribution_stats">
-<code class="sig-prename descclassname">bxa.sherpa.solver.</code><code class="sig-name descname">distribution_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distribution</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#distribution_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.distribution_stats" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.solver.photon_flux_histogram">
-<code class="sig-prename descclassname">bxa.sherpa.solver.</code><code class="sig-name descname">photon_flux_histogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distribution</span></em>, <em class="sig-param"><span class="n">nbins</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#photon_flux_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.photon_flux_histogram" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="bxa.sherpa.solver.energy_flux_histogram">
-<code class="sig-prename descclassname">bxa.sherpa.solver.</code><code class="sig-name descname">energy_flux_histogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distribution</span></em>, <em class="sig-param"><span class="n">nbins</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#energy_flux_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.energy_flux_histogram" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py class">
-<dt id="bxa.sherpa.solver.BXASolver">
-<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.solver.</code><code class="sig-name descname">BXASolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">otherids</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">prior</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em>, <em class="sig-param"><span class="n">resume_from</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Set up Bayesian analysis with specified parameters+transformations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> – See the sherpa documentation of calc_stat.</p></li>
-<li><p><strong>otherids</strong> – See the sherpa documentation of calc_stat.</p></li>
-<li><p><strong>prior</strong> – prior function created with create_prior_function.</p></li>
-<li><p><strong>parameters</strong> – List of parameters to analyse.</p></li>
-<li><p><strong>outputfiles_basename</strong> – prefix for output filenames.</p></li>
-<li><p><strong>resume_from</strong> – prefix for output filenames of a previous run with similar posterior from which to resume</p></li>
-</ul>
-</dd>
-</dl>
-<p>If prior is None, uniform priors are used on the passed parameters.
-If parameters is also None, all thawed parameters are used.</p>
-<dl class="py method">
-<dt id="bxa.sherpa.solver.BXASolver.set_paramnames">
-<code class="sig-name descname">set_paramnames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paramnames</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.set_paramnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.set_paramnames" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.solver.BXASolver.get_fit">
-<code class="sig-name descname">get_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.get_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.get_fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.solver.BXASolver.prior_transform">
-<code class="sig-name descname">prior_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cube</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.prior_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.prior_transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>unit cube transformation.</p>
-<p>see <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/priors.html#Dependent-priors">https://johannesbuchner.github.io/UltraNest/priors.html#Dependent-priors</a></p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.solver.BXASolver.log_likelihood">
-<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cube</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.log_likelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns -0.5 of the fit statistic.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.solver.BXASolver.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sampler_kwargs</span><span class="o">=</span><span class="default_value">{'resume': 'overwrite'}</span></em>, <em class="sig-param"><span class="n">run_kwargs</span><span class="o">=</span><span class="default_value">{'Lepsilon': 0.1}</span></em>, <em class="sig-param"><span class="n">speed</span><span class="o">=</span><span class="default_value">'safe'</span></em>, <em class="sig-param"><span class="n">resume</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_live_points</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frac_remain</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Lepsilon</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">evidence_tolerance</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run nested sampling with ultranest.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Sampler_kwargs</dt>
-<dd class="field-odd"><p>arguments passed to ReactiveNestedSampler (see ultranest documentation)</p>
-</dd>
-<dt class="field-even">Run_kwargs</dt>
-<dd class="field-even"><p>arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)</p>
-</dd>
-</dl>
-<p>The following arguments are also available directly for backward compatibility:</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>resume</strong> – sets sampler_kwargs[‘resume’]=’resume’ if True, otherwise ‘overwrite’</p></li>
-<li><p><strong>n_live_points</strong> – sets run_kwargs[‘min_num_live_points’]</p></li>
-<li><p><strong>evidence_tolerance</strong> – sets run_kwargs[‘dlogz’]</p></li>
-<li><p><strong>Lepsilon</strong> – sets run_kwargs[‘Lepsilon’]</p></li>
-<li><p><strong>frac_remain</strong> – sets run_kwargs[‘frac_remain’]</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.solver.BXASolver.set_best_fit">
-<code class="sig-name descname">set_best_fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.set_best_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.set_best_fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets model to the best fit values.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="bxa.sherpa.solver.BXASolver.get_distribution_with_fluxes">
-<code class="sig-name descname">get_distribution_with_fluxes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elo</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ehi</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.get_distribution_with_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.solver.BXASolver.get_distribution_with_fluxes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes flux posterior samples.</p>
-<p>Returns an array of equally weighted posterior samples (parameter values) with two
-additional columns: the photon fluxes and the energy fluxes.</p>
-<p>The values will be correctly distributed according to the
-analysis run before.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-bxa.sherpa">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bxa.sherpa" title="Permalink to this headline">¶</a></h2>
-<p>BXA (Bayesian X-ray Analysis) for Sherpa</p>
-<p>Copyright: Johannes Buchner (C) 2013-2019</p>
-<dl class="py function">
-<dt id="bxa.sherpa.nested_run">
-<code class="sig-prename descclassname">bxa.sherpa.</code><code class="sig-name descname">nested_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">otherids</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">prior</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sampling_efficiency</span><span class="o">=</span><span class="default_value">0.3</span></em>, <em class="sig-param"><span class="n">evidence_tolerance</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">n_live_points</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">outputfiles_basename</span><span class="o">=</span><span class="default_value">'chains/'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa.html#nested_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bxa.sherpa.nested_run" title="Permalink to this definition">¶</a></dt>
-<dd><p>deprecated, use BXASolver instead.</p>
-</dd></dl>
-
-</div>
-</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-cachedmodel-module">
+<h2>bxa.sherpa.cachedmodel module<a class="headerlink" href="#bxa-sherpa-cachedmodel-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-galabs-module">
+<h2>bxa.sherpa.galabs module<a class="headerlink" href="#bxa-sherpa-galabs-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-invgauss-module">
+<h2>bxa.sherpa.invgauss module<a class="headerlink" href="#bxa-sherpa-invgauss-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-priors-module">
+<h2>bxa.sherpa.priors module<a class="headerlink" href="#bxa-sherpa-priors-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-qq-module">
+<h2>bxa.sherpa.qq module<a class="headerlink" href="#bxa-sherpa-qq-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-rebinnedmodel-module">
+<h2>bxa.sherpa.rebinnedmodel module<a class="headerlink" href="#bxa-sherpa-rebinnedmodel-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="bxa-sherpa-solver-module">
+<h2>bxa.sherpa.solver module<a class="headerlink" href="#bxa-sherpa-solver-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
 
 
           </div>
@@ -475,7 +100,7 @@ analysis run before.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Documentation</span></p>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
@@ -483,7 +108,7 @@ analysis run before.</p>
 <li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Learn more</span></p>
+<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="visualisations.html">Visualisations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="engine.html">Inference engine</a></li>
@@ -492,7 +117,7 @@ analysis run before.</p>
 <li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Examples</span></p>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
@@ -515,12 +140,12 @@ analysis run before.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -537,7 +162,7 @@ analysis run before.</p>
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

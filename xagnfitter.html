@@ -4,15 +4,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Obscured Active Galactic Nuclei &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Example scripts" href="examples.html" />
@@ -34,8 +36,8 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="obscured-active-galactic-nuclei">
-<h1>Obscured Active Galactic Nuclei<a class="headerlink" href="#obscured-active-galactic-nuclei" title="Permalink to this headline">¶</a></h1>
+  <section id="obscured-active-galactic-nuclei">
+<h1>Obscured Active Galactic Nuclei<a class="headerlink" href="#obscured-active-galactic-nuclei" title="Permalink to this heading">¶</a></h1>
 <p>A script for fitting Active Galactic Nuclei is provided at
 <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py">xagnfitter.py</a>.
 This is the method used in Buchner+14, Buchner+15, Simmonds+17.</p>
@@ -64,8 +66,8 @@ This is the method used in Buchner+14, Buchner+15, Simmonds+17.</p>
 </ul>
 <p>I strongly recommend using the <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py">xagnfitter</a>
 script instead of hardness ratios.</p>
-<div class="section" id="xagnfitter-py-script">
-<h2>xagnfitter.py script<a class="headerlink" href="#xagnfitter-py-script" title="Permalink to this headline">¶</a></h2>
+<section id="xagnfitter-py-script">
+<h2>xagnfitter.py script<a class="headerlink" href="#xagnfitter-py-script" title="Permalink to this heading">¶</a></h2>
 <p>It is included verbatim below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -457,9 +459,9 @@ script instead of hardness ratios.</p>
 <span class="c1">#exit()</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="example-run">
-<h2>Example run<a class="headerlink" href="#example-run" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="example-run">
+<h2>Example run<a class="headerlink" href="#example-run" title="Permalink to this heading">¶</a></h2>
 <p>You can try running this against the AGN spectrum provided in the examples/sherpa/chandra/ folder.</p>
 <p>The output should look something like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ WITHAPEC=0 MODELDIR=$HOME/Downloads/specmodels/ python3 ../xagnfitter.py
@@ -2071,8 +2073,8 @@ multiple_out_zspec_src_1.txt.gz
 <li><p>chains/equal_weighted_post.txt: contains posterior samples: each row is a model parameter vector. You can iterate through these, set up the model in pyxspec, and then do something with it (compute fluxes and luminosities, for example).</p></li>
 <li><p>multiple_out_zspec_intrinsic_photonflux.dist.gz: contains the posterior distribution of redshifts, photon and energy fluxes (see step 9 in the script code)</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -2091,7 +2093,7 @@ multiple_out_zspec_src_1.txt.gz
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Documentation</span></p>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
@@ -2099,7 +2101,7 @@ multiple_out_zspec_src_1.txt.gz
 <li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Learn more</span></p>
+<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="visualisations.html">Visualisations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="engine.html">Inference engine</a></li>
@@ -2108,7 +2110,7 @@ multiple_out_zspec_src_1.txt.gz
 <li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Examples</span></p>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Obscured Active Galactic Nuclei</a></li>
@@ -2126,12 +2128,12 @@ multiple_out_zspec_src_1.txt.gz
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -2148,7 +2150,7 @@ multiple_out_zspec_src_1.txt.gz
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
