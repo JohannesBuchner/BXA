@@ -4,16 +4,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Convenience features &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Empirical background models" href="background-models.html" />
@@ -36,8 +35,8 @@
 
           <div class="body" role="main">
             
-  <section id="convenience-features">
-<h1>Convenience features<a class="headerlink" href="#convenience-features" title="Permalink to this heading">¶</a></h1>
+  <div class="section" id="convenience-features">
+<h1>Convenience features<a class="headerlink" href="#convenience-features" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#fixing-fits-keywords" id="id1">Fixing FITS keywords</a></p></li>
@@ -48,8 +47,8 @@
 <li><p><a class="reference internal" href="#verbosity" id="id6">Verbosity</a></p></li>
 </ul>
 </div>
-<section id="fixing-fits-keywords">
-<h2><a class="toc-backref" href="#id1">Fixing FITS keywords</a><a class="headerlink" href="#fixing-fits-keywords" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="fixing-fits-keywords">
+<h2><a class="toc-backref" href="#id1">Fixing FITS keywords</a><a class="headerlink" href="#fixing-fits-keywords" title="Permalink to this headline">¶</a></h2>
 <p>Source, background, ARF and RMF files should reference each other
 by FITS header keywords.</p>
 <p>The <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/fixkeywords.py">fixkeywords.py</a>
@@ -59,9 +58,9 @@ script adjusts the keywords:</p>
 </div>
 <p>This also fixes ARF/RMF that start the energy bounds at zero (which is invalid)
 instead of a small number.</p>
-</section>
-<section id="galactic-absorption">
-<h2><a class="toc-backref" href="#id2">Galactic absorption</a><a class="headerlink" href="#galactic-absorption" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="galactic-absorption">
+<h2><a class="toc-backref" href="#id2">Galactic absorption</a><a class="headerlink" href="#galactic-absorption" title="Permalink to this headline">¶</a></h2>
 <p>The galactic column density in the direction of the source is often needed.
 <a class="reference external" href="https://www.swift.ac.uk/analysis/nhtot/donhtot.php">https://www.swift.ac.uk/analysis/nhtot/donhtot.php</a> provides a look-up service.</p>
 <p>The <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/gal.py">gal.py</a>
@@ -71,25 +70,32 @@ script fetches the value from there:</p>
 </div>
 <p>and stores it in src.pi.nh.</p>
 <p>You can also give this script multiple spectral files and it avoids duplicate requests.</p>
-</section>
-<section id="accelerating-slow-models">
-<h2><a class="toc-backref" href="#id3">Accelerating slow models</a><a class="headerlink" href="#accelerating-slow-models" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="accelerating-slow-models">
+<h2><a class="toc-backref" href="#id3">Accelerating slow models</a><a class="headerlink" href="#accelerating-slow-models" title="Permalink to this headline">¶</a></h2>
 <p>Some models are very slow (such as convolutions).
 It is worthwhile to cache them or produce interpolation grids.</p>
 <p>For Sherpa, caching of arbitrary models is provided by CachedModel, which you can use as a wrapper:</p>
+<dl class="py class">
+<dt>
+<em class="property">class </em><code class="sig-prename descclassname">bxa.sherpa.cachedmodel.</code><code class="sig-name descname">CachedModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">othermodel</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/cachedmodel.html#CachedModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Wrapper that caches the first model call forever.</p>
+<p><em>othermodel</em> can be any sherpa model</p>
+</dd></dl>
+
 <p>Automatic production of an interpolation model is possible with the RebinnedModel:</p>
-</section>
-<section id="xspec-chain-files">
-<h2><a class="toc-backref" href="#id4">Xspec chain files</a><a class="headerlink" href="#xspec-chain-files" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="xspec-chain-files">
+<h2><a class="toc-backref" href="#id4">Xspec chain files</a><a class="headerlink" href="#xspec-chain-files" title="Permalink to this headline">¶</a></h2>
 <p>BXA, when run from pyxspec, also provides chain fits file compatible with the
 mcmc feature in xspec/pyxspec. xspec error propagation tools can thus be used
 after a BXA fit. In xspec, one can load it with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">XSPEC12</span><span class="o">&gt;</span> <span class="n">chain</span> <span class="n">load</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">mychain</span><span class="o">.</span><span class="n">fits</span>
 </pre></div>
 </div>
-</section>
-<section id="parallelisation">
-<h2><a class="toc-backref" href="#id5">Parallelisation</a><a class="headerlink" href="#parallelisation" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="parallelisation">
+<h2><a class="toc-backref" href="#id5">Parallelisation</a><a class="headerlink" href="#parallelisation" title="Permalink to this headline">¶</a></h2>
 <p>BXA supports parallelisation with MPI (Message Passing Interface).
 This allows scaling the inference from laptops all the way to computing clusters.</p>
 <p>To use it, install mpi4py and run your python script with mpiexec:</p>
@@ -102,9 +108,9 @@ run plotting and other post-analysis only on rank 0.</p>
 If your script accepts a command line argument, unix tools such as
 “make -j 10” and “xargs –max-args 1 –max-procs 10”
 can help run your code in parallel.</p>
-</section>
-<section id="verbosity">
-<h2><a class="toc-backref" href="#id6">Verbosity</a><a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="verbosity">
+<h2><a class="toc-backref" href="#id6">Verbosity</a><a class="headerlink" href="#verbosity" title="Permalink to this headline">¶</a></h2>
 <p>If you want to make the fitting more quiet, set <cite>verbose=False</cite> when calling <cite>run()</cite>.</p>
 <p>You can find more instructions
 <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/issues.html#how-do-i-suppress-the-output">how to reduce the output of the UltraNest fitting engine here</a>.</p>
@@ -115,8 +121,8 @@ can help run your code in parallel.</p>
         <span class="c1"># do something here</span>
 </pre></div>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
           </div>
@@ -135,7 +141,7 @@ can help run your code in parallel.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<p class="caption"><span class="caption-text">Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
@@ -143,7 +149,7 @@ can help run your code in parallel.</p>
 <li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
+<p class="caption"><span class="caption-text">Learn more</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="visualisations.html">Visualisations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="engine.html">Inference engine</a></li>
@@ -152,7 +158,7 @@ can help run your code in parallel.</p>
 <li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<p class="caption"><span class="caption-text">Examples</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
@@ -171,12 +177,12 @@ can help run your code in parallel.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -193,7 +199,7 @@ can help run your code in parallel.</p>
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

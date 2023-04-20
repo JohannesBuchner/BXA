@@ -6,13 +6,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>bxa.sherpa.solver &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -87,7 +87,7 @@
 	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">x</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span></div>
 
 
-<span class="k">class</span> <span class="nc">BXASolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="BXASolver"><a class="viewcode-back" href="../../../sherpa-analysis.html#bxa.sherpa.solver.BXASolver">[docs]</a><span class="k">class</span> <span class="nc">BXASolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
 		<span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">otherids</span><span class="o">=</span><span class="p">(),</span> <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">outputfiles_basename</span><span class="o">=</span><span class="s1">&#39;chains/&#39;</span><span class="p">,</span>
@@ -163,7 +163,7 @@
 				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    Parameter </span><span class="si">%10s</span><span class="s1">: </span><span class="si">%f</span><span class="s1"> --&gt; </span><span class="si">%f</span><span class="s1"> [</span><span class="si">%f</span><span class="s1">..</span><span class="si">%f</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">fullname</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="n">cube</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">p</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">max</span><span class="p">))</span>
 			<span class="k">raise</span> <span class="n">e</span></div>
 
-	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+<div class="viewcode-block" id="BXASolver.run"><a class="viewcode-back" href="../../../sherpa-analysis.html#bxa.sherpa.solver.BXASolver.run">[docs]</a>	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
 		<span class="bp">self</span><span class="p">,</span> <span class="n">sampler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;resume&#39;</span><span class="p">:</span> <span class="s1">&#39;overwrite&#39;</span><span class="p">},</span> <span class="n">run_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Lepsilon&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
 		<span class="n">speed</span><span class="o">=</span><span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_live_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">frac_remain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Lepsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="kc">None</span>
@@ -234,7 +234,7 @@
 			<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;plotting failed.&quot;</span><span class="p">)</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">set_best_fit</span><span class="p">()</span>
-		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span></div>
 
 <div class="viewcode-block" id="BXASolver.set_best_fit"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.solver.BXASolver.set_best_fit">[docs]</a>	<span class="k">def</span> <span class="nf">set_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Sets model to the best fit values.&quot;&quot;&quot;</span>
@@ -242,7 +242,7 @@
 		<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:]):</span>
 			<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span></div>
 
-	<span class="k">def</span> <span class="nf">get_distribution_with_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ehi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BXASolver.get_distribution_with_fluxes"><a class="viewcode-back" href="../../../sherpa-analysis.html#bxa.sherpa.solver.BXASolver.get_distribution_with_fluxes">[docs]</a>	<span class="k">def</span> <span class="nf">get_distribution_with_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ehi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Computes flux posterior samples.</span>
 
 <span class="sd">		Returns an array of equally weighted posterior samples (parameter values) with two</span>
@@ -260,7 +260,7 @@
 				<span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span>
 					<span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">calc_photon_flux</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">elo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">ehi</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
 					<span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">calc_energy_flux</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">elo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">ehi</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)])</span>
-		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -279,7 +279,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<p class="caption"><span class="caption-text">Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../sherpa-analysis.html">Sherpa with BXA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec-analysis.html">Xspec with BXA</a></li>
@@ -287,7 +287,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../history.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
+<p class="caption"><span class="caption-text">Learn more</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../visualisations.html">Visualisations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../engine.html">Inference engine</a></li>
@@ -296,7 +296,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../background-models.html">Empirical background models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pca-background-models.html">PCA-based background models</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<p class="caption"><span class="caption-text">Examples</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
@@ -317,12 +317,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -339,7 +339,7 @@
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

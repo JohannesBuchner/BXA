@@ -4,16 +4,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Visualisations &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Inference engine" href="engine.html" />
@@ -36,11 +35,11 @@
 
           <div class="body" role="main">
             
-  <section id="visualisations">
-<h1>Visualisations<a class="headerlink" href="#visualisations" title="Permalink to this heading">¶</a></h1>
+  <div class="section" id="visualisations">
+<h1>Visualisations<a class="headerlink" href="#visualisations" title="Permalink to this headline">¶</a></h1>
 <p>Advanced users will want to make their own visualisations and further analyses.</p>
-<section id="loading-the-model">
-<h2>Loading the model<a class="headerlink" href="#loading-the-model" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="loading-the-model">
+<h2>Loading the model<a class="headerlink" href="#loading-the-model" title="Permalink to this headline">¶</a></h2>
 <p>To start, lets pick one possible posterior sample:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">posterior_sample</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
@@ -60,9 +59,9 @@
 <span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="n">solver</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">posterior_sample</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="getting-the-data-for-plotting">
-<h2>Getting the data for plotting<a class="headerlink" href="#getting-the-data-for-plotting" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="getting-the-data-for-plotting">
+<h2>Getting the data for plotting<a class="headerlink" href="#getting-the-data-for-plotting" title="Permalink to this headline">¶</a></h2>
 <p>Now, you should use xspec or sherpa’s capabilities to make a plot,
 and extract the data.</p>
 <p>For xspec, here are the references:</p>
@@ -90,15 +89,15 @@ and extract the data.</p>
 </pre></div>
 </div>
 <p>It may also be helpful to rebin the data prior to plotting.</p>
-</section>
-<section id="modifying-the-model">
-<h2>Modifying the model<a class="headerlink" href="#modifying-the-model" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="modifying-the-model">
+<h2>Modifying the model<a class="headerlink" href="#modifying-the-model" title="Permalink to this headline">¶</a></h2>
 <p>At this stage you could also extract information from a modified model.</p>
 <p>For example, you could set the absorption to zero to plot the unabsorbed case,
 or remove nuisance components to reveal the key component of interest.</p>
-</section>
-<section id="getting-the-entire-posterior">
-<h2>Getting the entire posterior<a class="headerlink" href="#getting-the-entire-posterior" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="getting-the-entire-posterior">
+<h2>Getting the entire posterior<a class="headerlink" href="#getting-the-entire-posterior" title="Permalink to this headline">¶</a></h2>
 <p>In the sections above, we have worked with one posterior sample, and
 obtained one model prediction.</p>
 <p>For the Bayesian analysis, we have a posterior probability distribution of
@@ -120,9 +119,9 @@ the parameters, so we also want a posterior distribution of our model plot.</p>
 </div>
 <p>Here, <cite>solver.posterior</cite> contains the equally weighted posterior samples (typically a few thousand).
 You can also limit yourself to a few hundred with <cite>solver.posterior[:400]</cite>.</p>
-</section>
-<section id="plotting-the-prediction-band">
-<h2>Plotting the prediction band<a class="headerlink" href="#plotting-the-prediction-band" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="plotting-the-prediction-band">
+<h2>Plotting the prediction band<a class="headerlink" href="#plotting-the-prediction-band" title="Permalink to this headline">¶</a></h2>
 <p>Finally, we want to plot the predictions.</p>
 <p>This could be done inside the same script. Alternatively, you can write out the data
 to a text file and write a separate, dedicated plotting script that reads the data.
@@ -152,19 +151,19 @@ This will allow you to quickly make changes to plots.</p>
 </pre></div>
 </div>
 <p>For an example of extracting plot data for sherpa, see the <span class="xref std std-ref">xagnfitter script</span> (towards the bottom).</p>
-</section>
-<section id="fluxes-and-luminosities">
-<h2>Fluxes and luminosities<a class="headerlink" href="#fluxes-and-luminosities" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="fluxes-and-luminosities">
+<h2>Fluxes and luminosities<a class="headerlink" href="#fluxes-and-luminosities" title="Permalink to this headline">¶</a></h2>
 <p>Similar to extracting plots, you can also compute a flux or luminosity
 for each posterior sample, to obtain the entire posterior distribution.</p>
-</section>
-<section id="summary">
-<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>On this page you learned the ingredients to load up model realisations, extract data and
 plot the results. Now you can make your visualisation the way you want it.</p>
 <p>Visualisation contributions to BXA are welcome.</p>
-</section>
-</section>
+</div>
+</div>
 
 
           </div>
@@ -183,7 +182,7 @@ plot the results. Now you can make your visualisation the way you want it.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<p class="caption"><span class="caption-text">Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
@@ -191,7 +190,7 @@ plot the results. Now you can make your visualisation the way you want it.</p>
 <li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
+<p class="caption"><span class="caption-text">Learn more</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Visualisations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="engine.html">Inference engine</a></li>
@@ -200,7 +199,7 @@ plot the results. Now you can make your visualisation the way you want it.</p>
 <li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<p class="caption"><span class="caption-text">Examples</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
@@ -219,12 +218,12 @@ plot the results. Now you can make your visualisation the way you want it.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -241,7 +240,7 @@ plot the results. Now you can make your visualisation the way you want it.</p>
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
