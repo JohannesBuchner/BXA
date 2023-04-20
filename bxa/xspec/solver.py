@@ -24,7 +24,7 @@ from xspec import Xset, AllModels, Fit, Plot
 import xspec
 import matplotlib.pyplot as plt
 from tqdm import tqdm  # if this fails --> pip install tqdm
-from .priors import *
+#from .priors import *
 
 
 class XSilence(object):
@@ -296,9 +296,12 @@ class BXASolver(object):
 		data = [None]  # bin, bin width, data and data error
 		models = []    #
 		if component_names is None:
-			component_names = [''] * 100
+			component_names = ['convolved model'] + ['component%d' for i in range(100-1)]
 		if plot_args is None:
 			plot_args = [{}] * 100
+			for i, c in enumerate(plt.rcParams['axes.prop_cycle'].by_key()['color']):
+				plot_args[i] = dict(color=c)
+				del i, c
 		bands = []
 		Plot.background = True
 		Plot.add = True
@@ -312,29 +315,21 @@ class BXASolver(object):
 			model_contributions = []
 			for component in range(ncomponents):
 				y = content[:, ndata_columns + component]
-				kwargs = dict(drawstyle='steps', alpha=0.1, color='k')
-				kwargs.update(plot_args[component])
-
-				label = component_names[component]
-				# we only label the first time we enter here
-				# otherwise we get lots of entries in the legend
-				component_names[component] = ''
 				if component >= len(bands):
-					bands.append(PredictionBand(
-						xmid,
-						shadeargs=dict(color=kwargs['color']),
-						lineargs=dict(color=kwargs['color'])))
-				if label != 'ignore':
-					# plt.plot(xmid, y, label=label, **kwargs)
-					bands[component].add(y)
+					bands.append(PredictionBand(xmid))
+				bands[component].add(y)
 
 				model_contributions.append(y)
 			models.append(model_contributions)
 
-		for band, label in zip(bands, component_names):
-			band.shade(alpha=0.5, label=label)
-			band.shade(q=0.495, alpha=0.1)
-			band.line()
+		for band, label, component_plot_args in zip(bands, component_names, plot_args):
+			if label == 'ignore': continue
+			lineargs = dict(drawstyle='steps', color='k')
+			lineargs.update(component_plot_args)
+			shadeargs = dict(color=lineargs['color'])
+			band.shade(alpha=0.5, **shadeargs)
+			band.shade(q=0.495, alpha=0.1, **shadeargs)
+			band.line(label=label, **lineargs)
 
 		if Plot.background:
 			results = dict(list(zip('bins,width,data,error,background,backgrounderr'.split(','), data[0].transpose())))
@@ -351,13 +346,17 @@ class BXASolver(object):
 		Plot unconvolved model posterior predictions.
 
 		:param component_names: labels to use. Set to 'ignore' to skip plotting a component
-		:param plot_args: matplotlib.pyplot.plot arguments for each component
+		:param plot_args: list of matplotlib.pyplot.plot arguments for each component, e.g. [dict(color='r'), dict(color='g'), dict(color='b')]
 		:param nsamples: number of posterior samples to use (lower is faster)
+		:param plottype: type of plot string, passed to `xspec.Plot()`
 		"""
 		if component_names is None:
-			component_names = [''] * 100
+			component_names = ['model'] + ['component%d' for i in range(100-1)]
 		if plot_args is None:
 			plot_args = [{}] * 100
+			for i, c in enumerate(plt.rcParams['axes.prop_cycle'].by_key()['color']):
+				plot_args[i] = dict(color=c)
+				del i, c
 		Plot.add = True
 		bands = []
 
@@ -366,26 +365,19 @@ class BXASolver(object):
 			ncomponents = content.shape[1] - 2
 			for component in range(ncomponents):
 				y = content[:, 2 + component]
-				kwargs = dict(drawstyle='steps', alpha=0.1, color='k')
-				kwargs.update(plot_args[component])
 
-				label = component_names[component]
-				# we only label the first time we enter here
-				# otherwise we get lots of entries in the legend
-				component_names[component] = ''
 				if component >= len(bands):
-					bands.append(PredictionBand(
-						xmid,
-						shadeargs=dict(color=kwargs['color']),
-						lineargs=dict(color=kwargs['color'])))
-				if label != 'ignore':
-					# plt.plot(xmid, y, label=label, **kwargs)
-					bands[component].add(y)
+					bands.append(PredictionBand(xmid))
+				bands[component].add(y)
 
-		for band, label in zip(bands, component_names):
-			band.shade(alpha=0.5, label=label)
-			band.shade(q=0.495, alpha=0.1)
-			band.line()
+		for band, label, component_plot_args in zip(bands, component_names, plot_args):
+			if label == 'ignore': continue
+			lineargs = dict(drawstyle='steps', color='k')
+			lineargs.update(component_plot_args)
+			shadeargs = dict(color=lineargs['color'])
+			band.shade(alpha=0.5, **shadeargs)
+			band.shade(q=0.495, alpha=0.1, **shadeargs)
+			band.line(label=label, **lineargs)
 
 	def posterior_predictions_plot(self, plottype, nsamples=None):
 		"""

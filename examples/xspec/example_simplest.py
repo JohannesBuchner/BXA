@@ -34,13 +34,49 @@ print('running analysis ... done!')
 
 
 import matplotlib.pyplot as plt
+
 print('creating plot of posterior predictions against data ...')
 plt.figure()
+
+from xspec import Plot
+from bxa.xspec.solver import set_parameters, XSilence
+from ultranest.plot import PredictionBand
+
+band = None
+Plot.background = True
+
+with XSilence():
+	Plot.device = '/null'
+	# plot models
+	for row in solver.posterior[:400]:
+		set_parameters(values=row, transformations=solver.transformations)
+		Plot('counts')
+		if band is None:
+			band = PredictionBand(Plot.x())
+		band.add(Plot.model())
+
+band.shade(alpha=0.5, color='blue')
+band.shade(q=0.495, alpha=0.1, color='blue')
+band.line(color='blue', label='convolved model')
+
+plt.scatter(Plot.x(), Plot.y(), label='data')
+#plt.errorbar(
+#	x=Plot.x(), xerr=Plot.xErr(), y=Plot.y(), yerr=Plot.yErr(), 
+#	marker='o', label='data')
+
+if Plot.xAxis == 'keV':
+	plt.xlabel('Energy [keV]')
+elif Plot.xAxis == 'channel':
+	plt.xlabel('Channel')
+plt.ylabel('Counts/s/cm$^2$')
+plt.savefig(outputfiles_basename + 'convolved_posterior_direct.pdf', bbox_inches='tight')
+plt.close()
+
+
+
+print('creating a rebinned plot to check the model ...')
+plt.figure()
 data = solver.posterior_predictions_convolved(nsamples=100)
-# plot data
-#plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
-#	label='data', marker='o', color='green')
-# bin data for plotting
 print('binning for plot...')
 binned = bxa.binning(outputfiles_basename=outputfiles_basename, 
 	bins = data['bins'], widths = data['width'], 
@@ -56,6 +92,7 @@ elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
 plt.ylabel('Counts/s/cm$^2$')
 print('saving plot...')
+plt.legend()
 plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
 plt.close()
 
@@ -68,13 +105,15 @@ solver.posterior_predictions_unconvolved(nsamples=100)
 ylim = plt.ylim()
 # 3 orders of magnitude at most
 plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
-plt.gca().set_yscale('log')
+plt.yscale('log')
+plt.xscale('log')
 if Plot.xAxis == 'keV':
 	plt.xlabel('Energy [keV]')
 elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
 plt.ylabel('Energy flux density [erg/s/cm$^2$/keV]')
 print('saving plot...')
+plt.legend()
 plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
 plt.close()
 

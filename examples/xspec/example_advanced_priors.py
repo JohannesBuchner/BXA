@@ -97,7 +97,8 @@ solver.posterior_predictions_unconvolved(nsamples=100)
 ylim = plt.ylim()
 # 3 orders of magnitude at most
 plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
-plt.gca().set_yscale('log')
+plt.yscale('log')
+plt.xscale('log')
 if Plot.xAxis == 'keV':
 	plt.xlabel('Energy [keV]')
 elif Plot.xAxis == 'channel':

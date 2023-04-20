@@ -74,14 +74,13 @@ print('running analysis ... done!')
 import matplotlib.pyplot as plt
 print('creating plot of posterior predictions against data ...')
 plt.figure()
-data = solver.posterior_predictions_convolved(nsamples=100)
+data = solver.posterior_predictions_convolved(nsamples=100,
+	component_names=['total', 'comp1', 'comp2', 'comp3'],
+	plot_args=[dict(color='k'), dict(color='blue'), dict(color='navy'), dict(color='blue')])
 # plot data
-#plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
-#	label='data', marker='o', color='green')
-# bin data for plotting
 print('binning for plot...')
-binned = bxa.binning(outputfiles_basename=outputfiles_basename, 
-	bins = data['bins'], widths = data['width'], 
+binned = bxa.binning(outputfiles_basename=outputfiles_basename,
+	bins = data['bins'], widths = data['width'],
 	data = data['data'], models = data['models'])
 for point in binned['marked_binned']:
 	plt.errorbar(marker='o', zorder=-1, **point)
@@ -94,6 +93,7 @@ elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
 plt.ylabel('Counts/s/cm$^2$')
 print('saving plot...')
+plt.legend()
 plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
 plt.close()
 
@@ -102,17 +102,21 @@ plt.close()
 
 print('creating plot of posterior predictions ...')
 plt.figure()
-solver.posterior_predictions_unconvolved(nsamples=100)
+solver.posterior_predictions_unconvolved(nsamples=100,
+	component_names=['total', 'comp1', 'comp2', 'comp3'],
+	plot_args=[dict(color='k'), dict(color='blue'), dict(color='navy'), dict(color='blue')])
 ylim = plt.ylim()
 # 3 orders of magnitude at most
 plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
-plt.gca().set_yscale('log')
+plt.yscale('log')
+plt.xscale('log')
 if Plot.xAxis == 'keV':
 	plt.xlabel('Energy [keV]')
 elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
 plt.ylabel('Energy flux density [erg/s/cm$^2$/keV]')
 print('saving plot...')
+plt.legend()
 plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
 plt.close()
 
