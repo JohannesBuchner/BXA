@@ -96,7 +96,7 @@
 <span class="sd">     ]</span>
 <span class="sd">   </span>
 <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="RebinnedModel"><a class="viewcode-back" href="../../../convenience.html#bxa.sherpa.rebinnedmodel.RebinnedModel">[docs]</a><span class="k">class</span> <span class="nc">RebinnedModel</span><span class="p">(</span><span class="n">ArithmeticModel</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">RebinnedModel</span><span class="p">(</span><span class="n">ArithmeticModel</span><span class="p">):</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slowmodel</span><span class="p">,</span> <span class="n">ebins</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">modelname</span><span class="o">=</span><span class="s1">&#39;rebinnedmodel&#39;</span><span class="p">):</span>
 		<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">nbins</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
 	
@@ -199,7 +199,7 @@
 		<span class="c1">#print &#39;    result&#39;, r</span>
 		<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">r</span>
 		<span class="c1">#print r[len(r)/2], yw[len(yw)/2], norm</span>
-		<span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="n">norm</span></div></div>
+		<span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="n">norm</span></div>
 </pre></div>
 
           </div>

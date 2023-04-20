@@ -99,6 +99,31 @@ This will allow you to quickly make changes to plots.
 A helpful visualisation function to make credible interval bands is
 `PredictionBand <https://johannesbuchner.github.io/UltraNest/ultranest.html#ultranest.plot.PredictionBand>`_.
 
+Putting it all together, here is one example for xspec::
+
+	from xspec import Plot
+	from bxa.xspec.solver import set_parameters, XSilence
+
+	band = None
+	Plot.background = True
+
+	with XSilence():
+		Plot.device = '/null'
+		# plot models
+		for row in solver.posterior[:400]:
+			set_parameters(values=row, transformations=solver.transformations)
+			Plot('counts')
+			if band is None:
+				band = PredictionBand(Plot.x())
+			band.add(Plot.model())
+
+	band.shade(alpha=0.5)
+	band.shade(q=0.495, alpha=0.1)
+	band.line()
+
+
+For an example of extracting plot data for sherpa, see the :ref:`xagnfitter script <xagnfitter>` (towards the bottom).
+
 Fluxes and luminosities
 ------------------------
 

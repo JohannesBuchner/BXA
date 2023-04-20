@@ -60,7 +60,7 @@
 <span class="kn">import</span> <span class="nn">xspec</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>  <span class="c1"># if this fails --&gt; pip install tqdm</span>
-<span class="kn">from</span> <span class="nn">.priors</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="c1">#from .priors import *</span>
 
 
 <div class="viewcode-block" id="XSilence"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.XSilence">[docs]</a><span class="k">class</span> <span class="nc">XSilence</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -265,7 +265,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">results</span>
 			<span class="k">try</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-			<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
 				<span class="kn">import</span> <span class="nn">traceback</span>
 				<span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
 				<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;plotting failed.&quot;</span><span class="p">)</span>
@@ -295,6 +295,10 @@
 
 <span class="sd">		Returns erg/cm^2 energy flux (first column) and photon flux (second column)</span>
 <span class="sd">		for each posterior sample.</span>
+<span class="sd">		</span>
+<span class="sd">		:param spectrum: spectrum to use for spectrum.flux</span>
+<span class="sd">		:param erange: argument to AllModels.calcFlux, energy range</span>
+<span class="sd">		:param nsamples: number of samples to consider (the default, None, means all)</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># prefix = analyzer.outputfiles_basename</span>
 		<span class="c1"># modelnames = set([t[&#39;model&#39;].name for t in transformations])</span>
@@ -328,13 +332,17 @@
 		<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>  <span class="c1"># bin, bin width, data and data error</span>
 		<span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>    <span class="c1">#</span>
 		<span class="k">if</span> <span class="n">component_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-			<span class="n">component_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+			<span class="n">component_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;convolved model&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;component</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
 		<span class="k">if</span> <span class="n">plot_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="n">plot_args</span> <span class="o">=</span> <span class="p">[{}]</span> <span class="o">*</span> <span class="mi">100</span>
+			<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.prop_cycle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s1">&#39;color&#39;</span><span class="p">]):</span>
+				<span class="n">plot_args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+				<span class="k">del</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span>
 		<span class="n">bands</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="n">Plot</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="n">Plot</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="kc">True</span>
 
-		<span class="k">def</span> <span class="nf">plot_convolved_components</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">posterior_predictions_plot</span><span class="p">(</span><span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">):</span>
 			<span class="n">xmid</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 			<span class="n">ndata_columns</span> <span class="o">=</span> <span class="mi">6</span> <span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">background</span> <span class="k">else</span> <span class="mi">4</span>
 			<span class="n">ncomponents</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ndata_columns</span>
@@ -343,34 +351,21 @@
 			<span class="n">model_contributions</span> <span class="o">=</span> <span class="p">[]</span>
 			<span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncomponents</span><span class="p">):</span>
 				<span class="n">y</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="n">ndata_columns</span> <span class="o">+</span> <span class="n">component</span><span class="p">]</span>
-				<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
-				<span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_args</span><span class="p">[</span><span class="n">component</span><span class="p">])</span>
-
-				<span class="n">label</span> <span class="o">=</span> <span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span>
-				<span class="c1"># we only label the first time we enter here</span>
-				<span class="c1"># otherwise we get lots of entries in the legend</span>
-				<span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 				<span class="k">if</span> <span class="n">component</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">):</span>
-					<span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PredictionBand</span><span class="p">(</span>
-						<span class="n">xmid</span><span class="p">,</span>
-						<span class="n">shadeargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]),</span>
-						<span class="n">lineargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">])))</span>
-				<span class="k">if</span> <span class="n">label</span> <span class="o">!=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">:</span>
-					<span class="c1"># plt.plot(xmid, y, label=label, **kwargs)</span>
-					<span class="n">bands</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+					<span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PredictionBand</span><span class="p">(</span><span class="n">xmid</span><span class="p">))</span>
+				<span class="n">bands</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
 				<span class="n">model_contributions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 			<span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_contributions</span><span class="p">)</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">posterior_predictions_plot</span><span class="p">(</span>
-			<span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">,</span>
-			<span class="n">callback</span><span class="o">=</span><span class="n">plot_convolved_components</span><span class="p">,</span>
-			<span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
-
-		<span class="k">for</span> <span class="n">band</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">component_names</span><span class="p">):</span>
-			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
-			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-			<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">band</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">component_plot_args</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">component_names</span><span class="p">,</span> <span class="n">plot_args</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s1">&#39;ignore&#39;</span><span class="p">:</span> <span class="k">continue</span>
+			<span class="n">lineargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+			<span class="n">lineargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">component_plot_args</span><span class="p">)</span>
+			<span class="n">shadeargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">lineargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">])</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">shadeargs</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">**</span><span class="n">shadeargs</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">lineargs</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
 			<span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="s1">&#39;bins,width,data,error,background,backgrounderr&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">())))</span>
@@ -387,87 +382,82 @@
 <span class="sd">		Plot unconvolved model posterior predictions.</span>
 
 <span class="sd">		:param component_names: labels to use. Set to &#39;ignore&#39; to skip plotting a component</span>
-<span class="sd">		:param plot_args: matplotlib.pyplot.plot arguments for each component</span>
+<span class="sd">		:param plot_args: list of matplotlib.pyplot.plot arguments for each component, e.g. [dict(color=&#39;r&#39;), dict(color=&#39;g&#39;), dict(color=&#39;b&#39;)]</span>
 <span class="sd">		:param nsamples: number of posterior samples to use (lower is faster)</span>
+<span class="sd">		:param plottype: type of plot string, passed to `xspec.Plot()`</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">if</span> <span class="n">component_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-			<span class="n">component_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+			<span class="n">component_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;component</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
 		<span class="k">if</span> <span class="n">plot_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="n">plot_args</span> <span class="o">=</span> <span class="p">[{}]</span> <span class="o">*</span> <span class="mi">100</span>
+			<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.prop_cycle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s1">&#39;color&#39;</span><span class="p">]):</span>
+				<span class="n">plot_args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+				<span class="k">del</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span>
+		<span class="n">Plot</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="kc">True</span>
 		<span class="n">bands</span> <span class="o">=</span> <span class="p">[]</span>
 
-		<span class="k">def</span> <span class="nf">plot_unconvolved_components</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">posterior_predictions_plot</span><span class="p">(</span><span class="n">plottype</span><span class="o">=</span><span class="n">plottype</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">):</span>
 			<span class="n">xmid</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 			<span class="n">ncomponents</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span>
 			<span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncomponents</span><span class="p">):</span>
 				<span class="n">y</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:,</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">component</span><span class="p">]</span>
-				<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
-				<span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_args</span><span class="p">[</span><span class="n">component</span><span class="p">])</span>
 
-				<span class="n">label</span> <span class="o">=</span> <span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span>
-				<span class="c1"># we only label the first time we enter here</span>
-				<span class="c1"># otherwise we get lots of entries in the legend</span>
-				<span class="n">component_names</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 				<span class="k">if</span> <span class="n">component</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">):</span>
-					<span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PredictionBand</span><span class="p">(</span>
-						<span class="n">xmid</span><span class="p">,</span>
-						<span class="n">shadeargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]),</span>
-						<span class="n">lineargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">])))</span>
-				<span class="k">if</span> <span class="n">label</span> <span class="o">!=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">:</span>
-					<span class="c1"># plt.plot(xmid, y, label=label, **kwargs)</span>
-					<span class="n">bands</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+					<span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PredictionBand</span><span class="p">(</span><span class="n">xmid</span><span class="p">))</span>
+				<span class="n">bands</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">posterior_predictions_plot</span><span class="p">(</span>
-			<span class="n">plottype</span><span class="o">=</span><span class="n">plottype</span><span class="p">,</span>
-			<span class="n">callback</span><span class="o">=</span><span class="n">plot_unconvolved_components</span><span class="p">,</span>
-			<span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
-		<span class="k">for</span> <span class="n">band</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">component_names</span><span class="p">):</span>
-			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
-			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-			<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">()</span></div>
+		<span class="k">for</span> <span class="n">band</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">component_plot_args</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">component_names</span><span class="p">,</span> <span class="n">plot_args</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s1">&#39;ignore&#39;</span><span class="p">:</span> <span class="k">continue</span>
+			<span class="n">lineargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+			<span class="n">lineargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">component_plot_args</span><span class="p">)</span>
+			<span class="n">shadeargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">lineargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">])</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">shadeargs</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">**</span><span class="n">shadeargs</span><span class="p">)</span>
+			<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">lineargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BXASolver.posterior_predictions_plot"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.posterior_predictions_plot">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plottype</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BXASolver.posterior_predictions_plot"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.posterior_predictions_plot">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plottype</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posterior</span>
 		<span class="c1"># for plotting, we don&#39;t need so many points, and especially the</span>
 		<span class="c1"># points that barely made it into the analysis are not that interesting.</span>
 		<span class="c1"># so pick a random subset of at least nsamples points</span>
-		<span class="k">if</span> <span class="n">nsamples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">nsamples</span><span class="p">:</span>
-			<span class="n">chosen</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-				<span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nsamples</span><span class="p">)</span>
-			<span class="n">posterior</span> <span class="o">=</span> <span class="n">posterior</span><span class="p">[</span><span class="n">chosen</span><span class="p">,</span> <span class="p">:]</span>
-			<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span> <span class="o">==</span> <span class="n">nsamples</span>
-		<span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputfiles_basename</span>
-		<span class="n">tmpfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-wdatatmp.qdp&#39;</span><span class="p">)</span>
-		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">76</span><span class="p">,</span> <span class="s1">&#39;xspec cannot handle file paths this long (&quot;</span><span class="si">%s</span><span class="s1">&quot;), and would truncate them!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
-		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
-			<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
+		<span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posterior</span><span class="p">[:</span><span class="n">nsamples</span><span class="p">]</span>
 
 		<span class="k">with</span> <span class="n">XSilence</span><span class="p">():</span>
 			<span class="n">olddevice</span> <span class="o">=</span> <span class="n">Plot</span><span class="o">.</span><span class="n">device</span>
 			<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;/null&#39;</span>
-			<span class="c1"># modelnames = set([t[&#39;model&#39;].name for t in transformations])</span>
-
-			<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-				<span class="n">Plot</span><span class="o">.</span><span class="n">delCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-			<span class="n">Plot</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s1">&#39;wdata &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">tmpfilename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.qdp&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
 
 			<span class="c1"># plot models</span>
+			<span class="n">maxncomp</span> <span class="o">=</span> <span class="mi">100</span> <span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">add</span> <span class="k">else</span> <span class="mi">0</span>
 			<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="kc">None</span><span class="p">)):</span>
 				<span class="n">set_parameters</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">)</span>
-				<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
-					<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
-				<span class="n">xspec</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="n">plottype</span><span class="p">)</span>
-				<span class="n">content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-				<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
-				<span class="n">callback</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-			<span class="n">xspec</span><span class="o">.</span><span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span>
-			<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-				<span class="n">Plot</span><span class="o">.</span><span class="n">delCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">):</span>
-				<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span></div></div>
+				<span class="n">Plot</span><span class="p">(</span><span class="n">plottype</span><span class="p">)</span>
+				<span class="c1"># get plot data</span>
+				<span class="k">if</span> <span class="n">plottype</span> <span class="o">==</span> <span class="s1">&#39;model&#39;</span><span class="p">:</span>
+					<span class="n">base_content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span>
+						<span class="n">Plot</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xErr</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">model</span><span class="p">()])</span>
+				<span class="k">elif</span> <span class="n">Plot</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
+					<span class="n">base_content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span>
+						<span class="n">Plot</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xErr</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">yErr</span><span class="p">(),</span>
+						<span class="n">Plot</span><span class="o">.</span><span class="n">backgroundVals</span><span class="p">(),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">backgroundVals</span><span class="p">()),</span>
+						<span class="n">Plot</span><span class="o">.</span><span class="n">model</span><span class="p">()])</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">base_content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span>
+						<span class="n">Plot</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xErr</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">Plot</span><span class="o">.</span><span class="n">yErr</span><span class="p">(),</span>
+						<span class="n">Plot</span><span class="o">.</span><span class="n">model</span><span class="p">()])</span>
+				<span class="c1"># get additive components, if there are any</span>
+				<span class="n">comp</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">maxncomp</span><span class="p">):</span>
+					<span class="k">try</span><span class="p">:</span>
+						<span class="n">comp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">addComp</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+					<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+						<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The error &quot;***XSPEC Error: Requested array does not exist for this plot.&quot; can be ignored.&#39;</span><span class="p">)</span>
+						<span class="n">maxncomp</span> <span class="o">=</span> <span class="n">i</span>
+						<span class="k">break</span>	
+				<span class="n">content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">base_content</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">base_content</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))))</span>
+				<span class="k">yield</span> <span class="n">content</span>
+			<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span></div></div>
 
 
 <div class="viewcode-block" id="standard_analysis"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.standard_analysis">[docs]</a><span class="k">def</span> <span class="nf">standard_analysis</span><span class="p">(</span>
@@ -493,6 +483,7 @@
 <span class="sd">	Copy them to your scripts and adapt them to your needs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1">#   run nested sampling</span>
+	<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;standard_analysis() is deprecated and will be removed in future BXA releases.&quot;</span><span class="p">)</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;running analysis ...&#39;</span><span class="p">)</span>
 	<span class="n">solver</span> <span class="o">=</span> <span class="n">BXASolver</span><span class="p">(</span>
 		<span class="n">transformations</span><span class="o">=</span><span class="n">transformations</span><span class="p">,</span>

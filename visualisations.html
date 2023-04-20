@@ -129,6 +129,29 @@ to a text file and write a separate, dedicated plotting script that reads the da
 This will allow you to quickly make changes to plots.</p>
 <p>A helpful visualisation function to make credible interval bands is
 <a class="reference external" href="https://johannesbuchner.github.io/UltraNest/ultranest.html#ultranest.plot.PredictionBand">PredictionBand</a>.</p>
+<p>Putting it all together, here is one example for xspec:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="n">Plot</span>
+<span class="kn">from</span> <span class="nn">bxa.xspec.solver</span> <span class="kn">import</span> <span class="n">set_parameters</span><span class="p">,</span> <span class="n">XSilence</span>
+
+<span class="n">band</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">Plot</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">with</span> <span class="n">XSilence</span><span class="p">():</span>
+        <span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;/null&#39;</span>
+        <span class="c1"># plot models</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">solver</span><span class="o">.</span><span class="n">posterior</span><span class="p">[:</span><span class="mi">400</span><span class="p">]:</span>
+                <span class="n">set_parameters</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">transformations</span><span class="o">=</span><span class="n">solver</span><span class="o">.</span><span class="n">transformations</span><span class="p">)</span>
+                <span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">band</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">band</span> <span class="o">=</span> <span class="n">PredictionBand</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">x</span><span class="p">())</span>
+                <span class="n">band</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">model</span><span class="p">())</span>
+
+<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For an example of extracting plot data for sherpa, see the <span class="xref std std-ref">xagnfitter script</span> (towards the bottom).</p>
 </section>
 <section id="fluxes-and-luminosities">
 <h2>Fluxes and luminosities<a class="headerlink" href="#fluxes-and-luminosities" title="Permalink to this heading">¶</a></h2>

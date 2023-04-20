@@ -61,13 +61,6 @@ the location of strongest fit mismatch.</p>
 <span class="n">set_full_model</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">get_response</span><span class="p">(</span><span class="nb">id</span><span class="p">)(</span><span class="n">model</span><span class="p">)</span> <span class="o">+</span> <span class="n">bkg_model</span> <span class="o">*</span> <span class="n">get_bkg_scale</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
 </pre></div>
 </div>
-<dl class="py function">
-<dt class="sig sig-object py" id="bxa.sherpa.background.pca.auto_background">
-<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.background.pca.</span></span><span class="sig-name descname"><span class="pre">auto_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#auto_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.background.pca.auto_background" title="Permalink to this definition">¶</a></dt>
-<dd><p>Automatically fits background <em>id</em> based on PCA-based templates,
-and additional gaussian lines as needed by AIC.</p>
-</dd></dl>
-
 <p>Beware that you need to set your energy limits and plot preferences
 after using <cite>auto_background</cite> (it switches count / count rate units).</p>
 <p>A full example for fitting obscured Active Galactic Nuclei is available:

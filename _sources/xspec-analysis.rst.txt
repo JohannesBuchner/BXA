@@ -113,7 +113,7 @@ For this functionality, you also need scipy installed.
 The following code creates a plot of the convolved posterior model:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
-   :lines: 37-60
+   :lines: 78-97
 
 .. figure:: absorbed-convolved_posterior.*
 	
@@ -121,12 +121,14 @@ The following code creates a plot of the convolved posterior model:
 	For each posterior sample (solution), the parameters are taken and put
 	through the model. All such lines are plotted. Where the region is darker,
 	more lines ended up, and thus it is more likely.
+	The band covers the 1 sigma equivalent model prediction interval (68 per cent),
+	the more transparent band contains 99 per cent of the posterior probability.
 	
 	The data points are adaptively binned to contain at least 20 counts.
 	The error bars are created by asking: which model count rate can produce
 	this amount of counts. 
-	In a Poisson process, the inverse incomplete gamma
-	function provides this answer. The 10%-90% probability range is used.
+	In a Poisson process, the inverse incomplete gamma function provides 
+	this answer. The error bars show the 10%-90% probability range.
 	
 	On the colors of the data points:
 	
@@ -151,7 +153,7 @@ The following code creates a plot of the convolved posterior model:
 The following code creates a plot of the unconvolved posterior:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
-   :lines: 65-79
+   :lines: 103-118
 
 .. figure:: absorbed-unconvolved_posterior.*
 	
@@ -160,7 +162,7 @@ The following code creates a plot of the unconvolved posterior:
 	through the model. All such lines are plotted. Where the region is darker,
 	more lines ended up, and thus it is more likely.
 
-For plotting the model parameters found against the data, use these functions.
+For plotting the model parameters found against the data, use these functions:
 
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_unconvolved
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_convolved

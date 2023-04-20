@@ -169,7 +169,7 @@ These are also reported on the screen for you.</p>
 (1d and 2d) of the marginal parameter distributions are plotted
 in ‘myoutputs/plots/corner.pdf’ for you.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 356.5px; height: 368.5px;" /></a>
+<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 357.5px; height: 368.5px;" /></a>
 </figure>
 <p>You can also plot them yourself using corner, triangle and getdist, by
 passing <cite>results[‘samples’]</cite> to them.</p>
@@ -180,13 +180,8 @@ see <a class="reference external" href="https://corner.readthedocs.io/en/latest/
 <h2>Model checking<a class="headerlink" href="#model-checking" title="Permalink to this heading">¶</a></h2>
 <p>For this functionality, you also need scipy installed.</p>
 <p>The following code creates a plot of the convolved posterior model:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating plot of posterior predictions against data ...&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">posterior_predictions_convolved</span><span class="p">(</span><span class="n">nsamples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="c1"># plot data</span>
-<span class="c1">#plt.errorbar(x=data[&#39;bins&#39;], xerr=data[&#39;width&#39;], y=data[&#39;data&#39;], yerr=data[&#39;error&#39;],</span>
-<span class="c1">#	label=&#39;data&#39;, marker=&#39;o&#39;, color=&#39;green&#39;)</span>
-<span class="c1"># bin data for plotting</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;binning for plot...&#39;</span><span class="p">)</span>
 <span class="n">binned</span> <span class="o">=</span> <span class="n">bxa</span><span class="o">.</span><span class="n">binning</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="o">=</span><span class="n">outputfiles_basename</span><span class="p">,</span> 
 	<span class="n">bins</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">],</span> <span class="n">widths</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">],</span> 
@@ -202,6 +197,7 @@ see <a class="reference external" href="https://corner.readthedocs.io/en/latest/
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Channel&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Counts/s/cm$^2$&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;convolved_posterior.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
@@ -212,13 +208,15 @@ see <a class="reference external" href="https://corner.readthedocs.io/en/latest/
 <p><span class="caption-text">Example of the convolved spectrum with data.
 For each posterior sample (solution), the parameters are taken and put
 through the model. All such lines are plotted. Where the region is darker,
-more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+more lines ended up, and thus it is more likely.
+The band covers the 1 sigma equivalent model prediction interval (68 per cent),
+the more transparent band contains 99 per cent of the posterior probability.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 <div class="legend">
 <p>The data points are adaptively binned to contain at least 20 counts.
 The error bars are created by asking: which model count rate can produce
 this amount of counts.
-In a Poisson process, the inverse incomplete gamma
-function provides this answer. The 10%-90% probability range is used.</p>
+In a Poisson process, the inverse incomplete gamma function provides
+this answer. The error bars show the 10%-90% probability range.</p>
 <p>On the colors of the data points:</p>
 <p>For all intents and purposes, you can ignore the colors.</p>
 <p>The colors are intended to aid the discovery of discrepancies, by using
@@ -238,19 +236,20 @@ and if it reaches below <span class="math notranslate nohighlight">\(10^{-6}\)</
 </figcaption>
 </figure>
 <p>The following code creates a plot of the unconvolved posterior:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating plot of posterior predictions ...&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">posterior_predictions_unconvolved</span><span class="p">(</span><span class="n">nsamples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">ylim</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
 <span class="c1"># 3 orders of magnitude at most</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;keV&#39;</span><span class="p">:</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">)</span>
 <span class="k">elif</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;channel&#39;</span><span class="p">:</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Channel&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy flux density [erg/s/cm$^2$/keV]&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;unconvolved_posterior.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
@@ -264,7 +263,7 @@ through the model. All such lines are plotted. Where the region is darker,
 more lines ended up, and thus it is more likely.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
-<p>For plotting the model parameters found against the data, use these functions.</p>
+<p>For plotting the model parameters found against the data, use these functions:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bxa.xspec.BXASolver.posterior_predictions_unconvolved">
 <span class="sig-prename descclassname"><span class="pre">BXASolver.</span></span><span class="sig-name descname"><span class="pre">posterior_predictions_unconvolved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plottype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_unconvolved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.BXASolver.posterior_predictions_unconvolved" title="Permalink to this definition">¶</a></dt>
@@ -273,8 +272,9 @@ more lines ended up, and thus it is more likely.</span><a class="headerlink" hre
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>component_names</strong> – labels to use. Set to ‘ignore’ to skip plotting a component</p></li>
-<li><p><strong>plot_args</strong> – matplotlib.pyplot.plot arguments for each component</p></li>
+<li><p><strong>plot_args</strong> – list of matplotlib.pyplot.plot arguments for each component, e.g. [dict(color=’r’), dict(color=’g’), dict(color=’b’)]</p></li>
 <li><p><strong>nsamples</strong> – number of posterior samples to use (lower is faster)</p></li>
+<li><p><strong>plottype</strong> – type of plot string, passed to <cite>xspec.Plot()</cite></p></li>
 </ul>
 </dd>
 </dl>
@@ -298,20 +298,31 @@ more lines ended up, and thus it is more likely.</span><a class="headerlink" hre
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">sinning.</span></span><span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Bins the data for plotting.
-Using the gof module, computes a Poisson goodness-of-fit range,
+<span class="sig-prename descclassname"><span class="pre">sinning.</span></span><span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Bins the data for plotting and checks the model.</p>
+<p>Using the gof module, computes a Poisson goodness-of-fit range,
 i.e. ranges where the model must lie. This is done for multiple
 binning sizes simultaneously.</p>
-<p>Returns:</p>
-<ul class="simple">
-<li><p>marked_binned: data points binned to contain 10 counts
-a sequence ready to be passed to matplotlib.pyplot.errorbar</p></li>
-<li><p>modelrange: range allowed by the data
-ready to be passed to matplotlib.pyplot.fill_between</p></li>
-<li><p>and statistics (GoF measure)</p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputfiles_basename</strong> – not used.</p></li>
+<li><p><strong>bins</strong> – bin location from Plot.x()</p></li>
+<li><p><strong>widths</strong> – bin width from Plot.xErr()</p></li>
+<li><p><strong>data</strong> – counts per bin width from Plot.y() with Plot.background = True and Plot(‘counts’)</p></li>
+<li><p><strong>model</strong> – counts per bin width predicted by the model, from Plot.model()</p></li>
+<li><p><strong>nmin</strong> – number of counts per bin to use for rebinning.</p></li>
 </ul>
-<p>outputfiles_basename is not used.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>* marked_binned</strong> (data points binned to contain <cite>nmin</cite> counts) – a sequence ready to be passed to matplotlib.pyplot.errorbar</p></li>
+<li><p><strong>* modelrange</strong> (<em>range allowed by the data</em>) – ready to be passed to matplotlib.pyplot.fill_between</p></li>
+<li><p><em>* and statistics (GoF measure)</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -431,14 +442,14 @@ This indicates that the data has more counts than the model there.</p>
 <p>As the growth is in a S-shape, it is probably a Gaussian (see its <a class="reference external" href="https://en.wikipedia.org/wiki/Normal_distribution">cumulative density function</a>).</p>
 <p>Refer to the appendix of the <a class="reference external" href="cite">accompaning paper</a> for more examples.</p>
 <p>For Xspec, the <em>qq</em> function in the <em>qq</em> module allows you to create such plots easily:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating quantile-quantile plot ...&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
-<span class="k">with</span> <span class="n">bxa</span><span class="o">.</span><span class="n">XSilence</span><span class="p">():</span>
-	<span class="n">solver</span><span class="o">.</span><span class="n">set_best_fit</span><span class="p">()</span>
-	<span class="n">bxa</span><span class="o">.</span><span class="n">qq</span><span class="o">.</span><span class="n">qq</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;qq_model_deviations.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">models</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">binned</span><span class="p">[</span><span class="s1">&#39;marked_binned&#39;</span><span class="p">]:</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">point</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">binned</span><span class="p">[</span><span class="s1">&#39;xlim&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">binned</span><span class="p">[</span><span class="s1">&#39;ylim&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">binned</span><span class="p">[</span><span class="s1">&#39;ylim&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;keV&#39;</span><span class="p">:</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py function">

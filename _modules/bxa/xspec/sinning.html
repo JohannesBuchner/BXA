@@ -50,7 +50,17 @@
 
 <div class="viewcode-block" id="group_adapt"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.sinning.group_adapt">[docs]</a><span class="k">def</span> <span class="nf">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">nmin</span> <span class="o">=</span> <span class="mi">20</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Adaptive grouping into nmin count bins</span>
+<span class="sd">	Adaptive grouping into nmin count bins.</span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">		:param xdata: bin center</span>
+<span class="sd">		:param ydata: count values</span>
+<span class="sd">		:param xlo: bin lower edge</span>
+<span class="sd">		:param xhi: bin upper edge</span>
+<span class="sd">		:param nmin: desired minimum number of counts in each bin</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		sequence of (lower edge, upper edge, number of counts) tuples</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">xlo</span><span class="p">):</span>
@@ -65,22 +75,29 @@
 		<span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="binning"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.sinning.binning">[docs]</a><span class="k">def</span> <span class="nf">binning</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">models</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Bins the data for plotting.</span>
+<div class="viewcode-block" id="binning"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.sinning.binning">[docs]</a><span class="k">def</span> <span class="nf">binning</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">nmin</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Bins the data for plotting and checks the model.</span>
+
 <span class="sd">	Using the gof module, computes a Poisson goodness-of-fit range,</span>
 <span class="sd">	i.e. ranges where the model must lie. This is done for multiple</span>
 <span class="sd">	binning sizes simultaneously.</span>
+
+<span class="sd">	:param outputfiles_basename: not used.</span>
+<span class="sd">	:param bins: bin location from Plot.x()</span>
+<span class="sd">	:param widths: bin width from Plot.xErr()</span>
+<span class="sd">	:param data: counts per bin width from Plot.y() with Plot.background = True and Plot(&#39;counts&#39;)</span>
+<span class="sd">	:param model: counts per bin width predicted by the model, from Plot.model()</span>
+<span class="sd">	:param nmin: number of counts per bin to use for rebinning.</span>
 <span class="sd">	</span>
-<span class="sd">	Returns:</span>
+<span class="sd">	Returns</span>
+<span class="sd">	--------</span>
 <span class="sd">	</span>
-<span class="sd">	* marked_binned: data points binned to contain 10 counts</span>
+<span class="sd">	* marked_binned: data points binned to contain `nmin` counts</span>
 <span class="sd">	  a sequence ready to be passed to matplotlib.pyplot.errorbar</span>
 <span class="sd">	* modelrange: range allowed by the data</span>
 <span class="sd">	  ready to be passed to matplotlib.pyplot.fill_between</span>
 <span class="sd">	* and statistics (GoF measure)</span>
 <span class="sd">	</span>
-<span class="sd">	outputfiles_basename is not used.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	
 	<span class="n">xdata</span> <span class="o">=</span> <span class="n">bins</span>
@@ -94,24 +111,23 @@
 	<span class="n">best_gof_stats</span> <span class="o">=</span> <span class="kc">None</span>
 	<span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
 	
-	<span class="n">grouped_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">))</span>
+	<span class="n">grouped_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">nmin</span><span class="o">=</span><span class="n">nmin</span><span class="p">))</span>
 	<span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ydata</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">xdata</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="p">,</span> <span class="n">xdata</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">)])</span>
 	
-	<span class="k">for</span> <span class="n">icomponent</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-		<span class="n">component</span> <span class="o">=</span> <span class="n">models</span><span class="p">[:,</span><span class="n">icomponent</span><span class="p">,:]</span>
-		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">counts_predicted</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">component</span><span class="p">)):</span>
-			<span class="n">modelrange_low</span><span class="p">,</span> <span class="n">modelrange_high</span> <span class="o">=</span> <span class="n">gof</span><span class="o">.</span><span class="n">calc_models_range</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">component</span> <span class="o">=</span> <span class="n">models</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">counts_predicted</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">component</span><span class="p">)):</span>
+		<span class="n">modelrange_low</span><span class="p">,</span> <span class="n">modelrange_high</span> <span class="o">=</span> <span class="n">gof</span><span class="o">.</span><span class="n">calc_models_range</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	
+		<span class="n">stats</span> <span class="o">=</span> <span class="n">gof</span><span class="o">.</span><span class="n">calc_multigof</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">counts_predicted</span><span class="p">)</span>
+		<span class="n">curgof</span> <span class="o">=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span>
+			<span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">stats</span><span class="p">[</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">][:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> 
+				<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))])</span> <span class="o">+</span> <span class="mf">1e-300</span><span class="p">)</span>
 		
-			<span class="n">stats</span> <span class="o">=</span> <span class="n">gof</span><span class="o">.</span><span class="n">calc_multigof</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">counts_predicted</span><span class="p">)</span>
-			<span class="n">curgof</span> <span class="o">=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span>
-				<span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">stats</span><span class="p">[</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">][:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> 
-					<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))])</span> <span class="o">+</span> <span class="mf">1e-300</span><span class="p">)</span>
-			
-			<span class="k">if</span> <span class="n">best_gof</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">curgof</span> <span class="o">&lt;</span> <span class="n">best_gof</span><span class="p">:</span>
-				<span class="n">best_gof</span> <span class="o">=</span> <span class="n">curgof</span>
-				<span class="n">best_gof_stats</span> <span class="o">=</span> <span class="n">stats</span>
-			<span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
-				<span class="k">break</span>
+		<span class="k">if</span> <span class="n">best_gof</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">curgof</span> <span class="o">&lt;</span> <span class="n">best_gof</span><span class="p">:</span>
+			<span class="n">best_gof</span> <span class="o">=</span> <span class="n">curgof</span>
+			<span class="n">best_gof_stats</span> <span class="o">=</span> <span class="n">stats</span>
+		<span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+			<span class="k">break</span>
 
 	<span class="c1"># check if we can reproduce the data</span>
 	<span class="n">curgof</span> <span class="o">=</span> <span class="n">best_gof</span>

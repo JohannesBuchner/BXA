@@ -196,25 +196,46 @@ or number of equally spaced markers between minimum+maximum.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="bxa.xspec.sinning.group_adapt">
 <span class="sig-prename descclassname"><span class="pre">bxa.xspec.sinning.</span></span><span class="sig-name descname"><span class="pre">group_adapt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xhi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/sinning.html#group_adapt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.sinning.group_adapt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adaptive grouping into nmin count bins</p>
+<dd><p>Adaptive grouping into nmin count bins.</p>
+<p>:param : param xdata: bin center
+:param : param ydata: count values
+:param : param xlo: bin lower edge
+:param : param xhi: bin upper edge
+:param : param nmin: desired minimum number of counts in each bin</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sequence of (lower edge, upper edge, number of counts) tuples</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bxa.xspec.sinning.binning">
-<span class="sig-prename descclassname"><span class="pre">bxa.xspec.sinning.</span></span><span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputfiles_basename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/sinning.html#binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.sinning.binning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bins the data for plotting.
-Using the gof module, computes a Poisson goodness-of-fit range,
+<span class="sig-prename descclassname"><span class="pre">bxa.xspec.sinning.</span></span><span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputfiles_basename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/sinning.html#binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.sinning.binning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bins the data for plotting and checks the model.</p>
+<p>Using the gof module, computes a Poisson goodness-of-fit range,
 i.e. ranges where the model must lie. This is done for multiple
 binning sizes simultaneously.</p>
-<p>Returns:</p>
-<ul class="simple">
-<li><p>marked_binned: data points binned to contain 10 counts
-a sequence ready to be passed to matplotlib.pyplot.errorbar</p></li>
-<li><p>modelrange: range allowed by the data
-ready to be passed to matplotlib.pyplot.fill_between</p></li>
-<li><p>and statistics (GoF measure)</p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputfiles_basename</strong> – not used.</p></li>
+<li><p><strong>bins</strong> – bin location from Plot.x()</p></li>
+<li><p><strong>widths</strong> – bin width from Plot.xErr()</p></li>
+<li><p><strong>data</strong> – counts per bin width from Plot.y() with Plot.background = True and Plot(‘counts’)</p></li>
+<li><p><strong>model</strong> – counts per bin width predicted by the model, from Plot.model()</p></li>
+<li><p><strong>nmin</strong> – number of counts per bin to use for rebinning.</p></li>
 </ul>
-<p>outputfiles_basename is not used.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>* marked_binned</strong> (data points binned to contain <cite>nmin</cite> counts) – a sequence ready to be passed to matplotlib.pyplot.errorbar</p></li>
+<li><p><strong>* modelrange</strong> (<em>range allowed by the data</em>) – ready to be passed to matplotlib.pyplot.fill_between</p></li>
+<li><p><em>* and statistics (GoF measure)</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -325,6 +346,15 @@ the uncertainty. This is especially important if redshift is a variable
 parameter in the fit (with some prior).</p>
 <p>Returns erg/cm^2 energy flux (first column) and photon flux (second column)
 for each posterior sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrum</strong> – spectrum to use for spectrum.flux</p></li>
+<li><p><strong>erange</strong> – argument to AllModels.calcFlux, energy range</p></li>
+<li><p><strong>nsamples</strong> – number of samples to consider (the default, None, means all)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -351,8 +381,9 @@ for each posterior sample.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>component_names</strong> – labels to use. Set to ‘ignore’ to skip plotting a component</p></li>
-<li><p><strong>plot_args</strong> – matplotlib.pyplot.plot arguments for each component</p></li>
+<li><p><strong>plot_args</strong> – list of matplotlib.pyplot.plot arguments for each component, e.g. [dict(color=’r’), dict(color=’g’), dict(color=’b’)]</p></li>
 <li><p><strong>nsamples</strong> – number of posterior samples to use (lower is faster)</p></li>
+<li><p><strong>plottype</strong> – type of plot string, passed to <cite>xspec.Plot()</cite></p></li>
 </ul>
 </dd>
 </dl>
@@ -360,7 +391,7 @@ for each posterior sample.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bxa.xspec.solver.BXASolver.posterior_predictions_plot">
-<span class="sig-name descname"><span class="pre">posterior_predictions_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plottype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.posterior_predictions_plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">posterior_predictions_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plottype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.posterior_predictions_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.posterior_predictions_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved</p>
 </dd></dl>
 
