@@ -55,13 +55,13 @@ create a flipbook of prior sample predictions.
 
 1) Pick a random sample from the prior::
 
-   import numpy
-   from bxa.xspec.solver import set_parameters
+	import numpy
+	from bxa.xspec.solver import set_parameters
 
-   prior_function = bxa.create_prior_function(transformations)
-   values = prior_function(numpy.random.uniform(size=len(transformations)))
-   set_parameters(transformations, values)
-   print("set to parameters:", values)
+	prior_function = bxa.create_prior_function(transformations)
+	values = prior_function(numpy.random.uniform(size=len(transformations)))
+	set_parameters(transformations, values)
+	print("set to parameters:", values)
 
 2) make a plot
 

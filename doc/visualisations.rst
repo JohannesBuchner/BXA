@@ -1,5 +1,5 @@
 Visualisations
---------------
+==============
 
 Advanced users will want to make their own visualisations and further analyses.
 
