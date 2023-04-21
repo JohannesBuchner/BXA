@@ -123,12 +123,12 @@ Putting it all together, here is one example for xspec::
 
 	plt.scatter(Plot.x(), Plot.y(), label='data')
 
-.. figure:: simplest-unconvolved_posterior_direct.*
+.. figure:: simplest-convolved_posterior_direct.*
 	
 	Example of the convolved model spectrum prediction band.
 
 
-For an example of extracting plot data for sherpa, see the :doc:`xagnfitter` (towards the bottom).
+For an example of extracting plot data for sherpa, see the :doc:`xagnfitter Script <xagnfitter>` (towards the bottom).
 
 Fluxes and luminosities
 ------------------------
@@ -136,9 +136,12 @@ Fluxes and luminosities
 Similar to extracting plots, you can also compute a flux or luminosity
 for each posterior sample, to obtain the entire posterior distribution.
 
-.. figure:: simplest-unconvolved_posterior_direct.*
+.. figure:: simplest-flux_posterior.*
 	
-	Example of the convolved model spectrum prediction band.
+	Posterior distribution of the soft and hard band fluxes.
+	Photon fluxes are shown in the left panel, energy fluxes in the right panel.
+	Histograms were obtained by taking each posterior sample, loading the model,
+	then computing the flux.
 
 
 Summary
