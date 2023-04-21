@@ -128,7 +128,7 @@ Putting it all together, here is one example for xspec::
 	Example of the convolved model spectrum prediction band.
 
 
-For an example of extracting plot data for sherpa, see the :doc:`xagnfitter Script <xagnfitter>` (towards the bottom).
+For an example of extracting plot data for sherpa, see the :doc:`xagnfitter script <xagnfitter>` (towards the bottom).
 
 Fluxes and luminosities
 ------------------------
