@@ -123,7 +123,7 @@ Putting it all together, here is one example for xspec::
 
 	plt.scatter(Plot.x(), Plot.y(), label='data')
 
-.. figure:: absorbed-unconvolved_posterior_direct.*
+.. figure:: simplest-unconvolved_posterior_direct.*
 	
 	Example of the convolved model spectrum prediction band.
 
@@ -136,7 +136,7 @@ Fluxes and luminosities
 Similar to extracting plots, you can also compute a flux or luminosity
 for each posterior sample, to obtain the entire posterior distribution.
 
-.. figure:: absorbed-unconvolved_posterior_direct.*
+.. figure:: simplest-unconvolved_posterior_direct.*
 	
 	Example of the convolved model spectrum prediction band.
 
