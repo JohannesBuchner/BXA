@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bxa.sherpa.background.pca &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/sherpa/background/pca.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bxa.sherpa.background.pca</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">PCA-based background model.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">if</span> <span class="s1">&#39;MAKESPHINXDOC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">sherpa.astro.ui</span> <span class="k">as</span> <span class="nn">ui</span>
+	<span class="kn">from</span> <span class="nn">sherpa.stats</span> <span class="kn">import</span> <span class="n">Cash</span><span class="p">,</span> <span class="n">CStat</span>
+	<span class="kn">from</span> <span class="nn">sherpa.models.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
+	<span class="kn">from</span> <span class="nn">sherpa.models</span> <span class="kn">import</span> <span class="n">ArithmeticModel</span><span class="p">,</span> <span class="n">CompositeModel</span>
+	<span class="kn">from</span> <span class="nn">sherpa.astro.ui</span> <span class="kn">import</span> <span class="o">*</span>
+	<span class="kn">from</span> <span class="nn">sherpa.astro.instrument</span> <span class="kn">import</span> <span class="n">RSPModelNoPHA</span><span class="p">,</span> <span class="n">RMFModelNoPHA</span>
+<span class="k">else</span><span class="p">:</span>
+	<span class="c1"># mock objects when sherpa doc is built</span>
+	<span class="n">ArithmeticModel</span> <span class="o">=</span> <span class="nb">object</span>
+	<span class="k">class</span> <span class="nc">CompositeModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+		<span class="k">pass</span>
+	<span class="n">RSPModelNoPHA</span><span class="p">,</span> <span class="n">RMFModelNoPHA</span> <span class="o">=</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">object</span>
+
+<span class="k">def</span> <span class="nf">pca</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
+	<span class="n">mean</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">Moffset</span> <span class="o">=</span> <span class="n">M</span> <span class="o">-</span> <span class="n">mean</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+	<span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">Moffset</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">V</span> <span class="o">=</span> <span class="n">Vt</span><span class="o">.</span><span class="n">T</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;variance explained:&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">M</span><span class="p">))</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">M</span><span class="p">))</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="n">c</span> <span class="o">/</span> <span class="n">c</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">cut</span> <span class="ow">in</span> <span class="mf">0.80</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">:</span>
+		<span class="n">idx</span><span class="p">,</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">c</span><span class="o">&gt;</span><span class="n">cut</span><span class="p">)</span>
+		<span class="n">n</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  --&gt; need </span><span class="si">%d</span><span class="s1"> components to explain </span><span class="si">%.2f%%</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">cut</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mean</span>
+
+<span class="k">def</span> <span class="nf">pca_predict</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mean</span><span class="p">):</span>
+	<span class="n">S</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">V</span><span class="o">.</span><span class="n">T</span><span class="p">))</span> <span class="o">+</span> <span class="n">mean</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">pca_get_vectors</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mean</span><span class="p">):</span>
+	<span class="c1">#U = numpy.eye(len(s))</span>
+	<span class="c1">#return pca_predict(U, s, V, mean)</span>
+	<span class="n">Sroot</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Sroot</span><span class="p">,</span> <span class="n">V</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">pca_cut</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">ncomponents</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">U</span><span class="p">[:,</span> <span class="p">:</span><span class="n">ncomponents</span><span class="p">],</span> <span class="n">s</span><span class="p">[:</span><span class="n">ncomponents</span><span class="p">],</span> <span class="n">V</span><span class="p">[:,:</span><span class="n">ncomponents</span><span class="p">],</span> <span class="n">mean</span>
+<span class="k">def</span> <span class="nf">pca_cut_adapt</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mean</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">U</span><span class="p">[:,</span> <span class="p">:</span><span class="n">ncomponents</span><span class="p">],</span> <span class="n">s</span><span class="p">[:</span><span class="n">ncomponents</span><span class="p">],</span> <span class="n">V</span><span class="p">[:,:</span><span class="n">ncomponents</span><span class="p">],</span> <span class="n">mean</span>
+
+<span class="k">def</span> <span class="nf">pca_check</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mean</span><span class="p">):</span>
+	<span class="c1"># if we use only the first 20 PCs the reconstruction is less accurate</span>
+	<span class="n">Mhat2</span> <span class="o">=</span> <span class="n">pca_predict</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using </span><span class="si">%d</span><span class="s2"> PCs, MSE = </span><span class="si">%.6G</span><span class="s2">&quot;</span>  <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">M</span> <span class="o">-</span> <span class="n">Mhat2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+	<span class="k">return</span> <span class="n">M</span> <span class="o">-</span> <span class="n">Mhat2</span>
+
+<div class="viewcode-block" id="get_unit_response"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.get_unit_response">[docs]</a><span class="k">def</span> <span class="nf">get_unit_response</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+	<span class="n">copy_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;temp_unitrsp&quot;</span><span class="p">)</span>
+	<span class="n">unit_arf</span> <span class="o">=</span> <span class="n">get_bkg_arf</span><span class="p">(</span><span class="s2">&quot;temp_unitrsp&quot;</span><span class="p">)</span>
+	<span class="n">unit_arf</span><span class="o">.</span><span class="n">specresp</span> <span class="o">=</span> <span class="mf">0.</span> <span class="o">*</span> <span class="n">unit_arf</span><span class="o">.</span><span class="n">specresp</span> <span class="o">+</span> <span class="mf">1.0</span>
+	<span class="n">bunitrsp</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="s2">&quot;temp_unitrsp&quot;</span><span class="p">,</span> <span class="n">bkg_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">delete_data</span><span class="p">(</span><span class="s2">&quot;temp_unitrsp&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">bunitrsp</span></div>
+
+
+<span class="k">class</span> <span class="nc">IdentityResponse</span><span class="p">(</span><span class="n">RSPModelNoPHA</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">arf</span><span class="p">,</span> <span class="n">rmf</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+		<span class="n">RSPModelNoPHA</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arf</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span> <span class="n">rmf</span><span class="o">=</span><span class="n">rmf</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">elo</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ehi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lo</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">xlo</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">xhi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+	<span class="k">def</span> <span class="nf">apply_rmf</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">src</span>
+	<span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">xhi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xlo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xhi</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">src</span>
+		<span class="k">return</span> <span class="n">src</span>
+
+
+<span class="k">class</span> <span class="nc">IdentityRMF</span><span class="p">(</span><span class="n">RMFModelNoPHA</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">rmf</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+		<span class="n">RMFModelNoPHA</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rmf</span><span class="o">=</span><span class="n">rmf</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">elo</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ehi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lo</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">xlo</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">xhi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+	<span class="k">def</span> <span class="nf">apply_rmf</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">src</span>
+	<span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">xhi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xlo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xhi</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">src</span>
+		<span class="k">return</span> <span class="n">src</span>
+
+
+<div class="viewcode-block" id="get_identity_response"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.get_identity_response">[docs]</a><span class="k">def</span> <span class="nf">get_identity_response</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+	<span class="n">n</span> <span class="o">=</span> <span class="n">get_bkg</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">size</span>
+	<span class="n">rmf</span> <span class="o">=</span> <span class="n">get_rmf</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">arf</span> <span class="o">=</span> <span class="n">get_arf</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="k">return</span> <span class="k">lambda</span> <span class="n">model</span><span class="p">:</span> <span class="n">IdentityResponse</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">arf</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span> <span class="n">rmf</span><span class="o">=</span><span class="n">rmf</span><span class="p">)</span>
+	<span class="k">except</span><span class="p">:</span>
+		<span class="k">return</span> <span class="k">lambda</span> <span class="n">model</span><span class="p">:</span> <span class="n">IdentityRMF</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">rmf</span><span class="o">=</span><span class="n">rmf</span><span class="p">)</span></div>
+
+
+
+<span class="n">logf</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;bxa.Fitter&#39;</span><span class="p">)</span>
+<span class="n">logf</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="c1"># Model</span>
+<div class="viewcode-block" id="PCAModel"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAModel">[docs]</a><span class="k">class</span> <span class="nc">PCAModel</span><span class="p">(</span><span class="n">ArithmeticModel</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelname</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;U&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ilo</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ilo&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ihi</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ihi&#39;</span><span class="p">]</span>
+
+		<span class="n">p0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;lognorm&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+			<span class="n">hard_min</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">hard_max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+		<span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">p0</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)):</span>
+			<span class="n">pi</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;PC</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span>
+				<span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+				<span class="n">hard_min</span><span class="o">=-</span><span class="mf">1e300</span><span class="p">,</span> <span class="n">hard_max</span><span class="o">=</span><span class="mf">1e300</span><span class="p">)</span>
+			<span class="n">pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">ArithmeticModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="n">pars</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PCAModel.calc"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAModel.calc">[docs]</a>	<span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">lognorm</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">pars</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+			<span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pars</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+			<span class="n">cts</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="n">lognorm</span>
+
+			<span class="n">out</span> <span class="o">=</span> <span class="n">left</span> <span class="o">*</span> <span class="mf">0.0</span>
+			<span class="n">out</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ilo</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">ihi</span><span class="p">]</span> <span class="o">=</span> <span class="n">cts</span>
+			<span class="k">return</span> <span class="n">out</span>
+		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception in PCA model:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+			<span class="k">raise</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="PCAModel.startup"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAModel.startup">[docs]</a>	<span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="PCAModel.teardown"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAModel.teardown">[docs]</a>	<span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="PCAModel.guess"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAModel.guess">[docs]</a>	<span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_load_params</span><span class="p">()</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">GaussModel</span><span class="p">(</span><span class="n">ArithmeticModel</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelname</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">LineE</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;LineE&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e38</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Sigma</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Sigma&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e38</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">modelname</span><span class="o">=</span><span class="n">modelname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e38</span><span class="p">)</span>
+		<span class="n">pars</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LineE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sigma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">ArithmeticModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="n">pars</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">LineE</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">p</span>
+			<span class="n">cts</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">left</span> <span class="o">-</span> <span class="n">LineE</span><span class="p">)</span><span class="o">/</span><span class="n">Sigma</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+			<span class="n">out</span> <span class="o">=</span> <span class="n">cts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+			<span class="k">return</span> <span class="n">cts</span>
+		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception in PCA model:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+			<span class="k">raise</span> <span class="n">e</span>
+
+	<span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span>
+
+	<span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span>
+	<span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_load_params</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="PCAFitter"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAFitter">[docs]</a><span class="k">class</span> <span class="nc">PCAFitter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Fitter mixing PCA-based templates and gaussian lines &quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		id: which data id to fit</span>
+
+<span class="sd">		filename: prefix for where to store background information</span>
+
+<span class="sd">		load: whether the background file should be loaded now</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;PCAFitter(for ID=</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+		<span class="n">hdr</span> <span class="o">=</span> <span class="n">get_bkg</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">header</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ndata</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_bkg</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+
+		<span class="n">telescope</span> <span class="o">=</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;TELESCOP&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+		<span class="n">instrument</span> <span class="o">=</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;INSTRUME&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">telescope</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">instrument</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;ERROR: The TELESCOP/INSTRUME headers are not set in the data file.&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BKGMODELDIR&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">):</span>
+			<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.json&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="n">instrument</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndata</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+				<span class="k">return</span>
+			<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.json&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndata</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+				<span class="k">return</span>
+		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;ERROR: Could not load PCA components for this detector (</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">, </span><span class="si">%d</span><span class="s1"> channels). Try the SingleFitter instead.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="n">instrument</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndata</span><span class="p">))</span>
+
+<div class="viewcode-block" id="PCAFitter.load"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAFitter.load">[docs]</a>	<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;loading PCA information from </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pca</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PCAFitter.decompose"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAFitter.decompose">[docs]</a>	<span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">ilo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;ilo&#39;</span><span class="p">])</span>
+		<span class="n">ihi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;ihi&#39;</span><span class="p">])</span>
+		<span class="n">lo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;lo&#39;</span><span class="p">]</span>
+		<span class="n">hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;hi&#39;</span><span class="p">]</span>
+		<span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span>
+		<span class="n">V</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">])</span>
+		<span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span>
+		<span class="n">U</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">[</span><span class="s1">&#39;U&#39;</span><span class="p">]</span>
+		<span class="n">cts</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">ilo</span><span class="p">:</span><span class="n">ihi</span><span class="p">]</span>
+		<span class="n">ncts</span> <span class="o">=</span> <span class="n">cts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;have </span><span class="si">%d</span><span class="s1"> background counts for deconvolution&#39;</span> <span class="o">%</span> <span class="n">ncts</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">cts</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">ncts</span>  <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+		<span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">*</span> <span class="n">V</span>
+		<span class="k">assert</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span>
+		<span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ncts</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">)]</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PCAFitter.calc_bkg_stat"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAFitter.calc_bkg_stat">[docs]</a>	<span class="k">def</span> <span class="nf">calc_bkg_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">ss</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">get_stat_info</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">ids</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">bkg_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">bkg_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">get_stat_info</span><span class="p">():</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">ids</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">bkg_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;get_stat_info returned: ids=</span><span class="si">%s</span><span class="s1"> bkg_ids=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">ids</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">bkg_ids</span><span class="p">))</span>
+
+		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+		<span class="k">return</span> <span class="n">ss</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">statval</span></div>
+
+<div class="viewcode-block" id="PCAFitter.fit"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.pca.PCAFitter.fit">[docs]</a>	<span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c1"># try a PCA decomposition of this spectrum</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fitting background of ID=</span><span class="si">%s</span><span class="s1"> using PCA method&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+		<span class="n">initial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: initial PCA decomposition: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">initial</span><span class="p">))</span>
+		<span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+		<span class="n">set_method</span><span class="p">(</span><span class="s1">&#39;neldermead&#39;</span><span class="p">)</span>
+		<span class="n">bkgmodel</span> <span class="o">=</span> <span class="n">PCAModel</span><span class="p">(</span><span class="s1">&#39;pca</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bkgmodel</span> <span class="o">=</span> <span class="n">bkgmodel</span>
+		<span class="n">response</span> <span class="o">=</span> <span class="n">get_identity_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+		<span class="n">convbkgmodel</span> <span class="o">=</span> <span class="n">response</span><span class="p">(</span><span class="n">bkgmodel</span><span class="p">)</span>
+		<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">convbkgmodel</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">,</span> <span class="n">initial</span><span class="p">):</span>
+			<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+		<span class="n">srcmodel</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+		<span class="n">set_full_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">srcmodel</span><span class="p">)</span>
+		<span class="n">fit_bkg</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: first full fit done&#39;</span><span class="p">)</span>
+		<span class="n">final</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">get_bkg_model</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">pars</span><span class="p">]</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: parameters: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">final</span><span class="p">))</span>
+		<span class="n">initial_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bkg_stat</span><span class="p">()</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: stat: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">initial_v</span><span class="p">))</span>
+
+		<span class="c1"># lets try from zero</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: second full fit from zero&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">:</span>
+			<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">fit_bkg</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+		<span class="n">initial_v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bkg_stat</span><span class="p">()</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: parameters: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">final</span><span class="p">))</span>
+		<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: stat: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">initial_v0</span><span class="p">))</span>
+
+		<span class="c1"># pick the better starting point</span>
+		<span class="k">if</span> <span class="n">initial_v0</span> <span class="o">&lt;</span> <span class="n">initial_v</span><span class="p">:</span>
+			<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: using zero-fit&#39;</span><span class="p">)</span>
+			<span class="n">initial_v</span> <span class="o">=</span> <span class="n">initial_v0</span>
+			<span class="n">final</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">get_bkg_model</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">pars</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">logf</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;fit: using decomposed-fit&#39;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">,</span> <span class="n">final</span><span class="p">):</span>
+				<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+
+		<span class="c1"># start with the full fit and remove(freeze) parameters</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> parameters, stat=</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">initial</span><span class="p">),</span> <span class="n">initial_v</span><span class="p">))</span>
+		<span class="n">results</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">final</span><span class="p">)</span> <span class="o">+</span> <span class="n">initial_v</span><span class="p">,</span> <span class="n">final</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">final</span><span class="p">),</span> <span class="n">initial_v</span><span class="p">)]</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+			<span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+			<span class="n">fit_bkg</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+			<span class="n">final</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">get_bkg_model</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">pars</span><span class="p">]</span>
+			<span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bkg_stat</span><span class="p">()</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&gt; </span><span class="si">%d</span><span class="s1"> parameters, stat=</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+			<span class="n">results</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="p">,</span> <span class="n">final</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+		<span class="nb">print</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Background PCA fitting AIC results:&#39;</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-----------------------------------&#39;</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stat Ncomp AIC&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">aic</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">nparams</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-05.1f</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%-05.1f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">nparams</span><span class="p">,</span> <span class="n">aic</span><span class="p">))</span>
+		<span class="n">aic</span><span class="p">,</span> <span class="n">final</span><span class="p">,</span> <span class="n">nparams</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">,</span> <span class="n">final</span><span class="p">):</span>
+			<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nparams</span><span class="p">):</span>
+			<span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">thaw</span><span class="p">()</span>
+
+		<span class="nb">print</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Increasing parameters again...&#39;</span><span class="p">)</span>
+		<span class="c1"># now increase the number of parameters again</span>
+		<span class="c1">#results = [(aic, final, nparams, val)]</span>
+		<span class="n">last_aic</span><span class="p">,</span> <span class="n">last_final</span><span class="p">,</span> <span class="n">last_nparams</span><span class="p">,</span> <span class="n">last_val</span> <span class="o">=</span> <span class="n">aic</span><span class="p">,</span> <span class="n">final</span><span class="p">,</span> <span class="n">nparams</span><span class="p">,</span> <span class="n">val</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">last_nparams</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">)):</span>
+			<span class="n">next_nparams</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">thaw</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">,</span> <span class="n">last_final</span><span class="p">):</span>
+				<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+			<span class="n">fit_bkg</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+			<span class="n">next_final</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">get_bkg_model</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">pars</span><span class="p">]</span>
+			<span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bkg_stat</span><span class="p">()</span>
+			<span class="n">next_aic</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">next_nparams</span>
+			<span class="k">if</span> <span class="n">next_aic</span> <span class="o">&lt;</span> <span class="n">last_aic</span><span class="p">:</span>
+				<span class="c1"># accept</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> parameters, aic=</span><span class="si">%.2f</span><span class="s1"> ** accepting&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">next_nparams</span><span class="p">,</span> <span class="n">next_aic</span><span class="p">))</span>
+				<span class="n">last_aic</span><span class="p">,</span> <span class="n">last_final</span><span class="p">,</span> <span class="n">last_nparams</span><span class="p">,</span> <span class="n">last_val</span> <span class="o">=</span> <span class="n">next_aic</span><span class="p">,</span> <span class="n">next_final</span><span class="p">,</span> <span class="n">next_nparams</span><span class="p">,</span> <span class="n">v</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> parameters, aic=</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">next_nparams</span><span class="p">,</span> <span class="n">next_aic</span><span class="p">))</span>
+			<span class="c1"># stop if we are 3 parameters ahead what we needed</span>
+			<span class="k">if</span> <span class="n">next_nparams</span> <span class="o">&gt;=</span> <span class="n">last_nparams</span> <span class="o">+</span> <span class="mi">3</span><span class="p">:</span>
+				<span class="k">break</span>
+
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Final choice: </span><span class="si">%d</span><span class="s1"> parameters, aic=</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">last_nparams</span><span class="p">,</span> <span class="n">last_aic</span><span class="p">))</span>
+		<span class="c1"># reset to the last good solution</span>
+		<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bkgmodel</span><span class="o">.</span><span class="n">pars</span><span class="p">,</span> <span class="n">last_final</span><span class="p">):</span>
+			<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+
+		<span class="n">last_model</span> <span class="o">=</span> <span class="n">convbkgmodel</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+			<span class="nb">print</span><span class="p">()</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Adding Gaussian#</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+			<span class="c1"># find largest discrepancy</span>
+			<span class="n">set_analysis</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="s2">&quot;ener&quot;</span><span class="p">,</span> <span class="s2">&quot;rate&quot;</span><span class="p">)</span>
+			<span class="n">m</span> <span class="o">=</span> <span class="n">get_bkg_fit_plot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+			<span class="n">y</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">dataplot</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+			<span class="n">z</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">modelplot</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+			<span class="n">diff_rate</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">z</span><span class="p">)</span>
+			<span class="n">set_analysis</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="s2">&quot;ener&quot;</span><span class="p">,</span> <span class="s2">&quot;counts&quot;</span><span class="p">)</span>
+			<span class="n">m</span> <span class="o">=</span> <span class="n">get_bkg_fit_plot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">dataplot</span><span class="o">.</span><span class="n">x</span>
+			<span class="n">y</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">dataplot</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+			<span class="n">z</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">modelplot</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+			<span class="n">diff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">z</span><span class="p">)</span>
+			<span class="n">i</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+			<span class="n">energies</span> <span class="o">=</span> <span class="n">x</span>
+			<span class="n">e</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;largest remaining discrepancy at </span><span class="si">%.3f</span><span class="s1">keV[</span><span class="si">%d</span><span class="s1">], need </span><span class="si">%d</span><span class="s1"> counts&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+			<span class="c1">#e = x[i]</span>
+			<span class="n">power</span> <span class="o">=</span> <span class="n">diff_rate</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="c1"># lets try to inject a gaussian there</span>
+
+			<span class="n">g</span> <span class="o">=</span> <span class="n">xsgaussian</span><span class="p">(</span><span class="s1">&#39;g_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;placing gaussian at </span><span class="si">%.2f</span><span class="s1">keV, with power </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">power</span><span class="p">))</span>
+			<span class="c1"># we work in energy bins, not energy</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">LineE</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">LineE</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">LineE</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">e</span>
+			<span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+			<span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">i</span> <span class="o">=</span> <span class="mi">2</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">Sigma</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">Sigma</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">3</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">Sigma</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">power</span> <span class="o">*</span> <span class="mf">1e-6</span>
+			<span class="n">g</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">power</span>
+			<span class="n">convbkgmodel2</span> <span class="o">=</span> <span class="n">response</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+			<span class="n">next_model</span> <span class="o">=</span> <span class="n">last_model</span> <span class="o">+</span> <span class="n">convbkgmodel2</span>
+			<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">next_model</span><span class="p">)</span>
+			<span class="n">fit_bkg</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+			<span class="n">next_final</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">get_bkg_model</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">pars</span><span class="p">]</span>
+			<span class="n">next_nparams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_final</span><span class="p">)</span>
+			<span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bkg_stat</span><span class="p">()</span>
+			<span class="n">next_aic</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">next_nparams</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;with Gaussian:&#39;</span><span class="p">,</span> <span class="n">next_aic</span><span class="p">,</span> <span class="s1">&#39;; change: </span><span class="si">%.1f</span><span class="s1"> (negative is good)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">next_aic</span> <span class="o">-</span> <span class="n">last_aic</span><span class="p">))</span>
+			<span class="k">if</span> <span class="n">next_aic</span> <span class="o">&lt;</span> <span class="n">last_aic</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;accepting&#39;</span><span class="p">)</span>
+				<span class="n">last_model</span> <span class="o">=</span> <span class="n">next_model</span>
+				<span class="n">last_aic</span><span class="p">,</span> <span class="n">last_final</span><span class="p">,</span> <span class="n">last_nparams</span><span class="p">,</span> <span class="n">last_val</span> <span class="o">=</span> <span class="n">next_aic</span><span class="p">,</span> <span class="n">next_final</span><span class="p">,</span> <span class="n">next_nparams</span><span class="p">,</span> <span class="n">v</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;not significant, rejecting&#39;</span><span class="p">)</span>
+				<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">last_model</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">last_model</span><span class="o">.</span><span class="n">pars</span><span class="p">,</span> <span class="n">last_final</span><span class="p">):</span>
+					<span class="n">p</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+				<span class="k">break</span></div></div>
+
+<div class="viewcode-block" id="auto_background"><a class="viewcode-back" href="../../../../pca-background-models.html#bxa.sherpa.background.pca.auto_background">[docs]</a><span class="k">def</span> <span class="nf">auto_background</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Automatically fits background *id* based on PCA-based templates,</span>
+<span class="sd">	and additional gaussian lines as needed by AIC.&quot;&quot;&quot;</span>
+	<span class="n">bkgmodel</span> <span class="o">=</span> <span class="n">PCAFitter</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+	<span class="n">log_sherpa</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;sherpa.astro.ui.utils&#39;</span><span class="p">)</span>
+	<span class="n">prev_level</span> <span class="o">=</span> <span class="n">log_sherpa</span><span class="o">.</span><span class="n">level</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">log_sherpa</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">)</span>
+		<span class="n">bkgmodel</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+	<span class="k">finally</span><span class="p">:</span>
+		<span class="n">log_sherpa</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">prev_level</span><span class="p">)</span>
+	<span class="n">m</span> <span class="o">=</span> <span class="n">get_bkg_fit_plot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+	<span class="n">numpy</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;test_bkg.txt&#39;</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="n">m</span><span class="o">.</span><span class="n">dataplot</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">dataplot</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">modelplot</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">modelplot</span><span class="o">.</span><span class="n">y</span><span class="p">]))</span>
+	<span class="k">return</span> <span class="n">get_bkg_model</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PCAFitter&#39;</span><span class="p">,</span> <span class="s1">&#39;PCAModel&#39;</span><span class="p">,</span> <span class="s1">&#39;auto_background&#39;</span><span class="p">,</span> <span class="s1">&#39;get_identity_response&#39;</span><span class="p">,</span> <span class="s1">&#39;get_unit_response&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualisations.html">Visualisations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../engine.html">Inference engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pca-background-models.html">PCA-based background models</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../sherpa.html">bxa.sherpa</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2022, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

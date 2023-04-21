@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bxa.sherpa.galabs &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/_modules/bxa/sherpa/galabs.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for bxa.sherpa.galabs</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*- </span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">BXA (Bayesian X-ray Analysis) for Sherpa</span>
+
+<span class="sd">Copyright: Johannes Buchner (C) 2013-2019</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="k">if</span> <span class="s1">&#39;MAKESPHINXDOC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">sherpa.astro.ui</span> <span class="k">as</span> <span class="nn">ui</span>
+	<span class="kn">from</span> <span class="nn">sherpa.stats</span> <span class="kn">import</span> <span class="n">Cash</span><span class="p">,</span> <span class="n">CStat</span>
+
+<span class="kn">from</span> <span class="nn">.cachedmodel</span> <span class="kn">import</span> <span class="n">CachedModel</span>
+
+<div class="viewcode-block" id="auto_galactic_absorption"><a class="viewcode-back" href="../../../bxa.sherpa.html#bxa.sherpa.galabs.auto_galactic_absorption">[docs]</a><span class="k">def</span> <span class="nf">auto_galactic_absorption</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="c1">#model = ui._session.get_model(id).model</span>
+	<span class="n">filename</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.nh&#39;</span>
+	<span class="nb">print</span><span class="p">((</span><span class="s1">&#39;loading nH from </span><span class="si">%s</span><span class="s1"> (expecting something like 1e21 in there)&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">))</span>
+	<span class="n">nH</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+	<span class="n">galabso</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">xstbabs</span><span class="p">(</span><span class="s1">&#39;galabso</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">)</span>
+	<span class="c1">#galabsmodel = model * galabso</span>
+	<span class="n">galabso</span><span class="o">.</span><span class="n">nH</span> <span class="o">=</span> <span class="n">nH</span> <span class="o">/</span> <span class="mf">1e22</span>
+	<span class="nb">print</span><span class="p">((</span><span class="s1">&#39;setting galactic nH to </span><span class="si">%s</span><span class="s1"> [units of 1e22/cm²]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">galabso</span><span class="o">.</span><span class="n">nH</span><span class="o">.</span><span class="n">val</span><span class="p">)))</span>
+	<span class="n">galabso</span><span class="o">.</span><span class="n">nH</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">galabso</span>
+	<span class="n">cgalabso</span> <span class="o">=</span> <span class="n">CachedModel</span><span class="p">(</span><span class="n">galabso</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;returning cached galaxy absorption model&#39;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">cgalabso</span></div>
+	<span class="c1">#ui._session.set_model(id, galabsmodel)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualisations.html">Visualisations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../engine.html">Inference engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pca-background-models.html">PCA-based background models</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../sherpa.html">bxa.sherpa</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2022, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

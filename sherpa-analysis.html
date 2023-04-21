@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Sherpa with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.0.7 documentation</title>
+    <title>Sherpa with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -80,6 +80,59 @@ for more details about this concept.
 The script <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/example_automatic_background_model.py">examples/sherpa/example_automatic_background_model.py</a>
 gives an example of such a custom prior function (<cite>limited_19_24</cite>).</p>
 <p>API information:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="bxa.sherpa.create_jeffreys_prior_for">
+<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.</span></span><span class="sig-name descname"><span class="pre">create_jeffreys_prior_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_jeffreys_prior_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.create_jeffreys_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>deprecated name for create_loguniform_prior_for</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bxa.sherpa.create_uniform_prior_for">
+<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.</span></span><span class="sig-name descname"><span class="pre">create_uniform_prior_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_uniform_prior_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.create_uniform_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for location variables (position)
+The uniform prior gives equal weight in non-logarithmic scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parameter</strong> – Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bxa.sherpa.create_gaussian_prior_for">
+<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.</span></span><span class="sig-name descname"><span class="pre">create_gaussian_prior_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_gaussian_prior_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.create_gaussian_prior_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for informed variables.
+The Gaussian prior weights by a Gaussian in the parameter. If you
+would like the logarithm of the parameter to be weighted by
+a Gaussian, create a ancillary parameter (see create_jeffreys_prior_for).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter</strong> – Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex</p></li>
+<li><p><strong>mean</strong> – Mean of the Gaussian</p></li>
+<li><p><strong>std</strong> – Standard deviation of the Gaussian</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bxa.sherpa.create_prior_function">
+<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.</span></span><span class="sig-name descname"><span class="pre">create_prior_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">priors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/priors.html#create_prior_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.create_prior_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine the prior transformations into a single function.</p>
+<p>This assumes factorized (independent) priors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>priors</strong> – individual prior transforms to combine into one function.
+If priors is empty, uniform priors are used on all passed parameters</p></li>
+<li><p><strong>parameters</strong> – If priors is empty, specify the list of parameters.
+Uniform priors will be created for them.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="prior-predictive-checks">
 <span id="sherpa-prior-predictive-checks"></span><h2>Prior Predictive Checks<a class="headerlink" href="#prior-predictive-checks" title="Permalink to this heading">¶</a></h2>
@@ -108,6 +161,52 @@ look like a reasonable representation of your prior expectation?</p>
 </pre></div>
 </div>
 <p>API information:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="bxa.sherpa.BXASolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bxa.sherpa.</span></span><span class="sig-name descname"><span class="pre">BXASolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">otherids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfiles_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chains/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.BXASolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up Bayesian analysis with specified parameters+transformations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> – See the sherpa documentation of calc_stat.</p></li>
+<li><p><strong>otherids</strong> – See the sherpa documentation of calc_stat.</p></li>
+<li><p><strong>prior</strong> – prior function created with create_prior_function.</p></li>
+<li><p><strong>parameters</strong> – List of parameters to analyse.</p></li>
+<li><p><strong>outputfiles_basename</strong> – prefix for output filenames.</p></li>
+<li><p><strong>resume_from</strong> – prefix for output filenames of a previous run with similar posterior from which to resume</p></li>
+</ul>
+</dd>
+</dl>
+<p>If prior is None, uniform priors are used on the passed parameters.
+If parameters is also None, all thawed parameters are used.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bxa.sherpa.BXASolver.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'resume':</span> <span class="pre">'overwrite'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'Lepsilon':</span> <span class="pre">0.1}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'safe'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_remain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lepsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.BXASolver.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run nested sampling with ultranest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Sampler_kwargs</dt>
+<dd class="field-odd"><p>arguments passed to ReactiveNestedSampler (see ultranest documentation)</p>
+</dd>
+<dt class="field-even">Run_kwargs</dt>
+<dd class="field-even"><p>arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)</p>
+</dd>
+</dl>
+<p>The following arguments are also available directly for backward compatibility:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resume</strong> – sets sampler_kwargs[‘resume’]=’resume’ if True, otherwise ‘overwrite’</p></li>
+<li><p><strong>n_live_points</strong> – sets run_kwargs[‘min_num_live_points’]</p></li>
+<li><p><strong>evidence_tolerance</strong> – sets run_kwargs[‘dlogz’]</p></li>
+<li><p><strong>Lepsilon</strong> – sets run_kwargs[‘Lepsilon’]</p></li>
+<li><p><strong>frac_remain</strong> – sets run_kwargs[‘frac_remain’]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="parameter-posterior-plots">
 <span id="sherpa-analyse"></span><h2>Parameter posterior plots<a class="headerlink" href="#parameter-posterior-plots" title="Permalink to this heading">¶</a></h2>
@@ -115,7 +214,7 @@ look like a reasonable representation of your prior expectation?</p>
 (1d and 2d) of the marginal parameter distributions are plotted
 in ‘myoutputs/plots/corner.pdf’ for you.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 357.5px; height: 368.5px;" /></a>
+<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 358.5px; height: 368.5px;" /></a>
 </figure>
 <p>You can also plot them yourself using corner, triangle and getdist, by
 passing <cite>results[‘samples’]</cite> to them.</p>
@@ -140,6 +239,16 @@ the correct luminosity distribution.</p>
 </pre></div>
 </div>
 <p>API information:</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bxa.sherpa.BXASolver.get_distribution_with_fluxes">
+<span class="sig-prename descclassname"><span class="pre">BXASolver.</span></span><span class="sig-name descname"><span class="pre">get_distribution_with_fluxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ehi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/solver.html#BXASolver.get_distribution_with_fluxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.BXASolver.get_distribution_with_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes flux posterior samples.</p>
+<p>Returns an array of equally weighted posterior samples (parameter values) with two
+additional columns: the photon fluxes and the energy fluxes.</p>
+<p>The values will be correctly distributed according to the
+analysis run before.</p>
+</dd></dl>
+
 <p>This does nothing more than:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]:</span>
@@ -257,6 +366,27 @@ This indicates that the data has more counts than the model there.</p>
 <p>Refer to the appendix of the <a class="reference external" href="cite">accompaning paper</a> for more examples.</p>
 <p>The <em>qq</em> function in the <em>qq</em> module allows you to create such plots easily, by
 exporting the cumulative functions into a file.</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.qq.</span></span><span class="sig-name descname"><span class="pre">qq_export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'qq.txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ehigh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/qq.html#qq_export"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Export Q-Q plot into a file for plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> – spectrum id to use (see get_bkg_plot/get_data_plot)</p></li>
+<li><p><strong>bkg</strong> – whether to use get_bkg_plot or get_data_plot</p></li>
+<li><p><strong>outfile</strong> – filename to write results into</p></li>
+<li><p><strong>elow</strong> – low energy limit</p></li>
+<li><p><strong>ehigh</strong> – low energy limit</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qq</span><span class="o">.</span><span class="n">qq_export</span><span class="p">(</span><span class="s1">&#39;bg&#39;</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;my_bg_qq&#39;</span><span class="p">,</span> <span class="n">elow</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">ehigh</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <p>Refer to the <a class="reference internal" href="index.html#cite"><span class="std std-ref">accompaning paper</span></a>, which gives an introduction and
 detailed discussion on the methodology.</p>
 </section>
