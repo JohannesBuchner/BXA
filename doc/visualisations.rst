@@ -121,14 +121,25 @@ Putting it all together, here is one example for xspec::
 	band.shade(q=0.495, alpha=0.1)
 	band.line()
 
+	plt.scatter(Plot.x(), Plot.y(), label='data')
 
-For an example of extracting plot data for sherpa, see the :ref:`xagnfitter script <xagnfitter>` (towards the bottom).
+.. figure:: absorbed-unconvolved_posterior_direct.*
+	
+	Example of the convolved model spectrum prediction band.
+
+
+For an example of extracting plot data for sherpa, see the :doc:`xagnfitter` (towards the bottom).
 
 Fluxes and luminosities
 ------------------------
 
 Similar to extracting plots, you can also compute a flux or luminosity
 for each posterior sample, to obtain the entire posterior distribution.
+
+.. figure:: absorbed-unconvolved_posterior_direct.*
+	
+	Example of the convolved model spectrum prediction band.
+
 
 Summary
 --------
