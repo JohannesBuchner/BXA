@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9]
+        python-version: [3.9, 3]
 
     defaults:
       run:
@@ -67,7 +67,7 @@ jobs:
           sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
           conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
           conda install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          pip install coverage-lcov
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Conda info
@@ -164,7 +164,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9]
+        python-version: [3.9, 3]
 
     steps:
       - uses: actions/checkout@v2
@@ -197,16 +197,19 @@ jobs:
           cache-version: 3
         with:
           path: ${{ env.MYCACHE }}/xspec-install
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.cache-version }}
-            ${{ runner.os }}-build-${{ env.cache-name }}
-
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
-          sudo sudo apt-get update && sudo apt-get install -y python3-numpy python3-dev python3-tk python3-pip python3-setuptools ghostscript cython3 python3-matplotlib python3-h5py python3-requests python3-tqdm python3-astropy
-          pip3 install ultranest coveralls coverage coverage-lcov toml
+          sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
+          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
+          conda install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml ultranest coveralls coverage toml
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov
+          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
+
       - name: Download and Install heasoft (if necessary)
         run: |
             mkdir -p $MYCACHE
