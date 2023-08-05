@@ -25,7 +25,7 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-update-conda: false
+          auto-update-conda: true
           channels: conda-forge, sherpa
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
@@ -65,8 +65,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
-          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
-          conda install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          mamba install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
+          mamba install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
@@ -168,7 +168,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
- 
+      - uses: conda-incubator/setup-miniconda@v2
+       with:
+         auto-update-conda: true
+         channels: conda-forge, sherpa
+         python-version: ${{ matrix.python-version }}
+         use-only-tar-bz2: true
+         mamba-version: "*"
+
       - name: Set directory names
         run: |
           echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
@@ -205,7 +212,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
-          conda install -c conda-forge -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          mamba install -c conda-forge -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
