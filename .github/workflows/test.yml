@@ -205,8 +205,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
-          conda install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
-          conda install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml ultranest coveralls coverage toml
+          conda install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
