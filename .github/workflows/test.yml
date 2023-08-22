@@ -10,6 +10,7 @@ on:
 jobs:
   Sherpa:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -106,14 +107,14 @@ jobs:
       - name: Test helper scripts
         run: |
           pushd docker/testsrc
-          coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
-          coverage run -p ../../gal.py combined_src.pi
+          python -m coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
+          python -m coverage run -p ../../gal.py combined_src.pi
           ls combined_src.pi.nh
-          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
-          coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
-          coverage run -p ../../autobackgroundmodel/fitbkg.py || true
-          coverage run -p ../../gal.py || true
-          coverage run -p ../../fixkeywords.py || true
+          python -m coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
+          python -m coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
+          python -m coverage run -p ../../autobackgroundmodel/fitbkg.py || true
+          python -m coverage run -p ../../gal.py || true
+          python -m coverage run -p ../../fixkeywords.py || true
           git checkout .
           popd
 
@@ -141,13 +142,13 @@ jobs:
 
       - name: Install
         run: |
-          pip install . --user
+          python -m pip install . --user
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
         run: |
-          coverage combine examples/sherpa examples/xspec docker/testsrc .
-          coverage report
+          python -m coverage combine examples/sherpa examples/xspec docker/testsrc .
+          python -m coverage report
           coverage-lcov
           # make paths relative
           sed -i s,$PWD/,,g lcov.info
@@ -162,6 +163,7 @@ jobs:
           
   Xspec:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -246,6 +248,11 @@ jobs:
             echo "PYTHONPATH: $PYTHONPATH";
             echo "PATH: $PATH";
             python -c 'import xspec' || true;
+
+      - name: Test install
+        run: |
+          python -c "import numpy";
+          python -c "import xspec"
 
       - name: Prepare testing
         run: |
