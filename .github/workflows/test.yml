@@ -30,7 +30,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
-          mamba-version: "*"
+          #mamba-version: "*"
  
       - name: Set directory names
         run: |
@@ -176,7 +176,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
-          mamba-version: "*"
+          #mamba-version: "*"
  
       - name: Set directory names
         run: |
