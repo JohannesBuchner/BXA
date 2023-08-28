@@ -63,9 +63,10 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
+      - name: Install python dependencies
         run: |
-          sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
           conda install -y -c conda-forge mamba
           mamba install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
           mamba install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
@@ -211,9 +212,11 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
+
+      - name: Install python dependencies
         run: |
-          sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
           conda install -y -c conda-forge mamba
           mamba install -c conda-forge -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
