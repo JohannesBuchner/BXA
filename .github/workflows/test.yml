@@ -25,6 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
+
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: false
@@ -63,13 +66,11 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
 
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
       - name: Install python dependencies
         run: |
           conda install -y -c conda-forge mamba
           mamba install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
-          mamba install -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
@@ -172,13 +173,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
+
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
           #mamba-version: "*"
- 
+
+      - name: Install mamba
+        run: conda install -y -c conda-forge mamba
+
+      - name: Install python dependencies
+        run: |
+          mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov
+          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
+
       - name: Set directory names
         run: |
           echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
@@ -198,16 +212,6 @@ jobs:
              pushd $MODELDIR
              wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
              popd
-
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
-
-      - name: Install python dependencies
-        run: |
-          conda install -y -c conda-forge mamba
-          mamba install -c conda-forge -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          pip install git+https://github.com/JohannesBuchner/coverage-lcov
-          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Cache xspec install
         uses: pat-s/always-upload-cache@v3.0.11
@@ -252,7 +256,7 @@ jobs:
             echo "PATH: $PATH";
             python -c 'import xspec' || true;
 
-      - name: Test install
+      - name: Check install
         run: |
           python -c "import numpy";
           python -c "import xspec"
