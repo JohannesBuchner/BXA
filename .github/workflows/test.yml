@@ -10,12 +10,12 @@ on:
 jobs:
   Sherpa:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         #python-version: [3.8, 3.9, '3.10', 3]
-        python-version: [3]
+        python-version: [3.9]
 
     defaults:
       run:
@@ -199,6 +199,16 @@ jobs:
              wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
              popd
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
+
+      - name: Install python dependencies
+        run: |
+          conda install -y -c conda-forge mamba
+          mamba install -c conda-forge -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov
+          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
+
       - name: Cache xspec install
         uses: pat-s/always-upload-cache@v3.0.11
         id: cache-xspec
@@ -211,16 +221,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
-
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
-
-      - name: Install python dependencies
-        run: |
-          conda install -y -c conda-forge mamba
-          mamba install -c conda-forge -y ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          pip install git+https://github.com/JohannesBuchner/coverage-lcov
-          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Download and Install heasoft (if necessary)
         run: |
