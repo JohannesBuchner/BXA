@@ -33,7 +33,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           use-only-tar-bz2: true
-          mamba-version: "*"
+          #mamba-version: "*"
  
       - name: Install mamba
         run: conda install -y -c conda-forge mamba
