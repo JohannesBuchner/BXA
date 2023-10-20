@@ -76,7 +76,7 @@ jobs:
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
           pip uninstall -y h5py
-          pip install -y --no-cache-dir h5py
+          pip install --no-cache-dir h5py
 
       - name: Conda info
         run: conda info
@@ -200,7 +200,7 @@ jobs:
       - name: Install python dependencies
         run: |
           mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          pip install -y git+https://github.com/JohannesBuchner/coverage-lcov
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Set directory names
