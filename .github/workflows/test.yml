@@ -35,6 +35,9 @@ jobs:
           use-only-tar-bz2: true
           #mamba-version: "*"
  
+      - name: Install mamba
+        run: conda install -y -c conda-forge mamba
+
       - name: Set directory names
         run: |
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
@@ -68,11 +71,12 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          conda install -y -c conda-forge mamba
-          mamba install -y -c https://cxc.cfa.harvard.edu/conda/ciao ciao sherpa ds9 ciao-contrib caldb_main 
+          mamba install -y --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
           mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
+          pip uninstall h5py
+          pip install --no-cache-dir h5py
 
       - name: Conda info
         run: conda info
@@ -171,6 +175,11 @@ jobs:
       matrix:
         python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3]
 
+    defaults:
+      run:
+        # this is needed, because otherwise conda env is not available
+        shell: bash -l {0}
+        
     steps:
       - uses: actions/checkout@v2
 
