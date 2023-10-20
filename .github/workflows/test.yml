@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         #python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3]
-        python-version: [3.11]
+        python-version: [3.9]
 
     defaults:
       run:
@@ -75,8 +75,8 @@ jobs:
           mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
-          pip uninstall h5py
-          pip install --no-cache-dir h5py
+          pip uninstall -y h5py
+          pip install -y --no-cache-dir h5py
 
       - name: Conda info
         run: conda info
@@ -148,7 +148,7 @@ jobs:
 
       - name: Install
         run: |
-          python -m pip install . --user
+          python -m pip -y install . --user
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
@@ -174,7 +174,7 @@ jobs:
       fail-fast: false
       matrix:
         #python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3]
-        python-version: [3.11]
+        python-version: [3.9, 3.11]
 
     defaults:
       run:
@@ -200,7 +200,7 @@ jobs:
       - name: Install python dependencies
         run: |
           mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          pip install git+https://github.com/JohannesBuchner/coverage-lcov
+          pip install -y git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Set directory names
