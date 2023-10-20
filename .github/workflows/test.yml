@@ -33,9 +33,7 @@ jobs:
           miniforge-variant: Mambaforge
           miniforge-version: latest
           mamba-version: "*"
-          activate-environment: pymc-test
           channel-priority: strict
-          environment-file: conda-envs/environment-test.yml
           python-version: ${{matrix.python-version}}
           use-mamba: true
           use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
@@ -194,9 +192,7 @@ jobs:
           miniforge-variant: Mambaforge
           miniforge-version: latest
           mamba-version: "*"
-          activate-environment: pymc-test
           channel-priority: strict
-          environment-file: conda-envs/environment-test.yml
           python-version: ${{matrix.python-version}}
           use-mamba: true
           use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
