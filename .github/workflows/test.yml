@@ -30,14 +30,16 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-update-conda: true
-          python-version: ${{ matrix.python-version }}
-          use-only-tar-bz2: true
-          #mamba-version: "*"
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
+          mamba-version: "*"
+          activate-environment: pymc-test
+          channel-priority: strict
+          environment-file: conda-envs/environment-test.yml
+          python-version: ${{matrix.python-version}}
+          use-mamba: true
+          use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
  
-      - name: Install mamba
-        run: conda install -y -c conda-forge mamba
-
       - name: Set directory names
         run: |
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
@@ -189,13 +191,15 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-update-conda: false
-          python-version: ${{ matrix.python-version }}
-          use-only-tar-bz2: true
-          #mamba-version: "*"
-
-      - name: Install mamba
-        run: conda install -y -c conda-forge mamba
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
+          mamba-version: "*"
+          activate-environment: pymc-test
+          channel-priority: strict
+          environment-file: conda-envs/environment-test.yml
+          python-version: ${{matrix.python-version}}
+          use-mamba: true
+          use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
 
       - name: Install python dependencies
         run: |
