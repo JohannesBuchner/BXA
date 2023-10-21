@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         #python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3]
-        python-version: [3.9]
+        python-version: [3.8, 3.9, '3.10', 3.11, 3]
 
     defaults:
       run:
@@ -80,8 +80,9 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          mamba install -y --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
-          mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          mamba install -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
+          mamba install -y -n ciao -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          mamba activate ciao
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
           pip uninstall -y h5py
@@ -215,12 +216,6 @@ jobs:
           use-mamba: true
           use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
 
-      - name: Install python dependencies
-        run: |
-          mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          pip install git+https://github.com/JohannesBuchner/coverage-lcov
-          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
-
       - name: Set directory names
         run: |
           echo "MYCACHE=$HOME/Downloads/xspec" >> $GITHUB_ENV
@@ -246,7 +241,7 @@ jobs:
         id: cache-xspec
         env:
           cache-name: cache-xspec-install
-          cache-version: 3
+          cache-version: 4
         with:
           path: ${{ env.MYCACHE }}/xspec-install
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
@@ -283,6 +278,12 @@ jobs:
             echo "PYTHONPATH: $PYTHONPATH";
             echo "PATH: $PATH";
             python -c 'import xspec' || true;
+
+      - name: Install python dependencies
+        run: |
+          mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov
+          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Check install
         run: |
