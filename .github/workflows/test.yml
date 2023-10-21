@@ -89,9 +89,13 @@ jobs:
           pip install --no-cache-dir h5py
 
       - name: Conda info
-        run: conda info
+        run: |
+          conda activate ciao
+          conda info
       - name: Conda list
-        run: conda list
+        run: |
+          conda activate ciao
+          conda list
       - name: Conda paths
         run: |
           pwd
@@ -122,6 +126,7 @@ jobs:
 
       - name: Test helper scripts
         run: |
+          conda activate ciao
           pushd docker/testsrc
           python -m coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           python -m coverage run -p ../../gal.py combined_src.pi
@@ -136,33 +141,37 @@ jobs:
 
       - name: Test examples
         run: |
-            pushd examples/sherpa;
-            # install interpolation code first
-            echo $CONDA_PREFIX/lib/python* 
-            ls /usr/include/numpy/ || true
-            sudo ln -s $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/numpy/core/include/numpy /usr/include/numpy
-            ls /usr/include/numpy/;
-            git clone https://github.com/JohannesBuchner/npyinterp.git;
-            pushd npyinterp; make; popd;
-            # run examples
-            PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash -v runall.sh || exit 1;
-            popd;
+          conda activate ciao
+          pushd examples/sherpa;
+          # install interpolation code first
+          echo $CONDA_PREFIX/lib/python* 
+          ls /usr/include/numpy/ || true
+          sudo ln -s $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/numpy/core/include/numpy /usr/include/numpy
+          ls /usr/include/numpy/;
+          git clone https://github.com/JohannesBuchner/npyinterp.git;
+          pushd npyinterp; make; popd;
+          # run examples
+          PYTHONPATH=../../:${PYTHONPATH}:npyinterp/ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:npyinterp/ bash -v runall.sh || exit 1;
+          popd;
 
       - name: Run XAGNFitter
         run: |
-            pushd examples/sherpa/chandra;
-            echo "179.pi  0.5 8" > filenames.txt 
-            PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../xagnfitter.py || exit 1;
-            ls;
-            popd;
+          conda activate ciao
+          pushd examples/sherpa/chandra;
+          echo "179.pi  0.5 8" > filenames.txt 
+          PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../xagnfitter.py || exit 1;
+          ls;
+          popd;
 
       - name: Install
         run: |
+          conda activate ciao
           python -m pip -y install . --user
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
         run: |
+          conda activate ciao
           python -m coverage combine examples/sherpa examples/xspec docker/testsrc .
           python -m coverage report
           coverage-lcov

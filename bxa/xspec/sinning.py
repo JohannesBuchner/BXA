@@ -103,7 +103,7 @@ def binning(outputfiles_basename, bins, widths, data, models, nmin=20):
 		#exp(numpy.log(stats[stats[:,0] == n][:,2]).sum()) * (stats[:,0] == n).sum() 
 		#		for n in sorted(set(stats[:,0]))]))
 		nstats = stats[stats[:,0] == n]
-		pxlo = xlo[(nstats[:,1] * n).astype(numpy.int)]
+		pxlo = xlo[(nstats[:,1] * n).astype(int)]
 		pxhi = numpy.asarray(pxlo[1:].tolist() + [xdata.max()])
 	
 		# so far so good.
