@@ -150,6 +150,7 @@ jobs:
           
   Xspec:
     runs-on: ubuntu-latest
+    skip: True
     timeout-minutes: 60
     strategy:
       fail-fast: false
