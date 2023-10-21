@@ -145,6 +145,10 @@ jobs:
           conda activate ciao
           pushd examples/sherpa;
           # install interpolation code first
+          echo $CONDA_PREFIX/lib/python*;
+          ls /usr/include/numpy/ || true;
+          for d in $CONDA_PREFIX/lib/python*/site-packages/numpy/core/include/numpy; do echo $d; sudo ln -f -v -s $d /usr/include/numpy; done;
+          ls /usr/include/numpy/ || true;
           git clone https://github.com/JohannesBuchner/npyinterp.git;
           pushd npyinterp; make; popd;
           # run examples
