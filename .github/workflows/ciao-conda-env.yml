@@ -1,22 +1,22 @@
 name: test
 channels:
   - conda-forge
-  - https://cxc.cfa.harvard.edu/conda/ciao
+  - https://cxc.cfa.harvard.edu/conda/ciao/
 
 show_channel_urls: True
 
 dependencies:
-  - cxc.cfa.harvard.edu::caldb_main
-  - cxc.cfa.harvard.edu::cfitsio
-  - cxc.cfa.harvard.edu::ciao
-  - cxc.cfa.harvard.edu::ciao-contrib
-  - cxc.cfa.harvard.edu::ds9
-  - cxc.cfa.harvard.edu::sherpa
-  - cxc.cfa.harvard.edu::gsl
-  - cxc.cfa.harvard.edu::jpeg
-  - cxc.cfa.harvard.edu::wcssubs
-  - cxc.cfa.harvard.edu::xpa
-  - cxc.cfa.harvard.edu::xspec-modelsonly
+  - https://cxc.cfa.harvard.edu/conda/ciao/::caldb_main
+  - https://cxc.cfa.harvard.edu/conda/ciao/::cfitsio
+  - https://cxc.cfa.harvard.edu/conda/ciao/::ciao
+  - https://cxc.cfa.harvard.edu/conda/ciao/::ciao-contrib
+  - https://cxc.cfa.harvard.edu/conda/ciao/::ds9
+  - https://cxc.cfa.harvard.edu/conda/ciao/::sherpa
+  - https://cxc.cfa.harvard.edu/conda/ciao/::gsl
+  - https://cxc.cfa.harvard.edu/conda/ciao/::jpeg
+  - https://cxc.cfa.harvard.edu/conda/ciao/::wcssubs
+  - https://cxc.cfa.harvard.edu/conda/ciao/::xpa
+  - https://cxc.cfa.harvard.edu/conda/ciao/::xspec-modelsonly
   - ultranest
   - coverage
   - coveralls
