@@ -1,0 +1,29 @@
+channels:
+  - conda-forge
+  - https://cxc.cfa.harvard.edu/conda/ciao
+
+show_channel_urls: True
+
+dependencies:
+  - cxc.cfa.harvard.edu::caldb_main
+  - cxc.cfa.harvard.edu::cfitsio
+  - cxc.cfa.harvard.edu::ciao
+  - cxc.cfa.harvard.edu::ciao-contrib
+  - cxc.cfa.harvard.edu::ds9
+  - cxc.cfa.harvard.edu::sherpa
+  - cxc.cfa.harvard.edu::gsl
+  - cxc.cfa.harvard.edu::jpeg
+  - cxc.cfa.harvard.edu::wcssubs
+  - cxc.cfa.harvard.edu::xpa
+  - cxc.cfa.harvard.edu::xspec-modelsonly
+  - ultranest
+  - coverage
+  - coveralls
+  - scipy
+  - "matplotlib>=3.5"
+  - h5py
+  - astropy
+  - requests
+  - cython
+  - tqdm
+  - toml
