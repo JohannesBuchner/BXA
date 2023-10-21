@@ -37,16 +37,12 @@ jobs:
           path: ~/conda_pkgs_dir
           key: ${{ runner.os }}-Sherpa-py${{matrix.python-version}}-conda-${{ env.CACHE_NUMBER }}
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: mamba-org/setup-micromamba@v1
         with:
-          miniforge-variant: Mambaforge
-          miniforge-version: latest
-          mamba-version: "*"
-          channel-priority: strict
-          python-version: ${{matrix.python-version}}
-          use-mamba: true
-          use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
- 
+          cache-environment: true
+          cache-downloads: true
+          environment-file: .github/workflows/ciao-conda-env.yml
+          
       - name: Set directory names
         run: |
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
@@ -65,40 +61,19 @@ jobs:
              wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
              popd
 
-      - name: Cache conda
-        uses: pat-s/always-upload-cache@v3.0.11
-        id: cache-conda
-        env:
-          cache-name: cache-conda
-          cache-version: 5
-        with:
-          path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
-
       - name: Install python dependencies
         run: |
-          mamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
-          mamba install -y -n ciao -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          conda activate ciao
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
           pip uninstall -y h5py
           pip install --no-cache-dir h5py
 
       - name: Conda info
-        run: |
-          conda activate ciao
-          conda info
+        run: conda info
       - name: Conda list
-        run: |
-          conda activate ciao
-          conda list
+        run: conda list
       - name: Conda paths
         run: |
-          conda activate ciao
           pwd
           echo $PATH
           ls $CONDA/bin/
@@ -127,7 +102,6 @@ jobs:
 
       - name: Test helper scripts
         run: |
-          conda activate ciao
           pushd docker/testsrc
           python -m coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           python -m coverage run -p ../../gal.py combined_src.pi
@@ -142,7 +116,6 @@ jobs:
 
       - name: Test examples
         run: |
-          conda activate ciao
           pushd examples/sherpa;
           # install interpolation code first
           echo $CONDA_PREFIX/lib/python*;
@@ -157,7 +130,6 @@ jobs:
 
       - name: Run XAGNFitter
         run: |
-          conda activate ciao
           pushd examples/sherpa/chandra;
           echo "179.pi  0.5 8" > filenames.txt 
           PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../xagnfitter.py || exit 1;
@@ -166,13 +138,11 @@ jobs:
 
       - name: Install
         run: |
-          conda activate ciao
           python -m pip -y install . --user
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
         run: |
-          conda activate ciao
           python -m coverage combine examples/sherpa examples/xspec docker/testsrc .
           python -m coverage report
           coverage-lcov
