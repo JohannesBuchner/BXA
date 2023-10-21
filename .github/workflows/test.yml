@@ -82,7 +82,7 @@ jobs:
         run: |
           mamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
           mamba install -y -n ciao -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          mamba activate ciao
+          conda activate ciao
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
           pip uninstall -y h5py
@@ -279,6 +279,7 @@ jobs:
             echo "PATH: $PATH";
             echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV
             echo "PATH=$PATH" >> $GITHUB_ENV
+            echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $GITHUB_ENV
             python -c 'import xspec' || true;
 
       - name: Install python dependencies
