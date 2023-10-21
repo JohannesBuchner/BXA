@@ -80,7 +80,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          mamba install -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
+          mamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
           mamba install -y -n ciao -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           mamba activate ciao
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
@@ -277,6 +277,8 @@ jobs:
             source ${HEADAS}/headas-init.sh;
             echo "PYTHONPATH: $PYTHONPATH";
             echo "PATH: $PATH";
+            echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV
+            echo "PATH=$PATH" >> $GITHUB_ENV
             python -c 'import xspec' || true;
 
       - name: Install python dependencies
