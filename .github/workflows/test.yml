@@ -67,7 +67,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          mamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest coverage coveralls scipy h5py astropy requests cython tqdm coverage toml
+          micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest coverage coveralls scipy h5py astropy requests cython tqdm coverage toml
           conda activate ciao
           echo "--- Environment dump start ---"
           env
