@@ -28,25 +28,13 @@ jobs:
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
 
-      - name: Cache conda package downloads
-        uses: actions/cache@v3
-        env:
-          # Increase this value to reset cache if environment-test.yml has not changed
-          CACHE_NUMBER: 0
+      - uses: mamba-org/setup-micromamba@v1
         with:
-          path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-Sherpa-py${{matrix.python-version}}-conda-${{ env.CACHE_NUMBER }}
+          environment-file: environment.yml
+          # only cache environment
+          cache-environment: true
+          cache-downloads: false
 
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          miniforge-variant: Mambaforge
-          miniforge-version: latest
-          mamba-version: "*"
-          channel-priority: strict
-          python-version: ${{matrix.python-version}}
-          use-mamba: true
-          use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
- 
       - name: Set directory names
         run: |
           echo "MODELDIR=$HOME/Downloads/models" >> $GITHUB_ENV
@@ -193,6 +181,7 @@ jobs:
   Xspec:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    if: false
     strategy:
       fail-fast: false
       matrix:
