@@ -80,9 +80,12 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          mamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main 
-          mamba install -y -n ciao -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          mamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest coverage coveralls scipy h5py astropy requests cython tqdm coverage toml
           conda activate ciao
+          echo "--- Environment dump start ---"
+          env
+          echo "--- Environment dump end ---"
+          python -c 'from sherpa.astro import io; print(io.backend)'
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
           pip uninstall -y h5py
