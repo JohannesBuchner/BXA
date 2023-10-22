@@ -31,7 +31,7 @@ jobs:
       - uses: mamba-org/setup-micromamba@v1
         with:
           environment-name: test
-          cache-environment: true
+          cache-environment: false
           cache-downloads: true
 
       - name: Set directory names
@@ -197,7 +197,7 @@ jobs:
       - uses: mamba-org/setup-micromamba@v1
         with:
           environment-name: test
-          cache-environment: true
+          cache-environment: false
           cache-downloads: true
 
       - name: Set directory names
@@ -268,8 +268,8 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          micromamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
-          pip install git+https://github.com/JohannesBuchner/coverage-lcov
+          micromamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml &&
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Check install
