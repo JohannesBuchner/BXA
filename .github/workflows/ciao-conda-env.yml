@@ -1,4 +1,4 @@
-name: test
+name: ciao
 channels:
   - conda-forge
   - https://cxc.cfa.harvard.edu/conda/ciao/
@@ -17,14 +17,14 @@ dependencies:
   - https://cxc.cfa.harvard.edu/conda/ciao/::wcssubs
   - https://cxc.cfa.harvard.edu/conda/ciao/::xpa
   - https://cxc.cfa.harvard.edu/conda/ciao/::xspec-modelsonly
-  - ultranest
-  - coverage
-  - coveralls
-  - scipy
-  - "matplotlib>=3.5"
-  - h5py
-  - astropy
-  - requests
-  - cython
-  - tqdm
-  - toml
+  - conda-forge::ultranest
+  - conda-forge::coverage
+  - conda-forge::coveralls
+  - conda-forge::scipy
+  - conda-forge::matplotlib>=3.5
+  - conda-forge::h5py
+  - conda-forge::astropy
+  - conda-forge::requests
+  - conda-forge::cython
+  - conda-forge::tqdm
+  - conda-forge::toml
