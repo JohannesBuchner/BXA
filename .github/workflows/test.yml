@@ -54,16 +54,16 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          #micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest coverage coveralls scipy h5py astropy requests cython tqdm coverage toml
-          micromamba env create -y -n ciao -f .github/workflows/ciao-conda-env.yml
-          micromamba activate ciao
-          echo "--- Environment dump start ---"
-          env
-          echo "--- Environment dump end ---"
-          python -c 'from sherpa.astro import io; print(io.backend)'
-          pip install git+https://github.com/JohannesBuchner/coverage-lcov
-          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
-          pip uninstall -y h5py
+          micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest coverage coveralls scipy h5py astropy requests cython tqdm coverage toml &&
+          # micromamba env create -y -n ciao -f .github/workflows/ciao-conda-env.yml && 
+          micromamba activate ciao &&
+          echo "--- Environment dump start ---" &&
+          env &&
+          echo "--- Environment dump end ---" &&
+          python -c 'from sherpa.astro import io; print(io.backend)' &&
+          pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
+          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml &&
+          pip uninstall -y h5py &&
           pip install --no-cache-dir h5py
 
       - name: Conda info
