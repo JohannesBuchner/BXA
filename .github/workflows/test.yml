@@ -52,23 +52,10 @@ jobs:
              wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
              popd
 
-      - name: Cache conda
-        uses: pat-s/always-upload-cache@v3.0.11
-        id: cache-conda
-        env:
-          cache-name: cache-conda
-          cache-version: 5
-        with:
-          path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
-
       - name: Install python dependencies
         run: |
           micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest coverage coveralls scipy h5py astropy requests cython tqdm coverage toml
-          conda activate ciao
+          micromamba activate ciao
           echo "--- Environment dump start ---"
           env
           echo "--- Environment dump end ---"
@@ -80,15 +67,15 @@ jobs:
 
       - name: Conda info
         run: |
-          conda activate ciao
-          conda info
+          micromamba activate ciao
+          micromamba info
       - name: Conda list
         run: |
-          conda activate ciao
-          conda list
+          micromamba activate ciao
+          micromamba list
       - name: Conda paths
         run: |
-          conda activate ciao
+          micromamba activate ciao
           pwd
           echo $PATH
           ls $CONDA/bin/
@@ -117,7 +104,7 @@ jobs:
 
       - name: Test helper scripts
         run: |
-          conda activate ciao
+          micromamba activate ciao
           pushd docker/testsrc
           python -m coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           python -m coverage run -p ../../gal.py combined_src.pi
@@ -132,7 +119,7 @@ jobs:
 
       - name: Test examples
         run: |
-          conda activate ciao
+          micromamba activate ciao
           pushd examples/sherpa;
           # install interpolation code first
           echo $CONDA_PREFIX/lib/python*;
@@ -147,7 +134,7 @@ jobs:
 
       - name: Run XAGNFitter
         run: |
-          conda activate ciao
+          micromamba activate ciao
           pushd examples/sherpa/chandra;
           echo "179.pi  0.5 8" > filenames.txt 
           PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../xagnfitter.py || exit 1;
@@ -156,13 +143,13 @@ jobs:
 
       - name: Install
         run: |
-          conda activate ciao
+          micromamba activate ciao
           python -m pip -y install . --user
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
         run: |
-          conda activate ciao
+          micromamba activate ciao
           python -m coverage combine examples/sherpa examples/xspec docker/testsrc .
           python -m coverage report
           coverage-lcov
