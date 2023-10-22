@@ -168,7 +168,6 @@ jobs:
   Xspec:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -195,15 +194,11 @@ jobs:
           path: ~/conda_pkgs_dir
           key: ${{ runner.os }}-Xspec-py${{matrix.python-version}}-conda-${{ env.CACHE_NUMBER }}
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: mamba-org/setup-micromamba@v1
         with:
-          miniforge-variant: Mambaforge
-          miniforge-version: latest
-          mamba-version: "*"
-          channel-priority: strict
-          python-version: ${{matrix.python-version}}
-          use-mamba: true
-          use-only-tar-bz2: false # IMPORTANT: This may break caching of conda packages! See https://github.com/conda-incubator/setup-miniconda/issues/267
+          environment-name: test
+          cache-environment: true
+          cache-downloads: true
 
       - name: Set directory names
         run: |
@@ -273,7 +268,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          mamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
+          micromamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
@@ -308,11 +303,11 @@ jobs:
 
       - name: Test examples
         run: |
-            pushd examples/xspec;
-            source ${HEADAS}/headas-init.sh
-            PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
-            ls;
-            popd;
+          pushd examples/xspec;
+          source ${HEADAS}/headas-init.sh
+          PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
+          ls;
+          popd;
 
       - name: Install
         run: |
