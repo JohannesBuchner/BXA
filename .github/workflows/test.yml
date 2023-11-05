@@ -2,11 +2,7 @@ name: Test
 
 on:
   push: 
-    branches:
-      - '**'
   pull_request:
-    branches:
-      - '**'
   schedule:
     - cron: '42 4 5,20 * *'
 
@@ -14,7 +10,7 @@ on:
 jobs:
   Sherpa:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
@@ -171,7 +167,7 @@ jobs:
           
   Xspec:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
