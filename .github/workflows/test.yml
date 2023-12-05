@@ -311,7 +311,7 @@ jobs:
 
       - name: Install
         run: |
-          python3 setup.py install --user
+          python -m pip install .
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
