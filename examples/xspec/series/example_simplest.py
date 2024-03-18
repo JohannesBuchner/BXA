@@ -90,11 +90,17 @@ participating_parameters = []
 for i, filename in enumerate(['sim1.fak', 'sim2.fak', 'sim3.fak'], start=1):
 	AllData("%d:%d %s" % (i, i, filename))
 	s1 = AllData(i)
-	s1.ignore("**"); s1.notice("0.2-8.0")
+	s1.ignore("**-0.2, 8.0-**")
+	print("setting up model")
 	m1 = AllModels(i)
 	m1.wabs.nH.values = ",,0.01,0.01,1000,1000"
+	m1.powerlaw.norm.values = ",,1e-10,1e-10,1e1,1e1"
 	#m1.powerlaw.norm.values = ",,1e-10,1e-10,1e1,1e1"
 	#m1.powerlaw.PhoIndex.values = ",,1,1,3,3"
+	if i != 1:
+		m1.powerlaw.PhoIndex.link = '=%d' % AllModels(1).powerlaw.PhoIndex.index
+	if i != 1:
+		m1.powerlaw.norm.link = '=%d' % AllModels(1).powerlaw.norm.index
 	transformations += [
 		bxa.create_uniform_prior_for( m1, m1.wabs.nH),
 	]
@@ -128,5 +134,10 @@ solver = bxa.BXASolver(
 	prior_function=combined_prior,
 	outputfiles_basename='hierarchical3/',
 )
-results = solver.run(resume=True)
+import ultranest.stepsampler
+results = solver.run(resume=True,
+	run_kwargs=dict(frac_remain=0.5),
+	stepsampler_kwargs=dict(
+		generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+		initial_max_ncalls=100000, nsteps=100))
 print('running analysis ... done!')

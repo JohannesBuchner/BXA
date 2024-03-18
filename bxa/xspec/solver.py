@@ -62,8 +62,6 @@ def store_chain(chainfilename, transformations, posterior, fit_statistic):
 	old_model = transformations[0]['model']
 	names = []
 	for t in transformations:
-		if t.get('skip_setting', False):
-			continue
 		if t['model'] != old_model:
 			group_index += 1
 		old_model = t['model']
@@ -89,8 +87,6 @@ def set_parameters(transformations, values):
 	assert len(values) == len(transformations)
 	pars = []
 	for i, t in enumerate(transformations):
-		if t.get('skip_setting', False):
-			continue
 		v = t['aftertransform'](values[i])
 		assert not isnan(v) and not isinf(v), 'ERROR: parameter %d (index %d, %s) to be set to %f' % (
 			i, t['index'], t['name'], v)
