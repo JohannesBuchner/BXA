@@ -170,12 +170,24 @@ class BXASolver(object):
 	def run(
 		self, sampler_kwargs={'resume': 'overwrite'}, run_kwargs={'Lepsilon': 0.1},
 		speed="safe", resume=None, n_live_points=None,
-		frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
+		frac_remain=None, Lepsilon=0.1, evidence_tolerance=None,
+		stepsampler_kwargs=None,
 	):
 		"""Run nested sampling with ultranest.
 
-		:sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)
-		:run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)
+		:param sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)
+		:param run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)
+		:param stepsampler_kwargs: dictionary, which contains the following keys: 
+		        `'initial_max_ncalls'` (int), for example 40000. This sets the initial sampling
+		        with MLFriends before switching to a step sampler. Setting this to zero may help resuming.
+		        all other arguments are passed directly to `ultranest.stepsampler.SliceSampler`,
+		        including arguments such as max_nsteps, nsteps, and
+		        `'generate_direction'` (function), which can be for example `ultranest.stepsampler.generate_mixture_random_direction`: 
+		        the name of the proposal function in `ultranest.stepsampler` passed to `ultranest.stepsampler.SliceSampler`.
+				For partial parameter updates to consider slow and fast variables, use `ultranest.stepsampler.SpeedVariableGenerator`.
+		        A recommended configuration is:
+		        `stepsampler_kwargs=dict(generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					initial_max_ncalls=40000, nsteps=100, max_nsteps=1000, region_filter=False)`.
 
 		The following arguments are also available directly for backward compatibility:
 
@@ -184,6 +196,11 @@ class BXASolver(object):
 		:param evidence_tolerance: sets run_kwargs['dlogz']
 		:param Lepsilon: sets run_kwargs['Lepsilon']
 		:param frac_remain: sets run_kwargs['frac_remain']
+		:param speed: 'safe' (default), uses MLFriends algorithm of UltraNest, 'auto':
+		     corresponds to `stepsampler_kwargs=dict(generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					initial_max_ncalls=40000, nsteps=1000, max_nsteps=1000, adaptive_nsteps='move-distance')`,
+			 a integer setting nsteps, corresponds to
+			 `stepsampler_kwargs=dict(generate_direction=ultranest.stepsampler.generate_mixture_random_direction, nsteps=speed)`.
 		"""
 
 		# run nested sampling
@@ -210,23 +227,22 @@ class BXASolver(object):
 				log_dir=self.outputfiles_basename,
 				vectorized=self.vectorized, **sampler_kwargs)
 
-			if speed == "safe":
-				pass
-			elif speed == "auto":
-				region_filter = run_kwargs.pop('region_filter', True)
-				self.sampler.run(max_ncalls=40000, **run_kwargs)
+			if speed == 'auto' and stepsampler_kwargs is None:
+				stepsampler_kwargs = dict(
+					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					initial_max_ncalls=40000, nsteps=1000, max_nsteps=1000, adaptive_nsteps='move-distance')
+			elif speed not in ('auto', 'safe'):
+				assert stepsampler_kwargs is None, 'do not set both speed and stepsampler_kwargs'
+				stepsampler_kwargs = dict(
+					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					initial_max_ncalls=0, nsteps=int(speed))
 
-				self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
-					nsteps=1000,
-					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
-					adaptive_nsteps='move-distance', region_filter=region_filter
-				)
-			else:
-				self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
-					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
-					nsteps=speed,
-					adaptive_nsteps=False,
-					region_filter=False)
+			if stepsampler_kwargs is not None:
+				initial_max_ncalls = stepsampler_kwargs.pop('initial_max_ncalls', 0)
+				if initial_max_ncalls > 0:
+					self.sampler.run(max_ncalls=initial_max_ncalls, **run_kwargs)
+
+				self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(**stepsampler_kwargs)
 
 			self.sampler.run(**run_kwargs)
 			self.sampler.print_results()
