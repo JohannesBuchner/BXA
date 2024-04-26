@@ -19,8 +19,24 @@ PlotBXA also provides the possibility for additional analysis, with further test
 
 For more experienced users, the methods (both public and private) provided in the PlotXspec and PlotBXA classes can also serve as a template or guide on how to access and manipulate the data in PyXspec and BXA, and how to use them to create plots.
 
+### Requirements
+
+In addition to the requirements for BXA, the classes defined here make use of the natsort package. If this is not yet installed on the system, it can be installed via pip or conda, e.g.:
+
+```
+$ pip install natsort
+```
+
 ## Running the examples
 
 Before running any of the scripts in the tutorial directory, it will be necessary to generate the test datasets. This can be done either by running `create_simdata.sh`, or by running `run_all.sh`. The latter script will also create a series of test fits and plots, using the basic methods of PlotXspec and PlotBXA. Once the files are generated, they will be stored in the directory `tutorials/example_data`, in the `athena` and `xmm` subdirectories.
 
-Please note: *all bug-reports, suggestions, and contributions are welcome*.
+---
+**Contact**
+
+David Homan
+dshoman@gmail.com
+
+Please note: *all bug reports, suggestions, and contributions are welcome*.
+
+---

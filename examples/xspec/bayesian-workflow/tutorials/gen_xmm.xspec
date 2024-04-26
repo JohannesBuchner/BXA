@@ -36,8 +36,6 @@ epic_pn
 epic_pn_agn.fak
 50000 1.0 1.0
 
-grppha epic_pn_agn.fak epic_pn_agn_grp1.fak comm="group min 1 & write & exit"
-
 # MOS spectra
 model constant(zTBabs*zpowerlw + zgauss)
 0.9
@@ -62,8 +60,6 @@ epic_mos1
 epic_mos1_agn.fak
 50000 1.0 1.0
 
-grppha epic_mos1_agn.fak epic_mos1_agn_grp1.fak comm="group min 1 & write & exit"
-
 # MOS2 spectrum
 data 1 none
 fakeit none
@@ -73,5 +69,3 @@ y
 epic_mos2
 epic_mos2_agn.fak
 50000 1.0 1.0
-
-grppha epic_mos2_agn.fak epic_mos2_agn_grp1.fak comm="group min 1 & write & exit"
