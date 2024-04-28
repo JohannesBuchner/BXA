@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.sherpa.background.models &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
+    <title>bxa.sherpa.background.models &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../../_static/documentation_options.js?v=d151bdce"></script>
+    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -65,7 +64,9 @@
 
 <span class="sd">Uses a flat continuum, two broad gaussians and 8 narrow instrumental lines.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ChandraBackground"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground">[docs]</a><span class="k">class</span> <span class="nc">ChandraBackground</span><span class="p">(</span><span class="n">BackgroundModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ChandraBackground">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground">[docs]</a>
+<span class="k">class</span> <span class="nc">ChandraBackground</span><span class="p">(</span><span class="n">BackgroundModel</span><span class="p">):</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">storage</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
@@ -161,19 +162,27 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">softsoftlevel</span> <span class="o">=</span> <span class="n">softsoftlevel</span>
 		
 		
-<div class="viewcode-block" id="ChandraBackground.set_zero"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_zero">[docs]</a>	<span class="k">def</span> <span class="nf">set_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ChandraBackground.set_zero">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_zero">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plboxes</span><span class="p">:</span>
 			<span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>
 			<span class="n">l</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mi">0</span></div>
-	
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="w">	</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	range over which this model is valid</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ChandraBackground.set_filter"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_filter">[docs]</a>	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ChandraBackground.set_filter">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_filter">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
 		<span class="n">ignore</span><span class="p">(</span><span class="mf">9.8</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 		<span class="n">notice</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">9.8</span><span class="p">)</span></div>
-<div class="viewcode-block" id="ChandraBackground.set_model"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_model">[docs]</a>	<span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ChandraBackground.set_model">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.ChandraBackground.set_model">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
 		<span class="n">withsoft</span> <span class="o">=</span> <span class="n">stage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;continuum&#39;</span><span class="p">)</span>
 		<span class="n">withlines</span> <span class="o">=</span> <span class="n">stage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;continuum&#39;</span><span class="p">,</span> <span class="s1">&#39;softfeatures&#39;</span><span class="p">)</span>
@@ -227,7 +236,9 @@
 				<span class="k">return</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">set_filter</span><span class="p">()</span>
 		<span class="c1"># finally, full fit</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pars</span></div></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stagepars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pars</span></div>
+</div>
+
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Background model for XMM/PN, as for the XMM-XXL.</span>
@@ -440,8 +451,8 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">stage_models</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">stage_models_full</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_model</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-		
-	<span class="sd">&quot;&quot;&quot;</span>
+<span class="w">		</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	range over which this model is valid</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -469,7 +480,9 @@
 
 <span class="sd">Uses a flat continuum, two broad gaussians and 8 narrow instrumental lines.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="SwiftXRTBackground"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground">[docs]</a><span class="k">class</span> <span class="nc">SwiftXRTBackground</span><span class="p">(</span><span class="n">BackgroundModel</span><span class="p">):</span>
+<div class="viewcode-block" id="SwiftXRTBackground">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground">[docs]</a>
+<span class="k">class</span> <span class="nc">SwiftXRTBackground</span><span class="p">(</span><span class="n">BackgroundModel</span><span class="p">):</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">storage</span>
 		
@@ -517,13 +530,18 @@
 		<span class="n">dip</span><span class="o">.</span><span class="n">ampl</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-3</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">pbknpl</span><span class="p">,</span> <span class="n">dip</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">,</span> <span class="n">g4</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
-<div class="viewcode-block" id="SwiftXRTBackground.set_filter"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground.set_filter">[docs]</a>	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SwiftXRTBackground.set_filter">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground.set_filter">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;SwiftXRTBackground: setting filter 0.3-5keV&#39;</span><span class="p">)</span>
 		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
 		<span class="n">ignore</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 		<span class="n">notice</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SwiftXRTBackground.set_model"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground.set_model">[docs]</a>	<span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SwiftXRTBackground.set_model">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTBackground.set_model">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">i</span>
 		<span class="p">[</span><span class="n">pbknpl</span><span class="p">,</span> <span class="n">dip</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">,</span> <span class="n">g4</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pars</span>
 		
@@ -553,14 +571,22 @@
 		<span class="n">set_bkg_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span><span class="p">)</span>
 		<span class="n">set_bkg_full_model</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bunitrsp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_model</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">set_filter</span><span class="p">()</span>
-		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;background model set for stage &quot;</span><span class="si">%s</span><span class="s1">&quot; for ID=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span></div></div>
+		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;background model set for stage &quot;</span><span class="si">%s</span><span class="s1">&quot; for ID=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span></div>
+</div>
 
-<div class="viewcode-block" id="SwiftXRTWTBackground"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTWTBackground">[docs]</a><span class="k">class</span> <span class="nc">SwiftXRTWTBackground</span><span class="p">(</span><span class="n">SwiftXRTBackground</span><span class="p">):</span>
-<div class="viewcode-block" id="SwiftXRTWTBackground.set_filter"><a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTWTBackground.set_filter">[docs]</a>	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SwiftXRTWTBackground">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTWTBackground">[docs]</a>
+<span class="k">class</span> <span class="nc">SwiftXRTWTBackground</span><span class="p">(</span><span class="n">SwiftXRTBackground</span><span class="p">):</span>
+<div class="viewcode-block" id="SwiftXRTWTBackground.set_filter">
+<a class="viewcode-back" href="../../../../bxa.sherpa.background.html#bxa.sherpa.background.models.SwiftXRTWTBackground.set_filter">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="n">logbm</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;SwiftXRTBackground: setting filter 0.4-5keV&#39;</span><span class="p">)</span>
 		<span class="n">ignore</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
 		<span class="n">ignore</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-		<span class="n">notice</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span></div></div>
+		<span class="n">notice</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span></div>
+</div>
+
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SwiftXRTBackground&#39;</span><span class="p">,</span> <span class="s1">&#39;SwiftXRTWTBackground&#39;</span><span class="p">,</span> <span class="s1">&#39;ChandraBackground&#39;</span><span class="p">]</span>
 </pre></div>
@@ -602,6 +628,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -641,8 +669,8 @@
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

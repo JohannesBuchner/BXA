@@ -1,19 +1,18 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Welcome to BXA’s documentation! &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>Welcome to BXA’s documentation! &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=d151bdce"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Sherpa with BXA" href="sherpa-analysis.html" />
@@ -36,9 +35,9 @@
           <div class="body" role="main">
             
   <section id="welcome-to-bxa-s-documentation">
-<h1>Welcome to BXA’s documentation!<a class="headerlink" href="#welcome-to-bxa-s-documentation" title="Permalink to this heading">¶</a></h1>
+<h1>Welcome to BXA’s documentation!<a class="headerlink" href="#welcome-to-bxa-s-documentation" title="Link to this heading">¶</a></h1>
 <section id="about-bayesian-x-ray-analysis-bxa">
-<h2>About Bayesian X-ray Analysis (BXA)<a class="headerlink" href="#about-bayesian-x-ray-analysis-bxa" title="Permalink to this heading">¶</a></h2>
+<h2>About Bayesian X-ray Analysis (BXA)<a class="headerlink" href="#about-bayesian-x-ray-analysis-bxa" title="Link to this heading">¶</a></h2>
 <p>BXA connects the X-ray spectral analysis environments Xspec/Sherpa
 to the nested sampling algorithm UltraNest
 for <strong>Bayesian Parameter Estimation</strong> and <strong>Model comparison</strong>.</p>
@@ -100,7 +99,7 @@ carefully if complicated parameter spaces are encountered. This allows building 
 <a class="reference external image-reference" href="https://github.com/JohannesBuchner/BXA/"><img alt="Github repository" src="https://img.shields.io/badge/GitHub-JohannesBuchner%2FBXA-blue.svg?style=flat" /></a>
 </section>
 <section id="who-is-using-bxa">
-<h2>Who is using BXA?<a class="headerlink" href="#who-is-using-bxa" title="Permalink to this heading">¶</a></h2>
+<h2>Who is using BXA?<a class="headerlink" href="#who-is-using-bxa" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Dr. Antonis Georgakakis, Dr. Angel Ruiz (NOA, Athens)</p></li>
 <li><p>Dr. Mike Anderson (MPA, Munich)</p></li>
@@ -117,11 +116,11 @@ carefully if complicated parameter spaces are encountered. This allows building 
 </ul>
 </section>
 <section id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">¶</a></h2>
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
 <p>BXA’s <a class="reference external" href="http://johannesbuchner.github.io/BXA/">documentation</a> is hosted at <a class="reference external" href="http://johannesbuchner.github.io/BXA/">http://johannesbuchner.github.io/BXA/</a></p>
 </section>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>First, you need to have either <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> or <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/">Xspec</a> installed and its environment loaded.</p>
 <p>BXA itself can installed easily using pip or conda:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install bxa
@@ -164,7 +163,7 @@ The support is systematically tested for every BXA release by
 <a class="reference external" href="https://travis-ci.com/github/JohannesBuchner/BXA">Travis CI</a>, but only for Ubuntu Linux.</p>
 </section>
 <section id="running">
-<h2>Running<a class="headerlink" href="#running" title="Permalink to this heading">¶</a></h2>
+<h2>Running<a class="headerlink" href="#running" title="Link to this heading">¶</a></h2>
 <p>In <em>Sherpa</em>, load the package:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>jbuchner@ds42 ~ $ sherpa
 -----------------------------------------------------
@@ -189,11 +188,11 @@ In [3]: bxa.BXASolver?
 to perform analyses. Several examples are included.</p>
 </section>
 <section id="code">
-<h2>Code<a class="headerlink" href="#code" title="Permalink to this heading">¶</a></h2>
+<h2>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h2>
 <p>See the <a class="reference external" href="https://github.com/JohannesBuchner/BXA">code repository page</a></p>
 </section>
 <section id="citing-bxa-correctly">
-<span id="cite"></span><h2>Citing BXA correctly<a class="headerlink" href="#citing-bxa-correctly" title="Permalink to this heading">¶</a></h2>
+<span id="cite"></span><h2>Citing BXA correctly<a class="headerlink" href="#citing-bxa-correctly" title="Link to this heading">¶</a></h2>
 <p>Refer to the <a class="reference external" href="http://www.aanda.org/articles/aa/abs/2014/04/aa22971-13/aa22971-13.html">accompaning paper Buchner et al. (2014)</a> which gives introduction and
 detailed discussion on the methodology and its statistical footing.</p>
 <p>We suggest giving credit to the developers of Sherpa/Xspec, UltraNest and of this software.
@@ -220,7 +219,7 @@ As an example:</p>
 </ul>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>We start with some notes on <a class="reference internal" href="best-practise.html"><span class="doc">best practice</span></a> in currently common
 Maximum Likelihood analysis (fitting) and Bayesian analysis.</p></li>
@@ -302,12 +301,14 @@ Maximum Likelihood analysis (fitting) and Bayesian analysis.</p></li>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 </div>
 </section>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
@@ -353,6 +354,8 @@ Maximum Likelihood analysis (fitting) and Bayesian analysis.</p></li>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -389,8 +392,8 @@ Maximum Likelihood analysis (fitting) and Bayesian analysis.</p></li>
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/index.rst.txt"

@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec.solver &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
+    <title>bxa.xspec.solver &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=d151bdce"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -63,8 +62,10 @@
 <span class="c1">#from .priors import *</span>
 
 
-<div class="viewcode-block" id="XSilence"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.XSilence">[docs]</a><span class="k">class</span> <span class="nc">XSilence</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Context for temporarily making xspec quiet.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="XSilence">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.XSilence">[docs]</a>
+<span class="k">class</span> <span class="nc">XSilence</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Context for temporarily making xspec quiet.&quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">oldchatter</span> <span class="o">=</span> <span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span>
@@ -74,8 +75,11 @@
 		<span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oldchatter</span></div>
 
 
-<div class="viewcode-block" id="create_prior_function"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.create_prior_function">[docs]</a><span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="create_prior_function">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.create_prior_function">[docs]</a>
+<span class="k">def</span> <span class="nf">create_prior_function</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Create a single prior transformation function from a list of</span>
 <span class="sd">	transformations for each parameter. This assumes the priors factorize.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -90,8 +94,11 @@
 	<span class="k">return</span> <span class="n">prior</span></div>
 
 
-<div class="viewcode-block" id="store_chain"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.store_chain">[docs]</a><span class="k">def</span> <span class="nf">store_chain</span><span class="p">(</span><span class="n">chainfilename</span><span class="p">,</span> <span class="n">transformations</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="n">fit_statistic</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Writes a MCMC chain file in the same format as the Xspec chain command.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="store_chain">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.store_chain">[docs]</a>
+<span class="k">def</span> <span class="nf">store_chain</span><span class="p">(</span><span class="n">chainfilename</span><span class="p">,</span> <span class="n">transformations</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="n">fit_statistic</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Writes a MCMC chain file in the same format as the Xspec chain command.&quot;&quot;&quot;</span>
 	<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">pyfits</span>
 
 	<span class="n">group_index</span> <span class="o">=</span> <span class="mi">1</span>
@@ -118,8 +125,11 @@
 	<span class="n">tbhdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">chainfilename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="set_parameters"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.set_parameters">[docs]</a><span class="k">def</span> <span class="nf">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Set current parameters.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="set_parameters">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.set_parameters">[docs]</a>
+<span class="k">def</span> <span class="nf">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Set current parameters.&quot;&quot;&quot;</span>
 	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformations</span><span class="p">)</span>
 	<span class="n">pars</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transformations</span><span class="p">):</span>
@@ -130,8 +140,11 @@
 	<span class="n">AllModels</span><span class="o">.</span><span class="n">setPars</span><span class="p">(</span><span class="o">*</span><span class="n">pars</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="BXASolver"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver">[docs]</a><span class="k">class</span> <span class="nc">BXASolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BXASolver">
+<a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver">[docs]</a>
+<span class="k">class</span> <span class="nc">BXASolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Run the Bayesian analysis.</span>
 
 <span class="sd">	The nested sampling package `UltraNest &lt;https://johannesbuchner.github.io/UltraNest/&gt;`_ is used under the hood.</span>
@@ -178,20 +191,28 @@
 				<span class="n">vectorized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 			<span class="p">)</span>
 
-<div class="viewcode-block" id="BXASolver.set_paramnames"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.set_paramnames">[docs]</a>	<span class="k">def</span> <span class="nf">set_paramnames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BXASolver.set_paramnames">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.set_paramnames">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_paramnames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="k">if</span> <span class="n">paramnames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">paramnames</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">]</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">paramnames</span> <span class="o">=</span> <span class="n">paramnames</span></div>
 
-<div class="viewcode-block" id="BXASolver.set_best_fit"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.set_best_fit">[docs]</a>	<span class="k">def</span> <span class="nf">set_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;Sets model to the best fit values.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BXASolver.set_best_fit">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.set_best_fit">[docs]</a>
+	<span class="k">def</span> <span class="nf">set_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Sets model to the best fit values.&quot;&quot;&quot;</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;logl&#39;</span><span class="p">])</span>
 		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;weighted_samples&#39;</span><span class="p">][</span><span class="s1">&#39;points&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
 		<span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BXASolver.log_likelihood"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.log_likelihood">[docs]</a>	<span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; returns -0.5 of the fit statistic.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BXASolver.log_likelihood">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.log_likelihood">[docs]</a>
+	<span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; returns -0.5 of the fit statistic.&quot;&quot;&quot;</span>
 		<span class="n">set_parameters</span><span class="p">(</span><span class="n">transformations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transformations</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 		<span class="n">like</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">Fit</span><span class="o">.</span><span class="n">statistic</span>
 		<span class="c1"># print(&quot;like = %.1f&quot; % like)</span>
@@ -199,12 +220,15 @@
 			<span class="k">return</span> <span class="o">-</span><span class="mf">1e100</span>
 		<span class="k">return</span> <span class="n">like</span></div>
 
-<div class="viewcode-block" id="BXASolver.run"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.run">[docs]</a>	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+
+<div class="viewcode-block" id="BXASolver.run">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.run">[docs]</a>
+	<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
 		<span class="bp">self</span><span class="p">,</span> <span class="n">sampler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;resume&#39;</span><span class="p">:</span> <span class="s1">&#39;overwrite&#39;</span><span class="p">},</span> <span class="n">run_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Lepsilon&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
 		<span class="n">speed</span><span class="o">=</span><span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_live_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">frac_remain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Lepsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">evidence_tolerance</span><span class="o">=</span><span class="kc">None</span>
 	<span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;Run nested sampling with ultranest.</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Run nested sampling with ultranest.</span>
 
 <span class="sd">		:sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)</span>
 <span class="sd">		:run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)</span>
@@ -285,8 +309,11 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span></div>
 
-<div class="viewcode-block" id="BXASolver.create_flux_chain"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.create_flux_chain">[docs]</a>	<span class="k">def</span> <span class="nf">create_flux_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">erange</span><span class="o">=</span><span class="s2">&quot;2.0 10.0&quot;</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BXASolver.create_flux_chain">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.create_flux_chain">[docs]</a>
+	<span class="k">def</span> <span class="nf">create_flux_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">erange</span><span class="o">=</span><span class="s2">&quot;2.0 10.0&quot;</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		For each posterior sample, computes the flux in the given energy range.</span>
 
 <span class="sd">		The so-created chain can be combined with redshift information to propagate</span>
@@ -315,10 +342,13 @@
 
 			<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BXASolver.posterior_predictions_convolved"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.posterior_predictions_convolved">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_convolved</span><span class="p">(</span>
+
+<div class="viewcode-block" id="BXASolver.posterior_predictions_convolved">
+<a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.posterior_predictions_convolved">[docs]</a>
+	<span class="k">def</span> <span class="nf">posterior_predictions_convolved</span><span class="p">(</span>
 		<span class="bp">self</span><span class="p">,</span> <span class="n">component_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">400</span>
 	<span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;Plot convolved model posterior predictions.</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Plot convolved model posterior predictions.</span>
 
 <span class="sd">		Also returns data points for plotting.</span>
 
@@ -374,11 +404,14 @@
 		<span class="n">results</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="BXASolver.posterior_predictions_unconvolved"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_unconvolved</span><span class="p">(</span>
+
+<div class="viewcode-block" id="BXASolver.posterior_predictions_unconvolved">
+<a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.posterior_predictions_unconvolved">[docs]</a>
+	<span class="k">def</span> <span class="nf">posterior_predictions_unconvolved</span><span class="p">(</span>
 		<span class="bp">self</span><span class="p">,</span> <span class="n">component_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
 		<span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span>
 	<span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Plot unconvolved model posterior predictions.</span>
 
 <span class="sd">		:param component_names: labels to use. Set to &#39;ignore&#39; to skip plotting a component</span>
@@ -415,8 +448,11 @@
 			<span class="n">band</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.495</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">**</span><span class="n">shadeargs</span><span class="p">)</span>
 			<span class="n">band</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">lineargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BXASolver.posterior_predictions_plot"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.posterior_predictions_plot">[docs]</a>	<span class="k">def</span> <span class="nf">posterior_predictions_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plottype</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BXASolver.posterior_predictions_plot">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.posterior_predictions_plot">[docs]</a>
+	<span class="k">def</span> <span class="nf">posterior_predictions_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plottype</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># for plotting, we don&#39;t need so many points, and especially the</span>
@@ -457,14 +493,18 @@
 						<span class="k">break</span>	
 				<span class="n">content</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">base_content</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">base_content</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))))</span>
 				<span class="k">yield</span> <span class="n">content</span>
-			<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span></div></div>
+			<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span></div>
+</div>
 
 
-<div class="viewcode-block" id="standard_analysis"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.standard_analysis">[docs]</a><span class="k">def</span> <span class="nf">standard_analysis</span><span class="p">(</span>
+
+<div class="viewcode-block" id="standard_analysis">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.standard_analysis">[docs]</a>
+<span class="k">def</span> <span class="nf">standard_analysis</span><span class="p">(</span>
 	<span class="n">transformations</span><span class="p">,</span> <span class="n">outputfiles_basename</span><span class="p">,</span>
 	<span class="n">skipsteps</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Run a default analysis which produces nice plots.</span>
 
 <span class="sd">	Deprecated; copy the code of this function into</span>
@@ -547,6 +587,7 @@
 		<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 	<span class="k">return</span> <span class="n">solver</span></div>
+
 </pre></div>
 
           </div>
@@ -586,6 +627,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -625,8 +668,8 @@
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

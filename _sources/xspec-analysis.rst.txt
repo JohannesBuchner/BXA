@@ -204,5 +204,8 @@ For Xspec, the *qq* function in the *qq* module allows you to create such plots 
 
 .. autofunction:: bxa.xspec.qq.qq
 
-Refer to the :ref:`accompaning paper <cite>`, which gives an introduction and 
-detailed discussion on the methodology.
+For an introduction and detailed discussion on the methodology, see: 
+
+* the :ref:`accompaning paper <cite>`
+* the `book chapter "Statistical Aspects of X-ray Spectral Analysis" <https://arxiv.org/abs/2309.05705>`_
+* the PlotBXA tutorial linked on the left of this page

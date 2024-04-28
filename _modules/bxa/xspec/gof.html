@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec.gof &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
+    <title>bxa.xspec.gof &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=d151bdce"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -44,7 +43,9 @@
 <span class="kn">import</span> <span class="nn">scipy.stats</span><span class="o">,</span> <span class="nn">scipy.special</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<div class="viewcode-block" id="build"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.build">[docs]</a><span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<div class="viewcode-block" id="build">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.build">[docs]</a>
+<span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 		<span class="n">o</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
@@ -57,7 +58,10 @@
 			<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">build</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">k</span> <span class="o">-</span> <span class="n">i</span><span class="p">):</span>
 				<span class="k">yield</span> <span class="p">[</span><span class="n">o</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span></div>
 
-<div class="viewcode-block" id="gen_choices"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.gen_choices">[docs]</a><span class="k">def</span> <span class="nf">gen_choices</span><span class="p">(</span><span class="n">cpart</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gen_choices">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.gen_choices">[docs]</a>
+<span class="k">def</span> <span class="nf">gen_choices</span><span class="p">(</span><span class="n">cpart</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 	<span class="n">nchoices</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cpart</span><span class="p">])</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39; gen?&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cpart</span><span class="p">),</span> <span class="n">nchoices</span><span class="p">)</span>
 	<span class="c1">#print [c for c in build(cpart, k) if c is not None]</span>
@@ -94,7 +98,10 @@
 			<span class="n">probs</span> <span class="o">+=</span> <span class="n">prob</span>
 	<span class="k">return</span> <span class="n">probs</span></div>
 
-<div class="viewcode-block" id="calc_models_range"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.calc_models_range">[docs]</a><span class="k">def</span> <span class="nf">calc_models_range</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="calc_models_range">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.calc_models_range">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_models_range</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="n">stats</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">lowmodel</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">*</span><span class="mf">1e-10</span>
 	<span class="n">highmodel</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">*</span><span class="mf">1e10</span>
@@ -128,7 +135,10 @@
 	
 	<span class="k">return</span> <span class="n">lowmodel</span><span class="p">,</span> <span class="n">highmodel</span></div>
 
-<div class="viewcode-block" id="calc_multigof"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.calc_multigof">[docs]</a><span class="k">def</span> <span class="nf">calc_multigof</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+
+<div class="viewcode-block" id="calc_multigof">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.calc_multigof">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_multigof</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
 	<span class="c1">#choice_limit = 1e-2 / len(data)</span>
 	<span class="c1">#choices = numpy.array([[scipy.stats.poisson(m).pmf(i)</span>
 			<span class="c1">#for i in range(</span>
@@ -165,7 +175,10 @@
 	<span class="n">stats</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">probs</span>
 	<span class="k">return</span> <span class="n">stats</span></div>
 
-<div class="viewcode-block" id="group_adapt"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.group_adapt">[docs]</a><span class="k">def</span> <span class="nf">group_adapt</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nmin</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+
+<div class="viewcode-block" id="group_adapt">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.group_adapt">[docs]</a>
+<span class="k">def</span> <span class="nf">group_adapt</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nmin</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
 	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 		<span class="c1">#print &#39; &#39;,i,&#39;--&#39;,len(data)</span>
@@ -177,7 +190,10 @@
 				<span class="k">break</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="write_multigof"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.write_multigof">[docs]</a><span class="k">def</span> <span class="nf">write_multigof</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">skip_plot_ifeq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="write_multigof">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.write_multigof">[docs]</a>
+<span class="k">def</span> <span class="nf">write_multigof</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">skip_plot_ifeq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="n">segments</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">group_adapt</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 	<span class="n">stats</span>    <span class="o">=</span> <span class="n">calc_multigof</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
 	<span class="c1">#gof = -2 * numpy.log10(stats[:,2]).mean()</span>
@@ -248,10 +264,13 @@
 	<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">)</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 	<span class="k">return</span> <span class="n">gof</span></div>
+
 	
 <span class="n">gof_limit</span> <span class="o">=</span> <span class="mi">2</span>
 
-<div class="viewcode-block" id="write_gof"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.write_gof">[docs]</a><span class="k">def</span> <span class="nf">write_gof</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">gof_avg</span><span class="p">,</span> <span class="n">gof_total</span><span class="p">):</span>
+<div class="viewcode-block" id="write_gof">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.write_gof">[docs]</a>
+<span class="k">def</span> <span class="nf">write_gof</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">gof_avg</span><span class="p">,</span> <span class="n">gof_total</span><span class="p">):</span>
 	<span class="n">verdict</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;good&#39;</span> <span class="k">if</span> <span class="n">gof_avg</span> <span class="o">&lt;</span> <span class="n">gof_limit</span> <span class="k">else</span> <span class="s1">&#39;bad&#39;</span><span class="p">)</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2"> </span><span class="si">%5s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span>  <span class="o">%</span> <span class="p">(</span><span class="n">gof_avg</span><span class="p">,</span> <span class="n">verdict</span><span class="p">,</span> <span class="n">prefix</span><span class="p">))</span>
 	<span class="c1">#file(filename + &quot;.out&quot;, &#39;w&#39;).write(str(gof) + &quot;\n&quot;)</span>
@@ -259,9 +278,13 @@
 	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.summary&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">verdict</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="load_gof"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.load_gof">[docs]</a><span class="k">def</span> <span class="nf">load_gof</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+
+<div class="viewcode-block" id="load_gof">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.gof.load_gof">[docs]</a>
+<span class="k">def</span> <span class="nf">load_gof</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
 	<span class="n">gof_total</span><span class="p">,</span> <span class="n">gof_avg</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.out&quot;</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">gof_total</span><span class="p">,</span> <span class="n">gof_avg</span></div>
+
 
 	
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -329,6 +352,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -368,8 +393,8 @@
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

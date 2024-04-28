@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PlotXspec Example – basic PyXspec usage &amp; additional plotting &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css" />
+    <script src="_static/documentation_options.js?v=d151bdce"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="PlotBXA example – basic BXA usage &amp; additional plotting" href="tutorial_usage_plotbxa.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/tutorial_usage_plotxspec.html"/>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="PlotXspec-Example----basic-PyXspec-usage-&amp;-additional-plotting">
+<h1>PlotXspec Example – basic PyXspec usage &amp; additional plotting<a class="headerlink" href="#PlotXspec-Example----basic-PyXspec-usage-&-additional-plotting" title="Link to this heading">¶</a></h1>
+<p>This notebook is aimed at illustrating the <em>basic</em> usage of PyXspec, as well as a few supporting methods related to plotting. The supporing methods are part of the PlotXspec class. The notebook will cover how to load spectra, define a define a model and fit it to the data, and how to plot the results. PyXspec makes all Xspec functionality accessible through Python, so covers a much broader range of options than covered here. For further details on PyXspec usage, please see the
+<a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/index.html">documentation</a>.</p>
+<p>In the following, we will assume a basic familiarity with both Python and Xspec usage. Users will need to have a working HEASOFT installation, as well as a working Python3 installation. The examples focus on the ‘out-of-the-box’ usage of the PlotXSpec public methods. Some users may find it more helpful to use these methods as a template for their own plotting functions; the PlotXspec class includes several private methods that could also be of use as a guide (such as the <code class="docutils literal notranslate"><span class="pre">_get_xspec_data()</span></code>
+method).</p>
+<p><em>Please note</em>: this notebook relates to PyXspec only, for examples of using BXA and the PlotBXA class, please see the notebook <em>tutorial_usage_plotbxa</em>.</p>
+<section id="The-notebook-is-structured-as-follows:">
+<h2>The notebook is structured as follows:<a class="headerlink" href="#The-notebook-is-structured-as-follows:" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Basic loading and plotting data using PyXspec</p></li>
+<li><p>Further plotting examples</p></li>
+<li><p>A slightly more complicated example (multiple spectra &amp; simultaneous fitting)</p></li>
+</ol>
+<hr class="docutils" />
+<p>This notebook was tested with: - HEASOFT 6.32.1 - Python 3.11.4</p>
+<section id="1)-Loading-and-plotting-data-using-PyXspec">
+<h3>1) Loading and plotting data using PyXspec<a class="headerlink" href="#1)-Loading-and-plotting-data-using-PyXspec" title="Link to this heading">¶</a></h3>
+<p>We will start with a simple example: loading a single spectrum into Xspec and fitting a model to it. The example data are a NICER spectrum for a bright extragalactic nuclear ignition and the associated background spectrum. The data have been rebinned to a minimum bin count of 20, which means we can use <span class="math notranslate nohighlight">\(\chi^2\)</span> statistics.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Loading the required modules</span>
+<span class="kn">import</span> <span class="nn">xspec</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+
+<span class="c1"># load the PlotXspec class and create an instance</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/..&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">plot_xspec</span> <span class="kn">import</span> <span class="n">PlotXspec</span>
+<span class="n">px</span> <span class="o">=</span> <span class="n">PlotXspec</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<section id="A-quick-aside-on-getting-more-information-on-class-methods-in-Python">
+<h4>A quick aside on getting more information on class methods in Python<a class="headerlink" href="#A-quick-aside-on-getting-more-information-on-class-methods-in-Python" title="Link to this heading">¶</a></h4>
+<p>If at any point you are unclear about what a method is supposed to do, or what arguments should be passed to it, you can make use of Python’s built-in help functionality.</p>
+<p>This will list all public methods included in the class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And this will show the ‘docstring’ for a particular method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">px</span><span class="o">.</span><span class="n">plot_model_and_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>The public methods in PlotXspec all have docstrings: these explain in more detail what the methods are supposed to and what additional arguments can be passed to make the best use of them.</strong></p>
+</section>
+<section id="A)-Loading">
+<h4>A) Loading<a class="headerlink" href="#A)-Loading" title="Link to this heading">¶</a></h4>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Global settings for XSpec</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">abund</span> <span class="o">=</span> <span class="s1">&#39;wilm&#39;</span> <span class="c1"># Wilms et al. &#39;00&#39;</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">xsect</span> <span class="o">=</span> <span class="s1">&#39;vern&#39;</span> <span class="c1"># Verner et al. &#39;96&#39;</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">cosmo</span> <span class="o">=</span> <span class="s1">&#39;70 0 0.73&#39;</span> <span class="c1"># Flat LambdaCDM</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ Solar Abundance Vector set to wilm:  Wilms, J., Allen, A. &amp; McCray, R. ApJ 542 914 (2000) (abundances are set to zero for those elements not included in the paper).
+ Cross Section Table set to vern:  Verner, Ferland, Korista, and Yakovlev 1996
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the data</span>
+<span class="c1">#</span>
+<span class="c1"># In this case we will explicitly set the background, RMF, and ARF in XSPEC</span>
+<span class="c1"># If all files are linked correctly, this is not necessary as XSPEC loads</span>
+<span class="c1"># the required files automatically</span>
+
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span> <span class="c1"># &lt;= just to be sure there is nothing in the way</span>
+
+<span class="n">olddir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;example_data/athena/&#39;</span><span class="p">)</span>
+
+<span class="n">sp</span> <span class="o">=</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Spectrum</span><span class="p">(</span><span class="s1">&#39;example-file.fak&#39;</span><span class="p">)</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">olddir</span><span class="p">)</span>
+
+<span class="c1"># NOTE: in our example case, the response file is linked directly</span>
+<span class="c1">#       from the spetral file. It is, of course, also possible to</span>
+<span class="c1">#       link these files manually. In PyXspec backround, RMF and</span>
+<span class="c1">#       ARF are all atributes of the &#39;Spectrum&#39; class instance.</span>
+<span class="c1">#</span>
+<span class="c1"># For example (setting background, RMF, and ARF explicitly):</span>
+<span class="c1">#</span>
+<span class="c1">#sp.background   = &#39;path/to/bg_file.bak&#39;</span>
+<span class="c1">#sp.response     = &#39;path/to/response_file.rmf&#39;</span>
+<span class="c1">#sp.response.arf = &#39;path/to/auxiliary_file.arf&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+1 spectrum  in use
+
+Spectral Data File: example-file.fak  Spectrum 1
+Net count rate (cts/s) for Spectrum:1  4.144e+00 +/- 9.104e-02
+ Assigned to Data Group 1 and Plot Group 1
+  Noticed Channels:  1-4096
+  Telescope: ATHENA+ Instrument: WFI  Channel Type: PI
+  Exposure Time: 500 sec
+ Using fit statistic: chi
+ Using Response (RMF) File            athenapp_ir_b4c_wfi_withfilter_fov40.0arcmin_avg.rsp for Source 1
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The loading above will have caused a few warning messages, but we can check whether</span>
+<span class="c1"># everything is now in place</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+1 file 1 spectrum
+Spectrum 1  Spectral Data File: example-file.fak
+Net count rate (cts/s) for Spectrum:1  4.144e+00 +/- 9.104e-02
+ Assigned to Data Group 1 and Plot Group 1
+  Noticed Channels:  1-4096
+  Telescope: ATHENA+ Instrument: WFI  Channel Type: PI
+  Exposure Time: 500 sec
+ Using fit statistic: chi
+ Using Response (RMF) File            athenapp_ir_b4c_wfi_withfilter_fov40.0arcmin_avg.rsp for Source 1
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the appropriate spectral range</span>
+<span class="n">sp</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s1">&#39;bad&#39;</span><span class="p">)</span>
+<span class="n">sp</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s1">&#39;**-1.0 10.0-**&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+  4096 channels (1,4096) noticed in spectrum #     1
+
+
+ignore:     0 channels ignored from  source number 1
+    93 channels (1-93) ignored in spectrum #     1
+  3080 channels (1017-4096) ignored in spectrum #     1
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># A final look to make sure everything is in place</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+1 file 1 spectrum
+Spectrum 1  Spectral Data File: example-file.fak
+Net count rate (cts/s) for Spectrum:1  4.122e+00 +/- 9.080e-02
+ Assigned to Data Group 1 and Plot Group 1
+  Noticed Channels:  94-1016
+  Telescope: ATHENA+ Instrument: WFI  Channel Type: PI
+  Exposure Time: 500 sec
+ Using fit statistic: chi
+ Using Response (RMF) File            athenapp_ir_b4c_wfi_withfilter_fov40.0arcmin_avg.rsp for Source 1
+
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="NOTE:">
+<h2>NOTE:<a class="headerlink" href="#NOTE:" title="Link to this heading">¶</a></h2>
+<p>From this point on we will use Python methods to visualise the data, as implemented in PlotXspec. However, XSpec’s normal visualisation can of course also still be used instead. For example, to make use of one of XSpec’s plotting windows, enter</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xspec</span><span class="o">.</span><span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;/xs&quot;</span>
+</pre></div>
+</div>
+<p>and then pass any of XSpec’s plotting arguments as strings to xspec.Plot, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xspec</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;ldata&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<span class="target" id="section-1"></span><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># A first look at the data</span>
+<span class="n">px</span><span class="o">.</span><span class="n">first_look</span><span class="p">(</span><span class="n">ymin</span><span class="o">=-</span><span class="mf">0.05</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span><span class="n">ylog</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="c1">#&lt;= several keyword arguments can be used,</span>
+              <span class="n">rebinsig</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">rebinbnum</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>        <span class="c1">#   to manipulate the plot</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_13_0.svg" src="_images/tutorial_usage_plotxspec_13_0.svg" /></div>
+</div>
+<p>We will now define a simple model and fit it to the data. For the model, we will use redshifted blackbody, modified by Galactic absorption.</p>
+<p>There are many ways to set the parameters in XSpec, and we show only the simplest example here. For a slightly more complex usage, please see section 3) of this notebook.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The simplest way to define a model in PyXspec</span>
+<span class="c1">#</span>
+<span class="c1"># We define the model components and then take a look</span>
+<span class="c1"># at the parameters we will need to set</span>
+
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span> <span class="c1"># &lt;= just to sure, remove any possible existing definitions</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s2">&quot;wabs*pow+gauss&quot;</span><span class="p">)</span> <span class="c1"># &lt;= the same model as used to create the spectrum</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+========================================================================
+Model wabs&lt;1&gt;*powerlaw&lt;2&gt; + gaussian&lt;3&gt; Source No.: 1   Active/On
+Model Model Component  Parameter  Unit     Value
+ par  comp
+   1    1   wabs       nH         10^22    1.00000      +/-  0.0
+   2    2   powerlaw   PhoIndex            1.00000      +/-  0.0
+   3    2   powerlaw   norm                1.00000      +/-  0.0
+   4    3   gaussian   LineE      keV      6.50000      +/-  0.0
+   5    3   gaussian   Sigma      keV      0.100000     +/-  0.0
+   6    3   gaussian   norm                1.00000      +/-  0.0
+________________________________________________________________________
+
+
+**************************************************************
+The wabs model is obsolete and is only included for comparison
+with historical results. The tbabs model should be used for
+the ISM or phabs for general photoelectric absorption.
+**************************************************************
+
+Fit statistic  : Chi-Squared              2.331898e+10     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              2.331898e+10     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now we set each of the parameters to an initial value.</span>
+<span class="c1"># We can access the models and the parameters by name:</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">wabs</span><span class="o">.</span><span class="n">nH</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">PhoIndex</span> <span class="o">=</span> <span class="mf">1.7</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">gaussian</span><span class="o">.</span><span class="n">LineE</span> <span class="o">=</span> <span class="mf">6.4</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">gaussian</span><span class="o">.</span><span class="n">Sigma</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">gaussian</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># If we want to freeze one of the parameters using</span>
+<span class="c1"># this syntax, we could specify, e.g.:</span>
+<span class="c1">#</span>
+<span class="c1"># mod.gaussian.LineE.frozen = True</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Fit statistic  : Chi-Squared              1.492560e+11     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              1.492560e+11     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+
+Fit statistic  : Chi-Squared              1.046520e+11     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              1.046520e+11     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+
+Fit statistic  : Chi-Squared              3.624626e+09     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              3.624626e+09     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+
+Fit statistic  : Chi-Squared              2.904268e+09     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              2.904268e+09     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+
+Fit statistic  : Chi-Squared              2.904268e+09     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              2.904268e+09     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+
+Fit statistic  : Chi-Squared              1.161918e+10     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              1.161918e+10     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let us have another look at the model, to make sure</span>
+<span class="c1"># all parameters are set</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Parameters defined:
+========================================================================
+Model wabs&lt;1&gt;*powerlaw&lt;2&gt; + gaussian&lt;3&gt; Source No.: 1   Active/On
+Model Model Component  Parameter  Unit     Value
+ par  comp
+   1    1   wabs       nH         10^22    1.00000E-02  +/-  0.0
+   2    2   powerlaw   PhoIndex            1.70000      +/-  0.0
+   3    2   powerlaw   norm                1.00000E-04  +/-  0.0
+   4    3   gaussian   LineE      keV      6.40000      +/-  0.0
+   5    3   gaussian   Sigma      keV      0.100000     +/-  0.0
+   6    3   gaussian   norm                2.00000      +/-  0.0
+________________________________________________________________________
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now we can run the fit</span>
+
+<span class="c1"># some fitting meta-parameters</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">statMethod</span> <span class="o">=</span> <span class="s1">&#39;chi&#39;</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">nIterations</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="c1"># and run...</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Default fit statistic is set to: Chi-Squared
+   This will apply to all current and newly loaded spectra.
+
+Fit statistic  : Chi-Squared              1.161918e+10     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared              1.161918e+10     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 0.000000e+00 with 917 degrees of freedom
+ Current data and model not fit yet.
+                                   Parameters
+Chi-Squared  |beta|/N    Lvl          1:nH    2:PhoIndex        3:norm       4:LineE       5:Sigma        6:norm
+1961.41      181916       -2   4.40138e-05      -1.63105   1.78908e-09       6.40276      0.110236   0.000173015
+1559.05      1.09745e+07   0   1.80951e-05      -2.34265   4.07536e-06       6.40249     0.0979004   0.000139696
+1395.23      1.64224e+07  -1   1.96220e-06      -2.18473   5.00389e-06       6.39852     0.0450599   7.49894e-05
+1254.26      6.93285e+06  -2      0.703929      -1.26069   1.37771e-05       6.40547    0.00592810   7.58803e-05
+1059.86      2.72192e+06  -1       1.98195      -1.08361   2.90103e-05       6.39738     0.0246127   7.72186e-05
+969.415      1.04882e+06  -1       1.84725     -0.859584   4.69524e-05       6.39913     0.0114638   7.37496e-05
+909.87       491921       -1       2.62606     -0.683156   7.00728e-05       6.39889   0.000704602   7.32513e-05
+867.103      307533       -1       2.92314     -0.508061   9.90646e-05       6.42506   0.000298386   7.59466e-05
+***Warning: Zero alpha-matrix diagonal element for parameter 5
+ Parameter 5 is pegged at 0.000298386 due to zero or negative pivot element, likely
+ caused by the fit being insensitive to the parameter.
+823.128      221796       -1       3.34644     -0.355361   0.000134767       6.39285   0.000298386   6.90574e-05
+792.057      145254       -1       3.67863     -0.213584   0.000176930       6.40283   0.000298386   7.55103e-05
+765.231      95620.8      -1       4.01163    -0.0852594   0.000226052       6.39624   0.000298386   7.46526e-05
+743.445      66032.7      -1       4.31574     0.0323554   0.000281990       6.40000   0.000298386   7.59472e-05
+725.226      46242.7      -1       4.60061      0.140447   0.000344608       6.40162   0.000298386   7.67607e-05
+710.917      33383.7      -1       4.86722      0.239973   0.000413764       6.40329   0.000298386   7.73171e-05
+696.856      24643        -1       5.11725      0.331745   0.000489176       6.39482   0.000298386   7.62638e-05
+685.735      18664        -1       5.35086      0.416832   0.000570485       6.39835   0.000298386   7.80253e-05
+676.219      14127.3      -1       5.56997      0.495906   0.000657374       6.40108   0.000298386   7.88673e-05
+668.879      10998        -1       5.77627      0.569454   0.000749523       6.40291   0.000298386   7.94602e-05
+660.941      8802.55      -1       5.97102      0.637874   0.000846522       6.39601   0.000298386   7.86237e-05
+654.769      7145.26      -1       6.15400      0.701855   0.000947905       6.39917   0.000298386   8.01245e-05
+649.393      5634.09      -1       6.32625      0.761844    0.00105329       6.40105   0.000298386   8.09064e-05
+645.597      4613.84      -1       6.48955      0.818025    0.00116239       6.40293   0.000298386   8.13873e-05
+640.559      4183.14      -1       6.64451      0.870640    0.00127473       6.39588   0.000298386   8.04192e-05
+636.903      3506.75      -1       6.79062      0.920203    0.00138986       6.39871   0.000298386   8.19025e-05
+633.676      2707.47      -1       6.92876      0.966977    0.00150746       6.40080   0.000298386   8.25869e-05
+631.395      2283.5       -1       7.06028       1.01104    0.00162730       6.40270   0.000298386   8.29968e-05
+629.3        2220.23      -2       7.96930       1.30301    0.00244680       6.39758   0.000298386   8.46283e-05
+616.155      10958.4      -2       8.55666       1.49303    0.00348696       6.40038   0.000298386   8.70425e-05
+608.671      5688.4       -2       8.96523       1.62022    0.00448151       6.40242   0.000298386   8.83221e-05
+605.743      2221.71      -2       9.26615       1.71234    0.00533053       6.40138   0.000298386   8.87219e-05
+605.576      1286.91       0       9.24616       1.71003    0.00536412       6.40238   0.000298386   8.90374e-05
+605.258      317.853      -1       9.27969       1.71790    0.00546268       6.40188   0.000298386   8.88857e-05
+605.258      297.897      11       9.27969       1.71790    0.00546268       6.40188   0.000298386   8.88857e-05
+605.252      248.391       0       9.27992       1.71797    0.00546374       6.40210   6.71861e-05   8.89162e-05
+======================================================================
+ Variances and Principal Axes
+                 1        2        3        4        5        6
+ 2.2767E-10| -0.0000  -0.0001   0.0075  -0.0000   0.0001   1.0000
+ 2.1686E-08| -0.0005  -0.0074   0.9999  -0.0001  -0.0001  -0.0075
+ 3.9956E-05| -0.0001   0.0002   0.0001   0.4195   0.9077  -0.0001
+ 2.3978E-03|  0.0016  -0.0067  -0.0001  -0.9077   0.4195  -0.0000
+ 7.5447E-03|  0.2426  -0.9701  -0.0071   0.0064  -0.0027  -0.0000
+ 5.3760E-01|  0.9701   0.2426   0.0023  -0.0000   0.0000   0.0000
+----------------------------------------------------------------------
+
+========================================================================
+  Covariance Matrix
+        1           2           3           4           5           6
+   5.064e-01   1.247e-01   1.200e-03  -3.881e-06   9.703e-06   8.322e-07
+   1.247e-01   3.873e-02   3.552e-04  -3.500e-05   1.607e-05   3.646e-07
+   1.200e-03   3.552e-04   3.310e-06  -2.045e-07   1.026e-07   3.001e-09
+  -3.881e-06  -3.500e-05  -2.045e-07   1.983e-03  -8.980e-04   9.205e-08
+   9.703e-06   1.607e-05   1.026e-07  -8.980e-04   4.550e-04  -4.523e-08
+   8.322e-07   3.646e-07   3.001e-09   9.205e-08  -4.523e-08   2.380e-10
+------------------------------------------------------------------------
+
+========================================================================
+Model wabs&lt;1&gt;*powerlaw&lt;2&gt; + gaussian&lt;3&gt; Source No.: 1   Active/On
+Model Model Component  Parameter  Unit     Value
+ par  comp
+   1    1   wabs       nH         10^22    9.27992      +/-  0.711625
+   2    2   powerlaw   PhoIndex            1.71797      +/-  0.196798
+   3    2   powerlaw   norm                5.46374E-03  +/-  1.81938E-03
+   4    3   gaussian   LineE      keV      6.40210      +/-  4.45308E-02
+   5    3   gaussian   Sigma      keV      6.71861E-05  +/-  2.13313E-02
+   6    3   gaussian   norm                8.89162E-05  +/-  1.54284E-05
+________________________________________________________________________
+
+
+Fit statistic  : Chi-Squared                  605.25     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+
+Test statistic : Chi-Squared                  605.25     using 923 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1
+
+ Null hypothesis probability of 1.00e+00 with 917 degrees of freedom
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># With the fit completed, we can access the usual functionalities in XSpec</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">(</span><span class="s2">&quot;1.0,10.0&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ Model Flux 0.0015144 photons (1.3645e-11 ergs/cm^2/s) range (1.0000 - 10.000 keV)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Should we want to look at the scaling factor from rate to flux, we could do the following</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;scaling rate (1-10keV) = </span><span class="si">{</span><span class="n">sp</span><span class="o">.</span><span class="n">flux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">sp</span><span class="o">.</span><span class="n">rate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.3e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+scaling rate (1-10keV) = 3.310e-12
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># And we can look at the resulting fit</span>
+<span class="n">px</span><span class="o">.</span><span class="n">plot_model_and_data</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span><span class="n">rebinsig</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">rebinbnum</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_22_0.svg" src="_images/tutorial_usage_plotxspec_22_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># If we, e.g., would like to look at the unfolded spectrum,</span>
+<span class="c1"># we can specify the &#39;plottype&#39; keyword argument.</span>
+<span class="n">px</span><span class="o">.</span><span class="n">plot_model_and_data</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">9e-7</span><span class="p">,</span><span class="n">rebinsig</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">rebinbnum</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span><span class="n">plottype</span><span class="o">=</span><span class="s1">&#39;unfolded&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_23_0.svg" src="_images/tutorial_usage_plotxspec_23_0.svg" /></div>
+</div>
+<p>PlotXspec also includes two methods to print a quick overview of the fitting results to screen: print_model_results() &amp; print_errors(). The print_errors method requires the user to specify the <span class="math notranslate nohighlight">\(\chi^2\)</span> level for which the errors should be calculated. Of course, if the overall <span class="math notranslate nohighlight">\(\chi^2\)</span> statistic for the fit is too high, no error can be calculated (as XSpec raises an exception).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">print_model_results</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Components of model  for data group 1:
+1   wabs              nH            9.27992e+00 +/- 7.11625e-01  10^22
+2   powerlaw          PhoIndex      1.71797e+00 +/- 1.96798e-01
+3   powerlaw          norm          5.46374e-03 +/- 1.81938e-03
+4   gaussian          LineE         6.40210e+00 +/- 4.45308e-02    keV
+5   gaussian          Sigma         6.71861e-05 +/- 2.13313e-02    keV
+6   gaussian          norm          8.89162e-05 +/- 1.54284e-05
+---
+Fit statistic: chi
+Test statistic: 605.25
+Reduced chi-squared: 605.25/917 = 0.66
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">print_errors</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Components of model  for data group 1:
+1   wabs       nH         9.280e+00 (-)-5.929e-01 (+)1.251e+00
+2   powerlaw   PhoIndex   1.991e+00 (-)2.080e-01 (+)2.220e-01
+3   powerlaw   norm       8.677e-03 (-)2.566e-03 (+)3.946e-03
+Continue error search in this direction? 4   gaussian   LineE      6.402e+00 (-)1.550e-02 (+)4.946e-05
+5   gaussian   Sigma      1.459e-05 (-)-5.000e-01 (+)-1.459e-05Continue error search in this direction? Continue error search in this direction?
+6   gaussian   norm       9.227e-05 (-)1.543e-05 (+)1.523e-05
+</pre></div></div>
+</div>
+<section id="2)-Further-Plotting-Examples">
+<h3>2) Further Plotting Examples<a class="headerlink" href="#2)-Further-Plotting-Examples" title="Link to this heading">¶</a></h3>
+<p>In some cases, it can be usefule to explore the parameter space of a model, to get a better understanding of the distribution of <span class="math notranslate nohighlight">\(\chi^2\)</span>, and therefore of the uncertainties. We can do this with steppar. The command for steppar is passed as a string and is the same as it would be in XSpec (we can see what the indices are for the model parameters of interest using e.g. the output of print_model_results or xspec.AllModels.show() ).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># when running in Jupyer notebooks, it can be helpful to reduce the log-output here (especially for steppar)</span>
+<span class="c1"># -- BXA&#39;s &#39;XSilence&#39; method is helpful for this too --</span>
+<span class="n">xchat</span> <span class="o">=</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span>    <span class="o">=</span> <span class="mi">0</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># run steppar and plot. Here we vary parameters 1 (nH) and 2 (Gamma)</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">steppar</span><span class="p">(</span><span class="s1">&#39;1 7.5 15.5 50 2 1.15 2.9 50&#39;</span><span class="p">)</span>
+<span class="n">px</span><span class="o">.</span><span class="n">plot_chisq_contours</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_30_0.svg" src="_images/tutorial_usage_plotxspec_30_0.svg" /></div>
+</div>
+<p>If it is only a single parameter we are interested in, we should consider the 1-dimensional <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. By passing the best-fit value of a particular parameter (in the example below: kT), we can get an estimate on the error in this way.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">par</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">powerlaw</span><span class="o">.</span><span class="n">PhoIndex</span>   <span class="c1">#&lt;= the parameter of interest</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">steppar</span><span class="p">(</span><span class="s1">&#39;2 1.2 2.9 1000&#39;</span><span class="p">)</span>
+<span class="n">px</span><span class="o">.</span><span class="n">calc_error_from_1Dchisq</span><span class="p">(</span><span class="n">par</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Resulting uncertainties: 1.99438e+00 (-) 4.77872e-04 (+) 1.35522e-01
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_32_1.svg" src="_images/tutorial_usage_plotxspec_32_1.svg" /></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># set XSpec&#39;s outbut levels back to their original values</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span> <span class="o">=</span> <span class="n">xchat</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note that the error value is above is different from the initial estimate shown in the</span>
+<span class="c1"># fitting results overview (see output below). This is because the method used above</span>
+<span class="c1"># provided a different (more refined) approach for the calculation of the uncertainties</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Parameters defined:
+========================================================================
+Model wabs&lt;1&gt;*powerlaw&lt;2&gt; + gaussian&lt;3&gt; Source No.: 1   Active/On
+Model Model Component  Parameter  Unit     Value
+ par  comp
+   1    1   wabs       nH         10^22    10.2035      +/-  0.778187
+   2    2   powerlaw   PhoIndex            1.99438      +/-  0.211870
+   3    2   powerlaw   norm                8.72635E-03  +/-  3.12319E-03
+   4    3   gaussian   LineE      keV      6.38855      +/-  1.27792E-02
+   5    3   gaussian   Sigma      keV      1.45915E-05  +/-  -1.00000
+   6    3   gaussian   norm                9.22690E-05  +/-  1.53991E-05
+________________________________________________________________________
+
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3)-More-detailed-fitting-example-(XMM-Newton:-pn,-MOS1,-and-MOS2)">
+<h3>3) More detailed fitting example (XMM-Newton: pn, MOS1, and MOS2)<a class="headerlink" href="#3)-More-detailed-fitting-example-(XMM-Newton:-pn,-MOS1,-and-MOS2)" title="Link to this heading">¶</a></h3>
+<p>When fitting multiple datasets simultaneously, we need to slightly adjust our fitting procedure. In the following we will load XMM-Newton data from all three EPIC instruments. To account for a possible offset in the flux level between the spectra, we will multiply our model with a constant factor, which will be allowed to vary among the spectra. All other model parameters will remain tied.</p>
+<p>The example data used here are for an AGN showing intrinsic obscuration and a weak Iron K<span class="math notranslate nohighlight">\(\alpha\)</span> line. We will fit these data with a redshifted power-law model, modified with both intrinsic and Galactic absorption.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the data</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">olddir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;example_data/xmm/&#39;</span><span class="p">)</span>
+
+<span class="n">epicfn</span> <span class="o">=</span> <span class="s1">&#39;epic_pn_agn.fak&#39;</span>
+<span class="n">mos1fn</span> <span class="o">=</span> <span class="s1">&#39;epic_mos1_agn.fak&#39;</span>
+<span class="n">mos2fn</span> <span class="o">=</span> <span class="s1">&#39;epic_mos2_agn.fak&#39;</span>
+
+<span class="c1"># load into different data groups</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;1:1 </span><span class="si">{</span><span class="n">epicfn</span><span class="si">}</span><span class="s2"> 2:2 </span><span class="si">{</span><span class="n">mos1fn</span><span class="si">}</span><span class="s2"> 3:3 </span><span class="si">{</span><span class="n">mos2fn</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">olddir</span><span class="p">)</span>
+
+<span class="c1"># Spectral range</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="o">.</span><span class="n">notice</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s1">&#39;bad&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">xspec</span><span class="o">.</span><span class="n">AllData</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s1">&#39;**-0.2 10.0-**&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+***Warning: Detected response matrix energy bin value = 0 (or neg).
+     XSPEC will instead use small finite value (response file will not be altered).
+***Warning: Detected response matrix energy bin value = 0 (or neg).
+     XSPEC will instead use small finite value (response file will not be altered).
+
+3 spectra  in use
+
+Spectral Data File: epic_pn_agn.fak  Spectrum 1
+Net count rate (cts/s) for Spectrum:1  6.544e-02 +/- 1.144e-03
+ Assigned to Data Group 1 and Plot Group 1
+  Noticed Channels:  1-4096
+  Telescope: XMM Instrument: EPN  Channel Type: PI
+  Exposure Time: 5e+04 sec
+ Using fit statistic: chi
+ Using Response (RMF) File            epic_pn.rsp for Source 1
+
+Spectral Data File: epic_mos1_agn.fak  Spectrum 2
+Net count rate (cts/s) for Spectrum:2  6.234e-02 +/- 1.117e-03
+ Assigned to Data Group 2 and Plot Group 2
+  Noticed Channels:  1-800
+  Telescope: XMM Instrument: EMOS1  Channel Type: PI
+  Exposure Time: 5e+04 sec
+ Using fit statistic: chi
+ Using Response (RMF) File            epic_mos1.rsp for Source 1
+
+Spectral Data File: epic_mos2_agn.fak  Spectrum 3
+Net count rate (cts/s) for Spectrum:3  6.182e-02 +/- 1.112e-03
+ Assigned to Data Group 3 and Plot Group 3
+  Noticed Channels:  1-800
+  Telescope: XMM Instrument: EMOS2  Channel Type: PI
+  Exposure Time: 5e+04 sec
+ Using fit statistic: chi
+ Using Response (RMF) File            epic_mos2.rsp for Source 1
+
+  4096 channels (1,4096) noticed in spectrum #     1
+   800 channels (1,800) noticed in spectrum #     2
+   800 channels (1,800) noticed in spectrum #     3
+
+All channels noticed
+
+ignore:     0 channels ignored from  source number 2
+ignore:     0 channels ignored from  source number 3
+ignore:     0 channels ignored from  source number 1
+    38 channels (1-38) ignored in spectrum #     1
+  2097 channels (2000-4096) ignored in spectrum #     1
+
+    14 channels (1-14) ignored in spectrum #     2
+   134 channels (667-800) ignored in spectrum #     2
+
+    14 channels (1-14) ignored in spectrum #     3
+   134 channels (667-800) ignored in spectrum #     3
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># A first look at the data</span>
+<span class="n">px</span><span class="o">.</span><span class="n">first_look</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span><span class="n">rebinsig</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">rebinbnum</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_39_0.svg" src="_images/tutorial_usage_plotxspec_39_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set all necessary parameters in XSpec &amp; define the model</span>
+<span class="c1">#</span>
+<span class="c1"># In the simulated data, there is an offset in flux between the pn and the</span>
+<span class="c1"># MOS1 &amp; MOS2 spectra. We will account for this using multiplicative</span>
+<span class="c1"># constant in the model. In the model definition, we need to make sure only</span>
+<span class="c1"># the &#39;constant&#39; factor is allowed to vary for the MOS1 &amp; MOS2 spectra,</span>
+<span class="c1"># w.r.t. the pn spectrum. All other parameters should remain tied together.</span>
+
+<span class="c1">## initial settings</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">abund</span> <span class="o">=</span> <span class="s1">&#39;wilm&#39;</span> <span class="c1"># Wilms et al. &#39;00&#39;</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">xsect</span> <span class="o">=</span> <span class="s1">&#39;vern&#39;</span> <span class="c1"># Verner et al. &#39;96&#39;</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">cosmo</span> <span class="o">=</span> <span class="s1">&#39;70 0 0.73&#39;</span>
+
+<span class="n">z_opt</span> <span class="o">=</span> <span class="mf">0.015</span> <span class="c1"># assume this is known</span>
+
+<span class="n">xspec</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">statMethod</span> <span class="o">=</span> <span class="s1">&#39;chi&#39;</span>
+
+<span class="c1">## define model</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;constant(zTBabs*(zpowerlw))&quot;</span><span class="p">)</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># &lt;= we explicitly set mod to the first of the models</span>
+                          <span class="c1">#   (XSspec has now loaded three, one for each spectrum)</span>
+
+<span class="c1"># Let us have a first look</span>
+<span class="c1"># xspec.AllModels.show() # &lt;= only necessary if the model is not automatically printed below</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ Solar Abundance Vector set to wilm:  Wilms, J., Allen, A. &amp; McCray, R. ApJ 542 914 (2000) (abundances are set to zero for those elements not included in the paper).
+ Cross Section Table set to vern:  Verner, Ferland, Korista, and Yakovlev 1996
+Default fit statistic is set to: Chi-Squared
+   This will apply to all current and newly loaded spectra.
+
+========================================================================
+Model constant&lt;1&gt;(zTBabs&lt;2&gt;*zpowerlw&lt;3&gt;) Source No.: 1   Active/On
+Model Model Component  Parameter  Unit     Value
+ par  comp
+                           Data group: 1
+   1    1   constant   factor              1.00000      +/-  0.0
+   2    2   zTBabs     nH         10^22    1.00000      +/-  0.0
+   3    2   zTBabs     Redshift            0.0          frozen
+   4    3   zpowerlw   PhoIndex            1.00000      +/-  0.0
+   5    3   zpowerlw   Redshift            0.0          frozen
+   6    3   zpowerlw   norm                1.00000      +/-  0.0
+                           Data group: 2
+   7    1   constant   factor              1.00000      = p1
+   8    2   zTBabs     nH         10^22    1.00000      = p2
+   9    2   zTBabs     Redshift            0.0          = p3
+  10    3   zpowerlw   PhoIndex            1.00000      = p4
+  11    3   zpowerlw   Redshift            0.0          = p5
+  12    3   zpowerlw   norm                1.00000      = p6
+                           Data group: 3
+  13    1   constant   factor              1.00000      = p1
+  14    2   zTBabs     nH         10^22    1.00000      = p2
+  15    2   zTBabs     Redshift            0.0          = p3
+  16    3   zpowerlw   PhoIndex            1.00000      = p4
+  17    3   zpowerlw   Redshift            0.0          = p5
+  18    3   zpowerlw   norm                1.00000      = p6
+________________________________________________________________________
+
+tbvabs Version 2.3
+Cosmic absorption with grains and H2, modified from
+Wilms, Allen, &amp; McCray, 2000, ApJ 542, 914-924
+Questions: Joern Wilms
+joern.wilms@sternwarte.uni-erlangen.de
+joern.wilms@fau.de
+
+http://pulsar.sternwarte.uni-erlangen.de/wilms/research/tbabs/
+
+PLEASE NOTICE:
+To get the model described by the above paper
+you will also have to set the abundances:
+   abund wilm
+
+Note that this routine ignores the current cross section setting
+as it always HAS to use the Verner cross sections as a baseline.
+
+Fit statistic  : Chi-Squared              2.943398e+06     using 1961 bins, spectrum 1, group 1.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+                 Chi-Squared              4.285963e+06     using 652 bins, spectrum 2, group 2.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 2
+                 Chi-Squared              4.303828e+06     using 652 bins, spectrum 3, group 3.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 3
+Total fit statistic                       1.153319e+07     with 3261 d.o.f.
+
+Test statistic : Chi-Squared              1.153319e+07     using 3265 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1 2 3
+
+ Null hypothesis probability of 0.000000e+00 with 3261 degrees of freedom
+ Current data and model not fit yet.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Silence XSpec for the moment...</span>
+<span class="n">xchat</span> <span class="o">=</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span>    <span class="o">=</span> <span class="mi">0</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># Set parameter definitions</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">constant</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">values</span>   <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>                           <span class="c1">#&lt;= note the different notation here;</span>
+                                                                <span class="c1">#   1 is the initial value, -1 means frozen</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">zTBabs</span><span class="o">.</span><span class="n">Redshift</span><span class="o">.</span><span class="n">values</span>   <span class="o">=</span> <span class="p">(</span><span class="n">z_opt</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">zTBabs</span><span class="o">.</span><span class="n">nH</span><span class="o">.</span><span class="n">values</span>         <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">)</span> <span class="c1">#&lt;= standard XSpec syntax for parameter definition</span>
+
+<span class="n">mod</span><span class="o">.</span><span class="n">zpowerlw</span><span class="o">.</span><span class="n">PhoIndex</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">)</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">zpowerlw</span><span class="o">.</span><span class="n">Redshift</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_opt</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">zpowerlw</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">values</span>     <span class="o">=</span> <span class="p">(</span><span class="mf">1.e-1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.e-5</span><span class="p">,</span> <span class="mf">1.e-5</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">)</span>
+
+<span class="c1"># Below we untie the model parameters for the MOS data. As noted,</span>
+<span class="c1"># there are in fact three models (one per data group). In PyXspec</span>
+<span class="c1"># we can access each model by its index in the AllModels object.</span>
+<span class="c1"># Below, we first untie the contant parameter from its counterpart</span>
+<span class="c1"># in the first model and then unfreeze it, by giving it a possible</span>
+<span class="c1"># range of values.</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">constant</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">untie</span><span class="p">()</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">constant</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">constant</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">untie</span><span class="p">()</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">constant</span><span class="o">.</span><span class="n">factor</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># ... and show XSpec output again</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">chatter</span><span class="p">,</span> <span class="n">xspec</span><span class="o">.</span><span class="n">Xset</span><span class="o">.</span><span class="n">logChatter</span> <span class="o">=</span> <span class="n">xchat</span>
+
+<span class="c1"># Let&#39;s have another look at the models now</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">AllModels</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Parameters defined:
+========================================================================
+Model constant&lt;1&gt;(zTBabs&lt;2&gt;*zpowerlw&lt;3&gt;) Source No.: 1   Active/On
+Model Model Component  Parameter  Unit     Value
+ par  comp
+                           Data group: 1
+   1    1   constant   factor              1.00000      frozen
+   2    2   zTBabs     nH         10^22    1.00000      +/-  0.0
+   3    2   zTBabs     Redshift            1.50000E-02  frozen
+   4    3   zpowerlw   PhoIndex            1.80000      +/-  0.0
+   5    3   zpowerlw   Redshift            1.50000E-02  frozen
+   6    3   zpowerlw   norm                0.100000     +/-  0.0
+                           Data group: 2
+   7    1   constant   factor              1.00000      +/-  0.0
+   8    2   zTBabs     nH         10^22    1.00000      = p2
+   9    2   zTBabs     Redshift            1.50000E-02  = p3
+  10    3   zpowerlw   PhoIndex            1.80000      = p4
+  11    3   zpowerlw   Redshift            1.50000E-02  = p5
+  12    3   zpowerlw   norm                0.100000     = p6
+                           Data group: 3
+  13    1   constant   factor              1.00000      +/-  0.0
+  14    2   zTBabs     nH         10^22    1.00000      = p2
+  15    2   zTBabs     Redshift            1.50000E-02  = p3
+  16    3   zpowerlw   PhoIndex            1.80000      = p4
+  17    3   zpowerlw   Redshift            1.50000E-02  = p5
+  18    3   zpowerlw   norm                0.100000     = p6
+________________________________________________________________________
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># now we can run the fit</span>
+<span class="n">xspec</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                                   Parameters
+Chi-Squared  |beta|/N    Lvl          2:nH    4:PhoIndex        6:norm      7:factor     13:factor
+2414.85      125          -3       1.01649       2.04219     0.0780821       1.07293       1.08391
+2411.68      169.882      -4       1.06261       2.09345     0.0831957       1.08686       1.10103
+2411.64      30.1453      -5       1.06119       2.09449     0.0832545       1.08887       1.10317
+2411.64      0.0665746    -6       1.06158       2.09488     0.0832932       1.08892       1.10324
+============================================================
+ Variances and Principal Axes
+                 2        4        6        7       13
+ 1.0167E-06|  0.0398   0.0692  -0.9961  -0.0268  -0.0268
+ 2.4296E-04|  0.7445  -0.6670  -0.0174   0.0104   0.0220
+ 5.0156E-04| -0.0071   0.0040   0.0003  -0.7136   0.7005
+ 1.6669E-03|  0.2722   0.2704   0.0647  -0.6459  -0.6568
+ 2.1798E-03|  0.6083   0.6908   0.0576   0.2697   0.2769
+------------------------------------------------------------
+
+============================================================
+  Covariance Matrix
+        1           2           3           4           5
+   1.065e-03   9.180e-04   1.025e-04   6.900e-05   7.068e-05
+   9.180e-04   1.270e-03   1.187e-04   1.119e-04   1.188e-04
+   1.025e-04   1.187e-04   1.530e-05  -3.596e-05  -3.605e-05
+   6.900e-05   1.119e-04  -3.596e-05   1.109e-03   6.193e-04
+   7.068e-05   1.188e-04  -3.605e-05   6.193e-04   1.133e-03
+------------------------------------------------------------
+
+========================================================================
+Model constant&lt;1&gt;(zTBabs&lt;2&gt;*zpowerlw&lt;3&gt;) Source No.: 1   Active/On
+Model Model Component  Parameter  Unit     Value
+ par  comp
+                           Data group: 1
+   1    1   constant   factor              1.00000      frozen
+   2    2   zTBabs     nH         10^22    1.06158      +/-  3.26316E-02
+   3    2   zTBabs     Redshift            1.50000E-02  frozen
+   4    3   zpowerlw   PhoIndex            2.09488      +/-  3.56397E-02
+   5    3   zpowerlw   Redshift            1.50000E-02  frozen
+   6    3   zpowerlw   norm                8.32932E-02  +/-  3.91112E-03
+                           Data group: 2
+   7    1   constant   factor              1.08892      +/-  3.33077E-02
+   8    2   zTBabs     nH         10^22    1.06158      = p2
+   9    2   zTBabs     Redshift            1.50000E-02  = p3
+  10    3   zpowerlw   PhoIndex            2.09488      = p4
+  11    3   zpowerlw   Redshift            1.50000E-02  = p5
+  12    3   zpowerlw   norm                8.32932E-02  = p6
+                           Data group: 3
+  13    1   constant   factor              1.10324      +/-  3.36528E-02
+  14    2   zTBabs     nH         10^22    1.06158      = p2
+  15    2   zTBabs     Redshift            1.50000E-02  = p3
+  16    3   zpowerlw   PhoIndex            2.09488      = p4
+  17    3   zpowerlw   Redshift            1.50000E-02  = p5
+  18    3   zpowerlw   norm                8.32932E-02  = p6
+________________________________________________________________________
+
+
+Fit statistic  : Chi-Squared                 1208.72     using 1961 bins, spectrum 1, group 1.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 1
+                 Chi-Squared                  630.54     using 652 bins, spectrum 2, group 2.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 2
+                 Chi-Squared                  572.37     using 652 bins, spectrum 3, group 3.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number: 3
+Total fit statistic                          2411.64     with 3260 d.o.f.
+
+Test statistic : Chi-Squared                 2411.64     using 3265 bins.
+
+***Warning: Chi-square may not be valid due to bins with zero variance
+            in spectrum number(s): 1 2 3
+
+ Null hypothesis probability of 1.00e+00 with 3260 degrees of freedom
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ... and plot the results</span>
+<span class="n">px</span><span class="o">.</span><span class="n">plot_model_and_data</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">rebinsig</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">rebinbnum</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_43_0.svg" src="_images/tutorial_usage_plotxspec_43_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># or if we want to look at e.g. only the MOS1 spectrum</span>
+<span class="n">px</span><span class="o">.</span><span class="n">plot_model_and_data</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">idsp</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">rebinsig</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/tutorial_usage_plotxspec_44_0.svg" src="_images/tutorial_usage_plotxspec_44_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># A quick overview of the fit results</span>
+<span class="n">px</span><span class="o">.</span><span class="n">print_model_results</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Components of model  for data group 1:
+1   constant          factor        1.00000e+00 +/- 0.00000e+00
+2   zTBabs            nH            1.06158e+00 +/- 3.26316e-02  10^22
+3   zTBabs            Redshift      1.50000e-02 +/- 0.00000e+00
+4   zpowerlw          PhoIndex      2.09488e+00 +/- 3.56397e-02
+5   zpowerlw          Redshift      1.50000e-02 +/- 0.00000e+00
+6   zpowerlw          norm          8.32932e-02 +/- 3.91112e-03
+---
+Fit statistic: chi
+Test statistic: 2411.64
+Reduced chi-squared: 2411.64/3260 = 0.74
+
+Components of model  for data group 2:
+7   constant          factor        1.08892e+00 +/- 3.33077e-02
+8   zTBabs            nH            1.06158e+00 +/- 0.00000e+00  10^22
+9   zTBabs            Redshift      1.50000e-02 +/- 0.00000e+00
+10  zpowerlw          PhoIndex      2.09488e+00 +/- 0.00000e+00
+11  zpowerlw          Redshift      1.50000e-02 +/- 0.00000e+00
+12  zpowerlw          norm          8.32932e-02 +/- 0.00000e+00
+---
+Fit statistic: chi
+Test statistic: 2411.64
+Reduced chi-squared: 2411.64/3260 = 0.74
+
+Components of model  for data group 3:
+13  constant          factor        1.10324e+00 +/- 3.36528e-02
+14  zTBabs            nH            1.06158e+00 +/- 0.00000e+00  10^22
+15  zTBabs            Redshift      1.50000e-02 +/- 0.00000e+00
+16  zpowerlw          PhoIndex      2.09488e+00 +/- 0.00000e+00
+17  zpowerlw          Redshift      1.50000e-02 +/- 0.00000e+00
+18  zpowerlw          norm          8.32932e-02 +/- 0.00000e+00
+---
+Fit statistic: chi
+Test statistic: 2411.64
+Reduced chi-squared: 2411.64/3260 = 0.74
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ... and of the errors</span>
+<span class="n">px</span><span class="o">.</span><span class="n">print_errors</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Components of model  for data group 1:
+1   constant   factor     1.000e+00 (-)0.000e+00 (+)0.000e+00
+2   zTBabs     nH         1.062e+00 (-)3.108e-02 (+)3.211e-02
+3   zTBabs     Redshift   1.500e-02 (-)0.000e+00 (+)0.000e+00
+4   zpowerlw   PhoIndex   2.095e+00 (-)3.591e-02 (+)3.649e-02
+5   zpowerlw   Redshift   1.500e-02 (-)0.000e+00 (+)0.000e+00
+6   zpowerlw   norm       8.329e-02 (-)3.744e-03 (+)3.944e-03
+
+Components of model  for data group 2:
+7   constant   factor     1.089e+00 (-)3.291e-02 (+)3.403e-02
+8   zTBabs     nH         1.062e+00 (-)0.000e+00 (+)0.000e+00
+9   zTBabs     Redshift   1.500e-02 (-)0.000e+00 (+)0.000e+00
+10  zpowerlw   PhoIndex   2.095e+00 (-)0.000e+00 (+)0.000e+00
+11  zpowerlw   Redshift   1.500e-02 (-)0.000e+00 (+)0.000e+00
+12  zpowerlw   norm       8.329e-02 (-)0.000e+00 (+)0.000e+00
+
+Components of model  for data group 3:
+13  constant   factor     1.103e+00 (-)3.328e-02 (+)3.441e-02
+14  zTBabs     nH         1.062e+00 (-)0.000e+00 (+)0.000e+00
+15  zTBabs     Redshift   1.500e-02 (-)0.000e+00 (+)0.000e+00
+16  zpowerlw   PhoIndex   2.095e+00 (-)0.000e+00 (+)0.000e+00
+17  zpowerlw   Redshift   1.500e-02 (-)0.000e+00 (+)0.000e+00
+18  zpowerlw   norm       8.329e-02 (-)0.000e+00 (+)0.000e+00
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BXA (Bayesian X-ray Analysis)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sherpa-analysis.html">Sherpa with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec-analysis.html">Xspec with BXA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Learn more</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisations.html">Visualisations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engine.html">Inference engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convenience.html">Convenience features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background-models.html">Empirical background models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pca-background-models.html">PCA-based background models</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial_usage_plotbxa.html" title="previous chapter">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2013-2022, Johannes Buchner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/tutorial_usage_plotxspec.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

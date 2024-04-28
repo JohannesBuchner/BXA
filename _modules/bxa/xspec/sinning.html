@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec.sinning &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
+    <title>bxa.xspec.sinning &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=d151bdce"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -48,8 +47,10 @@
 <span class="kn">import</span> <span class="nn">tqdm</span>
 
 
-<div class="viewcode-block" id="group_adapt"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.sinning.group_adapt">[docs]</a><span class="k">def</span> <span class="nf">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">nmin</span> <span class="o">=</span> <span class="mi">20</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="group_adapt">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.sinning.group_adapt">[docs]</a>
+<span class="k">def</span> <span class="nf">group_adapt</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">nmin</span> <span class="o">=</span> <span class="mi">20</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Adaptive grouping into nmin count bins.</span>
 <span class="sd">	</span>
 <span class="sd">	Args:</span>
@@ -75,8 +76,11 @@
 		<span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="binning"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.sinning.binning">[docs]</a><span class="k">def</span> <span class="nf">binning</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">nmin</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Bins the data for plotting and checks the model.</span>
+
+<div class="viewcode-block" id="binning">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.sinning.binning">[docs]</a>
+<span class="k">def</span> <span class="nf">binning</span><span class="p">(</span><span class="n">outputfiles_basename</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">nmin</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Bins the data for plotting and checks the model.</span>
 
 <span class="sd">	Using the gof module, computes a Poisson goodness-of-fit range,</span>
 <span class="sd">	i.e. ranges where the model must lie. This is done for multiple</span>
@@ -139,7 +143,7 @@
 		<span class="c1">#exp(numpy.log(stats[stats[:,0] == n][:,2]).sum()) * (stats[:,0] == n).sum() </span>
 		<span class="c1">#		for n in sorted(set(stats[:,0]))]))</span>
 		<span class="n">nstats</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="n">stats</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
-		<span class="n">pxlo</span> <span class="o">=</span> <span class="n">xlo</span><span class="p">[(</span><span class="n">nstats</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">int</span><span class="p">)]</span>
+		<span class="n">pxlo</span> <span class="o">=</span> <span class="n">xlo</span><span class="p">[(</span><span class="n">nstats</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span>
 		<span class="n">pxhi</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">pxlo</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="n">xdata</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
 	
 		<span class="c1"># so far so good.</span>
@@ -181,6 +185,7 @@
 		<span class="n">xlim</span> <span class="o">=</span> <span class="p">(</span><span class="n">xlo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xhi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
 		<span class="n">ylim</span> <span class="o">=</span> <span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">),</span>
 	<span class="p">)</span></div>
+
 </pre></div>
 
           </div>
@@ -220,6 +225,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -259,8 +266,8 @@
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

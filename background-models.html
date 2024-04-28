@@ -1,19 +1,18 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Empirical background models &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>Empirical background models &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=d151bdce"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="PCA-based background models" href="pca-background-models.html" />
@@ -37,7 +36,7 @@
           <div class="body" role="main">
             
   <section id="empirical-background-models">
-<h1>Empirical background models<a class="headerlink" href="#empirical-background-models" title="Permalink to this heading">¶</a></h1>
+<h1>Empirical background models<a class="headerlink" href="#empirical-background-models" title="Link to this heading">¶</a></h1>
 <p>The advantages of using background spectral models is that more information
 can be extracted from low-count data, as correlations between bins and instrument behaviours are known.</p>
 <p>The <a class="reference internal" href="bxa.sherpa.background.html#module-bxa.sherpa.background" title="bxa.sherpa.background"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bxa.sherpa.background</span></code></a> module includes hand-crafted models to
@@ -49,7 +48,7 @@ The best-fit model can then be used to fit the source. Optionally,
 background parameters (such as the overall normalisation) can be varied with the source fit.</p>
 <p>You may also be interested in the <a class="reference external" href="pca-background-models">PCA models</a> for Chandra/ACIS, XMM/EPIC, Swift/XRT, NuSTAR/FPMA, RXTE observations.</p>
 <section id="empirical-models-for-xmm-epic">
-<h2>Empirical models for XMM/EPIC<a class="headerlink" href="#empirical-models-for-xmm-epic" title="Permalink to this heading">¶</a></h2>
+<h2>Empirical models for XMM/EPIC<a class="headerlink" href="#empirical-models-for-xmm-epic" title="Link to this heading">¶</a></h2>
 <p>An example for XMM is available at
 <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xmm/fit.py">https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xmm/fit.py</a></p>
 <dl class="py function">
@@ -66,7 +65,7 @@ background parameters (such as the overall normalisation) can be varied with the
 The citation is <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2012A&amp;A...546A.109M/abstract">Maggi P., et al., 2014, A&amp;A, 561, AA76</a>.</p>
 </section>
 <section id="empirical-models-for-swift-xrt-and-chandra-acis">
-<h2>Empirical models for Swift/XRT and Chandra/ACIS<a class="headerlink" href="#empirical-models-for-swift-xrt-and-chandra-acis" title="Permalink to this heading">¶</a></h2>
+<h2>Empirical models for Swift/XRT and Chandra/ACIS<a class="headerlink" href="#empirical-models-for-swift-xrt-and-chandra-acis" title="Link to this heading">¶</a></h2>
 <p>An example for Swift/XRT is available at
 <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/swift/fit.py">https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/swift/fit.py</a></p>
 <p>First define which background you want to use and where you want to store intermediate results:</p>
@@ -107,7 +106,7 @@ The citation is <a class="reference external" href="https://ui.adsabs.harvard.ed
 
 </section>
 <section id="if-the-fit-is-bad">
-<h2>If the fit is bad<a class="headerlink" href="#if-the-fit-is-bad" title="Permalink to this heading">¶</a></h2>
+<h2>If the fit is bad<a class="headerlink" href="#if-the-fit-is-bad" title="Link to this heading">¶</a></h2>
 <p>Try another method (e.g., PCA models, or fall back to Wstat statistics).</p>
 </section>
 </section>
@@ -150,6 +149,8 @@ The citation is <a class="reference external" href="https://ui.adsabs.harvard.ed
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -187,8 +188,8 @@ The citation is <a class="reference external" href="https://ui.adsabs.harvard.ed
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/background-models.rst.txt"

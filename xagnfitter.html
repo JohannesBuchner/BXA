@@ -1,22 +1,23 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Obscured Active Galactic Nuclei &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>Obscured Active Galactic Nuclei &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=d151bdce"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PlotBXA example – basic BXA usage &amp; additional plotting" href="tutorial_usage_plotbxa.html" />
     <link rel="prev" title="Example scripts" href="examples.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -37,7 +38,7 @@
           <div class="body" role="main">
             
   <section id="obscured-active-galactic-nuclei">
-<h1>Obscured Active Galactic Nuclei<a class="headerlink" href="#obscured-active-galactic-nuclei" title="Permalink to this heading">¶</a></h1>
+<h1>Obscured Active Galactic Nuclei<a class="headerlink" href="#obscured-active-galactic-nuclei" title="Link to this heading">¶</a></h1>
 <p>A script for fitting Active Galactic Nuclei is provided at
 <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py">xagnfitter.py</a>.
 This is the method used in Buchner+14, Buchner+15, Simmonds+17.</p>
@@ -67,7 +68,7 @@ This is the method used in Buchner+14, Buchner+15, Simmonds+17.</p>
 <p>I strongly recommend using the <a class="reference external" href="https://github.com/JohannesBuchner/BXA/blob/master/examples/sherpa/xagnfitter.py">xagnfitter</a>
 script instead of hardness ratios.</p>
 <section id="xagnfitter-py-script">
-<h2>xagnfitter.py script<a class="headerlink" href="#xagnfitter-py-script" title="Permalink to this heading">¶</a></h2>
+<h2>xagnfitter.py script<a class="headerlink" href="#xagnfitter-py-script" title="Link to this heading">¶</a></h2>
 <p>It is included verbatim below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -461,7 +462,7 @@ script instead of hardness ratios.</p>
 </div>
 </section>
 <section id="example-run">
-<h2>Example run<a class="headerlink" href="#example-run" title="Permalink to this heading">¶</a></h2>
+<h2>Example run<a class="headerlink" href="#example-run" title="Link to this heading">¶</a></h2>
 <p>You can try running this against the AGN spectrum provided in the examples/sherpa/chandra/ folder.</p>
 <p>The output should look something like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ WITHAPEC=0 MODELDIR=$HOME/Downloads/specmodels/ python3 ../xagnfitter.py
@@ -2114,6 +2115,8 @@ multiple_out_zspec_src_1.txt.gz
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -2121,6 +2124,7 @@ multiple_out_zspec_src_1.txt.gz
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="examples.html" title="previous chapter">Example scripts</a></li>
+      <li>Next: <a href="tutorial_usage_plotbxa.html" title="next chapter">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
   </ul></li>
 </ul>
 </div>
@@ -2150,8 +2154,8 @@ multiple_out_zspec_src_1.txt.gz
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/xagnfitter.rst.txt"

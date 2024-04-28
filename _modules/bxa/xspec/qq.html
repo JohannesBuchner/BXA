@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec.qq &#8212; BXA (Bayesian X-ray Analysis) 4.1.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
+    <title>bxa.xspec.qq &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=d151bdce"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -47,8 +46,10 @@
 <span class="kn">from</span> <span class="nn">xspec</span> <span class="kn">import</span> <span class="n">Plot</span>
 
 
-<div class="viewcode-block" id="KSstat"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.KSstat">[docs]</a><span class="k">def</span> <span class="nf">KSstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="KSstat">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.KSstat">[docs]</a>
+<span class="k">def</span> <span class="nf">KSstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Kolmogorov-Smirnov statistic: maximum deviance between data and model</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">modelc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span> <span class="o">/</span> <span class="n">model</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -56,8 +57,11 @@
 	<span class="n">ks</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">modelc</span> <span class="o">-</span> <span class="n">datac</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 	<span class="k">return</span> <span class="n">ks</span></div>
 
-<div class="viewcode-block" id="CvMstat"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.CvMstat">[docs]</a><span class="k">def</span> <span class="nf">CvMstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CvMstat">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.CvMstat">[docs]</a>
+<span class="k">def</span> <span class="nf">CvMstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Cramér–von Mises statistic: Takes all deviances into account</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">modelc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
@@ -66,8 +70,11 @@
 	<span class="n">cvm</span> <span class="o">=</span> <span class="p">((</span><span class="n">modelc</span> <span class="o">/</span> <span class="n">maxmodelc</span> <span class="o">-</span> <span class="n">datac</span> <span class="o">/</span> <span class="n">datac</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">model</span> <span class="o">/</span> <span class="n">maxmodelc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 	<span class="k">return</span> <span class="n">cvm</span></div>
 
-<div class="viewcode-block" id="ADstat"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.ADstat">[docs]</a><span class="k">def</span> <span class="nf">ADstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ADstat">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.ADstat">[docs]</a>
+<span class="k">def</span> <span class="nf">ADstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Anderson-Darling statistic: Takes all deviances into account</span>
 <span class="sd">	more weight on tails than CvM.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -83,8 +90,11 @@
 	<span class="n">ad</span> <span class="o">=</span> <span class="p">((</span><span class="n">modelc</span> <span class="o">-</span> <span class="n">datac</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">modelc</span> <span class="o">*</span> <span class="p">(</span><span class="n">maxmodelc</span> <span class="o">-</span> <span class="n">modelc</span><span class="p">))</span> <span class="o">*</span> <span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 	<span class="k">return</span> <span class="n">ad</span></div>
 
-<div class="viewcode-block" id="qq_plot"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.qq_plot">[docs]</a><span class="k">def</span> <span class="nf">qq_plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">markers</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="qq_plot">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.qq_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">qq_plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">markers</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Create a quantile-quantile plot for model discovery (deviations in data from model).</span>
 
 <span class="sd">	* bins: energies/channel</span>
@@ -132,14 +142,17 @@
 			<span class="n">ad</span> <span class="o">=</span> <span class="n">ADstat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">),</span>
 		<span class="p">)</span>
 		
-		<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;K-S = </span><span class="si">%(ks).3f</span><span class="s2"></span>
-<span class="s2">C-vM = </span><span class="si">%(cvm).5f</span><span class="s2"></span>
+		<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;K-S = </span><span class="si">%(ks).3f</span>
+<span class="s2">C-vM = </span><span class="si">%(cvm).5f</span>
 <span class="s2">A-D = </span><span class="si">%(ad)e</span><span class="s2">&quot;&quot;&quot;</span>  <span class="o">%</span> <span class="n">stats</span>
 		
 		<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">u</span><span class="o">*</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="xspecfilenamenormalise"><a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.xspecfilenamenormalise">[docs]</a><span class="k">def</span> <span class="nf">xspecfilenamenormalise</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="xspecfilenamenormalise">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.qq.xspecfilenamenormalise">[docs]</a>
+<span class="k">def</span> <span class="nf">xspecfilenamenormalise</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Xspec gets a bit confused if there are &quot;.&quot; in the filename</span>
 <span class="sd">	So we replace . with _ in the filename.</span>
 <span class="sd">	But if we replace it as part of the parent directory, we cannot write</span>
@@ -151,8 +164,11 @@
 		<span class="k">return</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="qq"><a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.qq.qq">[docs]</a><span class="k">def</span> <span class="nf">qq</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="qq">
+<a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.qq.qq">[docs]</a>
+<span class="k">def</span> <span class="nf">qq</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Create a quantile-quantile plot for model discovery (deviations in data from model).</span>
 
 <span class="sd">	The current data and model is used, so call *set_best_fit(analyzer, transformations)*</span>
@@ -197,6 +213,7 @@
 		<span class="n">markers</span> <span class="o">=</span> <span class="n">markers</span><span class="p">,</span> <span class="n">annotate</span> <span class="o">=</span> <span class="n">annotate</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span><span class="p">)</span>
 	
 	<span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">olddevice</span></div>
+
 </pre></div>
 
           </div>
@@ -236,6 +253,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_usage_plotxspec.html">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
 </ul>
 
 <div class="relations">
@@ -275,8 +294,8 @@
       &copy;2013-2022, Johannes Buchner.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 
