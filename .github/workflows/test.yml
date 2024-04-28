@@ -314,6 +314,13 @@ jobs:
           python -m pip install .
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
+      - name: David Homan's workflow
+        run: |
+          python -m pip install natsort;
+          pushd examples/xspec/bayesian-workflow/tutorials/;
+          bash run_all.sh;
+          popd;
+
       - name: Coverage report
         run: |
           coverage combine examples/sherpa examples/xspec docker/testsrc .
