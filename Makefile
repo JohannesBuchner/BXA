@@ -77,10 +77,11 @@ coverage: ## check code coverage quickly with the default Python
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f doc/bxa{,.sherpa,.xspec,.sherpa.background}.rst
 	rm -f doc/modules.rst
-	cp -vu examples/xspec/reference-output/*.{pdf,png} doc/
+	cp -vu examples/xspec/reference-output/*.pdf doc/
+	cp -vu examples/xspec/reference-output/*.png doc/
 	sphinx-apidoc -H API -o doc/ bxa
 	$(MAKE) -C doc clean
-	PYTHONPATH=${PWD}:${PWD}/npyinterp:${PYTHONPATH} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}/npyinterp $(MAKE) MAKESPHINXDOC=1 -C doc html
+	PYTHONPATH=${PWD}:${PWD}/examples/xspec/bayesian-workflow/:${PWD}/npyinterp:${PYTHONPATH} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}/npyinterp $(MAKE) MAKESPHINXDOC=1 -C doc html
 	$(BROWSER) doc/build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes

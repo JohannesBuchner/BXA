@@ -57,8 +57,8 @@ The usage is similar in Sherpa and Xspec conceptionally:
 
    examples
    xagnfitter
-   ../examples/xspec/bayesian-workflow/tutorials/tutorial_usage_plotbxa.ipynb
-   ../examples/xspec/bayesian-workflow/tutorials/tutorial_usage_plotxspec.ipynb
+   tutorial_usage_plotbxa.ipynb
+   tutorial_usage_plotxspec.ipynb
 
 Indices and tables
 ==================
