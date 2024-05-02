@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PlotXspec Example – basic PyXspec usage &amp; additional plotting &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
+    <title>PlotXspec Example &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
     <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css" />
@@ -18,7 +18,7 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="PlotBXA example – basic BXA usage &amp; additional plotting" href="tutorial_usage_plotbxa.html" />
+    <link rel="prev" title="PlotBXA example" href="tutorial_usage_plotbxa.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -37,24 +37,36 @@
 
           <div class="body" role="main">
             
-  <section id="PlotXspec-Example----basic-PyXspec-usage-&amp;-additional-plotting">
-<h1>PlotXspec Example – basic PyXspec usage &amp; additional plotting<a class="headerlink" href="#PlotXspec-Example----basic-PyXspec-usage-&-additional-plotting" title="Link to this heading">¶</a></h1>
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<section id="PlotXspec-Example">
+<h1>PlotXspec Example<a class="headerlink" href="#PlotXspec-Example" title="Link to this heading">¶</a></h1>
+<section id="Basic-PyXspec-usage-&amp;-additional-plotting">
+<h2>Basic PyXspec usage &amp; additional plotting<a class="headerlink" href="#Basic-PyXspec-usage-&-additional-plotting" title="Link to this heading">¶</a></h2>
 <p>This notebook is aimed at illustrating the <em>basic</em> usage of PyXspec, as well as a few supporting methods related to plotting. The supporing methods are part of the PlotXspec class. The notebook will cover how to load spectra, define a define a model and fit it to the data, and how to plot the results. PyXspec makes all Xspec functionality accessible through Python, so covers a much broader range of options than covered here. For further details on PyXspec usage, please see the
 <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/index.html">documentation</a>.</p>
 <p>In the following, we will assume a basic familiarity with both Python and Xspec usage. Users will need to have a working HEASOFT installation, as well as a working Python3 installation. The examples focus on the ‘out-of-the-box’ usage of the PlotXSpec public methods. Some users may find it more helpful to use these methods as a template for their own plotting functions; the PlotXspec class includes several private methods that could also be of use as a guide (such as the <code class="docutils literal notranslate"><span class="pre">_get_xspec_data()</span></code>
 method).</p>
 <p><em>Please note</em>: this notebook relates to PyXspec only, for examples of using BXA and the PlotBXA class, please see the notebook <em>tutorial_usage_plotbxa</em>.</p>
 <section id="The-notebook-is-structured-as-follows:">
-<h2>The notebook is structured as follows:<a class="headerlink" href="#The-notebook-is-structured-as-follows:" title="Link to this heading">¶</a></h2>
+<h3>The notebook is structured as follows:<a class="headerlink" href="#The-notebook-is-structured-as-follows:" title="Link to this heading">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Basic loading and plotting data using PyXspec</p></li>
 <li><p>Further plotting examples</p></li>
 <li><p>A slightly more complicated example (multiple spectra &amp; simultaneous fitting)</p></li>
 </ol>
 <hr class="docutils" />
-<p>This notebook was tested with: - HEASOFT 6.32.1 - Python 3.11.4</p>
+<p>This notebook was tested with: - HEASOFT 6.33.1 - Python 3.11.4</p>
+</section>
+</section>
 <section id="1)-Loading-and-plotting-data-using-PyXspec">
-<h3>1) Loading and plotting data using PyXspec<a class="headerlink" href="#1)-Loading-and-plotting-data-using-PyXspec" title="Link to this heading">¶</a></h3>
+<h2>1) Loading and plotting data using PyXspec<a class="headerlink" href="#1)-Loading-and-plotting-data-using-PyXspec" title="Link to this heading">¶</a></h2>
 <p>We will start with a simple example: loading a single spectrum into Xspec and fitting a model to it. The example data are a NICER spectrum for a bright extragalactic nuclear ignition and the associated background spectrum. The data have been rebinned to a minimum bin count of 20, which means we can use <span class="math notranslate nohighlight">\(\chi^2\)</span> statistics.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -71,8 +83,6 @@ method).</p>
 </pre></div>
 </div>
 </div>
-<section id="A-quick-aside-on-getting-more-information-on-class-methods-in-Python">
-<h4>A quick aside on getting more information on class methods in Python<a class="headerlink" href="#A-quick-aside-on-getting-more-information-on-class-methods-in-Python" title="Link to this heading">¶</a></h4>
 <p>If at any point you are unclear about what a method is supposed to do, or what arguments should be passed to it, you can make use of Python’s built-in help functionality.</p>
 <p>This will list all public methods included in the class:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
@@ -83,9 +93,6 @@ method).</p>
 </pre></div>
 </div>
 <p><strong>The public methods in PlotXspec all have docstrings: these explain in more detail what the methods are supposed to and what additional arguments can be passed to make the best use of them.</strong></p>
-</section>
-<section id="A)-Loading">
-<h4>A) Loading<a class="headerlink" href="#A)-Loading" title="Link to this heading">¶</a></h4>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -245,11 +252,8 @@ Net count rate (cts/s) for Spectrum:1  4.122e+00 +/- 9.080e-02
 </pre></div>
 </div>
 </div>
-</section>
-</section>
-</section>
 <section id="NOTE:">
-<h2>NOTE:<a class="headerlink" href="#NOTE:" title="Link to this heading">¶</a></h2>
+<h3>NOTE:<a class="headerlink" href="#NOTE:" title="Link to this heading">¶</a></h3>
 <p>From this point on we will use Python methods to visualise the data, as implemented in PlotXspec. However, XSpec’s normal visualisation can of course also still be used instead. For example, to make use of one of XSpec’s plotting windows, enter</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xspec</span><span class="o">.</span><span class="n">Plot</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;/xs&quot;</span>
 </pre></div>
@@ -272,8 +276,10 @@ Net count rate (cts/s) for Spectrum:1  4.122e+00 +/- 9.080e-02
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_13_0.svg" src="_images/tutorial_usage_plotxspec_13_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_14_0.svg" src="_images/tutorial_usage_plotxspec_14_0.svg" /></div>
 </div>
+<section id="B)-Define-and-fit-a-model">
+<h4>B) Define and fit a model<a class="headerlink" href="#B)-Define-and-fit-a-model" title="Link to this heading">¶</a></h4>
 <p>We will now define a simple model and fit it to the data. For the model, we will use redshifted blackbody, modified by Galactic absorption.</p>
 <p>There are many ways to set the parameters in XSpec, and we show only the simplest example here. For a slightly more complex usage, please see section 3) of this notebook.</p>
 <div class="nbinput docutils container">
@@ -633,7 +639,7 @@ scaling rate (1-10keV) = 3.310e-12
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_22_0.svg" src="_images/tutorial_usage_plotxspec_22_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_23_0.svg" src="_images/tutorial_usage_plotxspec_23_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
@@ -649,7 +655,7 @@ scaling rate (1-10keV) = 3.310e-12
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_23_0.svg" src="_images/tutorial_usage_plotxspec_23_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_24_0.svg" src="_images/tutorial_usage_plotxspec_24_0.svg" /></div>
 </div>
 <p>PlotXspec also includes two methods to print a quick overview of the fitting results to screen: print_model_results() &amp; print_errors(). The print_errors method requires the user to specify the <span class="math notranslate nohighlight">\(\chi^2\)</span> level for which the errors should be calculated. Of course, if the overall <span class="math notranslate nohighlight">\(\chi^2\)</span> statistic for the fit is too high, no error can be calculated (as XSpec raises an exception).</p>
 <div class="nbinput docutils container">
@@ -697,13 +703,16 @@ Components of model  for data group 1:
 1   wabs       nH         9.280e+00 (-)-5.929e-01 (+)1.251e+00
 2   powerlaw   PhoIndex   1.991e+00 (-)2.080e-01 (+)2.220e-01
 3   powerlaw   norm       8.677e-03 (-)2.566e-03 (+)3.946e-03
-Continue error search in this direction? 4   gaussian   LineE      6.402e+00 (-)1.550e-02 (+)4.946e-05
-5   gaussian   Sigma      1.459e-05 (-)-5.000e-01 (+)-1.459e-05Continue error search in this direction? Continue error search in this direction?
+4   gaussian   LineE      6.402e+00 (-)1.874e-02 (+)4.497e-04
+Continue error search in this direction? Continue error search in this direction? 5   gaussian   Sigma      1.459e-05 (-)-5.000e-01 (+)-1.459e-05
 6   gaussian   norm       9.227e-05 (-)1.543e-05 (+)1.523e-05
 </pre></div></div>
 </div>
+</section>
+</section>
+</section>
 <section id="2)-Further-Plotting-Examples">
-<h3>2) Further Plotting Examples<a class="headerlink" href="#2)-Further-Plotting-Examples" title="Link to this heading">¶</a></h3>
+<h2>2) Further Plotting Examples<a class="headerlink" href="#2)-Further-Plotting-Examples" title="Link to this heading">¶</a></h2>
 <p>In some cases, it can be usefule to explore the parameter space of a model, to get a better understanding of the distribution of <span class="math notranslate nohighlight">\(\chi^2\)</span>, and therefore of the uncertainties. We can do this with steppar. The command for steppar is passed as a string and is the same as it would be in XSpec (we can see what the indices are for the model parameters of interest using e.g. the output of print_model_results or xspec.AllModels.show() ).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
@@ -731,7 +740,7 @@ Continue error search in this direction? 4   gaussian   LineE      6.402e+00 (-)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_30_0.svg" src="_images/tutorial_usage_plotxspec_30_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_31_0.svg" src="_images/tutorial_usage_plotxspec_31_0.svg" /></div>
 </div>
 <p>If it is only a single parameter we are interested in, we should consider the 1-dimensional <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. By passing the best-fit value of a particular parameter (in the example below: kT), we can get an estimate on the error in this way.</p>
 <div class="nbinput docutils container">
@@ -756,7 +765,7 @@ Resulting uncertainties: 1.99438e+00 (-) 4.77872e-04 (+) 1.35522e-01
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_32_1.svg" src="_images/tutorial_usage_plotxspec_32_1.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_33_1.svg" src="_images/tutorial_usage_plotxspec_33_1.svg" /></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
@@ -809,7 +818,7 @@ ________________________________________________________________________
 </div>
 </section>
 <section id="3)-More-detailed-fitting-example-(XMM-Newton:-pn,-MOS1,-and-MOS2)">
-<h3>3) More detailed fitting example (XMM-Newton: pn, MOS1, and MOS2)<a class="headerlink" href="#3)-More-detailed-fitting-example-(XMM-Newton:-pn,-MOS1,-and-MOS2)" title="Link to this heading">¶</a></h3>
+<h2>3) More detailed fitting example (XMM-Newton: pn, MOS1, and MOS2)<a class="headerlink" href="#3)-More-detailed-fitting-example-(XMM-Newton:-pn,-MOS1,-and-MOS2)" title="Link to this heading">¶</a></h2>
 <p>When fitting multiple datasets simultaneously, we need to slightly adjust our fitting procedure. In the following we will load XMM-Newton data from all three EPIC instruments. To account for a possible offset in the flux level between the spectra, we will multiply our model with a constant factor, which will be allowed to vary among the spectra. All other model parameters will remain tied.</p>
 <p>The example data used here are for an AGN showing intrinsic obscuration and a weak Iron K<span class="math notranslate nohighlight">\(\alpha\)</span> line. We will fit these data with a redshifted power-law model, modified with both intrinsic and Galactic absorption.</p>
 <div class="nbinput docutils container">
@@ -912,7 +921,7 @@ ignore:     0 channels ignored from  source number 1
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_39_0.svg" src="_images/tutorial_usage_plotxspec_39_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_40_0.svg" src="_images/tutorial_usage_plotxspec_40_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
@@ -1199,7 +1208,7 @@ Test statistic : Chi-Squared                 2411.64     using 3265 bins.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_43_0.svg" src="_images/tutorial_usage_plotxspec_43_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_44_0.svg" src="_images/tutorial_usage_plotxspec_44_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
@@ -1214,7 +1223,7 @@ Test statistic : Chi-Squared                 2411.64     using 3265 bins.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_44_0.svg" src="_images/tutorial_usage_plotxspec_44_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_45_0.svg" src="_images/tutorial_usage_plotxspec_45_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
@@ -1326,7 +1335,6 @@ Components of model  for data group 3:
 </div>
 </section>
 </section>
-</section>
 
 
           </div>
@@ -1366,15 +1374,15 @@ Components of model  for data group 3:
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">PlotXspec Example – basic PyXspec usage &amp; additional plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PlotXspec Example</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="tutorial_usage_plotbxa.html" title="previous chapter">PlotBXA example – basic BXA usage &amp; additional plotting</a></li>
+      <li>Previous: <a href="tutorial_usage_plotbxa.html" title="previous chapter">PlotBXA example</a></li>
   </ul></li>
 </ul>
 </div>
