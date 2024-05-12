@@ -1595,7 +1595,7 @@ class PlotBXA(PlotXspec):
         for row in solver.posterior[:npost]:
             bxa.solver.set_parameters(values=row,transformations=solver.transformations)
             xspec.AllModels.calcFlux(frange)
-            d += [xspec.AllData(1).flux[0]*1e12] # in units of 10^12 erg cm^-2 s^-1
+            d += [xspec.AllData(1).flux[0]*1e12] # in units of 10^-12 erg cm^-2 s^-1
         # plot the data
         c,b = np.histogram(d,bins=np.minimum(int(len(d)/10),20),
                            density=True)
@@ -1616,13 +1616,13 @@ class PlotBXA(PlotXspec):
         mname = solver.transformations[1]['model'].expression
         if printq:
             print(f'For model {mname}:')
-            print(f'Mean={np.mean(d):.3f} (+){q_high:.3f} (-){q_low:.3f} (10^12 erg cm^-2 s^-1)')
+            print(f'Mean={np.mean(d):.3f} (+){q_high:.3f} (-){q_low:.3f} (10^-12 erg cm^-2 s^-1)')
             print(f'With uncertainties estimated for +/- {q*100:.1f}%\n')
         self.posterior_flux_unc += [[mname,fluxrange,np.mean(d),q_high,q_low]]
         # plot details
         lblkw   = dict( (('fontsize',20),('fontweight','bold')) )
         rngstr  = f'Flux {fluxrange[0]:.1f}-{fluxrange[1]:.1f} keV'
-        unitstr = r' ($10^{12}$ erg cm$^{-2}$ s$^{-1}$)'
+        unitstr = r' ($10^{-12}$ erg cm$^{-2}$ s$^{-1}$)'
         ax.set_xlabel(rngstr+unitstr,**lblkw)
         ax.set_ylabel('Probability Density',**lblkw)
         ax.set_ylim(yl)
