@@ -2001,7 +2001,7 @@ class PlotBXA(PlotXspec):
                 return
             if mnames is None:
                 print('If loading existing data, please specify the model names')
-                return
+                return (None,None)
             m1name,m2name = mnames
             logz1, logz2 = [], []
             fitd1, fitd2 = [], []
