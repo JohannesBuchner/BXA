@@ -106,7 +106,7 @@ class PlotXspec:
                                 maxBins=rebinbnum,
                                 groupNum=-1)
         else:
-            xspec.Plot.setRebin(minSig=0,maxBins=-1,groupNum=-1)
+            xspec.Plot.setRebin(minSig=0,maxBins=1,groupNum=-1)
         if plottype == 'folded':
             plttype = 'data'
         elif plottype == 'counts':

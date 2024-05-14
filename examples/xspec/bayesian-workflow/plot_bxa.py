@@ -1528,6 +1528,7 @@ class PlotBXA(PlotXspec):
         # loop over the models and create a predictive plot for each
         if type(axs) is not np.ndarray:
             axs = (axs,)
+        self.posterior_flux_unc = [] # define for first use or clear for new use
         for ii,s in enumerate(solvers):
             # re-activate model and point solver to new instance
             if models is not None:
@@ -1536,7 +1537,6 @@ class PlotBXA(PlotXspec):
             else:
                 mname = None
             if stat == 'flux':
-                self.posterior_flux_unc = [] # define for first use or clear for new use
                 # plot the flux distributions based on the posteriors
                 self._posterior_flux_single_model(axs[ii],s,
                                                   npost=nsample,
