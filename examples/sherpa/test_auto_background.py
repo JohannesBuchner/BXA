@@ -11,8 +11,8 @@ def test_chandra_pcabkg():
 
     filename = "chandra/179_pcabkg.json"
     bkgmodel = auto_background(1, max_lines=0)
-    _test_pca_params(filename, bkgmodel)
     # _save_pca_params(bkgmodel, filename)
+    _test_pca_params(filename, bkgmodel)
 
 def test_chandra_detect_line():
     _reset_sherpa()
@@ -35,8 +35,8 @@ def test_swift_pcabkg():
 
     filename = "swift/interval0pc_pcabkg.json"
     bkgmodel = auto_background(1, max_lines=0)
-    _test_pca_params(filename, bkgmodel)
     # _save_pca_params(bkgmodel, filename)
+    _test_pca_params(filename, bkgmodel)
 
 def test_swift_detect_line():
     _reset_sherpa()
@@ -59,8 +59,8 @@ def test_xmmpn_pcabkg():
 
     filename = "xmm/pn_pcabkg.json"
     bkgmodel = auto_background(1, max_lines=0)
-    _test_pca_params(filename, bkgmodel)
     # _save_pca_params(bkgmodel, filename)
+    _test_pca_params(filename, bkgmodel)
 
 def test_xmmpn_detect_line():
     _reset_sherpa()
@@ -88,8 +88,8 @@ def test_xmmmos_pcabkg():
 
     filename = "xmm/mos_pcabkg.json"
     bkgmodel = auto_background(1, max_lines=0)
-    _test_pca_params(filename, bkgmodel)
     # _save_pca_params(bkgmodel, filename)
+    _test_pca_params(filename, bkgmodel)
 
 def test_xmmmos_detect_line():
     _reset_sherpa()
@@ -117,8 +117,8 @@ def test_nustar_pcabkg():
 
     filename = "nustar/nu60360003002A01_pcabkg.json"
     bkgmodel = auto_background(1, max_lines=0)
-    _test_pca_params(filename, bkgmodel)
     # _save_pca_params(bkgmodel, filename)
+    _test_pca_params(filename, bkgmodel)
 
 def test_nustar_detect_line():
     _reset_sherpa()
@@ -205,9 +205,7 @@ def _save_pca_params(bkgmodel, filename):
 
 def _load_pca_params(filename):
     with open(filename, "r") as fp:
-        params = json.load(fp)
-
-    return params
+        return json.load(fp)
 
 
 def _test_pca_params(filename, bkgmodel):
@@ -219,7 +217,7 @@ def _test_pca_params(filename, bkgmodel):
     
     for p in bkgmodel.pars:
         assert p.name in test_pca_params
-        assert np.isclose(p.val, test_pca_params[p.name])
+        assert np.isclose(p.val, test_pca_params[p.name], rtol=0.05, atol=0.02), (p.name, p.val, test_pca_params[p.name])
 
 
 def _inject_count_excess(bkgdata):

@@ -380,7 +380,6 @@ class PCAFitter(object):
 				imax = 2
 			g.Sigma = (x[imax + 1] - x[imax - 1])
 			g.Sigma.min = (x[imax + 1] - x[imax - 1])/3
-			g.Sigma.hard_max = 1e10
 			g.Sigma.max = x[-1] - x[0]
 			g.norm.min = power * 1e-6
 			g.norm.val = power
