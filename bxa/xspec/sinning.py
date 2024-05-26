@@ -127,14 +127,14 @@ def binning(outputfiles_basename, bins, widths, data, models, nmin=20):
 		best_gof = -numpy.log10(gofpi + 1e-300)
 		# 1e3 and 1e6 correspond roughly to 3 sigma and 5 sigma
 		c = 'green' if best_gof < 2 else 'orange' if best_gof < 6. else 'red'
-		f = 1. / (xhii-xloi) #* deltax
+		f = 1. / (xhii - xloi)
 		y = ydatai * f
 		modelrange_low  = scipy.special.gammaincinv(ydatai + 1, 0.1) * f
 		modelrange_high = scipy.special.gammaincinv(ydatai + 1, 0.9) * f
-		marked_binned.append(
-			dict(x=(xloi+xhii)/2., xerr=(-xloi+xhii)/2.,
+		marked_binned.append(dict(
+			x=(xloi + xhii)/2., xerr=(xhii - xloi) / 2.,
 			y = y,
-			yerr = [[modelrange_high - y], [y - modelrange_low]],
+			yerr = [[max(0, modelrange_high - y)], [max(0, y - modelrange_low)]],
 			color=c)
 		)
 		ymin = min(ymin, modelrange_low)
