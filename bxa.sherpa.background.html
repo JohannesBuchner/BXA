@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>bxa.sherpa.background package &#8212; BXA (Bayesian X-ray Analysis) 4.1.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
-    <script src="_static/documentation_options.js?v=d151bdce"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <title>bxa.sherpa.background package &#8212; BXA (Bayesian X-ray Analysis) 4.1.4 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=bea0a91a"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -20,10 +20,11 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/bxa.sherpa.background.html"/>
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="canonical" href="https://johannesbuchner.github.io/BXA/bxa.sherpa.background.html" />
+  
 
   </head><body>
   
@@ -208,7 +209,7 @@ file names (if load=True) or storage prefixes</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bxa.sherpa.background.pca.PCAFitter.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAFitter.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAFitter.fit" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#PCAFitter.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.background.pca.PCAFitter.fit" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -241,7 +242,7 @@ file names (if load=True) or storage prefixes</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bxa.sherpa.background.pca.auto_background">
-<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.background.pca.</span></span><span class="sig-name descname"><span class="pre">auto_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#auto_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.background.pca.auto_background" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.background.pca.</span></span><span class="sig-name descname"><span class="pre">auto_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#auto_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.background.pca.auto_background" title="Link to this definition">¶</a></dt>
 <dd><p>Automatically fits background <em>id</em> based on PCA-based templates,
 and additional gaussian lines as needed by AIC.</p>
 </dd></dl>
@@ -348,7 +349,7 @@ and additional gaussian lines as needed by AIC.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -356,7 +357,7 @@ and additional gaussian lines as needed by AIC.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -371,11 +372,7 @@ and additional gaussian lines as needed by AIC.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2013-2022, Johannes Buchner.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &#169;2013-2022, Johannes Buchner.
       
       |
       <a href="_sources/bxa.sherpa.background.rst.txt"
