@@ -13,4 +13,4 @@ or, for Xspec::
 
 __author__ = """Johannes Buchner"""
 __email__ = 'johannes.buchner.acad@gmx.com'
-__version__ = '4.1.2'
+__version__ = '4.1.3'
