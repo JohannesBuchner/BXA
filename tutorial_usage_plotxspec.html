@@ -42,8 +42,8 @@
 <h1>PlotXspec example<a class="headerlink" href="#PlotXspec-example" title="Link to this heading">¶</a></h1>
 <section id="Basic-PyXspec-usage-&amp;-additional-plotting">
 <h2>Basic PyXspec usage &amp; additional plotting<a class="headerlink" href="#Basic-PyXspec-usage-&-additional-plotting" title="Link to this heading">¶</a></h2>
-<p>This notebook is aimed at illustrating the <em>basic</em> usage of PyXspec, as well as a few supporting methods related to plotting. The supporting methods are part of the <a class="reference external" href="https://github.com/JohannesBuchner/BXA/tree/master/examples/xspec/bayesian-workflow">PlotXspec class available for download here</a>. The notebook will cover how to load spectra, define a model, fit it to the data, and plot the results. PyXspec makes all Xspec functionality accessible through Python, so covers a much broader range
-of options than covered here. For further details on PyXspec usage, please see the <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/index.html">documentation</a>.</p>
+<p>This notebook is aimed at illustrating the <em>basic</em> usage of PyXspec, as well as a few supporting methods related to plotting. The supporting methods are part of the <a class="reference external" href="https://github.com/JohannesBuchner/BXA/tree/master/examples/xspec/bayesian-workflow">PlotXspec class available for download here</a>. The notebook will cover how to load spectra, define a model, fit it to the data, and plot the results. PyXspec makes all Xspec functionality accessible through Python, so has a much broader range of
+options than covered here. For further details on PyXspec usage, please see the <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/index.html">documentation</a>.</p>
 <p>In the following, we will assume a basic familiarity with both Python and Xspec usage. Users will need to have a working HEASOFT installation, as well as a working Python3 installation. The examples focus on the ‘out-of-the-box’ usage of the PlotXSpec public methods. Some users may find it more helpful to use these methods as a template for their own plotting functions; the PlotXspec class includes several private methods that could also be of use as a guide (such as the <code class="docutils literal notranslate"><span class="pre">_get_xspec_data()</span></code>
 method).</p>
 <p><em>Please note</em>: this notebook relates to PyXspec only. For examples of using BXA and the PlotBXA class, please see the notebook <a class="reference external" href="https://johannesbuchner.github.io/BXA/tutorial_usage_plotbxa.html">tutorial_usage_plotbxa</a>.</p>
@@ -696,9 +696,9 @@ Components of model  for data group 1:
 1   wabs       nH         9.280e+00 (-)-5.929e-01 (+)1.251e+00
 2   powerlaw   PhoIndex   1.991e+00 (-)2.080e-01 (+)2.220e-01
 3   powerlaw   norm       8.677e-03 (-)2.566e-03 (+)3.946e-03
-Continue error search in this direction? 4   gaussian   LineE      6.402e+00 (-)2.004e-02 (+)9.521e-03
-5   gaussian   Sigma      3.021e-02 (-)0.000e+00 (+)4.808e-02
-6   gaussian   norm       9.680e-05 (-)1.745e-05 (+)1.699e-05
+4   gaussian   LineE      6.402e+00 (-)2.253e-02 (+)3.446e-04
+Continue error search in this direction? Continue error search in this direction? Continue error search in this direction? 5   gaussian   Sigma      1.459e-05 (-)-5.000e-01 (+)-1.459e-05
+6   gaussian   norm       9.227e-05 (-)1.543e-05 (+)1.523e-05
 </pre></div></div>
 </div>
 </section>
@@ -751,7 +751,7 @@ Continue error search in this direction? 4   gaussian   LineE      6.402e+00 (-)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Resulting uncertainties: 2.01334e+00 (-) 2.13237e-01 (+) 2.23663e-01
+Resulting uncertainties: 1.99438e+00 (-) 4.77872e-04 (+) 1.35522e-01
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -791,12 +791,12 @@ Parameters defined:
 Model wabs&lt;1&gt;*powerlaw&lt;2&gt; + gaussian&lt;3&gt; Source No.: 1   Active/On
 Model Model Component  Parameter  Unit     Value
  par  comp
-   1    1   wabs       nH         10^22    10.2510      +/-  0.785613
-   2    2   powerlaw   PhoIndex            2.01334      +/-  0.215426
-   3    2   powerlaw   norm                8.98510E-03  +/-  3.26145E-03
-   4    3   gaussian   LineE      keV      6.40175      +/-  1.47760E-02
-   5    3   gaussian   Sigma      keV      3.02129E-02  +/-  2.24204E-02
-   6    3   gaussian   norm                9.67993E-05  +/-  1.74341E-05
+   1    1   wabs       nH         10^22    10.2035      +/-  0.778187
+   2    2   powerlaw   PhoIndex            1.99438      +/-  0.211870
+   3    2   powerlaw   norm                8.72635E-03  +/-  3.12319E-03
+   4    3   gaussian   LineE      keV      6.38855      +/-  1.27792E-02
+   5    3   gaussian   Sigma      keV      1.45915E-05  +/-  -1.00000
+   6    3   gaussian   norm                9.22690E-05  +/-  1.53991E-05
 ________________________________________________________________________
 
 </pre></div></div>
