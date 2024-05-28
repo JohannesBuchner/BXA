@@ -23,6 +23,8 @@ reset-gh-pages:
 update-gh-pages:
 	rm -rf build/html/.buildinfo build/html/*
 	$(MAKE) html
+	touch build/html/.nojekyll
+	git worktree repair
 	git -C build/html add .
 	git -C build/html commit -av -m 'update doc'
 
