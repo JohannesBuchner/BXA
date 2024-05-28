@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PlotXspec Example &#8212; BXA (Bayesian X-ray Analysis) 4.1.4 documentation</title>
+    <title>PlotXspec example &#8212; BXA (Bayesian X-ray Analysis) 4.1.4 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
     <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css" />
@@ -38,23 +38,15 @@
 
           <div class="body" role="main">
             
-  <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-</div>
-<section id="PlotXspec-Example">
-<h1>PlotXspec Example<a class="headerlink" href="#PlotXspec-Example" title="Link to this heading">¶</a></h1>
+  <section id="PlotXspec-example">
+<h1>PlotXspec example<a class="headerlink" href="#PlotXspec-example" title="Link to this heading">¶</a></h1>
 <section id="Basic-PyXspec-usage-&amp;-additional-plotting">
 <h2>Basic PyXspec usage &amp; additional plotting<a class="headerlink" href="#Basic-PyXspec-usage-&-additional-plotting" title="Link to this heading">¶</a></h2>
-<p>This notebook is aimed at illustrating the <em>basic</em> usage of PyXspec, as well as a few supporting methods related to plotting. The supporing methods are part of the PlotXspec class. The notebook will cover how to load spectra, define a define a model and fit it to the data, and how to plot the results. PyXspec makes all Xspec functionality accessible through Python, so covers a much broader range of options than covered here. For further details on PyXspec usage, please see the
-<a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/index.html">documentation</a>.</p>
+<p>This notebook is aimed at illustrating the <em>basic</em> usage of PyXspec, as well as a few supporting methods related to plotting. The supporting methods are part of the <a class="reference external" href="https://github.com/JohannesBuchner/BXA/tree/master/examples/xspec/bayesian-workflow">PlotXspec class available for download here</a>. The notebook will cover how to load spectra, define a model, fit it to the data, and plot the results. PyXspec makes all Xspec functionality accessible through Python, so covers a much broader range
+of options than covered here. For further details on PyXspec usage, please see the <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/python/html/index.html">documentation</a>.</p>
 <p>In the following, we will assume a basic familiarity with both Python and Xspec usage. Users will need to have a working HEASOFT installation, as well as a working Python3 installation. The examples focus on the ‘out-of-the-box’ usage of the PlotXSpec public methods. Some users may find it more helpful to use these methods as a template for their own plotting functions; the PlotXspec class includes several private methods that could also be of use as a guide (such as the <code class="docutils literal notranslate"><span class="pre">_get_xspec_data()</span></code>
 method).</p>
-<p><em>Please note</em>: this notebook relates to PyXspec only, for examples of using BXA and the PlotBXA class, please see the notebook <em>tutorial_usage_plotbxa</em>.</p>
+<p><em>Please note</em>: this notebook relates to PyXspec only. For examples of using BXA and the PlotBXA class, please see the notebook <a class="reference external" href="https://johannesbuchner.github.io/BXA/tutorial_usage_plotbxa.html">tutorial_usage_plotbxa</a>.</p>
 <section id="The-notebook-is-structured-as-follows:">
 <h3>The notebook is structured as follows:<a class="headerlink" href="#The-notebook-is-structured-as-follows:" title="Link to this heading">¶</a></h3>
 <ol class="arabic simple">
@@ -277,7 +269,7 @@ Net count rate (cts/s) for Spectrum:1  4.122e+00 +/- 9.080e-02
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_14_0.svg" src="_images/tutorial_usage_plotxspec_14_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_13_0.svg" src="_images/tutorial_usage_plotxspec_13_0.svg" /></div>
 </div>
 <section id="B)-Define-and-fit-a-model">
 <h4>B) Define and fit a model<a class="headerlink" href="#B)-Define-and-fit-a-model" title="Link to this heading">¶</a></h4>
@@ -640,7 +632,7 @@ scaling rate (1-10keV) = 3.310e-12
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_23_0.svg" src="_images/tutorial_usage_plotxspec_23_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_22_0.svg" src="_images/tutorial_usage_plotxspec_22_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
@@ -656,7 +648,7 @@ scaling rate (1-10keV) = 3.310e-12
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_24_0.svg" src="_images/tutorial_usage_plotxspec_24_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_23_0.svg" src="_images/tutorial_usage_plotxspec_23_0.svg" /></div>
 </div>
 <p>PlotXspec also includes two methods to print a quick overview of the fitting results to screen: print_model_results() &amp; print_errors(). The print_errors method requires the user to specify the <span class="math notranslate nohighlight">\(\chi^2\)</span> level for which the errors should be calculated. Of course, if the overall <span class="math notranslate nohighlight">\(\chi^2\)</span> statistic for the fit is too high, no error can be calculated (as XSpec raises an exception).</p>
 <div class="nbinput docutils container">
@@ -704,9 +696,9 @@ Components of model  for data group 1:
 1   wabs       nH         9.280e+00 (-)-5.929e-01 (+)1.251e+00
 2   powerlaw   PhoIndex   1.991e+00 (-)2.080e-01 (+)2.220e-01
 3   powerlaw   norm       8.677e-03 (-)2.566e-03 (+)3.946e-03
-Continue error search in this direction? 4   gaussian   LineE      6.402e+00 (-)2.546e-02 (+)3.452e-04
-Continue error search in this direction? 5   gaussian   Sigma      1.459e-05 (-)-5.000e-01 (+)-1.459e-05
-Continue error search in this direction? 6   gaussian   norm       9.227e-05 (-)1.543e-05 (+)1.523e-05
+Continue error search in this direction? 4   gaussian   LineE      6.402e+00 (-)2.004e-02 (+)9.521e-03
+5   gaussian   Sigma      3.021e-02 (-)0.000e+00 (+)4.808e-02
+6   gaussian   norm       9.680e-05 (-)1.745e-05 (+)1.699e-05
 </pre></div></div>
 </div>
 </section>
@@ -741,7 +733,7 @@ Continue error search in this direction? 6   gaussian   norm       9.227e-05 (-)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_31_0.svg" src="_images/tutorial_usage_plotxspec_31_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_30_0.svg" src="_images/tutorial_usage_plotxspec_30_0.svg" /></div>
 </div>
 <p>If it is only a single parameter we are interested in, we should consider the 1-dimensional <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution. By passing the best-fit value of a particular parameter (in the example below: kT), we can get an estimate on the error in this way.</p>
 <div class="nbinput docutils container">
@@ -759,14 +751,14 @@ Continue error search in this direction? 6   gaussian   norm       9.227e-05 (-)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Resulting uncertainties: 1.99438e+00 (-) 4.77872e-04 (+) 1.35522e-01
+Resulting uncertainties: 2.01334e+00 (-) 2.13237e-01 (+) 2.23663e-01
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_33_1.svg" src="_images/tutorial_usage_plotxspec_33_1.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_32_1.svg" src="_images/tutorial_usage_plotxspec_32_1.svg" /></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
@@ -799,12 +791,12 @@ Parameters defined:
 Model wabs&lt;1&gt;*powerlaw&lt;2&gt; + gaussian&lt;3&gt; Source No.: 1   Active/On
 Model Model Component  Parameter  Unit     Value
  par  comp
-   1    1   wabs       nH         10^22    10.2035      +/-  0.778187
-   2    2   powerlaw   PhoIndex            1.99438      +/-  0.211870
-   3    2   powerlaw   norm                8.72635E-03  +/-  3.12319E-03
-   4    3   gaussian   LineE      keV      6.38855      +/-  1.27792E-02
-   5    3   gaussian   Sigma      keV      1.45915E-05  +/-  -1.00000
-   6    3   gaussian   norm                9.22690E-05  +/-  1.53991E-05
+   1    1   wabs       nH         10^22    10.2510      +/-  0.785613
+   2    2   powerlaw   PhoIndex            2.01334      +/-  0.215426
+   3    2   powerlaw   norm                8.98510E-03  +/-  3.26145E-03
+   4    3   gaussian   LineE      keV      6.40175      +/-  1.47760E-02
+   5    3   gaussian   Sigma      keV      3.02129E-02  +/-  2.24204E-02
+   6    3   gaussian   norm                9.67993E-05  +/-  1.74341E-05
 ________________________________________________________________________
 
 </pre></div></div>
@@ -922,7 +914,7 @@ ignore:     0 channels ignored from  source number 1
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_40_0.svg" src="_images/tutorial_usage_plotxspec_40_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_39_0.svg" src="_images/tutorial_usage_plotxspec_39_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
@@ -1209,7 +1201,7 @@ Test statistic : Chi-Squared                 2411.64     using 3265 bins.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_44_0.svg" src="_images/tutorial_usage_plotxspec_44_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_43_0.svg" src="_images/tutorial_usage_plotxspec_43_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
@@ -1224,7 +1216,7 @@ Test statistic : Chi-Squared                 2411.64     using 3265 bins.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/tutorial_usage_plotxspec_45_0.svg" src="_images/tutorial_usage_plotxspec_45_0.svg" /></div>
+<img alt="_images/tutorial_usage_plotxspec_44_0.svg" src="_images/tutorial_usage_plotxspec_44_0.svg" /></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
@@ -1318,22 +1310,6 @@ Components of model  for data group 3:
 18  zpowerlw   norm       8.329e-02 (-)0.000e+00 (+)0.000e+00
 </pre></div></div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-</div>
 </section>
 </section>
 
@@ -1376,7 +1352,7 @@ Components of model  for data group 3:
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xagnfitter.html">Obscured Active Galactic Nuclei</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_usage_plotbxa.html">PlotBXA example</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">PlotXspec Example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PlotXspec example</a></li>
 </ul>
 
 <div class="relations">

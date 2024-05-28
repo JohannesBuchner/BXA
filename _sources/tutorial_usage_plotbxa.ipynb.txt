@@ -7,13 +7,13 @@
    "source": [
     "# PlotBXA example \n",
     "\n",
-    "## Basic BXA usage & additional plotting\n",
+    "## Basic BXA usage with Xspec & additional plotting\n",
     "\n",
     "This notebook aims to illustrate additional plotting features for BXA fitting results, as implemented in the PlotBXA class. The methods of this class will be demonstrated in a basic example of BXA fitting. For details on BXA usage and the underlying fitting algorithm please see refer to Johannes Buchner's detailed [BXA documentation](https://johannesbuchner.github.io/BXA/index.html) and [UltraNest documentation](https://johannesbuchner.github.io/UltraNest/readme.html), which also contain several useful examples. \n",
     "\n",
     "An overview of tutorials on BXA usage can be found [here](https://johannesbuchner.github.io/BXA/tutorials.html). The methods in PlotBXA are extensions of the built-in methods of UltraNest and BXA. Furthermore, they are strongly based on the [excellent tutorial](https://peterboorman.com/tutorial_bxa) by Peter Boorman. As for the classes defined in PlotXspec, some users may find it more helpful to use these methods as a template for their own plotting.\n",
     "\n",
-    "_Please note_: this notebook relates to BXA, for examples of PyXspec and the PlotXspec class, please see the notebook _tutorial_usage_plotxspec_. The notebooks both fit the same datasets, but with different methodologies.\n",
+    "_Please note_: this notebook relates to BXA, for examples of PyXspec and the PlotXspec class, please see the notebook [_tutorial_usage_plotxspec_](https://johannesbuchner.github.io/BXA/tutorial_usage_plotxspec.html). The notebooks both fit the same datasets, but with different methodologies.\n",
     "\n",
     "\n",
     "#### This notebook is structured as follows\n",
@@ -214,9 +214,7 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "bb435d3a",
-   "metadata": {
-    "scrolled": false
-   },
+   "metadata": {},
    "outputs": [],
    "source": [
     "# What are the spectral shapes that can be covered based on our specified priors?\n",
@@ -296,9 +294,7 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "12428f7c",
-   "metadata": {
-    "scrolled": false
-   },
+   "metadata": {},
    "outputs": [],
    "source": [
     "pbx.plot_overview_posteriors(solver,convert_log=True)"
@@ -308,9 +304,7 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "88f68c1a",
-   "metadata": {
-    "scrolled": false
-   },
+   "metadata": {},
    "outputs": [],
    "source": [
     "# And what is the posterior distribution of the flux?\n",
@@ -356,9 +350,7 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "6a205741",
-   "metadata": {
-    "scrolled": false
-   },
+   "metadata": {},
    "outputs": [],
    "source": [
     "with XSilence():\n",
@@ -748,9 +740,7 @@
    "cell_type": "code",
    "execution_count": null,
    "id": "69688cff",
-   "metadata": {
-    "scrolled": false
-   },
+   "metadata": {},
    "outputs": [],
    "source": [
     "# the fluxes\n",
@@ -1386,7 +1376,7 @@
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python 3",
+   "display_name": "Python 3 (ipykernel)",
    "language": "python",
    "name": "python3"
   },
@@ -1400,7 +1390,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.8.5"
+   "version": "3.12.3"
   }
  },
  "nbformat": 4,
