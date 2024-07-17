@@ -14,7 +14,7 @@ if 'MAKESPHINXDOC' not in os.environ:
 	from sherpa.models.parameter import Parameter
 	from sherpa.models import ArithmeticModel, CompositeModel
 	from sherpa.astro.ui import *
-	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA
+	from sherpa.astro.instrument import RSPModelNoPHA, RMFModelNoPHA, create_delta_rmf, create_arf
 else:
 	# mock objects when sherpa doc is built
 	ArithmeticModel = object
@@ -103,13 +103,11 @@ class IdentityRMF(RMFModelNoPHA):
 
 
 def get_identity_response(i):
-	n = get_bkg(i).counts.size
 	rmf = get_rmf(i)
-	try:
-		arf = get_arf(i)
-		return lambda model: IdentityResponse(n, model, arf=arf, rmf=rmf)
-	except:
-		return lambda model: IdentityRMF(n, model, rmf=rmf)
+	delta_rmf = create_delta_rmf(rmf.e_min, rmf.e_max, offset=1, e_min=rmf.e_min, e_max=rmf.e_max, ethresh=rmf.ethresh)
+	flat_arf = create_arf(rmf.e_min, rmf.e_max, ethresh=rmf.ethresh)
+
+	return lambda model: RSPModelNoPHA(flat_arf, delta_rmf, model)
 
 
 
@@ -250,7 +248,7 @@ class PCAFitter(object):
 		assert len(ss) == 1
 		return ss[0].statval
 
-	def fit(self):
+	def fit(self, max_lines=10):
 		# try a PCA decomposition of this spectrum
 		logf.info('fitting background of ID=%s using PCA method' % (self.id))
 		initial = self.decompose()
@@ -347,9 +345,9 @@ class PCAFitter(object):
 			p.val = v
 
 		last_model = convbkgmodel
-		for i in range(10):
+		for i in range(1, max_lines + 1):
 			print()
-			print('Adding Gaussian#%d' % (i+1))
+			print('Adding Gaussian#%d' % (i))
 			# find largest discrepancy
 			set_analysis(id, "ener", "rate")
 			m = get_bkg_fit_plot(id)
@@ -362,12 +360,12 @@ class PCAFitter(object):
 			y = m.dataplot.y.cumsum()
 			z = m.modelplot.y.cumsum()
 			diff = numpy.abs(y - z)
-			i = numpy.argmax(diff)
+			imax = numpy.argmax(diff)
 			energies = x
-			e = x[i]
-			print('largest remaining discrepancy at %.3fkeV[%d], need %d counts' % (x[i], i, diff[i]))
-			#e = x[i]
-			power = diff_rate[i]
+			e = x[imax]
+			print('largest remaining discrepancy at %.3fkeV[%d], need %d counts' % (x[imax], imax, diff[imax]))
+			power = diff_rate[imax]
+			# power = diff[imax]
 			# lets try to inject a gaussian there
 
 			g = xsgaussian('g_%d_%d' % (id, i))
@@ -376,12 +374,19 @@ class PCAFitter(object):
 			g.LineE.min = energies[0]
 			g.LineE.max = energies[-1]
 			g.LineE.val = e
-			if i > len(diff) - 2:
-				i = len(diff) - 2
-			if i < 2:
-				i = 2
-			g.Sigma = (x[i + 1] - x[i - 1])
-			g.Sigma.min = (x[i + 1] - x[i - 1])/3
+			if imax > len(diff) - 2:
+				imax = len(diff) - 2
+			if imax < 2:
+				imax = 2
+			g.Sigma = (x[imax + 1] - x[imax - 1])
+			try:
+				g.Sigma.hard_max = 1e10
+			except:
+				try:
+					g.Sigma._hard_max = 1e10
+				except:
+					pass
+			g.Sigma.min = (x[imax + 1] - x[imax - 1])/3
 			g.Sigma.max = x[-1] - x[0]
 			g.norm.min = power * 1e-6
 			g.norm.val = power
@@ -405,7 +410,7 @@ class PCAFitter(object):
 					p.val = v
 				break
 
-def auto_background(id):
+def auto_background(id, max_lines=10):
 	"""Automatically fits background *id* based on PCA-based templates,
 	and additional gaussian lines as needed by AIC."""
 	bkgmodel = PCAFitter(id)
@@ -413,7 +418,7 @@ def auto_background(id):
 	prev_level = log_sherpa.level
 	try:
 		log_sherpa.setLevel(logging.WARN)
-		bkgmodel.fit()
+		bkgmodel.fit(max_lines)
 	finally:
 		log_sherpa.setLevel(prev_level)
 	m = get_bkg_fit_plot(id)

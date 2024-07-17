@@ -54,7 +54,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest coverage coveralls scipy h5py astropy requests cython tqdm coverage toml &&
+          micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge ciao sherpa ds9 ciao-contrib caldb_main astropy "matplotlib>=3.5" ultranest "coverage<7.0.0" coveralls==3.3.1 scipy h5py astropy requests cython tqdm coverage toml &&
           # micromamba env create -y -n ciao -f .github/workflows/ciao-conda-env.yml && 
           micromamba activate ciao &&
           echo "--- Environment dump start ---" &&
@@ -186,7 +186,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript
 
       - name: Cache conda package downloads
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if environment-test.yml has not changed
           CACHE_NUMBER: 0
@@ -268,7 +268,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          micromamba install -y -c conda-forge ultranest coverage coveralls scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml &&
+          micromamba install -y -c conda-forge ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml &&
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 

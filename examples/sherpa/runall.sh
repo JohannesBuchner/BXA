@@ -2,6 +2,8 @@
 
 echo 1.680000e+20 > swift/interval0pc.pi.nh
 
+coverage run -p test_auto_background.py || exit 7
+
 coverage run -p example_simplest.py || exit 1
 coverage run -p example_pcabackground.py || exit 2
 coverage run -p example_automatic_background_model.py || exit 3
