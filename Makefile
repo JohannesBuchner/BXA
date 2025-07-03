@@ -89,7 +89,7 @@ servedocs: docs ## compile the docs watching for changes
 
 release: dist ## package and upload a release
 	twine check dist/*
-	twine upload -s dist/*
+	twine upload dist/*
 
 dist: clean ## builds source and wheel package
 	$(PYTHON) setup.py sdist
