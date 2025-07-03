@@ -298,7 +298,7 @@ class BXASolver(object):
 		:param spectrum: spectrum to use for spectrum.flux
 		:param erange: argument to AllModels.calcFlux, energy range
 		:param nsamples: number of samples to consider (the default, None, means all)
-		:param isource: index of source in case multiple sources are defined. Can be obtained with function bxa.solver.get_isource. 
+		:param i_src: index of source in case multiple sources are defined. Can be obtained with function bxa.solver.get_isource. 
 		"""
 		# prefix = analyzer.outputfiles_basename
 		# modelnames = set([t['model'].name for t in transformations])
