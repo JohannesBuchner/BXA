@@ -284,7 +284,7 @@ class BXASolver(object):
 
 		return self.results
 
-	def create_flux_chain(self, spectrum, erange="2.0 10.0", nsamples=None, isource=0):
+	def create_flux_chain(self, spectrum, erange="2.0 10.0", nsamples=None, i_src=0):
 		"""
 		For each posterior sample, computes the flux in the given energy range.
 
@@ -311,7 +311,7 @@ class BXASolver(object):
 				AllModels.calcFlux(erange)
 				f = spectrum.flux
 				# compute flux in current energies
-				flux.append([f[6*isource+0], f[6*isource+3]])
+				flux.append([f[6*i_src+0], f[6*i_src+3]])
 
 			return numpy.array(flux)
 
