@@ -181,8 +181,30 @@ Use these to propagate errors:
 
 This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)
 
-*Continuing in Xspec*: A chain file, compatible with Xspec chain commands is 
-written for you into *<outputfiles_basename>chain.fits*. In Xspec, load it using `"chain load" <https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html>`_.
+Fluxes and luminosities
+-----------------------
+
+Here is an example for computing photon and energy flux posterior distributions:
+
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 135-150
+
+These can be converted to luminosities with the usual cosmology packages.
+
+.. automethod:: bxa.xspec.BXASolver.create_flux_chain
+
+In case you have multiple sources, specify i_src, which you can get from the
+source number and spectrum number with `get_isrc`.
+
+.. automethod:: bxa.xspec.get_isrc
+
+Loading results into xspec
+--------------------------
+
+A chain file, compatible with Xspec chain commands is 
+written for you into *<outputfiles_basename>chain.fits*. 
+In Xspec, after you set the same model you can load it 
+using `"chain load" <https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html>`_.
 This should set parameters, and compute flux estimates.
 
 .. _xspec-models:
