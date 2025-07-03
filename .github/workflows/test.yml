@@ -183,7 +183,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick libx11-dev
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick libx11-dev libxt-dev
 
       - name: Cache conda package downloads
         uses: actions/cache@v4
