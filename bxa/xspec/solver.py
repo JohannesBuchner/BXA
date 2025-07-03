@@ -16,6 +16,7 @@ import os
 from math import isnan, isinf
 import warnings
 import numpy
+import tempfile
 
 from . import qq
 from .sinning import binning
@@ -93,6 +94,41 @@ def set_parameters(transformations, values):
 		pars += [t['model'], {t['index']:v}]
 	AllModels.setPars(*pars)
 
+def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
+	"""
+	Returns the index of the source in flux calculation of Xspec. The
+	returned index is to be used BXASolver.create_flux_chain for isource
+	parameter. Relevant when multiple sources are loaded (e.g. for
+	multiple responses). Needs to be used when multiple sources are
+	defined because the fluxes listed by Xspec are not ordered by source
+	number.
+	
+	:param erange: energy range as in create_flux_chain.
+	:param ispectrum: index of spectrum if multiple spectra are loaded.
+	:param isource: index of source. In most cases 1.
+	"""
+	# Create a temporary file
+	with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_file:
+		log_path = tmp_file.name
+	Xset.openLog(log_path)
+	AllModels.calcFlux(erange)
+	Xset.closeLog()
+	loglines = {}
+	with open(log_path, 'r') as f:
+		for line in f.readlines():
+			line_short = line.replace('\n', '').strip()
+			if line_short.startswith('Spectrum Number: '):
+				curr_spec = line_short[17:]
+				loglines[curr_spec] = []
+			elif line_short.startswith('Source '):
+				loglines[curr_spec].append(line_short[7:])
+	os.remove(log_path)
+	if not '%s' % (ispectrum) in loglines:
+		raise ValueError('Spectrum %s not loaded' % (ispectrum))
+	else:
+		if not '%s' % (isource) in loglines['%s' % (ispectrum)]:
+			raise ValueError('Source %s not loaded' % (isource))
+		return numpy.where(numpy.array(loglines['%s' % (ispectrum)]) == '%s' % (isource))[0][0]
 
 class BXASolver(object):
 	"""
@@ -249,7 +285,7 @@ class BXASolver(object):
 
 		return self.results
 
-	def create_flux_chain(self, spectrum, erange="2.0 10.0", nsamples=None):
+	def create_flux_chain(self, spectrum, erange="2.0 10.0", nsamples=None, i_src=0):
 		"""
 		For each posterior sample, computes the flux in the given energy range.
 
@@ -263,6 +299,7 @@ class BXASolver(object):
 		:param spectrum: spectrum to use for spectrum.flux
 		:param erange: argument to AllModels.calcFlux, energy range
 		:param nsamples: number of samples to consider (the default, None, means all)
+		:param i_src: index of source in case multiple sources are defined. Can be obtained with function bxa.solver.get_isource. 
 		"""
 		# prefix = analyzer.outputfiles_basename
 		# modelnames = set([t['model'].name for t in transformations])
@@ -275,7 +312,7 @@ class BXASolver(object):
 				AllModels.calcFlux(erange)
 				f = spectrum.flux
 				# compute flux in current energies
-				flux.append([f[0], f[3]])
+				flux.append([f[6 * i_src + 0], f[6 * i_src + 3]])
 
 			return numpy.array(flux)
 
