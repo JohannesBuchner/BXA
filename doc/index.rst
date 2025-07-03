@@ -31,18 +31,34 @@ The usage is similar in Sherpa and Xspec conceptionally:
 	* :ref:`In Xspec <xspec-qq>`
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents
+   :maxdepth: 1
+   :caption: Documentation
 
    sherpa-analysis
    xspec-analysis
-   convenience
-   background-models
-   pca-background-models
-   xagnfitter
    contributing
    history
    modules
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Learn more
+
+   visualisations
+   engine
+   tutorials
+   convenience
+   background-models
+   pca-background-models
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Examples
+
+   examples
+   xagnfitter
+   tutorial_usage_plotbxa.ipynb
+   tutorial_usage_plotxspec.ipynb
 
 Indices and tables
 ==================

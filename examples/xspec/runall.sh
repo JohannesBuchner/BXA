@@ -25,10 +25,14 @@ do
 	convert -density 100 ${prefix}/convolved_posterior.pdf reference-output/${prefix}-convolved_posterior.png
 	convert -density 100 ${prefix}/unconvolved_posterior.pdf reference-output/${prefix}-unconvolved_posterior.png
 	convert -density 100 ${prefix}/qq_model_deviations.pdf reference-output/${prefix}-qq_model_deviations.png
+	convert -density 100 ${prefix}/flux_posterior.pdf reference-output/${prefix}-flux_posterior.png
 	cp ${prefix}/plots/corner.pdf reference-output/${prefix}-corner.pdf
 	cp ${prefix}/convolved_posterior.pdf reference-output/${prefix}-convolved_posterior.pdf
 	cp ${prefix}/unconvolved_posterior.pdf reference-output/${prefix}-unconvolved_posterior.pdf
 	cp ${prefix}/qq_model_deviations.pdf reference-output/${prefix}-qq_model_deviations.pdf
+	cp ${prefix}/flux_posterior.pdf reference-output/${prefix}-flux_posterior.pdf
 done
+convert -density 100 simplest/convolved_posterior_direct.pdf reference-output/simplest-convolved_posterior_direct.png
+cp simplest/convolved_posterior.pdf reference-output/simplest-convolved_posterior.pdf
 
 exit 0

@@ -71,8 +71,8 @@ data = solver.posterior_predictions_convolved(nsamples=100)
 #	label='data', marker='o', color='green')
 # bin data for plotting
 print('binning for plot...')
-binned = bxa.binning(outputfiles_basename=outputfiles_basename, 
-	bins = data['bins'], widths = data['width'], 
+binned = bxa.binning(outputfiles_basename=outputfiles_basename,
+	bins = data['bins'], widths = data['width'],
 	data = data['data'], models = data['models'])
 for point in binned['marked_binned']:
 	plt.errorbar(marker='o', zorder=-1, **point)
@@ -85,6 +85,7 @@ elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
 plt.ylabel('Counts/s/cm$^2$')
 print('saving plot...')
+plt.legend()
 plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
 plt.close()
 
@@ -97,23 +98,43 @@ solver.posterior_predictions_unconvolved(nsamples=100)
 ylim = plt.ylim()
 # 3 orders of magnitude at most
 plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
-plt.gca().set_yscale('log')
+plt.yscale('log')
+plt.xscale('log')
 if Plot.xAxis == 'keV':
 	plt.xlabel('Energy [keV]')
 elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
 plt.ylabel('Energy flux density [erg/s/cm$^2$/keV]')
 print('saving plot...')
+plt.legend()
 plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
 plt.close()
 
 
 
 print('creating quantile-quantile plot ...')
-solver.set_best_fit()
 plt.figure(figsize=(7,7))
 with bxa.XSilence():
+	solver.set_best_fit()
 	bxa.qq.qq(prefix=outputfiles_basename, markers=5, annotate=True)
 print('saving plot...')
 plt.savefig(outputfiles_basename + 'qq_model_deviations.pdf', bbox_inches='tight')
+plt.close()
+
+
+print("compute fluxes ...")
+flux_hard = solver.create_flux_chain(s, "2.0 10.0")
+flux_soft = solver.create_flux_chain(s, "0.5 2.0")
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+plt.hist(flux_hard[:,0], label='hard', histtype='step')
+plt.hist(flux_soft[:,0], label='soft', histtype='step')
+plt.legend()
+plt.xlabel("Photon flux [phot/s/cm$^2$]")
+plt.subplot(1, 2, 2)
+plt.hist(flux_hard[:,1], label='hard', histtype='step')
+plt.hist(flux_soft[:,1], label='soft', histtype='step')
+plt.legend()
+plt.xlabel("Energy flux [erg/s/cm$^2$]")
+plt.savefig(outputfiles_basename + 'flux_posterior.pdf', bbox_inches='tight')
 plt.close()

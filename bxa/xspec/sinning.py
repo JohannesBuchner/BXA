@@ -14,7 +14,17 @@ import tqdm
 
 def group_adapt(xdata, ydata, xlo, xhi, nmin = 20):
 	"""
-	Adaptive grouping into nmin count bins
+	Adaptive grouping into nmin count bins.
+	
+	Args:
+		:param xdata: bin center
+		:param ydata: count values
+		:param xlo: bin lower edge
+		:param xhi: bin upper edge
+		:param nmin: desired minimum number of counts in each bin
+	
+	Returns:
+		sequence of (lower edge, upper edge, number of counts) tuples
 	"""
 	i = 0
 	while i < len(xlo):
@@ -29,22 +39,29 @@ def group_adapt(xdata, ydata, xlo, xhi, nmin = 20):
 		i = j + 1
 
 
-def binning(outputfiles_basename, bins, widths, data, models):
-	"""
-	Bins the data for plotting.
+def binning(outputfiles_basename, bins, widths, data, models, nmin=20):
+	"""Bins the data for plotting and checks the model.
+
 	Using the gof module, computes a Poisson goodness-of-fit range,
 	i.e. ranges where the model must lie. This is done for multiple
 	binning sizes simultaneously.
+
+	:param outputfiles_basename: not used.
+	:param bins: bin location from Plot.x()
+	:param widths: bin width from Plot.xErr()
+	:param data: counts per bin width from Plot.y() with Plot.background = True and Plot('counts')
+	:param model: counts per bin width predicted by the model, from Plot.model()
+	:param nmin: number of counts per bin to use for rebinning.
 	
-	Returns:
+	Returns
+	--------
 	
-	* marked_binned: data points binned to contain 10 counts
+	* marked_binned: data points binned to contain `nmin` counts
 	  a sequence ready to be passed to matplotlib.pyplot.errorbar
 	* modelrange: range allowed by the data
 	  ready to be passed to matplotlib.pyplot.fill_between
 	* and statistics (GoF measure)
 	
-	outputfiles_basename is not used.
 	"""
 	
 	xdata = bins
@@ -58,24 +75,23 @@ def binning(outputfiles_basename, bins, widths, data, models):
 	best_gof_stats = None
 	data = None
 	
-	grouped_data = list(group_adapt(xdata, ydata, xlo, xhi))
+	grouped_data = list(group_adapt(xdata, ydata, xlo, xhi, nmin=nmin))
 	data = numpy.array([ydata[numpy.logical_and(xdata >= i, xdata < j)].sum() for i, j in zip(xlo, xhi)])
 	
-	for icomponent in range(models.shape[1]):
-		component = models[:,icomponent,:]
-		for i, counts_predicted in enumerate(tqdm.tqdm(component)):
-			modelrange_low, modelrange_high = gof.calc_models_range(data)
+	component = models[:,0,:]
+	for i, counts_predicted in enumerate(tqdm.tqdm(component)):
+		modelrange_low, modelrange_high = gof.calc_models_range(data)
+	
+		stats = gof.calc_multigof(data, counts_predicted)
+		curgof = -numpy.log10(
+			numpy.min([stats[stats[:,0] == n][:,2].min() * (stats[:,0] == n).sum() 
+				for n in sorted(set(stats[:,0]))]) + 1e-300)
 		
-			stats = gof.calc_multigof(data, counts_predicted)
-			curgof = -numpy.log10(
-				numpy.min([stats[stats[:,0] == n][:,2].min() * (stats[:,0] == n).sum() 
-					for n in sorted(set(stats[:,0]))]) + 1e-300)
-			
-			if best_gof is None or curgof < best_gof:
-				best_gof = curgof
-				best_gof_stats = stats
-			if i > 100:
-				break
+		if best_gof is None or curgof < best_gof:
+			best_gof = curgof
+			best_gof_stats = stats
+		if i > 100:
+			break
 
 	# check if we can reproduce the data
 	curgof = best_gof
@@ -87,7 +103,7 @@ def binning(outputfiles_basename, bins, widths, data, models):
 		#exp(numpy.log(stats[stats[:,0] == n][:,2]).sum()) * (stats[:,0] == n).sum() 
 		#		for n in sorted(set(stats[:,0]))]))
 		nstats = stats[stats[:,0] == n]
-		pxlo = xlo[(nstats[:,1] * n).astype(numpy.int)]
+		pxlo = xlo[(nstats[:,1] * n).astype(int)]
 		pxhi = numpy.asarray(pxlo[1:].tolist() + [xdata.max()])
 	
 		# so far so good.
@@ -111,14 +127,14 @@ def binning(outputfiles_basename, bins, widths, data, models):
 		best_gof = -numpy.log10(gofpi + 1e-300)
 		# 1e3 and 1e6 correspond roughly to 3 sigma and 5 sigma
 		c = 'green' if best_gof < 2 else 'orange' if best_gof < 6. else 'red'
-		f = 1. / (xhii-xloi) #* deltax
+		f = 1. / (xhii - xloi)
 		y = ydatai * f
 		modelrange_low  = scipy.special.gammaincinv(ydatai + 1, 0.1) * f
 		modelrange_high = scipy.special.gammaincinv(ydatai + 1, 0.9) * f
-		marked_binned.append(
-			dict(x=(xloi+xhii)/2., xerr=(-xloi+xhii)/2.,
+		marked_binned.append(dict(
+			x=(xloi + xhii)/2., xerr=(xhii - xloi) / 2.,
 			y = y,
-			yerr = [[modelrange_high - y], [y - modelrange_low]],
+			yerr = [[max(0, modelrange_high - y)], [max(0, y - modelrange_low)]],
 			color=c)
 		)
 		ymin = min(ymin, modelrange_low)

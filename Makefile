@@ -55,7 +55,6 @@ clean-test: ## remove test and coverage artifacts
 
 clean-doc:
 	rm -rf doc/build
-	nbstripout doc/*.ipynb
 
 lint: ## check style with flake8
 	flake8 bxa tests
@@ -78,19 +77,19 @@ coverage: ## check code coverage quickly with the default Python
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f doc/bxa{,.sherpa,.xspec,.sherpa.background}.rst
 	rm -f doc/modules.rst
+	cp -vu examples/xspec/reference-output/*.pdf doc/
+	cp -vu examples/xspec/reference-output/*.png doc/
 	sphinx-apidoc -H API -o doc/ bxa
 	$(MAKE) -C doc clean
-	PYTHONPATH=${PWD}:${PWD}/npyinterp:${PYTHONPATH} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}/npyinterp $(MAKE) MAKESPHINXDOC=1 -C doc html
+	PYTHONPATH=${PWD}:${PWD}/examples/xspec/bayesian-workflow/:${PWD}/npyinterp:${PYTHONPATH} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}/npyinterp $(MAKE) MAKESPHINXDOC=1 -C doc update-gh-pages
 	$(BROWSER) doc/build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 release: dist ## package and upload a release
-	rm -rf logs/features-*
-	echo testfeatures/runsettings-*-iterated.json | xargs --max-args=1 mpiexec -np 3 coverage run --parallel-mode examples/testfeatures.py
-	bash -c 'echo $$RANDOM' | xargs mpiexec -np 5 coverage run --parallel-mode examples/testfeatures.py --random --seed
-	twine upload -s dist/*.tar.gz
+	twine check dist/*
+	twine upload dist/*
 
 dist: clean ## builds source and wheel package
 	$(PYTHON) setup.py sdist

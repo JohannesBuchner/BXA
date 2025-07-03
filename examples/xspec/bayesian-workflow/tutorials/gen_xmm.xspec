@@ -1,0 +1,71 @@
+# generate a set of simulated XMM-Newton EPIC spectra
+# to be used in the tutorial scripts
+#
+# The model will assume an AGN at z=0.15 with significant 
+# instrinsic absorption. A simulated spectrum is created
+# for pn, MOS1, and MOS2 and grppha is used to rebin the
+# spectra to a minimum of one count per bin
+
+rm -f epic*.fak
+
+abund wilm
+xsect vern
+
+# pn spectrum
+model constant(zTBabs*zpowerlw + zgauss)
+1
+1.0
+0.015
+1.95
+0.015
+0.1
+6.4
+0.5
+0.015
+0.002
+
+plot model
+
+
+energies 0.2 12 10000
+fakeit none
+epic_pn.rsp
+
+y
+epic_pn
+epic_pn_agn.fak
+50000 1.0 1.0
+
+# MOS spectra
+model constant(zTBabs*zpowerlw + zgauss)
+0.9
+1.0
+0.015
+1.95
+0.015
+0.1
+6.4
+0.5
+0.015
+0.002
+
+energies 0.2 12 5000
+
+data 1 none
+fakeit none
+epic_mos1.rsp
+
+y
+epic_mos1
+epic_mos1_agn.fak
+50000 1.0 1.0
+
+# MOS2 spectrum
+data 1 none
+fakeit none
+epic_mos2.rsp
+
+y
+epic_mos2
+epic_mos2_agn.fak
+50000 1.0 1.0

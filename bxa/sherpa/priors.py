@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
-from __future__ import print_function
 
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
@@ -9,7 +8,7 @@ Copyright: Johannes Buchner (C) 2013-2015
 
 Priors
 """
-from math import log10
+from math import log10, erf
 import numpy
 from . import invgauss
 
@@ -44,6 +43,7 @@ def create_loguniform_prior_for(parameter):
 		powerlaw.norm = 10**lognorm
 
 	"""
+	assert parameter.min > 0 and parameter.max > 0, ('The limits of "%s" (min and max) are not positive.' % parameter.fullname)
 	low = log10(parameter.min)
 	spread = log10(parameter.max) - log10(parameter.min)
 	return lambda x: 10**(x * spread + low)
@@ -57,12 +57,22 @@ def create_gaussian_prior_for(parameter, mean, std):
 	a Gaussian, create a ancillary parameter (see create_jeffreys_prior_for).
 	
 	:param parameter: Parameter to create a prior for. E.g. xspowerlaw.mypowerlaw.PhoIndex
+	:param mean: Mean of the Gaussian
+	:param std: Standard deviation of the Gaussian
 
 	"""
+	import scipy.stats
 	lo = parameter.min
 	hi = parameter.max
-	f = invgauss.get_invgauss_func(mean, std)
-	return lambda x: max(lo, min(hi, f(x)))
+
+	rv = scipy.stats.norm(mean, std)
+	xlo = rv.cdf(lo)
+	xhi = rv.cdf(hi)
+	def gauss_transform(x):
+		return rv.ppf(x * (xhi - xlo) + xlo)
+
+	return gauss_transform
+
 
 def prior_from_file(filename, parameter):
 	"""
@@ -82,13 +92,10 @@ def prior_from_file(filename, parameter):
 		parameter.val = float(dist)
 		return float(dist), [], []
 	distz = numpy.array(list(dist[:, 1]) + [dist[-1,1]]*2)
-	#deltax = dist[1,0] - dist[0,0]
-	n = len(dist)
 	def custom_priorf(x):
 		assert x >= 0
 		assert x <= 1
-		i = int(numpy.floor(x*n))
-		r = distz[i] + (distz[i + 1] - distz[i]) * (x * n - i)
+		r = numpy.interp(x, dist[:,0], dist[:,1])
 		return r
 	return parameter, [parameter], [custom_priorf]
 

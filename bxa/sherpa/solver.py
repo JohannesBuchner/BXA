@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
@@ -11,7 +11,9 @@ from __future__ import print_function
 import os
 import numpy
 from math import isnan
-from ultranest.solvecompat import pymultinest_solve_compat as solve
+from ultranest.integrator import ReactiveNestedSampler, resume_from_similar_file
+import ultranest.stepsampler
+import warnings
 from .priors import create_prior_function
 
 if 'MAKESPHINXDOC' not in os.environ:
@@ -52,7 +54,8 @@ def energy_flux_histogram(distribution, nbins=None):
 class BXASolver(object):
 	def __init__(
 		self, id=None, otherids=(), prior=None, parameters=None,
-		outputfiles_basename='chains/'
+		outputfiles_basename='chains/',
+		resume_from=None
 	):
 		"""
 		Set up Bayesian analysis with specified parameters+transformations.
@@ -62,7 +65,8 @@ class BXASolver(object):
 		:param prior: prior function created with create_prior_function.
 		:param parameters: List of parameters to analyse.
 		:param outputfiles_basename: prefix for output filenames.
-		
+		:param resume_from: prefix for output filenames of a previous run with similar posterior from which to resume
+
 		If prior is None, uniform priors are used on the passed parameters.
 		If parameters is also None, all thawed parameters are used.
 		"""
@@ -75,14 +79,22 @@ class BXASolver(object):
 			parameters = self.fit.model.thawedpars
 		if prior is None:
 			prior = create_prior_function(id=id, otherids=otherids, parameters=parameters)
-		
+
 		self.prior = prior
 		self.parameters = parameters
 		self.outputfiles_basename = outputfiles_basename
 		self.set_paramnames()
 		self.allowed_stats = (Cash, CStat)
 		self.ndims = len(parameters)
-	
+		self.vectorized = False
+
+		if resume_from is not None:
+			self.paramnames, self.log_likelihood, self.prior_transform, self.vectorized = resume_from_similar_file(
+				os.path.join(resume_from, 'chains', 'weighted_post_untransformed.txt'),
+				self.paramnames, loglike=self.log_likelihood, transform=self.prior_transform,
+				vectorized=False,
+			)
+
 	def set_paramnames(self, paramnames=None):
 		if paramnames is None:
 			self.paramnames = [p.fullname for p in self.parameters]
@@ -91,13 +103,18 @@ class BXASolver(object):
 
 	def get_fit(self):
 		return self.fit
-	
+
 	def prior_transform(self, cube):
+		"""unit cube transformation.
+
+		see https://johannesbuchner.github.io/UltraNest/priors.html#Dependent-priors
+		"""
 		params = cube.copy()
 		self.prior(params, self.ndims, self.ndims)
 		return params
 
 	def log_likelihood(self, cube):
+		""" returns -0.5 of the fit statistic."""
 		try:
 			for i, p in enumerate(self.parameters):
 				assert not isnan(cube[i]), 'ERROR: parameter %d (%s) to be set to %f' % (i, p.fullname, cube[i])
@@ -111,55 +128,89 @@ class BXASolver(object):
 			raise e
 
 	def run(
-		self, evidence_tolerance=0.5, n_live_points=400,
-		wrapped_params=None, **kwargs
+		self, sampler_kwargs={'resume': 'overwrite'}, run_kwargs={'Lepsilon': 0.1},
+		speed="safe", resume=None, n_live_points=None,
+		frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
 	):
-		"""
-		Run nested sampling with ultranest.
+		"""Run nested sampling with ultranest.
 
-		:param n_live_points: number of live points (400 to 1000 is recommended).
-		:param evidence_tolerance: uncertainty on the evidence to achieve
-		:param resume: uncertainty on the evidence to achieve
-		:param Lepsilon: numerical model inaccuracies in the statistic (default: 0.1). 
-			Increase if run is not finishing because it is trying too hard to resolve 
-			unimportant details caused e.g., by atable interpolations.
-		:param frac_remain: fraction of the integration remainder allowed in the live points.
-			Setting to 0.5 in mono-modal problems can be acceptable and faster.
-			The default is 0.01 (safer).
+		:sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)
+		:run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)
 
-		These are ultranest parameters (see ultranest.solve documentation!)
+		The following arguments are also available directly for backward compatibility:
+
+		:param resume: sets sampler_kwargs['resume']='resume' if True, otherwise 'overwrite'
+		:param n_live_points: sets run_kwargs['min_num_live_points']
+		:param evidence_tolerance: sets run_kwargs['dlogz']
+		:param Lepsilon: sets run_kwargs['Lepsilon']
+		:param frac_remain: sets run_kwargs['frac_remain']
 		"""
 
 		fit = self.fit
 		if False and not isinstance(fit.stat, self.allowed_stats):
 			raise RuntimeError("Fit statistic must be cash or cstat, not %s" % fit.stat.name)
 
-		resume = kwargs.pop('resume', False)
-		Lepsilon = kwargs.pop('Lepsilon', 0.1)
+		if resume is not None:
+			sampler_kwargs['resume'] = 'resume' if resume else 'overwrite'
+		run_kwargs['Lepsilon'] = run_kwargs.pop('Lepsilon', Lepsilon)
+		del Lepsilon
+		if evidence_tolerance is not None:
+			run_kwargs['dlogz'] = run_kwargs.pop('dlogz', evidence_tolerance)
+		del evidence_tolerance
+		if frac_remain is not None:
+			run_kwargs['frac_remain'] = run_kwargs.pop('frac_remain', frac_remain)
+		del frac_remain
+		if n_live_points is not None:
+			run_kwargs['min_num_live_points'] = run_kwargs.pop('min_num_live_points', n_live_points)
+		del n_live_points
 
-		self.results = solve(
-			self.log_likelihood, self.prior_transform, self.ndims,
-			paramnames=self.paramnames,
-			outputfiles_basename=self.outputfiles_basename,
-			resume=resume, Lepsilon=Lepsilon,
-			n_live_points=n_live_points, evidence_tolerance=evidence_tolerance,
-			seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
-		)
+		self.sampler = ReactiveNestedSampler(
+			self.paramnames, self.log_likelihood, transform=self.prior_transform,
+			log_dir=self.outputfiles_basename,
+			vectorized=self.vectorized, **sampler_kwargs)
+
+		if speed == "safe":
+			pass
+		elif speed == "auto":
+			region_filter = run_kwargs.pop('region_filter', True)
+			self.sampler.run(max_ncalls=40000, **run_kwargs)
+
+			self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
+				nsteps=1000,
+				generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+				adaptive_nsteps='move-distance', region_filter=region_filter
+			)
+		else:
+			self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
+				generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+				nsteps=speed,
+				adaptive_nsteps=False,
+				region_filter=False)
+
+		self.sampler.run(**run_kwargs)
+		self.sampler.print_results()
+		self.results = self.sampler.results
+		try:
+			self.sampler.plot()
+		except Exception as e:
+			import traceback
+			traceback.print_exc()
+			warnings.warn("plotting failed.")
+
 		self.set_best_fit()
 		return self.results
 
 	def set_best_fit(self):
-		"""
-		Sets model to the best fit values.
-		"""
+		"""Sets model to the best fit values."""
 		i = numpy.argmax(self.results['weighted_samples']['logl'])
 		for p, v in zip(self.parameters, self.results['weighted_samples']['points'][i, :]):
 			p.val = v
 
 	def get_distribution_with_fluxes(self, elo=None, ehi=None):
-		"""
-		Returns an array of equally weighted posterior samples (parameter values) with two 
-		additional columns: the photon fluxes and the energy fluxes. 
+		"""Computes flux posterior samples.
+
+		Returns an array of equally weighted posterior samples (parameter values) with two
+		additional columns: the photon fluxes and the energy fluxes.
 
 		The values will be correctly distributed according to the
 		analysis run before.
@@ -171,6 +222,6 @@ class BXASolver(object):
 				p.val = v
 			r.append(
 				list(row) + [
-					ui._session.calc_photon_flux(lo=elo, hi=ehi, id=self.id), 
+					ui._session.calc_photon_flux(lo=elo, hi=ehi, id=self.id),
 					ui._session.calc_energy_flux(lo=elo, hi=ehi, id=self.id)])
 		return numpy.array(r)

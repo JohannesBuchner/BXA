@@ -55,13 +55,13 @@ create a flipbook of prior sample predictions.
 
 1) Pick a random sample from the prior::
 
-   import numpy
-   from bxa.xspec.solver import set_parameters
+	import numpy
+	from bxa.xspec.solver import set_parameters
 
-   prior_function = bxa.create_prior_function(transformations)
-   values = prior_function(numpy.random.uniform(size=len(transformations)))
-   set_parameters(transformations, values)
-   print("set to parameters:", values)
+	prior_function = bxa.create_prior_function(transformations)
+	values = prior_function(numpy.random.uniform(size=len(transformations)))
+	set_parameters(transformations, values)
+	print("set to parameters:", values)
 
 2) make a plot
 
@@ -113,7 +113,7 @@ For this functionality, you also need scipy installed.
 The following code creates a plot of the convolved posterior model:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
-   :lines: 37-60
+   :lines: 78-97
 
 .. figure:: absorbed-convolved_posterior.*
 	
@@ -121,12 +121,14 @@ The following code creates a plot of the convolved posterior model:
 	For each posterior sample (solution), the parameters are taken and put
 	through the model. All such lines are plotted. Where the region is darker,
 	more lines ended up, and thus it is more likely.
+	The band covers the 1 sigma equivalent model prediction interval (68 per cent),
+	the more transparent band contains 99 per cent of the posterior probability.
 	
 	The data points are adaptively binned to contain at least 20 counts.
 	The error bars are created by asking: which model count rate can produce
 	this amount of counts. 
-	In a Poisson process, the inverse incomplete gamma
-	function provides this answer. The 10%-90% probability range is used.
+	In a Poisson process, the inverse incomplete gamma function provides 
+	this answer. The error bars show the 10%-90% probability range.
 	
 	On the colors of the data points:
 	
@@ -151,7 +153,7 @@ The following code creates a plot of the convolved posterior model:
 The following code creates a plot of the unconvolved posterior:
 
 .. literalinclude:: ../examples/xspec/example_simplest.py
-   :lines: 65-79
+   :lines: 103-118
 
 .. figure:: absorbed-unconvolved_posterior.*
 	
@@ -160,7 +162,7 @@ The following code creates a plot of the unconvolved posterior:
 	through the model. All such lines are plotted. Where the region is darker,
 	more lines ended up, and thus it is more likely.
 
-For plotting the model parameters found against the data, use these functions.
+For plotting the model parameters found against the data, use these functions:
 
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_unconvolved
 .. automethod:: bxa.xspec.BXASolver.posterior_predictions_convolved
@@ -179,8 +181,30 @@ Use these to propagate errors:
 
 This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)
 
-*Continuing in Xspec*: A chain file, compatible with Xspec chain commands is 
-written for you into *<outputfiles_basename>chain.fits*. In Xspec, load it using `"chain load" <https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html>`_.
+Fluxes and luminosities
+-----------------------
+
+Here is an example for computing photon and energy flux posterior distributions:
+
+.. literalinclude:: ../examples/xspec/example_simplest.py
+   :lines: 135-150
+
+These can be converted to luminosities with the usual cosmology packages.
+
+.. automethod:: bxa.xspec.BXASolver.create_flux_chain
+
+In case you have multiple sources, specify i_src, which you can get from the
+source number and spectrum number with `get_isrc`.
+
+.. automethod:: bxa.xspec.solver.get_isrc
+
+Loading results into xspec
+--------------------------
+
+A chain file, compatible with Xspec chain commands is 
+written for you into *<outputfiles_basename>chain.fits*. 
+In Xspec, after you set the same model you can load it 
+using `"chain load" <https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html>`_.
 This should set parameters, and compute flux estimates.
 
 .. _xspec-models:
@@ -202,5 +226,8 @@ For Xspec, the *qq* function in the *qq* module allows you to create such plots 
 
 .. autofunction:: bxa.xspec.qq.qq
 
-Refer to the :ref:`accompaning paper <cite>`, which gives an introduction and 
-detailed discussion on the methodology.
+For an introduction and detailed discussion on the methodology, see: 
+
+* the :ref:`accompaning paper <cite>`
+* the `book chapter "Statistical Aspects of X-ray Spectral Analysis" <https://arxiv.org/abs/2309.05705>`_
+* the PlotBXA tutorial linked on the left of this page

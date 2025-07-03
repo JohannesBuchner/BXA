@@ -38,7 +38,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.mathjax',
     'sphinx.ext.autosectionlabel',
-    #'nbsphinx',
+    'nbsphinx',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
@@ -60,7 +60,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'BXA (Bayesian X-ray Analysis)'
 author = bxa.__author__
-copyright = u'2013-2020, %s' % author
+copyright = u'2013-2022, %s' % author
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -76,7 +76,7 @@ release = bxa.__version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -186,6 +186,6 @@ man_pages = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-	'BXA': ('http://johannesbuchner.github.com/BXA/', None),
-	'UltraNest': ('http://johannesbuchner.github.com/UltraNest/', None),
+	'BXA': ('http://johannesbuchner.github.io/BXA/', None),
+	'UltraNest': ('http://johannesbuchner.github.io/UltraNest/', None),
 }

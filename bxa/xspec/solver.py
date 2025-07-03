@@ -9,11 +9,14 @@ Copyright: Johannes Buchner (C) 2013-2020
 """
 
 from __future__ import print_function
-from ultranest.solvecompat import pymultinest_solve_compat as solve
+from ultranest.integrator import ReactiveNestedSampler, resume_from_similar_file
 from ultranest.plot import PredictionBand
+import ultranest.stepsampler
 import os
 from math import isnan, isinf
+import warnings
 import numpy
+import tempfile
 
 from . import qq
 from .sinning import binning
@@ -22,11 +25,12 @@ from xspec import Xset, AllModels, Fit, Plot
 import xspec
 import matplotlib.pyplot as plt
 from tqdm import tqdm  # if this fails --> pip install tqdm
-from .priors import *
+#from .priors import *
 
 
 class XSilence(object):
 	"""Context for temporarily making xspec quiet."""
+
 	def __enter__(self):
 		self.oldchatter = Xset.chatter, Xset.logChatter
 		Xset.chatter, Xset.logChatter = 0, 0
@@ -52,9 +56,7 @@ def create_prior_function(transformations):
 
 
 def store_chain(chainfilename, transformations, posterior, fit_statistic):
-	"""
-	Writes a MCMC chain file in the same format as the Xspec chain command
-	"""
+	"""Writes a MCMC chain file in the same format as the Xspec chain command."""
 	import astropy.io.fits as pyfits
 
 	group_index = 1
@@ -82,9 +84,7 @@ def store_chain(chainfilename, transformations, posterior, fit_statistic):
 
 
 def set_parameters(transformations, values):
-	"""
-	Set current parameters.
-	"""
+	"""Set current parameters."""
 	assert len(values) == len(transformations)
 	pars = []
 	for i, t in enumerate(transformations):
@@ -94,6 +94,41 @@ def set_parameters(transformations, values):
 		pars += [t['model'], {t['index']:v}]
 	AllModels.setPars(*pars)
 
+def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
+	"""
+	Returns the index of the source in flux calculation of Xspec. The
+	returned index is to be used BXASolver.create_flux_chain for isource
+	parameter. Relevant when multiple sources are loaded (e.g. for
+	multiple responses). Needs to be used when multiple sources are
+	defined because the fluxes listed by Xspec are not ordered by source
+	number.
+	
+	:param erange: energy range as in create_flux_chain.
+	:param ispectrum: index of spectrum if multiple spectra are loaded.
+	:param isource: index of source. In most cases 1.
+	"""
+	# Create a temporary file
+	with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_file:
+		log_path = tmp_file.name
+	Xset.openLog(log_path)
+	AllModels.calcFlux(erange)
+	Xset.closeLog()
+	loglines = {}
+	with open(log_path, 'r') as f:
+		for line in f.readlines():
+			line_short = line.replace('\n', '').strip()
+			if line_short.startswith('Spectrum Number: '):
+				curr_spec = line_short[17:]
+				loglines[curr_spec] = []
+			elif line_short.startswith('Source '):
+				loglines[curr_spec].append(line_short[7:])
+	os.remove(log_path)
+	if not '%s' % (ispectrum) in loglines:
+		raise ValueError('Spectrum %s not loaded' % (ispectrum))
+	else:
+		if not '%s' % (isource) in loglines['%s' % (ispectrum)]:
+			raise ValueError('Source %s not loaded' % (isource))
+		return numpy.where(numpy.array(loglines['%s' % (ispectrum)]) == '%s' % (isource))[0][0]
 
 class BXASolver(object):
 	"""
@@ -107,6 +142,7 @@ class BXASolver(object):
 	:param transformations: List of parameter transformation definitions
 	:param prior_function: set only if you want to specify a custom, non-separable prior
 	:param outputfiles_basename: prefix for output filenames.
+	:param resume_from: prefix for output filenames of a previous run with similar posterior from which to resume
 
 	More information on the concept of prior transformations is available at
 	https://johannesbuchner.github.io/UltraNest/priors.html
@@ -115,7 +151,8 @@ class BXASolver(object):
 	allowed_stats = ['cstat', 'cash', 'pstat']
 
 	def __init__(
-		self, transformations, prior_function=None, outputfiles_basename='chains/'
+		self, transformations, prior_function=None, outputfiles_basename='chains/',
+		resume_from=None
 	):
 		if prior_function is None:
 			prior_function = create_prior_function(transformations)
@@ -123,6 +160,7 @@ class BXASolver(object):
 		self.prior_function = prior_function
 		self.transformations = transformations
 		self.set_paramnames()
+		self.vectorized = False
 
 		# for convenience. Has to be a directory anyway for ultranest
 		if not outputfiles_basename.endswith('/'):
@@ -133,6 +171,13 @@ class BXASolver(object):
 
 		self.outputfiles_basename = outputfiles_basename
 
+		if resume_from is not None:
+			self.paramnames, self.log_likelihood, self.prior_function, self.vectorized = resume_from_similar_file(
+				os.path.join(resume_from, 'chains', 'weighted_post_untransformed.txt'),
+				self.paramnames, loglike=self.log_likelihood, transform=self.prior_function,
+				vectorized=False,
+			)
+
 	def set_paramnames(self, paramnames=None):
 		if paramnames is None:
 			self.paramnames = [str(t['name']) for t in self.transformations]
@@ -140,15 +185,13 @@ class BXASolver(object):
 			self.paramnames = paramnames
 
 	def set_best_fit(self):
-		"""
-		Sets model to the best fit values.
-		"""
+		"""Sets model to the best fit values."""
 		i = numpy.argmax(self.results['weighted_samples']['logl'])
 		params = self.results['weighted_samples']['points'][i, :]
 		set_parameters(transformations=self.transformations, values=params)
 
-
 	def log_likelihood(self, params):
+		""" returns -0.5 of the fit statistic."""
 		set_parameters(transformations=self.transformations, values=params)
 		like = -0.5 * Fit.statistic
 		# print("like = %.1f" % like)
@@ -157,42 +200,76 @@ class BXASolver(object):
 		return like
 
 	def run(
-		self, evidence_tolerance=0.5, n_live_points=400,
-		wrapped_params=None, **kwargs
+		self, sampler_kwargs={'resume': 'overwrite'}, run_kwargs={'Lepsilon': 0.1},
+		speed="safe", resume=None, n_live_points=None,
+		frac_remain=None, Lepsilon=0.1, evidence_tolerance=None
 	):
-		"""
-		Run nested sampling with ultranest.
+		"""Run nested sampling with ultranest.
 
-		:param n_live_points: number of live points (400 to 1000 is recommended).
-		:param evidence_tolerance: uncertainty on the evidence to achieve
-		:param resume: uncertainty on the evidence to achieve
-		:param Lepsilon: numerical model inaccuracies in the statistic (default: 0.1).
-			Increase if run is not finishing because it is trying too hard to resolve
-			unimportant details caused e.g., by atable interpolations.
-		:param frac_remain: fraction of the integration remainder allowed in the live points.
-			Setting to 0.5 in mono-modal problems can be acceptable and faster.
-			The default is 0.01 (safer).
+		:sampler_kwargs: arguments passed to ReactiveNestedSampler (see ultranest documentation)
+		:run_kwargs: arguments passed to ReactiveNestedSampler.run() (see ultranest documentation)
 
-		These are ultranest parameters (see ultranest.solve documentation!)
+		The following arguments are also available directly for backward compatibility:
+
+		:param resume: sets sampler_kwargs['resume']='resume' if True, otherwise 'overwrite'
+		:param n_live_points: sets run_kwargs['min_num_live_points']
+		:param evidence_tolerance: sets run_kwargs['dlogz']
+		:param Lepsilon: sets run_kwargs['Lepsilon']
+		:param frac_remain: sets run_kwargs['frac_remain']
 		"""
 
 		# run nested sampling
 		if Fit.statMethod.lower() not in BXASolver.allowed_stats:
 			raise RuntimeError('ERROR: not using cash (Poisson likelihood) for Poisson data! set Fit.statMethod to cash before analysing (currently: %s)!' % Fit.statMethod)
 
-		n_dims = len(self.paramnames)
-		resume = kwargs.pop('resume', False)
-		Lepsilon = kwargs.pop('Lepsilon', 0.1)
+		if resume is not None:
+			sampler_kwargs['resume'] = 'resume' if resume else 'overwrite'
+		run_kwargs['Lepsilon'] = run_kwargs.pop('Lepsilon', Lepsilon)
+		del Lepsilon
+		if evidence_tolerance is not None:
+			run_kwargs['dlogz'] = run_kwargs.pop('dlogz', evidence_tolerance)
+		del evidence_tolerance
+		if frac_remain is not None:
+			run_kwargs['frac_remain'] = run_kwargs.pop('frac_remain', frac_remain)
+		del frac_remain
+		if n_live_points is not None:
+			run_kwargs['min_num_live_points'] = run_kwargs.pop('min_num_live_points', n_live_points)
+		del n_live_points
 
 		with XSilence():
-			self.results = solve(
-				self.log_likelihood, self.prior_function, n_dims,
-				paramnames=self.paramnames,
-				outputfiles_basename=self.outputfiles_basename,
-				resume=resume, Lepsilon=Lepsilon,
-				n_live_points=n_live_points, evidence_tolerance=evidence_tolerance,
-				seed=-1, max_iter=0, wrapped_params=wrapped_params, **kwargs
-			)
+			self.sampler = ReactiveNestedSampler(
+				self.paramnames, self.log_likelihood, transform=self.prior_function,
+				log_dir=self.outputfiles_basename,
+				vectorized=self.vectorized, **sampler_kwargs)
+
+			if speed == "safe":
+				pass
+			elif speed == "auto":
+				region_filter = run_kwargs.pop('region_filter', True)
+				self.sampler.run(max_ncalls=40000, **run_kwargs)
+
+				self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
+					nsteps=1000,
+					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					adaptive_nsteps='move-distance', region_filter=region_filter
+				)
+			else:
+				self.sampler.stepsampler = ultranest.stepsampler.SliceSampler(
+					generate_direction=ultranest.stepsampler.generate_mixture_random_direction,
+					nsteps=speed,
+					adaptive_nsteps=False,
+					region_filter=False)
+
+			self.sampler.run(**run_kwargs)
+			self.sampler.print_results()
+			self.results = self.sampler.results
+			try:
+				self.sampler.plot()
+			except Exception:
+				import traceback
+				traceback.print_exc()
+				warnings.warn("plotting failed.")
+
 			logls = [self.results['weighted_samples']['logl'][
 				numpy.where(self.results['weighted_samples']['points'] == sample)[0][0]]
 				for sample in self.results['samples']]
@@ -208,7 +285,7 @@ class BXASolver(object):
 
 		return self.results
 
-	def create_flux_chain(self, spectrum, erange="2.0 10.0", nsamples=None):
+	def create_flux_chain(self, spectrum, erange="2.0 10.0", nsamples=None, i_src=0):
 		"""
 		For each posterior sample, computes the flux in the given energy range.
 
@@ -218,6 +295,11 @@ class BXASolver(object):
 
 		Returns erg/cm^2 energy flux (first column) and photon flux (second column)
 		for each posterior sample.
+		
+		:param spectrum: spectrum to use for spectrum.flux
+		:param erange: argument to AllModels.calcFlux, energy range
+		:param nsamples: number of samples to consider (the default, None, means all)
+		:param i_src: index of source in case multiple sources are defined. Can be obtained with function bxa.solver.get_isrc. 
 		"""
 		# prefix = analyzer.outputfiles_basename
 		# modelnames = set([t['model'].name for t in transformations])
@@ -230,19 +312,20 @@ class BXASolver(object):
 				AllModels.calcFlux(erange)
 				f = spectrum.flux
 				# compute flux in current energies
-				flux.append([f[0], f[3]])
+				flux.append([f[6 * i_src + 0], f[6 * i_src + 3]])
 
 			return numpy.array(flux)
 
 	def posterior_predictions_convolved(
 		self, component_names=None, plot_args=None, nsamples=400
 	):
-		"""
-		Plot convolved model posterior predictions.
+		"""Plot convolved model posterior predictions.
+
 		Also returns data points for plotting.
 
-		component_names: labels to use. Set to 'ignore' to skip plotting a component
-		plot_args: matplotlib.pyplot.plot arguments for each component
+		:param component_names: labels to use. Set to 'ignore' to skip plotting a component
+		:param plot_args: matplotlib.pyplot.plot arguments for each component
+		:param nsamples: number of posterior samples to use (lower is faster)
 		"""
 		# get data, binned to 10 counts
 		# overplot models
@@ -250,13 +333,17 @@ class BXASolver(object):
 		data = [None]  # bin, bin width, data and data error
 		models = []    #
 		if component_names is None:
-			component_names = [''] * 100
+			component_names = ['convolved model'] + ['component%d' for i in range(100-1)]
 		if plot_args is None:
 			plot_args = [{}] * 100
+			for i, c in enumerate(plt.rcParams['axes.prop_cycle'].by_key()['color']):
+				plot_args[i] = dict(color=c)
+				del i, c
 		bands = []
 		Plot.background = True
+		Plot.add = True
 
-		def plot_convolved_components(content):
+		for content in self.posterior_predictions_plot(plottype='counts', nsamples=nsamples):
 			xmid = content[:, 0]
 			ndata_columns = 6 if Plot.background else 4
 			ncomponents = content.shape[1] - ndata_columns
@@ -265,34 +352,21 @@ class BXASolver(object):
 			model_contributions = []
 			for component in range(ncomponents):
 				y = content[:, ndata_columns + component]
-				kwargs = dict(drawstyle='steps', alpha=0.1, color='k')
-				kwargs.update(plot_args[component])
-
-				label = component_names[component]
-				# we only label the first time we enter here
-				# otherwise we get lots of entries in the legend
-				component_names[component] = ''
 				if component >= len(bands):
-					bands.append(PredictionBand(
-						xmid,
-						shadeargs=dict(color=kwargs['color']),
-						lineargs=dict(color=kwargs['color'])))
-				if label != 'ignore':
-					# plt.plot(xmid, y, label=label, **kwargs)
-					bands[component].add(y)
+					bands.append(PredictionBand(xmid))
+				bands[component].add(y)
 
 				model_contributions.append(y)
 			models.append(model_contributions)
 
-		self.posterior_predictions_plot(
-			plottype='counts',
-			callback=plot_convolved_components,
-			nsamples=nsamples)
-
-		for band, label in zip(bands, component_names):
-			band.shade(alpha=0.5, label=label)
-			band.shade(q=0.495, alpha=0.1)
-			band.line()
+		for band, label, component_plot_args in zip(bands, component_names, plot_args):
+			if label == 'ignore': continue
+			lineargs = dict(drawstyle='steps', color='k')
+			lineargs.update(component_plot_args)
+			shadeargs = dict(color=lineargs['color'])
+			band.shade(alpha=0.5, **shadeargs)
+			band.shade(q=0.495, alpha=0.1, **shadeargs)
+			band.line(label=label, **lineargs)
 
 		if Plot.background:
 			results = dict(list(zip('bins,width,data,error,background,backgrounderr'.split(','), data[0].transpose())))
@@ -309,91 +383,82 @@ class BXASolver(object):
 		Plot unconvolved model posterior predictions.
 
 		:param component_names: labels to use. Set to 'ignore' to skip plotting a component
-		:param plot_args: matplotlib.pyplot.plot arguments for each component
-		:param nsamples: number of posterior samples to use
+		:param plot_args: list of matplotlib.pyplot.plot arguments for each component, e.g. [dict(color='r'), dict(color='g'), dict(color='b')]
+		:param nsamples: number of posterior samples to use (lower is faster)
+		:param plottype: type of plot string, passed to `xspec.Plot()`
 		"""
 		if component_names is None:
-			component_names = [''] * 100
+			component_names = ['model'] + ['component%d' for i in range(100-1)]
 		if plot_args is None:
 			plot_args = [{}] * 100
+			for i, c in enumerate(plt.rcParams['axes.prop_cycle'].by_key()['color']):
+				plot_args[i] = dict(color=c)
+				del i, c
+		Plot.add = True
 		bands = []
 
-		def plot_unconvolved_components(content):
+		for content in self.posterior_predictions_plot(plottype=plottype, nsamples=nsamples):
 			xmid = content[:, 0]
 			ncomponents = content.shape[1] - 2
 			for component in range(ncomponents):
 				y = content[:, 2 + component]
-				kwargs = dict(drawstyle='steps', alpha=0.1, color='k')
-				kwargs.update(plot_args[component])
 
-				label = component_names[component]
-				# we only label the first time we enter here
-				# otherwise we get lots of entries in the legend
-				component_names[component] = ''
 				if component >= len(bands):
-					bands.append(PredictionBand(
-						xmid,
-						shadeargs=dict(color=kwargs['color']),
-						lineargs=dict(color=kwargs['color'])))
-				if label != 'ignore':
-					# plt.plot(xmid, y, label=label, **kwargs)
-					bands[component].add(y)
+					bands.append(PredictionBand(xmid))
+				bands[component].add(y)
 
-		self.posterior_predictions_plot(
-			plottype=plottype,
-			callback=plot_unconvolved_components,
-			nsamples=nsamples)
-		for band, label in zip(bands, component_names):
-			band.shade(alpha=0.5, label=label)
-			band.shade(q=0.495, alpha=0.1)
-			band.line()
+		for band, label, component_plot_args in zip(bands, component_names, plot_args):
+			if label == 'ignore': continue
+			lineargs = dict(drawstyle='steps', color='k')
+			lineargs.update(component_plot_args)
+			shadeargs = dict(color=lineargs['color'])
+			band.shade(alpha=0.5, **shadeargs)
+			band.shade(q=0.495, alpha=0.1, **shadeargs)
+			band.line(label=label, **lineargs)
 
-	def posterior_predictions_plot(self, plottype, callback, nsamples=None):
+	def posterior_predictions_plot(self, plottype, nsamples=None):
 		"""
 		Internal Routine used by posterior_predictions_unconvolved, posterior_predictions_convolved
 		"""
-		posterior = self.posterior
 		# for plotting, we don't need so many points, and especially the
 		# points that barely made it into the analysis are not that interesting.
 		# so pick a random subset of at least nsamples points
-		if nsamples is not None and len(posterior) > nsamples:
-			if hasattr(numpy.random, 'choice'):
-				chosen = numpy.random.choice(
-					numpy.arange(len(posterior)),
-					replace=False, size=nsamples)
-			else:
-				chosen = list(set(numpy.random.randint(
-					0, len(posterior), size=10 * nsamples)))[:nsamples]
-			posterior = posterior[chosen, :]
-			assert len(posterior) == nsamples
-		prefix = self.outputfiles_basename
-		tmpfilename = os.path.join(os.path.dirname(prefix), os.path.basename(prefix).replace('.', '_') + '-wdatatmp.qdp')
-		if os.path.exists(tmpfilename):
-			os.remove(tmpfilename)
+		posterior = self.posterior[:nsamples]
 
 		with XSilence():
 			olddevice = Plot.device
 			Plot.device = '/null'
-			# modelnames = set([t['model'].name for t in transformations])
-
-			while len(Plot.commands) > 0:
-				Plot.delCommand(1)
-			Plot.addCommand('wdata "%s"' % tmpfilename.replace('.qdp', ''))
 
 			# plot models
+			maxncomp = 100 if Plot.add else 0
 			for k, row in enumerate(tqdm(posterior, disable=None)):
 				set_parameters(values=row, transformations=self.transformations)
-				if os.path.exists(tmpfilename):
-					os.remove(tmpfilename)
-				xspec.Plot(plottype)
-				content = numpy.genfromtxt(tmpfilename, skip_header=3)
-				os.remove(tmpfilename)
-				callback(content)
-			xspec.Plot.device = olddevice
-			while len(Plot.commands) > 0:
-				Plot.delCommand(1)
-			if os.path.exists(tmpfilename):
-				os.remove(tmpfilename)
+				Plot(plottype)
+				# get plot data
+				if plottype == 'model':
+					base_content = numpy.transpose([
+						Plot.x(), Plot.xErr(), Plot.model()])
+				elif Plot.background:
+					base_content = numpy.transpose([
+						Plot.x(), Plot.xErr(), Plot.y(), Plot.yErr(),
+						Plot.backgroundVals(), numpy.zeros_like(Plot.backgroundVals()),
+						Plot.model()])
+				else:
+					base_content = numpy.transpose([
+						Plot.x(), Plot.xErr(), Plot.y(), Plot.yErr(),
+						Plot.model()])
+				# get additive components, if there are any
+				comp = []
+				for i in range(1, maxncomp):
+					try:
+						comp.append(Plot.addComp(i))
+					except Exception:
+						print('The error "***XSPEC Error: Requested array does not exist for this plot." can be ignored.')
+						maxncomp = i
+						break	
+				content = numpy.hstack((base_content, numpy.transpose(comp).reshape((len(base_content), -1))))
+				yield content
+			Plot.device = olddevice
 
 
 def standard_analysis(
@@ -401,7 +466,10 @@ def standard_analysis(
 	skipsteps=[], **kwargs
 ):
 	"""
-	Default analysis which produces nice plots:
+	Run a default analysis which produces nice plots.
+
+	Deprecated; copy the code of this function into
+	your script and adjust to your needs.
 
 	* runs nested sampling analysis, creates MCMC chain file
 	* marginal probabilities (1d and 2d)
@@ -415,8 +483,8 @@ def standard_analysis(
 	the individual parts.
 	Copy them to your scripts and adapt them to your needs.
 	"""
-
 	#   run nested sampling
+	warnings.warn("standard_analysis() is deprecated and will be removed in future BXA releases.")
 	print('running analysis ...')
 	solver = BXASolver(
 		transformations=transformations,

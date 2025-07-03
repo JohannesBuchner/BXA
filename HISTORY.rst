@@ -2,6 +2,16 @@
 Release Notes
 ==============
 
+4.1.4 (2024-05-26)
+------------------
+
+* fix in BXA/sherpa PCA background fitting. Previously, emission lines were never added.
+
+  * This means that versions before 4.1.3 and after will give different background fits
+  * The old behaviour can be recovered with auto_background(max_lines=0).
+
+* add Bayesian workflow tutorial
+
 4.0.0 (2021-01-06)
 ------------------
 
