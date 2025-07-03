@@ -65,6 +65,13 @@ def get_unit_response(i):
 	delete_data("temp_unitrsp")
 	return bunitrsp
 
+def get_analysis_initial_status(id):
+	pha = get_data(id)
+	factor = pha.plot_fac
+	quantity = pha.units
+	type = "rate" if pha.rate else "counts"		
+	return quantity, type, factor
+
 
 class IdentityResponse(RSPModelNoPHA):
 	def __init__(self, n, model, arf, rmf):
@@ -344,6 +351,7 @@ class PCAFitter(object):
 		for p, v in zip(bkgmodel.pars, last_final):
 			p.val = v
 
+		analysis_initial_status = get_analysis_initial_status(id)
 		last_model = convbkgmodel
 		for i in range(1, max_lines + 1):
 			print()
