@@ -196,7 +196,7 @@ These can be converted to luminosities with the usual cosmology packages.
 In case you have multiple sources, specify i_src, which you can get from the
 source number and spectrum number with `get_isrc`.
 
-.. automethod:: bxa.xspec.get_isrc
+.. automethod:: bxa.xspec.solver.get_isrc
 
 Loading results into xspec
 --------------------------

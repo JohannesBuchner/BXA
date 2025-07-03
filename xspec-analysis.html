@@ -12,7 +12,6 @@
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -379,6 +378,26 @@ for each posterior sample.</p>
 
 <p>In case you have multiple sources, specify i_src, which you can get from the
 source number and spectrum number with <cite>get_isrc</cite>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bxa.xspec.solver.get_isrc">
+<span class="sig-prename descclassname"><span class="pre">solver.</span></span><span class="sig-name descname"><span class="pre">get_isrc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ispectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bxa.xspec.solver.get_isrc" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the index of the source in flux calculation of Xspec. The
+returned index is to be used BXASolver.create_flux_chain for isource
+parameter. Relevant when multiple sources are loaded (e.g. for
+multiple responses). Needs to be used when multiple sources are
+defined because the fluxes listed by Xspec are not ordered by source
+number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>erange</strong> – energy range as in create_flux_chain.</p></li>
+<li><p><strong>ispectrum</strong> – index of spectrum if multiple spectra are loaded.</p></li>
+<li><p><strong>isource</strong> – index of source. In most cases 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="loading-results-into-xspec">
 <h2>Loading results into xspec<a class="headerlink" href="#loading-results-into-xspec" title="Link to this heading">¶</a></h2>
