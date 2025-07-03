@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>bxa.xspec package &#8212; BXA (Bayesian X-ray Analysis) 4.1.4 documentation</title>
+    <title>bxa.xspec package &#8212; BXA (Bayesian X-ray Analysis) 5.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=bea0a91a"></script>
+    <script src="_static/documentation_options.js?v=ce74c6a2"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -269,6 +269,26 @@ transformations for each parameter. This assumes the priors factorize.</p>
 <dd><p>Set current parameters.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="bxa.xspec.solver.get_isrc">
+<span class="sig-prename descclassname"><span class="pre">bxa.xspec.solver.</span></span><span class="sig-name descname"><span class="pre">get_isrc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">erange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2.0</span> <span class="pre">10.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ispectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#get_isrc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.solver.get_isrc" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the index of the source in flux calculation of Xspec. The
+returned index is to be used BXASolver.create_flux_chain for isource
+parameter. Relevant when multiple sources are loaded (e.g. for
+multiple responses). Needs to be used when multiple sources are
+defined because the fluxes listed by Xspec are not ordered by source
+number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>erange</strong> – energy range as in create_flux_chain.</p></li>
+<li><p><strong>ispectrum</strong> – index of spectrum if multiple spectra are loaded.</p></li>
+<li><p><strong>isource</strong> – index of source. In most cases 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="bxa.xspec.solver.BXASolver">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bxa.xspec.solver.</span></span><span class="sig-name descname"><span class="pre">BXASolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transformations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfiles_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chains/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver" title="Link to this definition">¶</a></dt>
@@ -339,7 +359,7 @@ If parameters is also None, all thawed parameters are used.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bxa.xspec.solver.BXASolver.create_flux_chain">
-<span class="sig-name descname"><span class="pre">create_flux_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2.0</span> <span class="pre">10.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.create_flux_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.create_flux_chain" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_flux_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2.0</span> <span class="pre">10.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_src</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.create_flux_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.solver.BXASolver.create_flux_chain" title="Link to this definition">¶</a></dt>
 <dd><p>For each posterior sample, computes the flux in the given energy range.</p>
 <p>The so-created chain can be combined with redshift information to propagate
 the uncertainty. This is especially important if redshift is a variable
@@ -352,6 +372,7 @@ for each posterior sample.</p>
 <li><p><strong>spectrum</strong> – spectrum to use for spectrum.flux</p></li>
 <li><p><strong>erange</strong> – argument to AllModels.calcFlux, energy range</p></li>
 <li><p><strong>nsamples</strong> – number of samples to consider (the default, None, means all)</p></li>
+<li><p><strong>i_src</strong> – index of source in case multiple sources are defined. Can be obtained with function bxa.solver.get_isrc.</p></li>
 </ul>
 </dd>
 </dl>

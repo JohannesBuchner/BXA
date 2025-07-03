@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bxa.xspec.solver &#8212; BXA (Bayesian X-ray Analysis) 4.1.4 documentation</title>
+    <title>bxa.xspec.solver &#8212; BXA (Bayesian X-ray Analysis) 5.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=12dfc556" />
-    <script src="../../../_static/documentation_options.js?v=bea0a91a"></script>
+    <script src="../../../_static/documentation_options.js?v=ce74c6a2"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -52,6 +52,7 @@
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">qq</span>
 <span class="kn">from</span> <span class="nn">.sinning</span> <span class="kn">import</span> <span class="n">binning</span>
@@ -140,6 +141,44 @@
 		<span class="n">pars</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">],</span> <span class="p">{</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]:</span><span class="n">v</span><span class="p">}]</span>
 	<span class="n">AllModels</span><span class="o">.</span><span class="n">setPars</span><span class="p">(</span><span class="o">*</span><span class="n">pars</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="get_isrc">
+<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.get_isrc">[docs]</a>
+<span class="k">def</span> <span class="nf">get_isrc</span><span class="p">(</span><span class="n">erange</span><span class="o">=</span><span class="s2">&quot;2.0 10.0&quot;</span><span class="p">,</span> <span class="n">ispectrum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">isource</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Returns the index of the source in flux calculation of Xspec. The</span>
+<span class="sd">	returned index is to be used BXASolver.create_flux_chain for isource</span>
+<span class="sd">	parameter. Relevant when multiple sources are loaded (e.g. for</span>
+<span class="sd">	multiple responses). Needs to be used when multiple sources are</span>
+<span class="sd">	defined because the fluxes listed by Xspec are not ordered by source</span>
+<span class="sd">	number.</span>
+<span class="sd">	</span>
+<span class="sd">	:param erange: energy range as in create_flux_chain.</span>
+<span class="sd">	:param ispectrum: index of spectrum if multiple spectra are loaded.</span>
+<span class="sd">	:param isource: index of source. In most cases 1.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Create a temporary file</span>
+	<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.log&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_file</span><span class="p">:</span>
+		<span class="n">log_path</span> <span class="o">=</span> <span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span>
+	<span class="n">Xset</span><span class="o">.</span><span class="n">openLog</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+	<span class="n">AllModels</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">(</span><span class="n">erange</span><span class="p">)</span>
+	<span class="n">Xset</span><span class="o">.</span><span class="n">closeLog</span><span class="p">()</span>
+	<span class="n">loglines</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+			<span class="n">line_short</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">line_short</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Spectrum Number: &#39;</span><span class="p">):</span>
+				<span class="n">curr_spec</span> <span class="o">=</span> <span class="n">line_short</span><span class="p">[</span><span class="mi">17</span><span class="p">:]</span>
+				<span class="n">loglines</span><span class="p">[</span><span class="n">curr_spec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">elif</span> <span class="n">line_short</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Source &#39;</span><span class="p">):</span>
+				<span class="n">loglines</span><span class="p">[</span><span class="n">curr_spec</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_short</span><span class="p">[</span><span class="mi">7</span><span class="p">:])</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loglines</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Spectrum </span><span class="si">%s</span><span class="s1"> not loaded&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">isource</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loglines</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">)]:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Source </span><span class="si">%s</span><span class="s1"> not loaded&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">isource</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">loglines</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">)])</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">isource</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="BXASolver">
@@ -312,8 +351,8 @@
 
 
 <div class="viewcode-block" id="BXASolver.create_flux_chain">
-<a class="viewcode-back" href="../../../bxa.xspec.html#bxa.xspec.solver.BXASolver.create_flux_chain">[docs]</a>
-	<span class="k">def</span> <span class="nf">create_flux_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">erange</span><span class="o">=</span><span class="s2">&quot;2.0 10.0&quot;</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../xspec-analysis.html#bxa.xspec.solver.BXASolver.create_flux_chain">[docs]</a>
+	<span class="k">def</span> <span class="nf">create_flux_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">erange</span><span class="o">=</span><span class="s2">&quot;2.0 10.0&quot;</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">i_src</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		For each posterior sample, computes the flux in the given energy range.</span>
 
@@ -327,6 +366,7 @@
 <span class="sd">		:param spectrum: spectrum to use for spectrum.flux</span>
 <span class="sd">		:param erange: argument to AllModels.calcFlux, energy range</span>
 <span class="sd">		:param nsamples: number of samples to consider (the default, None, means all)</span>
+<span class="sd">		:param i_src: index of source in case multiple sources are defined. Can be obtained with function bxa.solver.get_isrc. </span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># prefix = analyzer.outputfiles_basename</span>
 		<span class="c1"># modelnames = set([t[&#39;model&#39;].name for t in transformations])</span>
@@ -339,7 +379,7 @@
 				<span class="n">AllModels</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">(</span><span class="n">erange</span><span class="p">)</span>
 				<span class="n">f</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">flux</span>
 				<span class="c1"># compute flux in current energies</span>
-				<span class="n">flux</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]])</span>
+				<span class="n">flux</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">f</span><span class="p">[</span><span class="mi">6</span> <span class="o">*</span> <span class="n">i_src</span> <span class="o">+</span> <span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="mi">6</span> <span class="o">*</span> <span class="n">i_src</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]])</span>
 
 			<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span></div>
 

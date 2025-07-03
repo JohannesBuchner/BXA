@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Xspec with BXA &#8212; BXA (Bayesian X-ray Analysis) 4.1.4 documentation</title>
+    <title>Xspec with BXA &#8212; BXA (Bayesian X-ray Analysis) 5.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=bea0a91a"></script>
+    <script src="_static/documentation_options.js?v=ce74c6a2"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -336,8 +336,56 @@ Use these to propagate errors:</p>
 <li><p>Then, make a histogram of the results, or compute mean and standard deviations.</p></li>
 </ul>
 <p>This preserves the structure of the uncertainty (multiple modes, degeneracies, etc.)</p>
-<p><em>Continuing in Xspec</em>: A chain file, compatible with Xspec chain commands is
-written for you into <em>&lt;outputfiles_basename&gt;chain.fits</em>. In Xspec, load it using <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html">“chain load”</a>.
+</section>
+<section id="fluxes-and-luminosities">
+<h2>Fluxes and luminosities<a class="headerlink" href="#fluxes-and-luminosities" title="Link to this heading">¶</a></h2>
+<p>Here is an example for computing photon and energy flux posterior distributions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">flux_hard</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">flux_soft</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Photon flux [phot/s/cm$^2$]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">flux_hard</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">flux_soft</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Energy flux [erg/s/cm$^2$]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;flux_posterior.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>These can be converted to luminosities with the usual cosmology packages.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bxa.xspec.BXASolver.create_flux_chain">
+<span class="sig-prename descclassname"><span class="pre">BXASolver.</span></span><span class="sig-name descname"><span class="pre">create_flux_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2.0</span> <span class="pre">10.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_src</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/xspec/solver.html#BXASolver.create_flux_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.xspec.BXASolver.create_flux_chain" title="Link to this definition">¶</a></dt>
+<dd><p>For each posterior sample, computes the flux in the given energy range.</p>
+<p>The so-created chain can be combined with redshift information to propagate
+the uncertainty. This is especially important if redshift is a variable
+parameter in the fit (with some prior).</p>
+<p>Returns erg/cm^2 energy flux (first column) and photon flux (second column)
+for each posterior sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrum</strong> – spectrum to use for spectrum.flux</p></li>
+<li><p><strong>erange</strong> – argument to AllModels.calcFlux, energy range</p></li>
+<li><p><strong>nsamples</strong> – number of samples to consider (the default, None, means all)</p></li>
+<li><p><strong>i_src</strong> – index of source in case multiple sources are defined. Can be obtained with function bxa.solver.get_isrc.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p>In case you have multiple sources, specify i_src, which you can get from the
+source number and spectrum number with <cite>get_isrc</cite>.</p>
+</section>
+<section id="loading-results-into-xspec">
+<h2>Loading results into xspec<a class="headerlink" href="#loading-results-into-xspec" title="Link to this heading">¶</a></h2>
+<p>A chain file, compatible with Xspec chain commands is
+written for you into <em>&lt;outputfiles_basename&gt;chain.fits</em>.
+In Xspec, after you set the same model you can load it
+using <a class="reference external" href="https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html">“chain load”</a>.
 This should set parameters, and compute flux estimates.</p>
 </section>
 <section id="model-comparison">

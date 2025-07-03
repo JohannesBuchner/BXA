@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PCA-based background models &#8212; BXA (Bayesian X-ray Analysis) 4.1.4 documentation</title>
+    <title>PCA-based background models &#8212; BXA (Bayesian X-ray Analysis) 5.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=bea0a91a"></script>
+    <script src="_static/documentation_options.js?v=ce74c6a2"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -61,13 +61,6 @@ the location of strongest fit mismatch.</p>
 <span class="n">set_full_model</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">get_response</span><span class="p">(</span><span class="nb">id</span><span class="p">)(</span><span class="n">model</span><span class="p">)</span> <span class="o">+</span> <span class="n">bkg_model</span> <span class="o">*</span> <span class="n">get_bkg_scale</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
 </pre></div>
 </div>
-<dl class="py function">
-<dt class="sig sig-object py" id="bxa.sherpa.background.pca.auto_background">
-<span class="sig-prename descclassname"><span class="pre">bxa.sherpa.background.pca.</span></span><span class="sig-name descname"><span class="pre">auto_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bxa/sherpa/background/pca.html#auto_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bxa.sherpa.background.pca.auto_background" title="Link to this definition">¶</a></dt>
-<dd><p>Automatically fits background <em>id</em> based on PCA-based templates,
-and additional gaussian lines as needed by AIC.</p>
-</dd></dl>
-
 <p>Beware that you need to set your energy limits and plot preferences
 after using <cite>auto_background</cite> (it switches count / count rate units).</p>
 <p>A full example for fitting obscured Active Galactic Nuclei is available:
