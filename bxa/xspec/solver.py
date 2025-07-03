@@ -16,6 +16,7 @@ import os
 from math import isnan, isinf
 import warnings
 import numpy
+import tempfile
 
 from . import qq
 from .sinning import binning
@@ -93,7 +94,7 @@ def set_parameters(transformations, values):
 		pars += [t['model'], {t['index']:v}]
 	AllModels.setPars(*pars)
 
-def get_isrc(Erange=[0.2, 8.0], ispectrum=1, isource=1):
+def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	"""
 	Returns the index of the source in flux calculation of Xspec. The
 	returned index is to be used BXASolver.create_flux_chain for isource
@@ -102,32 +103,32 @@ def get_isrc(Erange=[0.2, 8.0], ispectrum=1, isource=1):
 	defined because the fluxes listed by Xspec are not ordered by source
 	number.
 	
-	:param Erange: energy range in keV which will be used as erange in create_flux_chain. List of two floats.
+	:param erange: energy range as in create_flux_chain.
 	:param ispectrum: index of spectrum if multiple spectra are loaded.
 	:param isource: index of source. In most cases 1.
 	"""
-	Xset.openLog('temp')
-	AllModels.calcFlux(f'{Erange[0]} {Erange[1]}')
+	# Create a temporary file
+	with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_file:
+		log_path = tmp_file.name
+	Xset.openLog(log_path)
+	AllModels.calcFlux(erange)
 	Xset.closeLog()
 	loglines = {}
-	with open('temp', 'r') as f:
+	with open(log_path, 'r') as f:
 		for line in f.readlines():
 			line_short = line.replace('\n', '').strip()
-			print(line_short)
 			if line_short.startswith('Spectrum Number: '):
 				curr_spec = line_short[17:]
 				loglines[curr_spec] = []
 			elif line_short.startswith('Source '):
 				loglines[curr_spec].append(line_short[7:])
-	os.remove('temp')
-	if not f'{ispectrum}' in loglines:
-		print(f'Spectrum {ispectrum} not loaded')
-		return numpy.nan
+	os.remove(log_path)
+	if not '%s' % (ispectrum) in loglines:
+		raise ValueError('Spectrum %s not loaded' % (ispectrum))
 	else:
-		if not f'{isource}' in loglines[f'{ispectrum}']:
-			print(f'Source {isource} not loaded')
-			return numpy.nan
-		return numpy.where(numpy.array(loglines[f'{ispectrum}']) == f'{isource}')[0][0]
+		if not '%s' % (isource) in loglines['%s' % (ispectrum)]:
+			raise ValueError('Source %s not loaded' % (isource))
+		return numpy.where(numpy.array(loglines['%s' % (ispectrum)]) == '%s' % (isource))[0][0]
 
 class BXASolver(object):
 	"""
@@ -311,7 +312,7 @@ class BXASolver(object):
 				AllModels.calcFlux(erange)
 				f = spectrum.flux
 				# compute flux in current energies
-				flux.append([f[6*i_src+0], f[6*i_src+3]])
+				flux.append([f[6 * i_src + 0], f[6 * i_src + 3]])
 
 			return numpy.array(flux)
 
