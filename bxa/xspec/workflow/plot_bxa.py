@@ -8,7 +8,7 @@
 import xspec
 import bxa.xspec as bxa
 import ultranest.plot as upl
-from plot_xspec import PlotXspec
+from .plot_xspec import PlotXspec
 import numpy as np
 
 import os
