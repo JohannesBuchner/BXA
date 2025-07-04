@@ -7,6 +7,8 @@
    "source": [
     "# PlotBXA example \n",
     "\n",
+    "written by David Homan.\n",
+    "\n",
     "## Basic BXA usage with Xspec & additional plotting\n",
     "\n",
     "This notebook aims to illustrate additional plotting features for BXA fitting results, as implemented in the PlotBXA class. The methods of this class will be demonstrated in a basic example of BXA fitting. For details on BXA usage and the underlying fitting algorithm please see refer to Johannes Buchner's detailed [BXA documentation](https://johannesbuchner.github.io/BXA/index.html) and [UltraNest documentation](https://johannesbuchner.github.io/UltraNest/readme.html), which also contain several useful examples. \n",
@@ -50,7 +52,7 @@
     "\n",
     "# Create an instance of the PlotBXA class\n",
     "sys.path.append(os.getcwd()+'/..')\n",
-    "from plot_bxa import PlotBXA\n",
+    "from bxa.xspec.workflow.plot_bxa import PlotBXA\n",
     "pbx = PlotBXA() # NOTE: all PlotXspec methods are also accessible through PlotBXA"
    ]
   },
