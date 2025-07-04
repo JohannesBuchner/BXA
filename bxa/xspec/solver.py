@@ -105,28 +105,25 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	:param ispectrum: index of spectrum if multiple spectra are loaded.
 	:param isource: index of source. In most cases 1.
 	"""
-	# Create a temporary file
-	with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_file:
+	with tempfile.NamedTemporaryFile(suffix=".log") as tmp_file:
 		log_path = tmp_file.name
-	Xset.openLog(log_path)
-	AllModels.calcFlux(erange)
-	Xset.closeLog()
-	loglines = {}
-	with open(log_path, 'r') as f:
-		for line in f.readlines():
-			line_short = line.replace('\n', '').strip()
-			if line_short.startswith('Spectrum Number: '):
-				curr_spec = line_short[17:]
-				loglines[curr_spec] = []
-			elif line_short.startswith('Source '):
-				loglines[curr_spec].append(line_short[7:])
-	os.remove(log_path)
-	if not '%s' % (ispectrum) in loglines:
-		raise ValueError('Spectrum %s not loaded' % (ispectrum))
-	else:
-		if not '%s' % (isource) in loglines['%s' % (ispectrum)]:
-			raise ValueError('Source %s not loaded' % (isource))
+		Xset.openLog(log_path)
+		AllModels.calcFlux(erange)
+		Xset.closeLog()
+		loglines = {}
+		with open(log_path, 'r') as f:
+			for line in f.readlines():
+				line_short = line.replace('\n', '').strip()
+				if line_short.startswith('Spectrum Number: '):
+					curr_spec = line_short[17:]
+					loglines[curr_spec] = []
+				elif line_short.startswith('Source '):
+					loglines[curr_spec].append(line_short[7:])
+	ispectrum_str = '%s' % (ispectrum)
+	if ispectrum_str in loglines and ispectrum_str in loglines[ispectrum_str]:
 		return numpy.where(numpy.array(loglines['%s' % (ispectrum)]) == '%s' % (isource))[0][0]
+	else:
+		raise ValueError('Spectrum %s not loaded, have only: ' % (ispectrum, loglines))
 
 class BXASolver(object):
 	"""
