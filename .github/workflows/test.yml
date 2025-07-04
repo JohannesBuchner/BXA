@@ -110,9 +110,9 @@ jobs:
           python -m coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           python -m coverage run -p ../../gal.py combined_src.pi
           ls combined_src.pi.nh
-          python -m coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi combined_src.pi || exit 1
-          python -m coverage run -p ../../autobackgroundmodel/fitbkg.py combined_bkg.pi || exit 1
-          python -m coverage run -p ../../autobackgroundmodel/fitbkg.py || true
+          python -m coverage run -p ../../bxa_fitbkg.py combined_bkg.pi combined_src.pi || exit 1
+          python -m coverage run -p ../../bxa_fitbkg.py combined_bkg.pi || exit 1
+          python -m coverage run -p ../../bxa_fitbkg.py || true
           python -m coverage run -p ../../gal.py || true
           python -m coverage run -p ../../fixkeywords.py || true
           git checkout .
