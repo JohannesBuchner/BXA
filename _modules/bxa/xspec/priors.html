@@ -11,7 +11,6 @@
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -40,12 +39,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">BXA (Bayesian X-ray Analysis) for Xspec</span>
 
-<span class="sd">Copyright: Johannes Buchner (C) 2013-2020</span>
+<span class="sd">Copyright: Johannes Buchner (C) 2013-2025</span>
 
 <span class="sd">Priors</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log10</span>
 
 <span class="c1"># priors</span>
@@ -58,11 +56,12 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">pval</span><span class="p">,</span> <span class="n">pdelta</span><span class="p">,</span> <span class="n">pmin</span><span class="p">,</span> <span class="n">pbottom</span><span class="p">,</span> <span class="n">ptop</span><span class="p">,</span> <span class="n">pmax</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">values</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  uniform prior for </span><span class="si">%s</span><span class="s1"> between </span><span class="si">%f</span><span class="s1"> and </span><span class="si">%f</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pbottom</span><span class="p">,</span> <span class="n">ptop</span><span class="p">))</span>
-	<span class="c1"># TODO: should we use min/max or bottom/top?</span>
 	<span class="n">low</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pbottom</span><span class="p">)</span>
 	<span class="n">spread</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ptop</span> <span class="o">-</span> <span class="n">pbottom</span><span class="p">)</span>
 	<span class="k">if</span> <span class="n">pbottom</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ptop</span> <span class="o">/</span> <span class="n">pbottom</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   note: this parameter spans several dex. Should it be log-uniform (create_jeffreys_prior_for)?&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">pmin</span> <span class="o">!=</span> <span class="n">pbottom</span> <span class="ow">or</span> <span class="n">ptop</span> <span class="o">!=</span> <span class="n">pmax</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s2">&quot;in BXA v5, priors now use bottom/top soft parameter limits instead of hard parameter limits.&quot;</span><span class="p">)</span>
 	<span class="k">def</span> <span class="nf">uniform_transform</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">spread</span> <span class="o">+</span> <span class="n">low</span>
 	<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">par</span><span class="o">.</span><span class="n">_Parameter__index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> 
 		<span class="n">transform</span><span class="o">=</span><span class="n">uniform_transform</span><span class="p">,</span> <span class="n">aftertransform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span></div>
@@ -86,11 +85,11 @@
 <span class="sd">	minimum and maximum value. Flat in logarithmic scale</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">pval</span><span class="p">,</span> <span class="n">pdelta</span><span class="p">,</span> <span class="n">pmin</span><span class="p">,</span> <span class="n">pbottom</span><span class="p">,</span> <span class="n">ptop</span><span class="p">,</span> <span class="n">pmax</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">values</span>
-	<span class="c1"># TODO: should we use min/max or bottom/top?</span>
-	<span class="c1">#print &#39;  &#39;, par.values</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  jeffreys prior for </span><span class="si">%s</span><span class="s1"> between </span><span class="si">%e</span><span class="s1"> and </span><span class="si">%e</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pbottom</span><span class="p">,</span> <span class="n">ptop</span><span class="p">))</span>
 	<span class="k">if</span> <span class="n">pbottom</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;You forgot to set reasonable parameter limits on </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">pmin</span> <span class="o">!=</span> <span class="n">pbottom</span> <span class="ow">or</span> <span class="n">ptop</span> <span class="o">!=</span> <span class="n">pmax</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s2">&quot;in BXA v5, priors now use bottom/top soft parameter limits instead of hard parameter limits.&quot;</span><span class="p">)</span>
 	<span class="n">low</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">pbottom</span><span class="p">)</span>
 	<span class="n">spread</span> <span class="o">=</span> <span class="n">log10</span><span class="p">(</span><span class="n">ptop</span><span class="p">)</span> <span class="o">-</span> <span class="n">log10</span><span class="p">(</span><span class="n">pbottom</span><span class="p">)</span>
 	<span class="k">if</span> <span class="n">spread</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
@@ -111,6 +110,8 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="kn">import</span> <span class="nn">scipy.stats</span>
 	<span class="n">pval</span><span class="p">,</span> <span class="n">pdelta</span><span class="p">,</span> <span class="n">pmin</span><span class="p">,</span> <span class="n">pbottom</span><span class="p">,</span> <span class="n">ptop</span><span class="p">,</span> <span class="n">pmax</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">values</span>
+	<span class="k">if</span> <span class="n">pmin</span> <span class="o">!=</span> <span class="n">pbottom</span> <span class="ow">or</span> <span class="n">ptop</span> <span class="o">!=</span> <span class="n">pmax</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s2">&quot;in BXA v5, priors now use bottom/top soft parameter limits instead of hard parameter limits.&quot;</span><span class="p">)</span>
 	<span class="n">rv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
 	<span class="k">def</span> <span class="nf">gauss_transform</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> 
 		<span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">pbottom</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ptop</span><span class="p">,</span> <span class="n">rv</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
@@ -223,7 +224,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2013-2022, Johannes Buchner.
+      &#169;2013-2025, Johannes Buchner.
       
     </div>
 

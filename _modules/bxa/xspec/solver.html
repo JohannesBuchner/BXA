@@ -11,7 +11,6 @@
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -40,11 +39,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">BXA (Bayesian X-ray Analysis) for Xspec</span>
 
-<span class="sd">Copyright: Johannes Buchner (C) 2013-2020</span>
+<span class="sd">Copyright: Johannes Buchner (C) 2013-2025</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">ultranest.integrator</span> <span class="kn">import</span> <span class="n">ReactiveNestedSampler</span><span class="p">,</span> <span class="n">resume_from_similar_file</span>
 <span class="kn">from</span> <span class="nn">ultranest.plot</span> <span class="kn">import</span> <span class="n">PredictionBand</span>
 <span class="kn">import</span> <span class="nn">ultranest.stepsampler</span>
@@ -157,28 +154,26 @@
 <span class="sd">	:param ispectrum: index of spectrum if multiple spectra are loaded.</span>
 <span class="sd">	:param isource: index of source. In most cases 1.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="c1"># Create a temporary file</span>
-	<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.log&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_file</span><span class="p">:</span>
+	<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.log&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_file</span><span class="p">:</span>
 		<span class="n">log_path</span> <span class="o">=</span> <span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span>
-	<span class="n">Xset</span><span class="o">.</span><span class="n">openLog</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
-	<span class="n">AllModels</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">(</span><span class="n">erange</span><span class="p">)</span>
-	<span class="n">Xset</span><span class="o">.</span><span class="n">closeLog</span><span class="p">()</span>
-	<span class="n">loglines</span> <span class="o">=</span> <span class="p">{}</span>
-	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
-			<span class="n">line_short</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-			<span class="k">if</span> <span class="n">line_short</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Spectrum Number: &#39;</span><span class="p">):</span>
-				<span class="n">curr_spec</span> <span class="o">=</span> <span class="n">line_short</span><span class="p">[</span><span class="mi">17</span><span class="p">:]</span>
-				<span class="n">loglines</span><span class="p">[</span><span class="n">curr_spec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-			<span class="k">elif</span> <span class="n">line_short</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Source &#39;</span><span class="p">):</span>
-				<span class="n">loglines</span><span class="p">[</span><span class="n">curr_spec</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_short</span><span class="p">[</span><span class="mi">7</span><span class="p">:])</span>
-	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
-	<span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loglines</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Spectrum </span><span class="si">%s</span><span class="s1"> not loaded&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">))</span>
+		<span class="n">Xset</span><span class="o">.</span><span class="n">openLog</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+		<span class="n">AllModels</span><span class="o">.</span><span class="n">calcFlux</span><span class="p">(</span><span class="n">erange</span><span class="p">)</span>
+		<span class="n">Xset</span><span class="o">.</span><span class="n">closeLog</span><span class="p">()</span>
+		<span class="n">loglines</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+				<span class="n">line_short</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+				<span class="k">if</span> <span class="n">line_short</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Spectrum Number: &#39;</span><span class="p">):</span>
+					<span class="n">curr_spec</span> <span class="o">=</span> <span class="n">line_short</span><span class="p">[</span><span class="mi">17</span><span class="p">:]</span>
+					<span class="n">loglines</span><span class="p">[</span><span class="n">curr_spec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">elif</span> <span class="n">line_short</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Source &#39;</span><span class="p">):</span>
+					<span class="n">loglines</span><span class="p">[</span><span class="n">curr_spec</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_short</span><span class="p">[</span><span class="mi">7</span><span class="p">:])</span>
+	<span class="n">ispectrum_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">)</span>
+	<span class="n">isource_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">isource</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">ispectrum_str</span> <span class="ow">in</span> <span class="n">loglines</span> <span class="ow">and</span> <span class="n">isource_str</span> <span class="ow">in</span> <span class="n">loglines</span><span class="p">[</span><span class="n">ispectrum_str</span><span class="p">]:</span>
+		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">loglines</span><span class="p">[</span><span class="n">ispectrum_str</span><span class="p">])</span> <span class="o">==</span> <span class="n">isource_str</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">isource</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loglines</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">)]:</span>
-			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Source </span><span class="si">%s</span><span class="s1"> not loaded&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">isource</span><span class="p">))</span>
-		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">loglines</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">)])</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">isource</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Spectrum </span><span class="si">%s</span><span class="s1"> not loaded, have only: &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ispectrum</span><span class="p">,</span> <span class="n">loglines</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="BXASolver">
@@ -706,7 +701,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2013-2022, Johannes Buchner.
+      &#169;2013-2025, Johannes Buchner.
       
     </div>
 
