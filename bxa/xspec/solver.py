@@ -107,7 +107,7 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	:param ispectrum: index of spectrum if multiple spectra are loaded.
 	:param isource: index of source. In most cases 1.
 	"""
-	src = xspec.AllData(1)
+	src = xspec.AllData(ispectrum)
 	try:
 		resp = src.multiresponse[1]
 		del resp
@@ -116,13 +116,12 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 		has_multi = False
 	if not has_multi:
 		return 0
-	# Create a temporary file
-	with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_file:
+	with tempfile.NamedTemporaryFile(suffix=".log") as tmp_file:
 		log_path = tmp_file.name
 	with XSilence(0, 10):
-			Xset.openLog(log_path)
-			AllModels.calcFlux(erange)
-			Xset.closeLog()
+		Xset.openLog(log_path)
+		AllModels.calcFlux(erange)
+		Xset.closeLog()
 	loglines = {}
 	with open(log_path, 'r') as f:
 		for line in f.readlines():
@@ -132,9 +131,8 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 				loglines[curr_spec] = []
 			elif line_short.startswith('Source '):
 				loglines[curr_spec].append(line_short[7:])
-	os.remove(log_path)
-	ispectrum_str = str(ispectrum)
-	isource_str = str(isource)
+	ispectrum_str = '%s' % (ispectrum)
+	isource_str = '%s' % (isource)
 	if ispectrum_str in loglines and isource_str in loglines[ispectrum_str]:
 		return numpy.where(numpy.asarray(loglines[ispectrum_str]) == isource_str)[0][0]
 	else:
