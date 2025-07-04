@@ -269,7 +269,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          micromamba install -y -c conda-forge ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib>=3.5" h5py astropy requests cython tqdm coverage toml &&
+          micromamba install -y -c conda-forge ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib>=3.5" joblib natsort h5py astropy requests cython tqdm coverage toml &&
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 

@@ -109,7 +109,7 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	"""
 	with tempfile.NamedTemporaryFile(suffix=".log") as tmp_file:
 		log_path = tmp_file.name
-		with XSilence(10, 10):
+		with XSilence(0, 10):
 			Xset.openLog(log_path)
 			AllModels.calcFlux(erange)
 			Xset.closeLog()

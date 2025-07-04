@@ -46,7 +46,7 @@ setup(name='bxa',
     license="GNU General Public License v3",
     long_description=long_description,
     packages=['bxa.xspec', 'bxa.sherpa', 'bxa.sherpa.background', 'bxa', 'autobackgroundmodel', 'bxa.xspec.workflow'],
-    install_requires=['ultranest','numpy', 'tqdm', 'corner', 'h5py', 'matplotlib', 'astropy', 'natsort'],
+    install_requires=['ultranest','numpy', 'tqdm', 'corner', 'h5py', 'matplotlib', 'astropy', 'natsort', 'joblib'],
     scripts=['gal.py', 'fixkeywords.py', 'addspec.py', 'bxa_fitbkg.py', 'bxa_fitbkgkde.py'],
     include_package_data=True,
 )
