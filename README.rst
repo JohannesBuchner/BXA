@@ -52,6 +52,17 @@ carefully if complicated parameter spaces are encountered. This allows building 
         :target: https://github.com/JohannesBuchner/BXA/
         :alt: Github repository
 
+Contributors
+------------
+
+* David Kaltenbrunner @DaKalt
+* David Homan @dshoman
+* Ruiz Angel @ruizca
+* Liu Teng @lewtonstein
+* Carlo Ferrigno @ferrigno
+* Charlotte Simmonds
+* Brian Refsdal @brefsdal
+
 Who is using BXA?
 -------------------------------
 

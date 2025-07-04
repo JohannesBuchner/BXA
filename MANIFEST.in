@@ -1,3 +1,5 @@
 include bxa/sherpa/background/*.json
+include autobackground/*.json
 include LICENSE
+include HISTORY.rst
 include README.rst

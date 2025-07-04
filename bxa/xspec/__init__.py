@@ -4,10 +4,8 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2020
+Copyright: Johannes Buchner (C) 2013-2025
 """
-
-from __future__ import print_function
 
 from . import qq
 from .sinning import binning

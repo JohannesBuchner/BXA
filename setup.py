@@ -25,7 +25,7 @@ if not sherpa_available and not xspec_available:
     warnings.warn("BXA is a plugin for xspec/sherpa, but neither xspec nor sherpa are installed in the current environment!")
 
 setup(name='bxa',
-    version='4.1.4',
+    version='5.0.0',
     author='Johannes Buchner',
     url='https://github.com/JohannesBuchner/BXA/',
     author_email='johannes.buchner.acad@gmx.com',
@@ -45,9 +45,9 @@ setup(name='bxa',
     ],
     license="GNU General Public License v3",
     long_description=long_description,
-    packages=['bxa.xspec', 'bxa.sherpa', 'bxa.sherpa.background', 'bxa'],
-    install_requires=['ultranest','numpy', 'tqdm', 'corner', 'h5py', 'matplotlib', 'astropy'],
-    scripts=['gal.py', 'fixkeywords.py', 'addspec.py'],
+    packages=['bxa.xspec', 'bxa.sherpa', 'bxa.sherpa.background', 'bxa', 'autobackgroundmodel', 'bxa.xspec.workflow'],
+    install_requires=['ultranest','numpy', 'tqdm', 'corner', 'h5py', 'matplotlib', 'astropy', 'natsort', 'joblib'],
+    scripts=['gal.py', 'fixkeywords.py', 'addspec.py', 'bxa_fitbkg.py', 'bxa_fitbkgkde.py'],
     include_package_data=True,
 )
 

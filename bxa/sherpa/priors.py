@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
-from __future__ import print_function
 
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
 
-Copyright: Johannes Buchner (C) 2013-2015
+Copyright: Johannes Buchner (C) 2013-2025
 
 Priors
 """
@@ -93,13 +92,10 @@ def prior_from_file(filename, parameter):
 		parameter.val = float(dist)
 		return float(dist), [], []
 	distz = numpy.array(list(dist[:, 1]) + [dist[-1,1]]*2)
-	#deltax = dist[1,0] - dist[0,0]
-	n = len(dist)
 	def custom_priorf(x):
 		assert x >= 0
 		assert x <= 1
-		i = int(numpy.floor(x*n))
-		r = distz[i] + (distz[i + 1] - distz[i]) * (x * n - i)
+		r = numpy.interp(x, dist[:,0], dist[:,1])
 		return r
 	return parameter, [parameter], [custom_priorf]
 

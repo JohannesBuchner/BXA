@@ -4,10 +4,8 @@
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
 
-Copyright: Johannes Buchner (C) 2013-2020
+Copyright: Johannes Buchner (C) 2013-2025
 """
-
-from __future__ import print_function
 import os
 import numpy
 from math import isnan

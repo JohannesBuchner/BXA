@@ -4,12 +4,11 @@
 """
 BXA (Bayesian X-ray Analysis) for Xspec
 
-Copyright: Johannes Buchner (C) 2013-2020
+Copyright: Johannes Buchner (C) 2013-2025
 
 Priors
 """
 
-from __future__ import print_function
 from math import log10
 
 # priors
@@ -19,12 +18,13 @@ def create_uniform_prior_for(model, par):
 	The uniform prior gives equal weight in non-logarithmic scale.
 	"""
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
-	print('  uniform prior for %s between %f and %f ' % (par.name, pmin, pmax))
-	# TODO: should we use min/max or bottom/top?
-	low = float(pmin)
-	spread = float(pmax - pmin)
-	if pmin > 0 and pmax / pmin > 100:
+	print('  uniform prior for %s between %f and %f ' % (par.name, pbottom, ptop))
+	low = float(pbottom)
+	spread = float(ptop - pbottom)
+	if pbottom > 0 and ptop / pbottom > 100:
 		print('   note: this parameter spans several dex. Should it be log-uniform (create_jeffreys_prior_for)?')
+	if pmin != pbottom or ptop != pmax:
+		raise UserWarning("in BXA v5, priors now use bottom/top soft parameter limits instead of hard parameter limits.")
 	def uniform_transform(x): return x * spread + low
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=uniform_transform, aftertransform=lambda x: x)
@@ -42,13 +42,13 @@ def create_loguniform_prior_for(model, par):
 	minimum and maximum value. Flat in logarithmic scale
 	"""
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
-	# TODO: should we use min/max or bottom/top?
-	#print '  ', par.values
-	print('  jeffreys prior for %s between %e and %e ' % (par.name, pmin, pmax))
-	if pmin == 0:
+	print('  jeffreys prior for %s between %e and %e ' % (par.name, pbottom, ptop))
+	if pbottom == 0:
 		raise Exception('You forgot to set reasonable parameter limits on %s' % par.name)
-	low = log10(pmin)
-	spread = log10(pmax) - log10(pmin)
+	if pmin != pbottom or ptop != pmax:
+		raise UserWarning("in BXA v5, priors now use bottom/top soft parameter limits instead of hard parameter limits.")
+	low = log10(pbottom)
+	spread = log10(ptop) - log10(pbottom)
 	if spread > 10:
 		print('   note: this parameter spans *many* dex. Double-check the limits are reasonable.')
 	def log_transform(x): return x * spread + low
@@ -64,9 +64,11 @@ def create_gaussian_prior_for(model, par, mean, std):
 	"""
 	import scipy.stats
 	pval, pdelta, pmin, pbottom, ptop, pmax = par.values
+	if pmin != pbottom or ptop != pmax:
+		raise UserWarning("in BXA v5, priors now use bottom/top soft parameter limits instead of hard parameter limits.")
 	rv = scipy.stats.norm(mean, std)
 	def gauss_transform(x): 
-		return max(pmin, min(pmax, rv.ppf(x)))
+		return max(pbottom, min(ptop, rv.ppf(x)))
 	print('  gaussian prior for %s of %f +- %f' % (par.name, mean, std))
 	return dict(model=model, index=par._Parameter__index, name=par.name, 
 		transform=gauss_transform, aftertransform=lambda x: x)

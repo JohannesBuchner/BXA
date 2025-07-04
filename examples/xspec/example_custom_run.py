@@ -3,7 +3,6 @@ Example of doing BXA in X-spec
 
 Run with python example_advanced_priors.py example-file.fak absorbed-
 """
-from __future__ import print_function
 import sys
 import scipy.stats
 import bxa.xspec as bxa
@@ -148,3 +147,8 @@ plt.legend()
 plt.xlabel("Energy flux [erg/s/cm$^2$]")
 plt.savefig(outputfiles_basename + 'flux_posterior.pdf', bbox_inches='tight')
 plt.close()
+
+# in case there are multiple spectra, you first have to get the right index:
+#from bxa.xspec.solver import get_isrc
+#i_src = get_isrc(ispectrum=1, isource=1)
+#flux_soft = solver.create_flux_chain(s, "0.5 2.0", i_src=i_src)

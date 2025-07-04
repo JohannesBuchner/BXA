@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os, numpy
 from sherpa.astro.ui import *
 import bxa.sherpa as bxa

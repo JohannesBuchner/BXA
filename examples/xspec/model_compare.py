@@ -2,7 +2,6 @@
 Compare analysed models using the stats.json files (which contain the evidence,
 but also marginal summaries)
 """
-from __future__ import print_function
 import json
 import sys
 import numpy
