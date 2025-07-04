@@ -1,2 +1,2 @@
-from autobackground.fitbkg import main
+from autobackgroundmodel.fitbkg import main
 main()

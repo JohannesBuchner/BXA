@@ -1,2 +1,2 @@
-from autobackground.fitbkgkde import main
+from autobackgroundmodel.fitbkgkde import main
 main()

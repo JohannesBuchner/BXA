@@ -149,6 +149,6 @@ plt.savefig(outputfiles_basename + 'flux_posterior.pdf', bbox_inches='tight')
 plt.close()
 
 # in case there are multiple spectra, you first have to get the right index:
-from bxa.xspec.solver import get_isrc
-i_src = get_isrc(ispectrum=0, isource=0)
-flux_soft = solver.create_flux_chain(s, "0.5 2.0", i_src=i_src)
+#from bxa.xspec.solver import get_isrc
+#i_src = get_isrc(ispectrum=1, isource=1)
+#flux_soft = solver.create_flux_chain(s, "0.5 2.0", i_src=i_src)
