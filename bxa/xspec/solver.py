@@ -23,15 +23,17 @@ from xspec import Xset, AllModels, Fit, Plot
 import xspec
 import matplotlib.pyplot as plt
 from tqdm import tqdm  # if this fails --> pip install tqdm
-#from .priors import *
 
 
-class XSilence(object):
+class XSilence:
 	"""Context for temporarily making xspec quiet."""
-
+	def __init__(self, chatter=0, logChatter=0):
+		self.chatter = chatter
+		self.logChatter = logChatter
+	
 	def __enter__(self):
 		self.oldchatter = Xset.chatter, Xset.logChatter
-		Xset.chatter, Xset.logChatter = 0, 0
+		Xset.chatter, Xset.logChatter = self.chatter, self.logChatter
 
 	def __exit__(self, *args):
 		Xset.chatter, Xset.logChatter = self.oldchatter
@@ -107,9 +109,10 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	"""
 	with tempfile.NamedTemporaryFile(suffix=".log") as tmp_file:
 		log_path = tmp_file.name
-		Xset.openLog(log_path)
-		AllModels.calcFlux(erange)
-		Xset.closeLog()
+		with XSilence(10, 10):
+			Xset.openLog(log_path)
+			AllModels.calcFlux(erange)
+			Xset.closeLog()
 		loglines = {}
 		with open(log_path, 'r') as f:
 			for line in f.readlines():
@@ -455,92 +458,3 @@ class BXASolver(object):
 				content = numpy.hstack((base_content, numpy.transpose(comp).reshape((len(base_content), -1))))
 				yield content
 			Plot.device = olddevice
-
-
-def standard_analysis(
-	transformations, outputfiles_basename,
-	skipsteps=[], **kwargs
-):
-	"""
-	Run a default analysis which produces nice plots.
-
-	Deprecated; copy the code of this function into
-	your script and adjust to your needs.
-
-	* runs nested sampling analysis, creates MCMC chain file
-	* marginal probabilities (1d and 2d)
-	* model posterior predictions + data overplotted, convolved
-	* model posterior predictions unconvolved
-	* quantile-quantile plot with statistics
-	* prints out summary of parameters
-	* prints out model evidence
-
-	Look at the source of this function to figure out how to do
-	the individual parts.
-	Copy them to your scripts and adapt them to your needs.
-	"""
-	#   run nested sampling
-	warnings.warn("standard_analysis() is deprecated and will be removed in future BXA releases.")
-	print('running analysis ...')
-	solver = BXASolver(
-		transformations=transformations,
-		outputfiles_basename=outputfiles_basename)
-	solver.run(**kwargs)
-	print('running analysis ... done')
-
-	# analyse results
-	print('analysing results...')
-	if 'unconvolved' not in skipsteps:
-		print('creating plot of posterior predictions ...')
-		plt.figure()
-		solver.posterior_predictions_unconvolved(nsamples=100)
-		ylim = plt.ylim()
-		# 3 orders of magnitude at most
-		plt.ylim(max(ylim[0], ylim[1] / 1000), ylim[1])
-		plt.gca().set_yscale('log')
-		if Plot.xAxis == 'keV':
-			plt.xlabel('Energy [keV]')
-		elif Plot.xAxis == 'channel':
-			plt.xlabel('Channel')
-		plt.ylabel('Counts/s/cm$^2$')
-		print('saving plot...')
-		plt.savefig(outputfiles_basename + 'unconvolved_posterior.pdf', bbox_inches='tight')
-		plt.close()
-
-	if 'convolved' not in skipsteps:
-		print('creating plot of posterior predictions against data ...')
-		plt.figure()
-		data = solver.posterior_predictions_convolved(nsamples=100)
-		# plot data
-		# plt.errorbar(x=data['bins'], xerr=data['width'], y=data['data'], yerr=data['error'],
-		# 	label='data', marker='o', color='green')
-		# bin data for plotting
-		print('binning for plot...')
-		binned = binning(
-			outputfiles_basename=outputfiles_basename,
-			bins=data['bins'], widths=data['width'],
-			data=data['data'], models=data['models'])
-		for point in binned['marked_binned']:
-			plt.errorbar(marker='o', zorder=-1, **point)
-		plt.xlim(binned['xlim'])
-		plt.ylim(binned['ylim'][0], binned['ylim'][1] * 2)
-		plt.gca().set_yscale('log')
-		if Plot.xAxis == 'keV':
-			plt.xlabel('Energy [keV]')
-		elif Plot.xAxis == 'channel':
-			plt.xlabel('Channel')
-		plt.ylabel('Counts/s/cm$^2$')
-		print('saving plot...')
-		plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
-		plt.close()
-
-	if 'qq' not in skipsteps:
-		print('creating quantile-quantile plot ...')
-		solver.set_best_fit()
-		plt.figure(figsize=(7, 7))
-		qq.qq(outputfiles_basename, markers=5, annotate=True)
-		print('saving plot...')
-		plt.savefig(outputfiles_basename + 'qq_model_deviations.pdf', bbox_inches='tight')
-		plt.close()
-
-	return solver
