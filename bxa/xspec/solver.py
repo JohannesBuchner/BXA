@@ -120,8 +120,9 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 				elif line_short.startswith('Source '):
 					loglines[curr_spec].append(line_short[7:])
 	ispectrum_str = '%s' % (ispectrum)
-	if ispectrum_str in loglines and ispectrum_str in loglines[ispectrum_str]:
-		return numpy.where(numpy.array(loglines['%s' % (ispectrum)]) == '%s' % (isource))[0][0]
+	isource_str = '%s' % (isource)
+	if ispectrum_str in loglines and isource_str in loglines[ispectrum_str]:
+		return numpy.where(numpy.asarray(loglines[ispectrum_str]) == isource_str)[0][0]
 	else:
 		raise ValueError('Spectrum %s not loaded, have only: ' % (ispectrum, loglines))
 
