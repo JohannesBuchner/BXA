@@ -12,6 +12,7 @@
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="PCA-based background models" href="pca-background-models.html" />
@@ -39,7 +40,7 @@
 <h1>Empirical background models<a class="headerlink" href="#empirical-background-models" title="Link to this heading">¶</a></h1>
 <p>The advantages of using background spectral models is that more information
 can be extracted from low-count data, as correlations between bins and instrument behaviours are known.</p>
-<p>The <a class="reference external" href="http://johannesbuchner.github.io/BXA/bxa.sherpa.background.html#module-bxa.sherpa.background" title="(in BXA (Bayesian X-ray Analysis) v4.1.4)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bxa.sherpa.background</span></code></a> module includes hand-crafted models to
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">bxa.sherpa.background</span></code> module includes hand-crafted models to
 empirically describe the background spectra
 for Chandra/ACIS, XMM/EPIC, Swift/XRT.
 This requires that you extracted a background spectrum (they are not ab initio predictions).</p>
