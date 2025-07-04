@@ -107,12 +107,24 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	:param ispectrum: index of spectrum if multiple spectra are loaded.
 	:param isource: index of source. In most cases 1.
 	"""
+	src = xspec.AllData(1)
+	try:
+		resp = src.multiresponse[1]
+		del resp
+		has_multi = True
+	except Exception:
+		has_multi = False
+	if xspec.AllData.nSpectra == 1 and not has_multi:
+		return 0
 	# Create a temporary file
 	with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_file:
 		log_path = tmp_file.name
+	chatter_old = xspec.XspecSettings.logChatter
+	xspec.XspecSettings.logChatter = 10
 	Xset.openLog(log_path)
 	AllModels.calcFlux(erange)
 	Xset.closeLog()
+	xspec.XspecSettings.logChatter = chatter_old
 	loglines = {}
 	with open(log_path, 'r') as f:
 		for line in f.readlines():
