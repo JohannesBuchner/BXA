@@ -114,7 +114,7 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 		has_multi = True
 	except Exception:
 		has_multi = False
-	if xspec.AllData.nSpectra == 1 and not has_multi:
+	if not has_multi:
 		return 0
 	# Create a temporary file
 	with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_file:
