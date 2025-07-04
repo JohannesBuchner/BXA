@@ -3,7 +3,6 @@ Example of doing BXA in X-spec
 
 Run with python example_advanced_priors.py example-file.fak absorbed-
 """
-from __future__ import print_function
 import sys
 import scipy.stats
 import bxa.xspec as bxa

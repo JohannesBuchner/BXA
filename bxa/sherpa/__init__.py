@@ -4,10 +4,8 @@
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
 
-Copyright: Johannes Buchner (C) 2013-2019
+Copyright: Johannes Buchner (C) 2013-2025
 """
-
-from __future__ import print_function
 import os
 from math import log10, isnan, isinf
 if 'MAKESPHINXDOC' not in os.environ:

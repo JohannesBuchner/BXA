@@ -4,7 +4,7 @@
 """
 BXA (Bayesian X-ray Analysis) for Sherpa
 
-Copyright: Johannes Buchner (C) 2013-2015
+Copyright: Johannes Buchner (C) 2013-2025
 
 Priors
 """

@@ -2,6 +2,14 @@
 Release Notes
 ==============
 
+5.0.0 (2024-07-03)
+------------------
+
+* potentially breaking change: xspec: in BXA v5, priors now use min/max soft parameter limits instead of hard parameter limits. That is, among "min, bottom, top, and max", BXA<5 used min and max, while BXA>=5 uses bottom and top.
+* xspec: compute fluxes for multi-source and multi-spectrum cases (thanks @DaKalt)
+* sherpa: smooth interpolation in CDF prior file interpolation
+* add eROSITA background file
+
 4.1.4 (2024-05-26)
 ------------------
 

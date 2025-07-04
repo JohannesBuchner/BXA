@@ -1,8 +1,6 @@
 """
 Compute poisson-based GOF
 """
-
-from __future__ import print_function
 import sys, os
 import numpy
 import scipy.stats, scipy.special

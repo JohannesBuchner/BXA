@@ -1,4 +1,3 @@
-from __future__ import print_function
 """
 Precomputes a interpolated grid model from a complex model.
 
