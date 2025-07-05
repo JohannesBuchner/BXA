@@ -66,12 +66,9 @@ jobs:
           micromamba activate ciao
           micromamba info
       - name: Conda list
-        run: |
-          micromamba activate ciao
-          micromamba list
+        run: micromamba list
       - name: Conda paths
         run: |
-          micromamba activate ciao
           pwd
           echo $PATH
           ls $CONDA/bin/
@@ -85,7 +82,7 @@ jobs:
             rm -rf ~/conda_pkgs_dir/*/
             find ~/conda_pkgs_dir -type f -printf '%s\t%p\n' | sort -nr -k1,1 |
             { S=0; while read s l; do 
-                ((S+=s)); [[ $S -gt 6000000000 ]] && rm -v "$l"; 
+                ((S+=s)); [[ $S -gt 5000000000 ]] && rm -v "$l"; 
               done; }
 
       - name: Prepare testing
@@ -100,7 +97,6 @@ jobs:
 
       - name: Test helper scripts
         run: |
-          micromamba activate ciao
           pushd docker/testsrc
           python -m coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           python -m coverage run -p ../../gal.py combined_src.pi
@@ -115,7 +111,6 @@ jobs:
 
       - name: Test examples
         run: |
-          micromamba activate ciao
           pushd examples/sherpa;
           # install interpolation code first
           echo $CONDA_PREFIX/lib/python*;
@@ -130,7 +125,6 @@ jobs:
 
       - name: Run XAGNFitter
         run: |
-          micromamba activate ciao
           pushd examples/sherpa/chandra;
           echo "179.pi  0.5 8" > filenames.txt 
           PYTHONPATH=../../../:$PYTHONPATH WITHAPEC=0 coverage run -p ../xagnfitter.py || exit 1;
@@ -139,13 +133,11 @@ jobs:
 
       - name: Install
         run: |
-          micromamba activate ciao
           python -m pip -y install . --user
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: Coverage report
         run: |
-          micromamba activate ciao
           python -m coverage combine examples/sherpa examples/xspec docker/testsrc .
           python -m coverage report
           coverage-lcov
