@@ -109,13 +109,11 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	"""
 	src = xspec.AllData(ispectrum)
 	try:
-		resp = src.multiresponse[1]
-		del resp
-		has_multi = True
+		src.multiresponse[1]
 	except Exception:
-		has_multi = False
-	if not has_multi:
+		# only one response, so the index has to be zero
 		return 0
+	# otherwise, need to parse calcFlux output:
 	with tempfile.NamedTemporaryFile(suffix=".log") as tmp_file:
 		log_path = tmp_file.name
 	with XSilence(0, 10):
