@@ -107,21 +107,30 @@ def get_isrc(erange="2.0 10.0", ispectrum=1, isource=1):
 	:param ispectrum: index of spectrum if multiple spectra are loaded.
 	:param isource: index of source. In most cases 1.
 	"""
+	src = xspec.AllData(ispectrum)
+	try:
+		resp = src.multiresponse[1]
+		del resp
+		has_multi = True
+	except Exception:
+		has_multi = False
+	if not has_multi:
+		return 0
 	with tempfile.NamedTemporaryFile(suffix=".log") as tmp_file:
 		log_path = tmp_file.name
-		with XSilence(0, 10):
-			Xset.openLog(log_path)
-			AllModels.calcFlux(erange)
-			Xset.closeLog()
-		loglines = {}
-		with open(log_path, 'r') as f:
-			for line in f.readlines():
-				line_short = line.replace('\n', '').strip()
-				if line_short.startswith('Spectrum Number: '):
-					curr_spec = line_short[17:]
-					loglines[curr_spec] = []
-				elif line_short.startswith('Source '):
-					loglines[curr_spec].append(line_short[7:])
+	with XSilence(0, 10):
+		Xset.openLog(log_path)
+		AllModels.calcFlux(erange)
+		Xset.closeLog()
+	loglines = {}
+	with open(log_path, 'r') as f:
+		for line in f.readlines():
+			line_short = line.replace('\n', '').strip()
+			if line_short.startswith('Spectrum Number: '):
+				curr_spec = line_short[17:]
+				loglines[curr_spec] = []
+			elif line_short.startswith('Source '):
+				loglines[curr_spec].append(line_short[7:])
 	ispectrum_str = '%s' % (ispectrum)
 	isource_str = '%s' % (isource)
 	if ispectrum_str in loglines and isource_str in loglines[ispectrum_str]:
