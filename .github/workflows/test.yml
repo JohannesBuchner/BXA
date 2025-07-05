@@ -31,7 +31,7 @@ jobs:
       - uses: mamba-org/setup-micromamba@v1
         with:
           environment-name: ciao
-          environment-file: .github/workflows/ciao-conda.env
+          environment-file: .github/conda-envs/ciao.yml
           cache-environment: false
           cache-downloads: true
 
@@ -184,7 +184,7 @@ jobs:
       - uses: mamba-org/setup-micromamba@v1
         with:
           environment-name: hea
-          environment-file: .github/workflows/xspec-conda.env
+          environment-file: .github/conda-envs/xspec.yml
           cache-environment: false
           cache-downloads: true
 
