@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         #python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3]
-        python-version: [3.11]
+        python-version: [3.12]
 
     defaults:
       run:
@@ -54,7 +54,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge sherpa astropy "matplotlib>=3.5" ultranest "coverage<7.0.0" coveralls==3.3.1 scipy h5py astropy requests cython tqdm coverage toml joblib &&
+          micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge sherpa astropy "matplotlib-base>=3.5" ultranest "coverage<7.0.0" coveralls==3.3.1 scipy h5py astropy requests cython tqdm coverage toml joblib &&
           # micromamba env create -y -n ciao -f .github/workflows/ciao-conda-env.yml && 
           micromamba activate ciao &&
           echo "--- Environment dump start ---" &&
@@ -172,7 +172,7 @@ jobs:
       fail-fast: false
       matrix:
         #python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3]
-        python-version: [3.11]
+        python-version: [3.12]
 
     defaults:
       run:
@@ -249,6 +249,7 @@ jobs:
               export XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
               pushd $XSPEC_BUILD_DIR;
               mkdir -p $MYCACHE/xspec-install/;
+              export CFLAGS="-s" CXXFLAGS="-s" FCFLAGS="-s"
               ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
               ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
               popd;
@@ -269,7 +270,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          micromamba install -y -c conda-forge ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib>=3.5" joblib natsort h5py astropy requests cython tqdm coverage toml &&
+          micromamba install -y -c conda-forge ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib-base>=3.5" joblib natsort h5py astropy requests cython tqdm coverage toml &&
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
