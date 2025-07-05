@@ -10,7 +10,7 @@ import joblib
 import json
 import tqdm
 
-import compress
+from . import compress
 
 
 def compile(filenames):

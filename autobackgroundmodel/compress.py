@@ -40,12 +40,10 @@ def pca_check(M, U, s, V, mean):
 	print("Using %d PCs, MSE = %.6G"  % (len(s), numpy.mean((M - Mhat2)**2)))
 	return M - Mhat2
 
-def run(cmd, filename):
+def run(cmd, filename, mincts = 50000):
 	f = h5py.File(filename, 'r')
 	attrs = f['spectra'].attrs
 	data = f['spectra'][()]
-	mincts = 50000
-	#mincts = 10000
 
 	if cmd == 'create':
 		lo = data.min(axis=0)
@@ -167,9 +165,6 @@ def run(cmd, filename):
 				plt.plot(counts[i,:] * cts[i,:].sum(), '-', color='k')
 				plt.plot(cts[i,:], '-', color='r', alpha=0.5)
 				plt.show()
-			
-			#diff = (counts * cts.sum(axis=0).reshape(1,-1) - cts) / (cts + 1)
-			#print 'largest ratio: %.3f' % numpy.abs(diff).max()
 			
 			
 if __name__ == '__main__':
