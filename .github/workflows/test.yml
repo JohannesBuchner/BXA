@@ -238,11 +238,13 @@ jobs:
 
       - name: Check install
         run: |
+          micromamba activate hea
           python -c "import numpy";
           python -c "import xspec"
 
       - name: Prepare testing
         run: |
+          micromamba activate hea
           cp .coveragerc docker/testsrc
           cp .coveragerc examples/sherpa
           cp .coveragerc examples/xspec
@@ -253,6 +255,7 @@ jobs:
 
       - name: Test helper scripts
         run: |
+          micromamba activate hea
           pushd docker/testsrc
           coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           coverage run -p ../../gal.py combined_src.pi
@@ -267,6 +270,7 @@ jobs:
 
       - name: Test examples
         run: |
+          micromamba activate hea
           pushd examples/xspec;
           source ${HEADAS}/headas-init.sh
           PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
@@ -275,17 +279,20 @@ jobs:
 
       - name: Install
         run: |
+          micromamba activate hea
           python -m pip install .
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: David Homan's workflow
         run: |
+          micromamba activate hea
           pushd examples/xspec/bayesian-workflow/tutorials/;
           bash run_all.sh;
           popd;
 
       - name: Coverage report
         run: |
+          micromamba activate hea
           coverage combine examples/sherpa examples/xspec docker/testsrc .
           coverage report
           coverage-lcov
