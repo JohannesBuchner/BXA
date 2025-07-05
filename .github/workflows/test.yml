@@ -26,7 +26,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick tcl
+        run: |
+          sudo apt-get update && 
+          sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick tcl \
+            build-essential gfortran libffi-dev libtool \
+            liblzma-dev libedit-dev libreadline-dev libexpat1-dev gettext \
+            libssl-dev libnsl-dev libc-ares-dev \
+            fonts-dejavu fonts-ubuntu fonts-inconsolata \
+            libx11-dev libxext-dev libice-dev libxau-dev libxdmcp-dev \
+            libopus-dev libogg-dev libwebp-dev liborc-0.4-dev \
+            libncurses-dev tzdata
 
       - uses: mamba-org/setup-micromamba@v1
         with:
@@ -183,7 +192,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick libx11-dev libxt-dev
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick
 
       - name: Cache conda package downloads
         uses: actions/cache@v4
@@ -220,57 +229,10 @@ jobs:
              wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
              popd
 
-      - name: Cache xspec install
-        uses: actions/cache@v4
-        id: cache-xspec
-        env:
-          cache-name: cache-xspec-install
-          cache-version: 4
-        with:
-          path: ${{ env.MYCACHE }}/xspec-install
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}-${{ env.cache-version }}
-            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.python-version }}
-
-      - name: Download and Install heasoft (if necessary)
-        run: |
-            mkdir -p $MYCACHE
-            pushd $MYCACHE
-            ls $MYCACHE/xspec-install/
-            if ! ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/; then
-              rm -rf heasoft*/;
-              wget -O - 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga | tar -xzf -
-              ls heasoft*;
-              ls;
-              echo "compiling xspec";
-              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
-              ls heasoft*;
-              export XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
-              pushd $XSPEC_BUILD_DIR;
-              mkdir -p $MYCACHE/xspec-install/;
-              export CFLAGS="-s" CXXFLAGS="-s" FCFLAGS="-s"
-              ./configure --prefix=$MYCACHE/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
-              ls $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/;
-              popd;
-            fi
-      - name: Load heasoft
-        run: |
-            export HEADAS=`ls -d $MYCACHE/xspec-install/x86_64-pc-linux-gnu-libc*/`;
-            echo "HEADAS=$HEADAS" >> $GITHUB_ENV
-            ls $HEADAS;
-            echo "loading xspec from " $HEADAS;
-            source ${HEADAS}/headas-init.sh;
-            echo "PYTHONPATH: $PYTHONPATH";
-            echo "PATH: $PATH";
-            echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV
-            echo "PATH=$PATH" >> $GITHUB_ENV
-            echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $GITHUB_ENV
-            python -c 'import xspec' || true;
-
       - name: Install python dependencies
         run: |
-          micromamba install -y -c conda-forge ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib-base>=3.5" joblib natsort h5py astropy requests cython tqdm coverage toml &&
+          micromamba create -y -n hea --override-channels -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/ -c conda-forge heasoft ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib-base>=3.5" joblib natsort h5py astropy requests cython tqdm coverage toml &&
+          micromamba activate hea &&
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
