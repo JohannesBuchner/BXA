@@ -26,16 +26,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install system dependencies
-        run: |
-          sudo apt-get update && 
-          sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick tcl \
-            build-essential gfortran libffi-dev libtool \
-            liblzma-dev libedit-dev libreadline-dev libexpat1-dev gettext \
-            libssl-dev libnsl-dev libc-ares-dev \
-            fonts-dejavu fonts-ubuntu fonts-inconsolata \
-            libx11-dev libxext-dev libice-dev libxau-dev libxdmcp-dev \
-            libopus-dev libogg-dev libwebp-dev liborc-0.4-dev \
-            libncurses-dev tzdata
+        run: sudo apt-get update && sudo apt-get -y --no-install-recommends install -y ghostscript imagemagick tcl
 
       - uses: mamba-org/setup-micromamba@v1
         with:
