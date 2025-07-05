@@ -2,7 +2,7 @@
 import h5py
 import numpy
 import sys
-import plotcolors
+from . import plotcolors
 import matplotlib.pyplot as plt
 
 def pca(M):
