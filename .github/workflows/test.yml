@@ -30,7 +30,8 @@ jobs:
 
       - uses: mamba-org/setup-micromamba@v1
         with:
-          environment-name: test
+          environment-name: ciao
+          environment-file: .github/workflows/ciao-conda-env.yml
           cache-environment: false
           cache-downloads: true
 
@@ -52,14 +53,8 @@ jobs:
              wget -q -nc https://zenodo.org/record/1169181/files/uxclumpy-cutoff.fits https://zenodo.org/record/1169181/files/uxclumpy-cutoff-omni.fits;
              popd
 
-      - name: Install python dependencies
+      - name: Install remaining python dependencies
         run: |
-          micromamba create -y -n ciao --override-channels -c https://cxc.cfa.harvard.edu/conda/ciao -c conda-forge sherpa astropy "matplotlib-base>=3.5" ultranest "coverage<7.0.0" coveralls==3.3.1 scipy h5py astropy requests cython tqdm coverage toml joblib &&
-          # micromamba env create -y -n ciao -f .github/workflows/ciao-conda-env.yml && 
-          micromamba activate ciao &&
-          echo "--- Environment dump start ---" &&
-          env &&
-          echo "--- Environment dump end ---" &&
           python -c 'from sherpa.astro import io; print(io.backend)' &&
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml &&
@@ -196,9 +191,11 @@ jobs:
 
       - uses: mamba-org/setup-micromamba@v1
         with:
-          environment-name: test
+          environment-name: hea
+          environment-file: .github/workflows/xspec-conda-env.yml
           cache-environment: false
           cache-downloads: true
+
 
       - name: Set directory names
         run: |
@@ -222,20 +219,16 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          micromamba create -y -n hea --override-channels -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/ -c conda-forge heasoft ultranest "coverage<7.0.0" coveralls==3.3.1 scipy "matplotlib-base>=3.5" joblib natsort h5py astropy requests cython tqdm coverage toml &&
-          micromamba activate hea &&
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
           sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
 
       - name: Check install
         run: |
-          micromamba activate hea
           python -c "import numpy";
           python -c "import xspec"
 
       - name: Prepare testing
         run: |
-          micromamba activate hea
           cp .coveragerc docker/testsrc
           cp .coveragerc examples/sherpa
           cp .coveragerc examples/xspec
@@ -246,7 +239,6 @@ jobs:
 
       - name: Test helper scripts
         run: |
-          micromamba activate hea
           pushd docker/testsrc
           coverage run -p ../../fixkeywords.py combined_src.pi combined_bkg.pi combined_src.rmf combined_src.arf
           coverage run -p ../../gal.py combined_src.pi
@@ -261,7 +253,6 @@ jobs:
 
       - name: Test examples
         run: |
-          micromamba activate hea
           pushd examples/xspec;
           source ${HEADAS}/headas-init.sh
           PYTHONPATH=../../:$PYTHONPATH bash -v runall.sh || exit 1;
@@ -270,13 +261,11 @@ jobs:
 
       - name: Install
         run: |
-          micromamba activate hea
           python -m pip install .
           wc -l examples/sherpa/.cover* examples/xspec/.cover* docker/testsrc/.cover* .cover* || true
 
       - name: David Homan's workflow
         run: |
-          micromamba activate hea
           pushd examples/xspec/bayesian-workflow/tutorials/;
           bash run_all.sh;
           popd;

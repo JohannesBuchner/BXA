@@ -1,12 +1,12 @@
-name: ciao
+name: hea
 channels:
   - conda-forge
-  - https://cxc.cfa.harvard.edu/conda/ciao/
+  - https://heasarc.gsfc.nasa.gov/FTP/software/conda/
 
 show_channel_urls: True
 
 dependencies:
-  - https://cxc.cfa.harvard.edu/conda/ciao/::sherpa
+  - https://heasarc.gsfc.nasa.gov/FTP/software/conda/::heasoft
   - conda-forge::ultranest
   - conda-forge::coverage<7.0.0
   - conda-forge::coveralls==3.3.1
@@ -18,4 +18,4 @@ dependencies:
   - conda-forge::cython
   - conda-forge::tqdm
   - conda-forge::toml
-  - conda-forge::joblib
+  - conda-forge::natsort
