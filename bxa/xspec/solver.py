@@ -60,22 +60,34 @@ def store_chain(chainfilename, transformations, posterior, fit_statistic):
 	import astropy.io.fits as pyfits
 
 	group_index = 1
+	index_offsets = {1: 0}
 	old_model = transformations[0]['model']
+
+	indices = [t["index"] for t in transformations]
 	names = []
 	for t in transformations:
 		if t['model'] != old_model:
+			# we are assuming that the next model is referring to the next group
 			group_index += 1
+			# the parameter index is offset by the number of model parameters
+			index_offsets[group_index] = index_offsets[group_index - 1] + old_model.nParameters
 		old_model = t['model']
-		names.append('%s__%d' % (t['name'], t['index'] + (group_index - 1) * old_model.nParameters))
+		try:
+			original_parname = AllModels(group_index)(t["index"]).name
+		except:
+			original_parname = AllModels(1)(t["index"]).name
+		names.append('%s__%d' % (original_parname, t['index'] + index_offsets.get(group_index, 0)))
 
 	columns = [pyfits.Column(
-		name=name, format='D', array=t['aftertransform'](posterior[:, i]))
+		name=name, format='D', unit=AllModels(1)(transformations[i]["index"]).unit, array=t['aftertransform'](posterior[:, i]))
 		for i, name in enumerate(names)]
+	columns = list(numpy.array(columns)[numpy.argsort(indices)])
+
 	columns.append(pyfits.Column(name='FIT_STATISTIC', format='D', array=fit_statistic))
 	table = pyfits.ColDefs(columns)
 	header = pyfits.Header()
 	header.add_comment("""Created by BXA (Bayesian X-ray spectal Analysis) for Xspec""")
-	header.add_comment("""refer to https://github.com/JohannesBuchner/""")
+	header.add_comment("""refer to https://github.com/JohannesBuchner/BXA/""")
 	header['TEMPR001'] = 1.
 	header['STROW001'] = 1
 	header['EXTNAME'] = 'CHAIN'
