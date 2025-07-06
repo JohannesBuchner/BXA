@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 import astropy.io.fits as pyfits
 import requests
 
@@ -30,6 +29,12 @@ def get_gal_nh(ra, dec):
 if __name__ == '__main__':
 	import sys, os
 	cache = []
+	if len(sys.argv) == 1:
+		print("SYNOPSIS: gal.py filename1.pha filename2.pha")
+		print()
+		print("gal.py requests the total Milky Way column density from swift.ac.uk")
+		print("which is then stored in filename1.pha.nh as a plain ASCII number")
+		sys.exit(0)
 	for infile in sys.argv[1:]:
 		outfile = infile + '.nh'
 		if not os.path.exists(outfile):
