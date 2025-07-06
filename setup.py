@@ -25,7 +25,7 @@ if not sherpa_available and not xspec_available:
     warnings.warn("BXA is a plugin for xspec/sherpa, but neither xspec nor sherpa are installed in the current environment!")
 
 setup(name='bxa',
-    version='5.1.0',
+    version='5.1.1',
     author='Johannes Buchner',
     url='https://github.com/JohannesBuchner/BXA/',
     author_email='johannes.buchner.acad@gmx.com',
