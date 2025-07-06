@@ -12,7 +12,6 @@
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -170,7 +169,7 @@ These are also reported on the screen for you.</p>
 (1d and 2d) of the marginal parameter distributions are plotted
 in ‘myoutputs/plots/corner.pdf’ for you.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 358.5px; height: 368.5px;" /></a>
+<a class="reference internal image-reference" href="_images/absorbed-corner.png"><img alt="_images/absorbed-corner.png" src="_images/absorbed-corner.png" style="width: 356.5px; height: 368.5px;" /></a>
 </figure>
 <p>You can also plot them yourself using corner, triangle and getdist, by
 passing <cite>results[‘samples’]</cite> to them.</p>
@@ -196,7 +195,7 @@ see <a class="reference external" href="https://corner.readthedocs.io/en/latest/
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">)</span>
 <span class="k">elif</span> <span class="n">Plot</span><span class="o">.</span><span class="n">xAxis</span> <span class="o">==</span> <span class="s1">&#39;channel&#39;</span><span class="p">:</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Channel&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">Plot</span><span class="o">.</span><span class="n">labels</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving plot...&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputfiles_basename</span> <span class="o">+</span> <span class="s1">&#39;convolved_posterior.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
