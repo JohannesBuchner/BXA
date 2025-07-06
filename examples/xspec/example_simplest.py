@@ -68,7 +68,7 @@ if Plot.xAxis == 'keV':
 	plt.xlabel('Energy [keV]')
 elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
-plt.ylabel('Counts/s/cm$^2$')
+plt.ylabel('Counts/keV (%s)' % Plot.yAxis)
 plt.savefig(outputfiles_basename + 'convolved_posterior_direct.pdf', bbox_inches='tight')
 plt.close()
 
@@ -90,7 +90,7 @@ if Plot.xAxis == 'keV':
 	plt.xlabel('Energy [keV]')
 elif Plot.xAxis == 'channel':
 	plt.xlabel('Channel')
-plt.ylabel('Counts/s/cm$^2$')
+plt.ylabel('Counts/keV (%s)' % Plot.yAxis)
 print('saving plot...')
 plt.legend()
 plt.savefig(outputfiles_basename + 'convolved_posterior.pdf', bbox_inches='tight')
