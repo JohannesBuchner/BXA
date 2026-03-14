@@ -282,13 +282,13 @@ class SingleFitter(object):
 		if prev is not None and link:
 			otherpars = prev
 			this = self.bm
-			assert len(otherpars) == len(self.bm.pars), (other, 'incompatible with', self.bm.pars)
+			assert len(otherpars) == len(self.bm.pars), (otherpars, 'incompatible with', self.bm.pars)
 			for pa, pb in zip(otherpars, self.bm.pars):
 				aname = pa.fullname.split('_')[0]
 				bname = pb.fullname.split('_')[0]
 				assert aname == bname, ('names should be the same', pa.fullname, pb.fullname)
 				logf.debug('   linking %s <- %s' % (pb.fullname, pa.fullname))
-				pb = pa
+				pb.link = pa
 		elif prev is not None:
 			for pa, pb in zip(self.bm.pars, prev):
 				if pa.link:
@@ -433,7 +433,7 @@ class MultiFitter(object):
 				for i in batchids:
 					self.fitters[i].store()
 				#self.fitters[i].fit_stage(stage=stage, **kwargs)
-				pars_at_stages[stage] = self.fitters[i].bm.pars
+				pars_at_stages[stage] = list(firstfit.bm.pars)
 				logmf.info('MultiFitter: joint fitting, stage "%s" done' % stage)
 			# now we release the links and try to improve the fits
 			# individually

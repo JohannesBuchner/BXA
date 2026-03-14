@@ -109,6 +109,10 @@ jobs:
           git checkout .
           popd
 
+      - name: Run Sherpa regression tests
+        run: |
+          MPLCONFIGDIR=$RUNNER_TEMP/matplotlib PYTHONPATH=. python -m coverage run -p -m pytest -q tests/test_sherpa_issue_regressions.py
+
       - name: Test examples
         run: |
           pushd examples/sherpa;
