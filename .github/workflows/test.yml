@@ -247,6 +247,11 @@ jobs:
           git checkout .
           popd
 
+      - name: Test XSPEC FITS chain export
+        run: |
+          source "${HEADAS}/headas-init.sh"
+          python -m unittest discover -s tests -p test_xspec_chain.py -v
+
       - name: Test examples
         run: |
           pushd examples/xspec;

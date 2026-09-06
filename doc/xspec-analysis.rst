@@ -207,6 +207,12 @@ In Xspec, after you set the same model you can load it
 using `"chain load" <https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSchain.html>`_.
 This should set parameters, and compute flux estimates.
 
+The parameter columns contain physical XSPEC values, after applying each
+parameter's ``aftertransform``. The ``FIT_STATISTIC`` column contains
+``-2 * log_likelihood`` for the corresponding complete posterior sample.
+Rows retain the order and repetitions of UltraNest's equal-weight posterior;
+exporting the chain does not change those samples or the evidence estimate.
+
 .. _xspec-models:
 
 .. include:: model_comparison.rst
