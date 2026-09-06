@@ -25,6 +25,9 @@ import numpy as np
 import sys, os
 import astropy.io.fits as pyfits
 import subprocess
+import filecmp
+import shutil
+import tempfile
 
 def remove(filename):
 	if os.path.exists(filename): 
@@ -34,7 +37,48 @@ def run(*args, **kwargs):
 	print("    running command:", *args)
 	subprocess.check_call(*args, **kwargs)
 
-def sum_pha(outfile, filenames, backscals, areascals, rel_weights, **kwargs):
+def combine_responses(arfs, rmfs, rel_weights, outprefix):
+	"""Average full responses, keeping separate ARFs only for identical RMFs.
+
+	Weights are proportional to exposure * AREASCAL. For differing RMFs,
+	include each ARF before averaging, and return ANCRFILE=NONE so the
+	effective area is not applied twice.
+	"""
+	same_rmf = all(filecmp.cmp(rmfs[0], rmf, shallow=False) for rmf in rmfs[1:])
+	separate_arf = same_rmf and all(str(arf).strip().lower() != 'none' for arf in arfs)
+	with tempfile.TemporaryDirectory(prefix='addspec_') as tmpdir:
+		if separate_arf:
+			inputs = arfs
+		else:
+			inputs = []
+			for i, (arf, rmf) in enumerate(zip(arfs, rmfs)):
+				if str(arf).strip().lower() == 'none':
+					# A response with no separate ARF is already complete.
+					inputs.append(rmf)
+					continue
+				response = os.path.join(tmpdir, '%d.rsp' % i)
+				run(['marfrmf', 'rmfil=' + rmf, 'arfil=' + arf,
+					'outfil=' + response, 'ebfil=%', 'qdivide=no',
+					'qoverride=no', 'clobber=yes'])
+				inputs.append(response)
+		# Use a list file to avoid the FTOOLS command-line length limit.
+		listfile = os.path.join(tmpdir, 'responses.txt')
+		with open(listfile, 'w') as fout:
+			for filename, weight in zip(inputs, rel_weights):
+				fout.write('%s %.17g\n' % (filename, weight))
+		if separate_arf:
+			arf = outprefix + '.arf'
+			rmf = outprefix + '.rmf'
+			run(['addarf', 'list=@' + listfile, 'out_ARF=' + arf, 'clobber=yes'])
+			shutil.copyfile(rmfs[0], rmf)
+		else:
+			arf = 'NONE'
+			rmf = outprefix + '.rsp'
+			run(['addrmf', 'list=@' + listfile, 'rmffile=' + rmf, 'clobber=yes'])
+	return arf, rmf
+
+
+def sum_pha(outfile, filenames, backscals, areascals, exposures, rel_weights, **kwargs):
 	print()
 	print("creating '%s' ..." % outfile)
 	remove(outfile)
@@ -43,7 +87,9 @@ def sum_pha(outfile, filenames, backscals, areascals, rel_weights, **kwargs):
 		'ncomments=1', "comment1=Created_by_addspec.py_alpha", 'chatter=5'])
 
 	# update AREASCAL, BACKSCAL keywords:
-	areascal = (areascals * rel_weights).sum()
+	# With T = sum(exposures), T * AREASCAL must equal sum(t_i * a_i).
+	# Response weights already contain a_i, so do not use them again here.
+	areascal = np.average(areascals, weights=exposures)
 	backscal = (backscals * rel_weights).sum()
 	print("    EXPOSURE and counts were summed")
 	print("    relative weights for scale factors:", rel_weights)
@@ -63,6 +109,8 @@ def sum_pha(outfile, filenames, backscals, areascals, rel_weights, **kwargs):
 def main(outprefix, filenames):
 
 	N = len(filenames)
+	if N == 0:
+		raise ValueError('At least one spectrum is required')
 	print("files:", N, filenames)
 
 	backscals = np.empty(N)
@@ -108,27 +156,24 @@ def main(outprefix, filenames):
 	print("AREASCAL:", areascals, bareascals)
 	print("EXPOSURE:", exposures, bexposures)
 
+	for values in (exposures, bexposures, areascals, bareascals):
+		if not np.all(np.isfinite(values) & (values > 0)):
+			raise ValueError('EXPOSURE and scalar AREASCAL must be finite and positive')
+	# With exposure-weighted output AREASCAL, these weights preserve
+	# sum(t_i * a_i * ARF_i * RMF_i) for a common incident spectrum.
 	weights = areascals * exposures
 	rel_weights = weights / weights.sum()
-	weightstr = ' '.join(['%e' % w for w in rel_weights])
 	bweights = bareascals * bexposures
 	rel_bweights = bweights / bweights.sum()
-	bweightstr = ' '.join(['%e' % w for w in rel_bweights])
 	assert len(arfs) == N
 	assert len(rmfs) == N
 	assert len(barfs) == N
 	assert len(brmfs) == N
 
-	print("combining ARFs:", arfs)
-	arf = outprefix + '.arf'
-	run(['addarf', ' '.join(arfs), weightstr, arf, 'clobber=yes'])
-	barf = outprefix + '_bkg.arf'
-	run(['addarf', ' '.join(barfs), bweightstr, barf, 'clobber=yes'])
-	print("combining RMFs:", rmfs)
-	rmf = outprefix + '.rmf'
-	run(['addrmf', ' '.join(rmfs), weightstr, rmf, 'clobber=yes'])
-	brmf = outprefix + '_bkg.rmf'
-	run(['addrmf', ' '.join(brmfs), bweightstr, brmf, 'clobber=yes'])
+	print("combining source responses:", arfs, rmfs)
+	arf, rmf = combine_responses(arfs, rmfs, rel_weights, outprefix)
+	print("combining background responses:", barfs, brmfs)
+	barf, brmf = combine_responses(barfs, brmfs, rel_bweights, outprefix + '_bkg')
 	
 	outfile = "%s.pha" % outprefix
 	boutfile = "%s_bkg.pha" % outprefix
@@ -137,6 +182,7 @@ def main(outprefix, filenames):
 		outfile = outfile,
 		filenames = filenames,
 		areascals = areascals,
+		exposures = exposures,
 		backscals = backscals,
 		rel_weights = rel_weights,
 		ANCRFILE = arf,
@@ -147,6 +193,7 @@ def main(outprefix, filenames):
 		outfile = boutfile,
 		filenames = bfilenames,
 		areascals = bareascals,
+		exposures = bexposures,
 		backscals = bbackscals,
 		rel_weights = rel_bweights,
 		ANCRFILE = barf,
@@ -161,8 +208,9 @@ SYNOPSIS: addspec.py <outprefix> @filelist.txt
 
 In the second case, each line of filelist.txt contains a file name.
 
-If as a outprefix "sum" is given, the output files are named
-sum.pha sum.arf sum.rmf sum_bkg.pha sum_bkg.arf sum_bkg.rmf
+If as a outprefix "sum" is given, the spectra are sum.pha and sum_bkg.pha.
+Identical input RMFs with separate ARFs retain .arf and .rmf outputs.
+Otherwise, a combined .rsp is written and ANCRFILE is set to NONE.
 
 Johannes Buchner (C) 2021, MIT Licence
 """)
