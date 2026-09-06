@@ -56,8 +56,15 @@ def create_prior_function(transformations):
 
 
 def store_chain(chainfilename, transformations, posterior, fit_statistic):
-	"""Writes a MCMC chain file in the same format as the Xspec chain command."""
+	"""Write physical posterior parameters and their corresponding fit statistics."""
 	import astropy.io.fits as pyfits
+
+	posterior = numpy.asarray(posterior)
+	fit_statistic = numpy.asarray(fit_statistic, dtype=float)
+	if posterior.ndim != 2 or posterior.shape[1] != len(transformations):
+		raise ValueError('posterior must have one column per parameter transformation')
+	if fit_statistic.shape != (len(posterior),):
+		raise ValueError('fit_statistic must have one value per posterior sample')
 
 	group_index = 1
 	index_offsets = {1: 0}
@@ -79,7 +86,8 @@ def store_chain(chainfilename, transformations, posterior, fit_statistic):
 		names.append('%s__%d' % (original_parname, t['index'] + index_offsets.get(group_index, 0)))
 
 	columns = [pyfits.Column(
-		name=name, format='D', unit=AllModels(1)(transformations[i]["index"]).unit, array=t['aftertransform'](posterior[:, i]))
+		name=name, format='D', unit=AllModels(1)(transformations[i]["index"]).unit,
+		array=transformations[i]['aftertransform'](posterior[:, i]))
 		for i, name in enumerate(names)]
 	columns = list(numpy.array(columns)[numpy.argsort(indices)])
 
@@ -288,10 +296,15 @@ class BXASolver(object):
 				traceback.print_exc()
 				warnings.warn("plotting failed.")
 
-			logls = [self.results['weighted_samples']['logl'][
-				numpy.where(self.results['weighted_samples']['points'] == sample)[0][0]]
-				for sample in self.results['samples']]
 			self.posterior = self.results['samples']
+			# UltraNest resamples complete rows from weighted_samples. Match those
+			# exact rows, preserving posterior order and repeated samples without
+			# re-evaluating XSPEC or accepting a match on only one coordinate.
+			weighted_samples = self.results['weighted_samples']
+			logl_by_sample = {
+				tuple(point): logl for point, logl in zip(
+					weighted_samples['points'], weighted_samples['logl'])}
+			logls = numpy.asarray([logl_by_sample[tuple(sample)] for sample in self.posterior])
 
 			chainfilename = '%schain.fits' % self.outputfiles_basename
 			store_chain(chainfilename, self.transformations, self.posterior, -2 * logls)
