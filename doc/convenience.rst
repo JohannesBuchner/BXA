@@ -17,6 +17,30 @@ script adjusts the keywords::
 This also fixes ARF/RMF that start the energy bounds at zero (which is invalid)
 instead of a small number.
 
+Combining spectra
+----------------------------
+
+The ``addspec.py`` script sums source and background spectra with compatible
+channel and response energy grids::
+
+	python addspec.py sum observation1.pha observation2.pha
+
+This creates ``sum.pha`` and ``sum_bkg.pha``. For identical RMF files with
+separate ARFs, it retains ``.arf`` and ``.rmf`` outputs. Otherwise, it multiplies
+each RMF by its corresponding ARF with ``marfrmf`` before averaging with
+``addrmf``.
+The resulting ``.rsp`` contains the effective area, so the output spectrum
+references it with ``RESPFILE`` and sets ``ANCRFILE=NONE``. Source and
+background responses are handled independently. Inputs with ``ANCRFILE=NONE``
+are used as complete responses without an additional ARF multiplication.
+
+Response weights are proportional to exposure times AREASCAL. The output
+exposure is the sum of the input exposures, and the output AREASCAL is their
+exposure-weighted mean. This preserves the summed forward-folded prediction
+for a common incident spectrum. It does not retain all the information of a
+joint fit, and source/background extraction scaling must also be compatible.
+
+
 Galactic absorption
 ----------------------------
 

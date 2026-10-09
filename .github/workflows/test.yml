@@ -247,6 +247,11 @@ jobs:
           git checkout .
           popd
 
+      - name: Test addspec response conservation
+        run: |
+          source "${HEADAS}/headas-init.sh"
+          python tests/test_addspec.py
+
       - name: Test examples
         run: |
           pushd examples/xspec;
