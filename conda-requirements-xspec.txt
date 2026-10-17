@@ -1,0 +1,9 @@
+https://heasarc.gsfc.nasa.gov/FTP/software/conda/::heasoft
+conda-forge::ultranest
+conda-forge::scipy
+conda-forge::matplotlib>=3.5
+conda-forge::h5py
+conda-forge::astropy
+conda-forge::requests
+conda-forge::cython
+conda-forge::natsort

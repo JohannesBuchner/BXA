@@ -2,10 +2,13 @@ import json
 import os
 import unittest
 import numpy as np
-import sherpa.astro.io
-import sherpa.astro.ui as shp
 
-from bxa.sherpa.background.pca import auto_background
+try:
+    import sherpa.astro.io
+    import sherpa.astro.ui as shp
+    from bxa.sherpa.background.pca import auto_background
+except ImportError:
+    raise unittest.SkipTest("sherpa is not installed")
 
 # The CIAO build of sherpa selects the crates I/O backend by default
 # (sherpa.rc io_pkg=crates), but pycrates cannot be imported with
