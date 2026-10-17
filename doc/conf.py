@@ -42,8 +42,16 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    'edit_on_github',
 ]
+
+# The edit_on_github extension is not part of the repository; only load
+# it when it is available so the docs build works in fresh checkouts and
+# CI environments.
+try:
+    import edit_on_github  # noqa: F401
+    extensions.append('edit_on_github')
+except ImportError:
+    pass
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']

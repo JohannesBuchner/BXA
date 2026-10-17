@@ -85,7 +85,7 @@ docs: reference-outputs ## generate Sphinx HTML documentation, including API doc
 	$(BROWSER) doc/build/html/index.html
 
 reference-outputs: ## generate the xspec example reference plots (needs an xspec installation)
-	-(cd examples/xspec && bash runall.sh)
+	-(export PYTHONPATH=$$PWD:$$PYTHONPATH; cd examples/xspec && env -u DISPLAY bash runall.sh)
 
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
