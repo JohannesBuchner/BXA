@@ -1,0 +1,9 @@
+https://cxc.cfa.harvard.edu/conda/ciao/::sherpa
+conda-forge::ultranest
+conda-forge::scipy
+conda-forge::matplotlib>=3.5
+conda-forge::h5py
+conda-forge::astropy
+conda-forge::requests
+conda-forge::cython
+conda-forge::natsort
