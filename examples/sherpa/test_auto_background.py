@@ -1,8 +1,24 @@
 import json
+import os
+import unittest
 import numpy as np
+import sherpa.astro.io
 import sherpa.astro.ui as shp
 
 from bxa.sherpa.background.pca import auto_background
+
+# The CIAO build of sherpa selects the crates I/O backend by default
+# (sherpa.rc io_pkg=crates), but pycrates cannot be imported with
+# numpy 2 (numpy.chararray was removed), leaving sherpa with its
+# dummy backend in numpy 2 environments without a working pycrates.
+# sherpa also ships an astropy backend; use it when crates is missing.
+if sherpa.astro.io.backend.name == "dummy":
+    sherpa.astro.io.set_io_backend("astropy")
+
+# The data files below are referenced relative to this directory
+# (runall.sh changes into it); run from here regardless of the
+# caller's working directory.
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 def test_chandra_pcabkg():
@@ -129,6 +145,8 @@ def test_nustar_detect_line():
     _check_injected_line(bkgdata, bkgmodel, channel)
 
 def _load_nustar_data(emin, emax):
+    if not os.path.isdir("nustar"):
+        raise unittest.SkipTest("NuSTAR data files are not in the repository")
     shp.load_pha("nustar/nu60360003002A01_sr_grp.pha")
     _ungroup_and_ignore_bkg(emin, emax)
 
@@ -153,6 +171,8 @@ def test_erosita_detect_line():
     _check_injected_line(bkgdata, bkgmodel, channel)
 
 def _load_erosita_data(emin, emax):
+    if not os.path.isdir("erosita"):
+        raise unittest.SkipTest("eROSITA data files are not in the repository")
     shp.load_pha("erosita/em01_182117_020_SourceSpec_00005_c010.fits")
     _ungroup_and_ignore_bkg(emin, emax)
 
@@ -177,6 +197,8 @@ def test_suzaku_detect_line():
     _check_injected_line(bkgdata, bkgmodel, channel)
 
 def _load_suzaku_data(emin, emax):
+    if not os.path.isdir("suzaku"):
+        raise unittest.SkipTest("Suzaku data files are not in the repository")
     shp.load_pha("suzaku/ae900001010xi0_0_3x3n000a_sr.pi")
     _ungroup_and_ignore_bkg(emin, emax)
 
