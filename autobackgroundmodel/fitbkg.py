@@ -508,6 +508,7 @@ class PCAFitter(object):
 				print('not significant, rejecting')
 				# reset to previous model
 				return last_pred, predictions
+		return last_pred, predictions
 
 def main():
 	import sys
