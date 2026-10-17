@@ -74,15 +74,18 @@ coverage: ## check code coverage quickly with the default Python
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-docs: ## generate Sphinx HTML documentation, including API docs
+docs: reference-outputs ## generate Sphinx HTML documentation, including API docs
 	rm -f doc/bxa{,.sherpa,.xspec,.sherpa.background}.rst
 	rm -f doc/modules.rst
-	cp -vu examples/xspec/reference-output/*.pdf doc/
-	cp -vu examples/xspec/reference-output/*.png doc/
+	cp -vu examples/xspec/reference-output/*.pdf doc/ || true
+	cp -vu examples/xspec/reference-output/*.png doc/ || true
 	sphinx-apidoc -H API -o doc/ bxa
 	$(MAKE) -C doc clean
 	PYTHONPATH=${PWD}:${PWD}/examples/xspec/bayesian-workflow/:${PWD}/npyinterp:${PYTHONPATH} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${PWD}/npyinterp $(MAKE) MAKESPHINXDOC=1 -C doc update-gh-pages
 	$(BROWSER) doc/build/html/index.html
+
+reference-outputs: ## generate the xspec example reference plots (needs an xspec installation)
+	-(cd examples/xspec && bash runall.sh)
 
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .

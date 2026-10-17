@@ -25,13 +25,13 @@ update-gh-pages:
 	$(MAKE) html
 	touch build/html/.nojekyll
 	git worktree repair
-	git -C build/html add .
-	git -C build/html commit -av -m 'update doc'
+	-git -C build/html add .
+	-git -C build/html commit -av -m 'update doc'
 
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-	cp ../examples/xspec/reference-output/*.pdf .
-	cp ../examples/xspec/reference-output/*.png .
+	-cp ../examples/xspec/reference-output/*.pdf .
+	-cp ../examples/xspec/reference-output/*.png .
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
