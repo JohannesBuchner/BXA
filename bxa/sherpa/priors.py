@@ -116,8 +116,11 @@ def create_prior_function(priors = [], parameters = None):
 		assert parameters is not None, "you need to pass the parameters if you want automatic uniform priors"
 		thawedparmins  = [p.min for p in parameters]
 		thawedparmaxes = [p.max for p in parameters]
+		def make_uniform_function(low, high):
+			spread = high - low
+			return lambda x: x * spread + low
 		for low, high in zip(thawedparmins, thawedparmaxes):
-			functions.append(lambda x: x * (high - low) + low)
+			functions.append(make_uniform_function(low, high))
 	else:
 		functions = priors
     
