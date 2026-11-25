@@ -57,7 +57,7 @@ jobs:
         run: |
           python -c 'from sherpa.astro import io; print(io.backend)' &&
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
-          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml &&
+          if [ -f /etc/ImageMagick-6/policy.xml ]; then sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml; fi &&
           pip uninstall -y h5py &&
           pip install --no-cache-dir h5py
 
@@ -216,7 +216,7 @@ jobs:
       - name: Install python dependencies
         run: |
           pip install git+https://github.com/JohannesBuchner/coverage-lcov &&
-          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
+          if [ -f /etc/ImageMagick-6/policy.xml ]; then sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml; fi
 
       - name: Check install
         run: |
